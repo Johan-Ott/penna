@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Fokusläge – Penna</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: {{bg}}; font-family: Geist, system-ui, sans-serif; color: {{fg}}; font-size: 13px">
+<header style="position: absolute; top: 0; left: 0; right: 0; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; color: #6B6B6B">
+<a href="Main.dc.html" style="color: #6B6B6B; text-decoration: none">Esc · lämna fokus</a>
+<span>Kapitel 8 · Köket</span>
+<div style="display: flex; align-items: center; gap: 12px">
+<span>812 / 1 000 ord</span>
+<button aria-label="Skrivinställningar" aria-expanded="true" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: {{seg}}; font-family: Literata, Georgia, serif; font-size: 14px; color: {{fg}}">Aa</button>
+</div>
+</header>
+<div style="position: absolute; left: 0; right: 0; top: {{textTop}}; display: flex; justify-content: center">
+<article style="width: 600px; font-family: Literata, Georgia, serif; font-size: 19px; line-height: 1.8">
+<sc-for list="{{paras}}" as="p" hint-placeholder-count="4">
+<p style="margin: 0 0 {{gap}}; text-indent: {{p.indent}}; color: {{p.color}}">{{p.text}}</p>
+</sc-for>
+<p style="margin: 0; text-indent: {{curIndent}}; color: {{prose}}"><span style="color: {{s1Color}}">Hon vände på kuvertet. </span>Ingen avsändare, bara en poststämpel från Göteborg, nästan bortnött.<span style="display: inline-block; width: 2px; height: 22px; margin-left: 2px; background: #111111; vertical-align: -4px; background: {{fg}}"></span></p>
+</article>
+</div>
+<div role="dialog" aria-label="Skrivinställningar" style="position: absolute; top: 56px; right: 24px; width: 300px; display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1px solid {{line}}; border-radius: 12px; background: {{panel}}; box-shadow: 0 10px 30px rgba(0,0,0,0.08)">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="color: #5C5C5C">Typsnitt</span>
+<div style="display: flex; padding: 3px; border-radius: 8px; background: {{seg}}">
+<button style="flex-grow: 1; height: 28px; border: 0; border-radius: 6px; background: #FFFFFF; font-family: Literata, Georgia, serif; font-size: 13px; color: {{fg}}">Serif</button>
+<button style="flex-grow: 1; height: 28px; border: 0; border-radius: 6px; background: transparent; font: inherit; color: #5C5C5C">Sans</button>
+<button style="flex-grow: 1; height: 28px; border: 0; border-radius: 6px; background: transparent; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #5C5C5C">Mono</button>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span>Storlek</span><div style="display: flex; align-items: center; gap: 10px"><button aria-label="Mindre" style="width: 28px; height: 28px; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; font: inherit; color: {{fg}}">–</button><span>19</span><button aria-label="Större" style="width: 28px; height: 28px; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; font: inherit; color: {{fg}}">+</button></div></div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span>Radavstånd</span><span style="color: #5C5C5C">1,8</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span>Textbredd</span><span style="color: #5C5C5C">Normal</span></div>
+<div style="height: 1px; background: {{seg}}"></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="color: #5C5C5C">Fokus</span>
+<div style="display: flex; padding: 3px; border-radius: 8px; background: {{seg}}">
+<sc-for list="{{focusOpts}}" as="f" hint-placeholder-count="3">
+<button onClick="{{f.pick}}" style="flex-grow: 1; height: 28px; border: 0; border-radius: 6px; background: {{f.bg}}; font: inherit; color: {{f.fg}}">{{f.label}}</button>
+</sc-for>
+</div>
+</div>
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="display: flex; flex-direction: column; gap: 2px"><span>{{t.label}}</span><span style="color: #6B6B6B; font-size: 12px">{{t.hint}}</span></span>
+<button aria-label="{{t.label}}" aria-pressed="{{t.on}}" onClick="{{t.flip}}" style="width: 36px; height: 20px; padding: 2px; border: 0; border-radius: 10px; background: {{t.track}}; display: flex; justify-content: {{t.side}}">
+<span style="width: 16px; height: 16px; border-radius: 8px; background: #FFFFFF"></span>
+</button>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const focus = st.focus || 'stycke';
+const indent = st.indent !== false;
+const tw = st.typewriter !== false;
+const dark = st.dark === true;
+const prose = dark ? '#E6E6E6' : '#1A1A1A';
+const dim = focus === 'av' ? prose : (dark ? '#4A4A4A' : '#C2C2C2');
+const texts = [
+'Brevet låg på köksbordet när Elin kom in från kylan. Kuvertet var gult av ålder, och handstilen kände hon igen innan hon ens hunnit ta av sig vantarna.',
+'– Det kom i morse, sa Arvid utan att se upp från spisen. Med posten. Som om ingenting hade hänt.',
+'Hon satte sig. Utanför fönstret hade isen lagt sig över viken, grå och orörlig, och bortom udden blinkade fyren som den gjort varje natt i fyrtio år.'
+];
+const paras = texts.map((t, i) => ({ text: t, color: dim, indent: indent && i > 0 ? '1.5em' : '0' }));
+const focusOpts = [['av', 'Av'], ['mening', 'Mening'], ['stycke', 'Stycke']].map((f) => ({ label: f[1], bg: f[0] === focus ? (dark ? '#3A3A3A' : '#FFFFFF') : 'transparent', fg: f[0] === focus ? (dark ? '#F2F2F2' : '#111111') : (dark ? '#A3A3A3' : '#5C5C5C'), pick: () => this.setState({ focus: f[0] }) }));
+const mk = (label, hint, on, key) => ({ label, hint, on: on ? 'true' : 'false', track: on ? (dark ? '#8A8A8A' : '#111111') : (dark ? '#3A3A3A' : '#D4D4D4'), side: on ? 'flex-end' : 'flex-start', flip: () => this.setState({ [key]: !on }) });
+const toggles = [
+mk('Typewriter', 'Raden du skriver stannar mitt på skärmen', tw, 'typewriter'),
+mk('Indrag första rad', 'Bokstil: inget indrag efter rubrik', indent, 'indent'),
+mk('Mörkt tema', 'Följer annars systemet', dark, 'dark')
+];
+return {
+paras, focusOpts, toggles,
+gap: indent ? '0' : '0.8em',
+curIndent: indent ? '1.5em' : '0',
+s1Color: focus === 'mening' ? dim : prose,
+prose, bg: dark ? '#111111' : '#FFFFFF', fg: dark ? '#F2F2F2' : '#111111', panel: dark ? '#1A1A1A' : '#FFFFFF', line: dark ? '#2E2E2E' : '#E0E0E0', seg: dark ? '#2A2A2A' : '#F0F0F0',
+textTop: tw ? '160px' : '96px'
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "ui/build",
+    "rootDir": ".",
+    "types": []
+  },
+  "include": ["ui", "src/storage"],
+  "exclude": ["ui/build", "src/storage/nodeFileSystem.ts"]
+}

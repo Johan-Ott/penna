@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Dialoger och tillstånd – Penna</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; padding: 40px; background: #F5F5F5; font-family: Geist, system-ui, sans-serif; color: #111111; font-size: 13px">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Kommandopalett · Cmd+K</span>
+<div role="dialog" aria-label="Kommandopalett" style="display: flex; flex-direction: column; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden">
+<label style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; border-bottom: 1px solid #EEEEEE">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input type="text" value="arv" aria-label="Sök" style="flex-grow: 1; border: 0; outline: 0; font: inherit; font-size: 15px; color: #111111">
+</label>
+<div style="display: flex; flex-direction: column; padding: 6px">
+<span style="padding: 8px 10px 4px; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #6B6B6B">Karaktärer</span>
+<div style="display: flex; justify-content: space-between; height: 34px; align-items: center; padding: 0 10px; border-radius: 6px; background: #EFEFEF"><span>Arvid</span><span style="color: #5C5C5C">Elins farbror</span></div>
+<span style="padding: 8px 10px 4px; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #6B6B6B">Scener</span>
+<div style="display: flex; justify-content: space-between; height: 34px; align-items: center; padding: 0 10px"><span>5. Arvid</span><span style="color: #5C5C5C">Del II</span></div>
+<span style="padding: 8px 10px 4px; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #6B6B6B">Kommandon</span>
+<div style="display: flex; justify-content: space-between; height: 34px; align-items: center; padding: 0 10px"><span>Sök ”arv” i hela manuset</span><span style="color: #5C5C5C">Cmd+Shift+F</span></div>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Synkkonflikt</span>
+<div role="dialog" aria-label="Två versioner av scenen" style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.08)">
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px; font-weight: 500">Två versioner av ”Köket”</span><span style="color: #5C5C5C">Scenen ändrades på två enheter innan molnet hann synka. Inget har raderats.</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid #111111; border-radius: 8px"><span style="font-weight: 500">Den här datorn</span><span style="color: #5C5C5C; font-size: 12px">Idag 14:03 · 1 240 ord</span><span style="font-family: Literata, Georgia, serif; font-size: 12px; line-height: 1.5; color: #3D3D3D">…isen lagt sig över viken, grå och orörlig…</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid #E0E0E0; border-radius: 8px"><span style="font-weight: 500">iPhone</span><span style="color: #5C5C5C; font-size: 12px">Idag 13:51 · 1 198 ord</span><span style="font-family: Literata, Georgia, serif; font-size: 12px; line-height: 1.5; color: #3D3D3D">…isen lagt sig över viken, tung och grå…</span></div>
+</div>
+<div style="display: flex; gap: 8px; justify-content: flex-end">
+<button style="height: 34px; padding: 0 12px; border: 1px solid #E0E0E0; border-radius: 8px; background: #FFFFFF; font: inherit; color: #111111">Behåll båda</button>
+<button style="height: 34px; padding: 0 12px; border: 0; border-radius: 8px; background: #111111; font: inherit; color: #FFFFFF">Behåll den här datorns</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Ögonblicksbilder</span>
+<div style="display: flex; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; overflow: hidden; height: 300px">
+<div style="width: 200px; flex-shrink: 0; display: flex; flex-direction: column; padding: 8px; border-right: 1px solid #EEEEEE">
+<div style="display: flex; flex-direction: column; padding: 8px 10px; border-radius: 6px; background: #EFEFEF"><span style="font-weight: 500">Nu</span><span style="color: #5C5C5C; font-size: 12px">1 240 ord</span></div>
+<div style="display: flex; flex-direction: column; padding: 8px 10px"><span>Idag 11:20</span><span style="color: #5C5C5C; font-size: 12px">Automatisk · 980 ord</span></div>
+<div style="display: flex; flex-direction: column; padding: 8px 10px"><span>Före omskrivning</span><span style="color: #5C5C5C; font-size: 12px">Manuell · igår</span></div>
+<button style="margin-top: auto; height: 32px; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; font: inherit; color: #111111">Ta ögonblicksbild</button>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px; padding: 16px; font-family: Literata, Georgia, serif; font-size: 14px; line-height: 1.7; color: #1A1A1A">
+<p style="margin: 0">Hon satte sig. Utanför fönstret hade isen lagt sig över viken, <span style="text-decoration: line-through; color: #6B6B6B">tung och grå</span> <span style="background: #E2E2E2">grå och orörlig</span>, och bortom udden blinkade fyren.</p>
+<button style="align-self: flex-start; margin-top: auto; height: 32px; padding: 0 12px; border: 0; border-radius: 6px; background: #111111; font-family: Geist, system-ui, sans-serif; font-size: 13px; color: #FFFFFF">Återställ den här versionen</button>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Tomma lägen och fel</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; height: 300px">
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; text-align: center">
+<span style="font-family: Literata, Georgia, serif; font-size: 18px; font-weight: 600">Tom bokhylla</span>
+<span style="color: #5C5C5C; line-height: 1.5">Skapa ditt första projekt eller öppna en mapp du redan har.</span>
+<button style="height: 34px; padding: 0 14px; border: 0; border-radius: 8px; background: #111111; font: inherit; color: #FFFFFF">Nytt projekt</button>
+<button style="height: 34px; padding: 0 14px; border: 0; background: transparent; font: inherit; color: #5C5C5C">Öppna mapp…</button>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; text-align: center">
+<span style="font-family: Literata, Georgia, serif; font-size: 18px; font-weight: 600">Saltstänk hittas inte</span>
+<span style="color: #5C5C5C; line-height: 1.5">Mappen har flyttats eller döpts om. Texten finns kvar där du lade den.</span>
+<button style="height: 34px; padding: 0 14px; border: 0; border-radius: 8px; background: #111111; font: inherit; color: #FFFFFF">Leta upp mappen</button>
+<button style="height: 34px; padding: 0 14px; border: 0; background: transparent; font: inherit; color: #5C5C5C">Ta bort från hyllan</button>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

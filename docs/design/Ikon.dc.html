@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Appikon – Penna</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1040px; height: 560px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 64px; background: #F5F5F5; font-family: Geist, system-ui, sans-serif; color: #5C5C5C; font-size: 13px">
+<sc-for list="{{sizes}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 14px">
+<div style="width: {{s.box}}; height: {{s.box}}; border-radius: {{s.radius}}; background: {{s.bg}}; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.12)">
+<svg width="{{s.glyph}}" height="{{s.glyph}}" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+<path d="M30 82 V18 H56 a20 20 0 0 1 0 40 H30" stroke="{{s.fg}}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M30 82 L22 92" stroke="{{s.fg}}" stroke-width="5" stroke-linecap="round"></path>
+</svg>
+</div>
+<span>{{s.label}}</span>
+</div>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1040,"height":560}}'>
+class Component extends DCLogic {
+renderVals() {
+const sizes = [
+{ label: '256 · ljus', box: '256px', radius: '56px', glyph: '150', bg: '#111111', fg: '#FFFFFF' },
+{ label: '256 · mörk', box: '256px', radius: '56px', glyph: '150', bg: '#F2F2F2', fg: '#111111' },
+{ label: '64', box: '64px', radius: '14px', glyph: '38', bg: '#111111', fg: '#FFFFFF' },
+{ label: '32', box: '32px', radius: '7px', glyph: '20', bg: '#111111', fg: '#FFFFFF' }
+];
+return { sizes };
+}
+}
+</script>
+</body>
+</html>

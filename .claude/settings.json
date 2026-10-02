@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node .claude/hooks/quality-gate.mjs", "timeout": 240 }
+        ]
+      }
+    ]
+  }
+}

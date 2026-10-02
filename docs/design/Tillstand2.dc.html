@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Fler tillstånd – Penna</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Literata:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; padding: 40px; background: #F5F5F5; font-family: Geist, system-ui, sans-serif; color: #111111; font-size: 13px">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Sök och ersätt · Cmd F</span>
+<div role="search" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.06)">
+<div style="display: flex; gap: 8px; align-items: center"><input type="text" value="Sjöbergh" aria-label="Sök" style="flex-grow: 1; height: 32px; box-sizing: border-box; padding: 0 10px; border: 1px solid #111111; border-radius: 6px; font: inherit; color: #111111"><span style="color: #5C5C5C; font-size: 12px">1 av 3</span></div>
+<div style="display: flex; gap: 8px; align-items: center"><input type="text" value="Sjöberg" aria-label="Ersätt med" style="flex-grow: 1; height: 32px; box-sizing: border-box; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 6px; font: inherit; color: #111111"><button style="height: 32px; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; font: inherit; color: #111111">Ersätt</button><button style="height: 32px; padding: 0 10px; border: 0; border-radius: 6px; background: #111111; font: inherit; color: #FFFFFF">Alla</button></div>
+<div style="display: flex; gap: 6px"><button style="height: 26px; padding: 0 8px; border: 1px solid #111111; border-radius: 13px; background: #FFFFFF; font: inherit; font-size: 12px; color: #111111">Hela manuset</button><button style="height: 26px; padding: 0 8px; border: 1px solid #E0E0E0; border-radius: 13px; background: #FFFFFF; font: inherit; font-size: 12px; color: #5C5C5C">Hela ord</button><button style="height: 26px; padding: 0 8px; border: 1px solid #E0E0E0; border-radius: 13px; background: #FFFFFF; font: inherit; font-size: 12px; color: #5C5C5C">Aa</button></div>
+</div>
+<span style="margin-top: 14px; color: #5C5C5C">Stavning och autotypografi</span>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF; font-family: Literata, Georgia, serif; font-size: 15px; line-height: 1.7">
+<span>Hon kände igen <span style="text-decoration: underline wavy #C62828; text-underline-offset: 3px">handstillen</span> direkt.</span>
+<span style="font-family: Geist, system-ui, sans-serif; font-size: 12px; color: #5C5C5C">Du skriver <code>-- Hej</code> och <code>"nej"</code>, Penna gör det till:</span>
+<span>– Hej, sa hon. ”Nej.”</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Export</span>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF">
+<div style="display: flex; justify-content: space-between"><span style="font-weight: 500">Exporterar e-bok…</span><span style="color: #5C5C5C">Kapitel 5 av 8</span></div>
+<div style="height: 4px; border-radius: 2px; background: #EBEBEB"><div style="width: 62%; height: 4px; border-radius: 2px; background: #111111"></div></div>
+<button style="align-self: flex-start; height: 28px; padding: 0; border: 0; background: transparent; font: inherit; color: #5C5C5C">Avbryt</button>
+</div>
+<div role="status" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 10px; background: #111111; color: #FFFFFF">
+<span>Vintervägen.epub är sparad</span><button style="height: 28px; padding: 0 10px; border: 1px solid #3A3A3A; border-radius: 6px; background: transparent; font: inherit; color: #FFFFFF">Visa i mappen</button>
+</div>
+<div role="alert" style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 1px solid #E0E0E0; border-left: 0; border-radius: 10px; background: #FFFFFF">
+<span style="font-weight: 500">Exporten stoppades i ”Isen”</span><span style="color: #5C5C5C; line-height: 1.45">Ett brev-block saknar sitt slut (:::). Inget har sparats.</span><button style="align-self: flex-start; height: 28px; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; font: inherit; color: #111111">Gå till scenen</button>
+</div>
+<span style="margin-top: 14px; color: #5C5C5C">Toasts</span>
+<div role="status" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; background: #111111; color: #FFFFFF"><span>Ändrade 3 förekomster av ”Sjöbergh”</span><button style="height: 26px; padding: 0 8px; border: 0; background: transparent; font: inherit; color: #BDBDBD; text-decoration: underline">Ångra</button></div>
+<div role="alert" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border: 1px solid #E0E0E0; border-radius: 10px; background: #FFFFFF"><span>Disken är full. Din text finns kvar i appen.</span><span style="color: #5C5C5C; font-size: 12px">Försöker igen…</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="color: #5C5C5C">Nytt projekt (från bokhyllan)</span>
+<div role="dialog" aria-label="Nytt projekt" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border: 1px solid #E0E0E0; border-radius: 14px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.08)">
+<span style="font-family: Literata, Georgia, serif; font-size: 18px; font-weight: 600">Nytt projekt</span>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="color: #5C5C5C">Titel</span><input type="text" placeholder="Arbetstitel duger" style="height: 36px; box-sizing: border-box; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 8px; font: inherit; color: #111111"></label>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="color: #5C5C5C">Dagligt ordmål</span><input type="text" value="1 000" style="height: 36px; box-sizing: border-box; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 8px; font: inherit; color: #111111"></label>
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="color: #5C5C5C">Deadline</span><input type="text" placeholder="Valfritt" style="height: 36px; box-sizing: border-box; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 8px; font: inherit; color: #111111"></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center"><button style="height: 34px; padding: 0; border: 0; background: transparent; font: inherit; color: #5C5C5C; text-decoration: underline">Importera i stället…</button><button style="height: 34px; padding: 0 14px; border: 0; border-radius: 8px; background: #111111; font: inherit; color: #FFFFFF">Skapa</button></div>
+</div>
+<span style="margin-top: 14px; color: #5C5C5C">Tomma lägen</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF"><span style="font-weight: 500">Inga karaktärer än</span><span style="color: #5C5C5C; line-height: 1.45">Lägg till en så känner Penna igen namnet i texten.</span><button style="align-self: flex-start; height: 30px; padding: 0 10px; border: 0; border-radius: 6px; background: #111111; font: inherit; color: #FFFFFF">Ny karaktär</button></div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid #E0E0E0; border-radius: 12px; background: #FFFFFF"><span style="font-weight: 500">Ingen statistik än</span><span style="color: #5C5C5C; line-height: 1.45">Skriv en stund idag, så fylls översikten på.</span><a href="Main.dc.html" style="align-self: flex-start; display: flex; align-items: center; height: 30px; padding: 0 10px; border: 1px solid #E0E0E0; border-radius: 6px; color: #111111; text-decoration: none">Börja skriva</a></div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

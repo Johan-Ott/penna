@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Penna",
+  "version": "0.0.1",
+  "identifier": "se.penna.app",
+  "build": {
+    "frontendDist": "../ui",
+    "beforeDevCommand": "npm run build:ui",
+    "beforeBuildCommand": "npm run build:ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{ "title": "Penna", "width": 1100, "height": 760 }]
+  },
+  "bundle": {
+    "active": false,
+    "icon": ["icons/icon.ico", "icons/icon.png"]
+  }
+}
