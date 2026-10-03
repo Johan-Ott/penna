@@ -7,6 +7,7 @@ import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
 import { Sidebar } from "./Sidebar.js";
 import { ProgressView } from "./progress/ProgressView.js";
+import { ExportView } from "./exporting/ExportView.js";
 import { useProject, type Project } from "./useProject.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
@@ -123,6 +124,14 @@ function useAppState() {
   return { ...parts, actions, palette, startup, syncCopy, stats, today, search };
 }
 
+// "Gå till scenen" after a failed export: the scene is found by the title the error named.
+function openSceneTitled(app: ReturnType<typeof useAppState>, project: Project, title: string) {
+  const id = Object.keys(project.summaries).find((key) => project.summaries[key]?.title === title);
+  if (!id) return;
+  app.writingMode.setView("skriv");
+  openIfOnDisk(app.session, project, id);
+}
+
 function sidebarProps(app: ReturnType<typeof useAppState>, project: Project) {
   const { session, writingMode } = app;
   return {
@@ -168,6 +177,14 @@ export function App() {
     <div className={app.writingMode.isFocusMode ? "app focus-mode" : "app"}>
       <Sidebar {...sidebarProps(app, project)} />
       <WritingArea {...writingAreaProps(app, project)} />
+      {app.writingMode.view === "exportera" && (
+        <ExportView
+          project={project}
+          generalAuthor={app.startup.preferences.authorName}
+          onSaveFields={(fields) => void app.updateFields(fields)}
+          onOpenScene={(title) => openSceneTitled(app, project, title)}
+        />
+      )}
       {app.writingMode.view === "framsteg" && (
         <ProgressView
           project={project}

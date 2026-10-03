@@ -1,9 +1,9 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { ask, open } from "@tauri-apps/plugin-dialog";
-import { exists, watch } from "@tauri-apps/plugin-fs";
+import { ask, open, save } from "@tauri-apps/plugin-dialog";
+import { exists, readFile, rename, watch, writeFile } from "@tauri-apps/plugin-fs";
 import { documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
-import type { Platform } from "./platform.js";
+import type { FileKind, Platform } from "./platform.js";
 
 // Windows paths come with backslashes and sometimes a trailing one; Penna uses forward slashes.
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
@@ -16,7 +16,33 @@ const askToCloseAnyway = () =>
     cancelLabel: "Fortsätt skriva",
   });
 
+// Written beside the target and renamed, so a crash never leaves half a file. The dialog only
+// grants the chosen path, so outside the home folder the file is written directly, still whole.
+async function saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind) {
+  const path = await save({
+    defaultPath: suggestedName,
+    filters: [{ name: kind.name, extensions: [kind.extension] }],
+  });
+  if (!path) return null;
+  const temp = `${path}.penna-tmp`;
+  try {
+    await writeFile(temp, bytes);
+    await rename(temp, path);
+  } catch {
+    await writeFile(path, bytes);
+  }
+  return withForwardSlashes(path);
+}
+
+// The dialog grants Penna the picked file, so it can be read wherever it lies.
+async function pickImage() {
+  const picked = await open({ filters: [{ name: "Bild", extensions: ["jpg", "jpeg", "png"] }] });
+  return typeof picked === "string" ? readFile(picked) : null;
+}
+
 export const tauriPlatform: Platform = {
+  saveFile,
+  pickImage,
   fileSystem: tauriFileSystem,
   knownFolders: async () => ({
     home: withForwardSlashes(await homeDir()),

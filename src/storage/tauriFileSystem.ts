@@ -2,9 +2,11 @@ import {
   exists,
   mkdir,
   readDir,
+  readFile,
   readTextFile,
   rename,
   stat,
+  writeFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 import type { FileSystem } from "./fileSystem.js";
@@ -12,6 +14,8 @@ import type { FileSystem } from "./fileSystem.js";
 export const tauriFileSystem: FileSystem = {
   readText: (path) => readTextFile(path),
   writeText: (path, text) => writeTextFile(path, text),
+  readBytes: (path) => readFile(path),
+  writeBytes: (path, bytes) => writeFile(path, bytes),
   rename: (from, to) => rename(from, to),
   makeDir: (dir) => mkdir(dir, { recursive: true }),
 

@@ -62,6 +62,15 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   in `useWritingMode`. The writing area stays mounted but hidden in other views, so the editor
   keeps its scene and undo. Framsteg's numbers are pure functions in `project/progress.ts`; the
   goals (`dailyGoal`, `totalGoal`, `deadline`) live in project.json, written by `updateFields`.
+- Export lives in `src/export/`: `book.ts` reads the manuscript in order (`bookOutline`) and every
+  scene before anything is written; `standardManuscript.ts` builds the DOCX with `docx` (npm), as
+  the spec decided. `platform.saveFile` asks where and writes the file whole (a download in the
+  browser). An `ExportError` names the scene and the reason; nothing is saved then.
+- EPUB is our own generator (`export/epub.ts` + `xhtml.ts`, zipped with jszip): mimetype first and
+  uncompressed, a page per part and chapter, nav.xhtml, and a typographic SVG cover until the
+  writer picks a picture (`cover.jpg`/`cover.png` in the project folder, `project/cover.ts`; an
+  older picture goes to trash/). The book id (ISBN, else `bookId` in project.json) stays between exports.
+  Check an exported book with W3C epubcheck (needs Java): `java -jar epubcheck.jar bok.epub`.
 - Tauri may read and write under $HOME and $DOCUMENT without a dialog (capabilities), and
   `tauri-plugin-persisted-scope` keeps folders picked in the dialog across restarts.
 - `npm run icons` rebuilds the app icons from `src-tauri/icons/icon-source.svg`.

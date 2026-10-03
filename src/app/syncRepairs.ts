@@ -1,6 +1,7 @@
 import { sceneTitle, splitSceneFile } from "../manuscript/sceneFile.js";
 import type { RecoverableTemp } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { setAside } from "../storage/setAside.js";
 import type { SceneFileRef } from "../storage/syncFiles.js";
 import {
   createScene,
@@ -32,18 +33,6 @@ export async function readSyncCopy(
     editorText: await fileSystem.readText(joinPath(scenesDir(dir), `${copy.sceneId}.md`)),
     diskText: await fileSystem.readText(joinPath(scenesDir(dir), copy.fileName)),
   };
-}
-
-// Nothing the writer chose away is deleted: it goes to the project's trash/ folder, under a
-// free name so an older file there is never replaced.
-async function setAside(fileSystem: FileSystem, dir: string, path: string, name: string) {
-  const trash = joinPath(dir, "trash");
-  await fileSystem.makeDir(trash);
-  const taken = await fileSystem.list(trash);
-  const stem = name.replace(/\.md$/, "");
-  let free = name;
-  for (let number = 2; taken.includes(free); number++) free = `${stem} (${number}).md`;
-  await fileSystem.rename(path, joinPath(trash, free));
 }
 
 const isOpen = (session: SceneSession, dir: string, id: string) =>

@@ -6,6 +6,8 @@ const isMissing = (error: unknown) => (error as NodeJS.ErrnoException).code === 
 export const nodeFileSystem: FileSystem = {
   readText: (path) => readFile(path, "utf8"),
   writeText: (path, text) => writeFile(path, text, "utf8"),
+  readBytes: async (path) => new Uint8Array(await readFile(path)),
+  writeBytes: (path, bytes) => writeFile(path, bytes),
   rename: (from, to) => rename(from, to),
   makeDir: async (dir) => void (await mkdir(dir, { recursive: true })),
 

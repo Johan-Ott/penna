@@ -19,4 +19,25 @@ export const browserPlatform: Platform = {
     (await fileSystem.list(parentOf(path))).includes(path.slice(path.lastIndexOf("/") + 1)),
   watchFolder: async () => () => undefined,
   guardClose: () => () => undefined,
+  pickImage: () =>
+    new Promise((resolve) => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/jpeg,image/png";
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return resolve(null);
+        void file.arrayBuffer().then((buffer) => resolve(new Uint8Array(buffer)));
+      };
+      input.click();
+    }),
+  // In the browser an export is downloaded; the bytes are copied so the Blob owns its buffer.
+  saveFile: async (suggestedName, bytes) => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([bytes.slice()]));
+    link.download = suggestedName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    return suggestedName;
+  },
 };

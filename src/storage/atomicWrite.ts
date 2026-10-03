@@ -12,9 +12,14 @@ export function tempPathFor(path: string): string {
 }
 
 // A crash between the two steps leaves the old file whole and the new text in the temp file.
-export async function writeAtomic(fileSystem: FileSystem, path: string, text: string) {
+export async function writeAtomic(
+  fileSystem: FileSystem,
+  path: string,
+  content: string | Uint8Array,
+) {
   const tempPath = tempPathFor(path);
-  await fileSystem.writeText(tempPath, text);
+  if (typeof content === "string") await fileSystem.writeText(tempPath, content);
+  else await fileSystem.writeBytes(tempPath, content);
   await fileSystem.rename(tempPath, path);
 }
 

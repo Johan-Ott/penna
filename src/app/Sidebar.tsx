@@ -14,11 +14,12 @@ interface SidebarProps extends TreeViewProps {
   onView: (view: View) => void;
 }
 
-/** The views of an open project. Planera, Bokdesign and Exportera join as they are built. */
-export type View = "skriv" | "framsteg";
+/** The views of an open project. Planera and Bokdesign join as they are built. */
+export type View = "skriv" | "framsteg" | "exportera";
 export const VIEWS: [View, string, string][] = [
   ["skriv", "Skriv", "G S"],
   ["framsteg", "Framsteg", "G F"],
+  ["exportera", "Exportera", "G E"],
 ];
 
 function ViewMenu({ view, onView }: Pick<SidebarProps, "view" | "onView">) {

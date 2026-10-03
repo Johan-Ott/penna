@@ -1,7 +1,10 @@
 import type { FileSystem } from "./fileSystem.js";
 
+// Text and pictures are kept as they were written; reading turns one into the other if asked.
+type Content = string | Uint8Array;
+
 interface Disk {
-  files: Map<string, { text: string; modifiedAt: number }>;
+  files: Map<string, { content: Content; modifiedAt: number }>;
   folders: Set<string>;
 }
 
@@ -14,8 +17,8 @@ function addFolderWithParents(disk: Disk, dir: string) {
   }
 }
 
-function store(disk: Disk, path: string, text: string) {
-  disk.files.set(path, { text, modifiedAt: Date.now() });
+function store(disk: Disk, path: string, content: Content) {
+  disk.files.set(path, { content, modifiedAt: Date.now() });
   addFolderWithParents(disk, path.slice(0, path.lastIndexOf("/")));
 }
 
@@ -31,16 +34,29 @@ function renameFile(disk: Disk, from: string, to: string) {
   const file = disk.files.get(from);
   if (!file) throw missing(from);
   disk.files.delete(from);
-  store(disk, to, file.text);
+  store(disk, to, file.content);
 }
+
+function read(disk: Disk, path: string): Content {
+  const file = disk.files.get(path);
+  if (!file) throw missing(path);
+  return file.content;
+}
+
+const asText = (content: Content) =>
+  typeof content === "string" ? content : new TextDecoder().decode(content);
+const asBytes = (content: Content) =>
+  typeof content === "string" ? new TextEncoder().encode(content) : content.slice();
 
 /** A disk in memory, used when Penna runs in a plain browser without Tauri. */
 export function createMemoryFileSystem(initialFiles: Record<string, string>): FileSystem {
   const disk: Disk = { files: new Map(), folders: new Set() };
   Object.entries(initialFiles).forEach(([path, text]) => store(disk, path, text));
   return {
-    readText: async (path) => disk.files.get(path)?.text ?? Promise.reject(missing(path)),
+    readText: async (path) => asText(read(disk, path)),
     writeText: async (path, text) => store(disk, path, text),
+    readBytes: async (path) => asBytes(read(disk, path)),
+    writeBytes: async (path, bytes) => store(disk, path, bytes.slice()),
     rename: async (from, to) => renameFile(disk, from, to),
     list: async (dir) => childNames(disk, dir),
     modifiedAt: async (path) => disk.files.get(path)?.modifiedAt ?? null,

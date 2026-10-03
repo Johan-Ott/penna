@@ -23,7 +23,8 @@ const STATUS_LABELS: Record<SceneStatus, string> = {
   redigering: "Redigering",
   klar: "Klar",
 };
-const KIND_LABELS: Record<string, string> = {
+/** The project types from onboarding, as a book cover or a subtitle names them. */
+export const KIND_LABELS: Record<string, string> = {
   roman: "Roman",
   noveller: "Noveller",
   fackbok: "Fackbok",

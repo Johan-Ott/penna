@@ -1823,3 +1823,223 @@ button.book-cover:hover {
 .goals-dialog {
   width: 380px;
 }
+
+/* Exportera, as in the design: format, the book's details, a preview of the first page. */
+.export-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.export-columns {
+  display: grid;
+  flex-grow: 1;
+  grid-template-columns: 360px 320px minmax(0, 1fr);
+  min-height: 0;
+}
+
+.export-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 24px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-soft);
+}
+
+.export-formats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0;
+  border: 0;
+}
+
+.export-formats legend,
+.export-heading {
+  padding: 0 0 10px;
+  font-weight: 500;
+}
+
+.export-heading.spaced {
+  margin-top: 8px;
+}
+
+.export-format {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.export-format[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--bg-panel);
+}
+
+.export-format:disabled {
+  opacity: 0.6;
+}
+
+.export-format-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.export-group,
+.export-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.export-field .settings-text {
+  width: 100%;
+  height: 36px;
+}
+
+.export-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 28px;
+}
+
+.export-check input {
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.export-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 24px;
+  background: var(--bg-subtle);
+}
+
+.export-preview > .setting-hint {
+  align-self: flex-start;
+}
+
+.export-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 340px;
+  max-width: 100%;
+  height: 500px;
+  padding: 56px 44px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  color: #1a1a1a;
+  font-family: var(--font-prose);
+  text-align: center;
+}
+
+.export-page-title {
+  margin-top: 110px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.export-page-subtitle {
+  margin-top: 6px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.export-page-author {
+  margin-top: 48px;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.export-page-note {
+  margin-top: auto;
+  color: #6b6b6b;
+  font-size: 9px;
+}
+
+.export-error {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 420px;
+  padding: 12px 14px;
+  transform: translateX(-50%);
+  border: 1px solid var(--border-control);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: var(--shadow-dialog);
+}
+
+.export-view {
+  position: relative;
+}
+
+.export-group .segmented {
+  width: fit-content;
+}
+
+.export-error-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.export-cover {
+  width: 300px;
+  max-width: 100%;
+  border-radius: 3px 8px 8px 3px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cover-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cover-thumb {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  width: 56px;
+  height: 84px;
+  overflow: hidden;
+  padding: 6px;
+  border-radius: 3px;
+  background: #1c1c1c;
+  color: #ffffff;
+  font-family: var(--font-prose);
+  font-size: 8px;
+}
+
+.cover-thumb img {
+  width: 56px;
+  height: 84px;
+  margin: -6px;
+  object-fit: cover;
+}
+
+.cover-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}

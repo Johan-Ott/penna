@@ -2,6 +2,9 @@
 export interface FileSystem {
   readText(path: string): Promise<string>;
   writeText(path: string, text: string): Promise<void>;
+  /** Pictures and other files that are not text, such as a cover image. */
+  readBytes(path: string): Promise<Uint8Array>;
+  writeBytes(path: string, bytes: Uint8Array): Promise<void>;
   /** Replaces `to` if it exists. */
   rename(from: string, to: string): Promise<void>;
   /** File names in `dir`, or an empty list when the folder is missing. */
