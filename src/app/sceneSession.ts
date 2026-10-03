@@ -5,7 +5,9 @@ import {
   newSceneText,
   sceneTitle,
   splitSceneFile,
+  withSceneStatus,
   withSceneTitle,
+  type SceneStatus,
 } from "../manuscript/sceneFile.js";
 import { serializeMarkdown } from "../manuscript/serializeMarkdown.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
@@ -138,19 +140,38 @@ export async function resolveConflict(
   await session.autosave.flush();
 }
 
-/** The title lives in the scene file. The open scene is renamed through the editor's autosave. */
-export async function renameScene(session: SceneSession, dir: string, id: string, title: string) {
+// Title and status live in the scene file's front matter. The open scene changes through the
+// editor's autosave, so what is being written is saved with it.
+async function changeFrontMatter(
+  session: SceneSession,
+  where: { dir: string; id: string },
+  change: (frontMatter: string) => string,
+) {
   const scene = session.scene;
-  if (scene?.dir === dir && scene.id === id) {
-    session.scene = { ...scene, frontMatter: withSceneTitle(scene.frontMatter, title), title };
+  if (scene?.dir === where.dir && scene.id === where.id) {
+    const frontMatter = change(scene.frontMatter);
+    session.scene = { ...scene, frontMatter, title: sceneTitle(frontMatter) ?? scene.title };
     session.hooks.onScene(session.scene);
     const doc = session.hooks.editor.currentDoc();
     if (doc) sceneEdited(session, doc);
     await session.autosave.flush();
     return;
   }
-  const path = scenePath(dir, id);
+  const path = scenePath(where.dir, where.id);
   const { frontMatter, body } = splitSceneFile(await session.fileSystem.readText(path));
-  const renamed = joinSceneFile({ frontMatter: withSceneTitle(frontMatter, title), body });
-  await writeAtomic(session.fileSystem, path, renamed);
+  await writeAtomic(
+    session.fileSystem,
+    path,
+    joinSceneFile({ frontMatter: change(frontMatter), body }),
+  );
 }
+
+export const renameScene = (session: SceneSession, dir: string, id: string, title: string) =>
+  changeFrontMatter(session, { dir, id }, (frontMatter) => withSceneTitle(frontMatter, title));
+
+export const setSceneStatus = (
+  session: SceneSession,
+  dir: string,
+  id: string,
+  status: SceneStatus,
+) => changeFrontMatter(session, { dir, id }, (frontMatter) => withSceneStatus(frontMatter, status));

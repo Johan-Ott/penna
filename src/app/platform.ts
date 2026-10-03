@@ -5,9 +5,10 @@ import { tauriPlatform } from "./tauriPlatform.js";
 
 export interface Platform {
   fileSystem: FileSystem;
-  /** True in a plain browser, where Penna shows the example project from memory. */
-  isDemo: boolean;
   pickFolder(): Promise<string | null>;
+  /** The home and Documents folders, with forward slashes. */
+  knownFolders(): Promise<{ home: string; documents: string }>;
+  folderExists(path: string): Promise<boolean>;
   watchFolder(dir: string, onChange: () => void): Promise<() => void>;
   /** `isSafeToClose` saves first; when it fails, the writer is asked before the window closes. */
   guardClose(isSafeToClose: () => Promise<boolean>): () => void;

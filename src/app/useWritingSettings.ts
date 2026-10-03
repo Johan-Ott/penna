@@ -1,18 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { loadSettings, saveSettings, type WritingSettings } from "../editor/writingSettings.js";
+import { browserStorage } from "./browserStorage.js";
 
 export type SettingsChange = (current: WritingSettings) => WritingSettings;
-
-const forgetfulStorage = { getItem: () => null, setItem: () => undefined };
-
-// Reading localStorage itself can throw when the webview blocks storage.
-function browserStorage() {
-  try {
-    return window.localStorage;
-  } catch {
-    return forgetfulStorage;
-  }
-}
 
 // Dark when the writer asks for it, otherwise as the system says.
 function useTheme(isDarkForced: boolean) {

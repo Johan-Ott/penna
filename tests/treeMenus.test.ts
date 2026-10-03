@@ -9,6 +9,8 @@ const actions: TreeMenuActions = {
   rename: noop,
   trash: noop,
   restore: noop,
+  setStatus: noop,
+  statusOf: () => "utkast",
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));
@@ -30,8 +32,20 @@ describe("tree menus", () => {
       "Öppna",
       "| Ny scen efter",
       "Nytt kapitel efter",
+      "| Status: Idé",
+      "Status: Utkast",
+      "Status: Redigering",
+      "Status: Klar",
       "| Byt namn",
       "Flytta till papperskorg",
+    ]);
+  });
+
+  it("checks the status the scene has", () => {
+    const items = rowMenu(node("scene"), false, actions);
+
+    expect(items.filter((item) => item.isChecked).map((item) => item.label)).toEqual([
+      "Status: Utkast",
     ]);
   });
 

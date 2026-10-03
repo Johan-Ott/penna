@@ -1,3 +1,5 @@
+import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
+
 export type ProseFont = "serif" | "sans" | "mono";
 export type TextWidth = "smal" | "normal" | "bred";
 export type FocusMode = "av" | "mening" | "stycke";
@@ -36,11 +38,6 @@ const FONTS: Record<ProseFont, string> = {
 };
 const WIDTHS: Record<TextWidth, string> = { smal: "520px", normal: "600px", bred: "720px" };
 
-interface SettingsStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-}
-
 const isOneOf = <T extends string>(value: unknown, options: Record<T, unknown>): value is T =>
   typeof value === "string" && value in options;
 
@@ -63,25 +60,11 @@ function validated(stored: Record<string, unknown>): WritingSettings {
   };
 }
 
-export function loadSettings(storage: SettingsStorage): WritingSettings {
-  try {
-    const stored: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? "{}");
-    return validated(
-      typeof stored === "object" && stored !== null ? (stored as Record<string, unknown>) : {},
-    );
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
-}
+export const loadSettings = (storage: KeyValueStorage): WritingSettings =>
+  validated(readStoredObject(storage, STORAGE_KEY));
 
-// A blocked storage only means the settings are not remembered; writing goes on.
-export function saveSettings(storage: SettingsStorage, settings: WritingSettings) {
-  try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  } catch {
-    return;
-  }
-}
+export const saveSettings = (storage: KeyValueStorage, settings: WritingSettings) =>
+  writeStored(storage, STORAGE_KEY, settings);
 
 export const changeSize = (settings: WritingSettings, step: 1 | -1): WritingSettings => ({
   ...settings,

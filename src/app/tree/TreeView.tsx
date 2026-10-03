@@ -12,6 +12,7 @@ import {
   type TreeNode,
   type TreeRow as Row,
 } from "../../project/tree.js";
+import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta, shortWordCount } from "../../project/treeLabels.js";
 import { Menu, type MenuItem } from "../Menu.js";
 import type { Project } from "../useProject.js";
@@ -29,6 +30,7 @@ export interface TreeViewProps {
   onOpenScene: (id: string) => void;
   onChangeTree: (tree: TreeNode[]) => void;
   onRenameScene: (id: string, title: string) => void;
+  onSetSceneStatus: (id: string, status: SceneStatus) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
 }
 
@@ -108,6 +110,8 @@ function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
     rename: (node) => actions.startRename(node),
     trash: (node) => actions.trash(node),
     restore: (node) => actions.restore(node),
+    setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
+    statusOf: (node) => props.project.summaries[node.id]?.status ?? null,
   };
 }
 
@@ -180,9 +184,12 @@ function rowHandlers(row: Row, actions: Actions, view: ReturnType<typeof useTree
 function rowView(row: Row, depth: number, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;
   const summary = props.project.summaries[node.id];
+  const isInCloud = props.project.notDownloaded.some((file) => file.sceneId === node.id);
   return {
     row: { ...row, depth },
-    label: nodeLabel(node, props.project.tree, props.project.summaries),
+    label: isInCloud
+      ? "Hämtar från molnet…"
+      : nodeLabel(node, props.project.tree, props.project.summaries),
     title: node.kind === "scene" ? (summary?.title ?? "") : (node.title ?? ""),
     meta: nodeMeta(node, props.project.summaries),
     isActive: node.id === props.openSceneId,

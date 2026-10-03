@@ -1,30 +1,13 @@
 import { useState } from "react";
+import type { SceneFileRef } from "../storage/syncFiles.js";
 import { Menu } from "./Menu.js";
+import { SyncNotices } from "./SyncLayer.js";
 import { addMenu } from "./tree/treeMenus.js";
 import { TreeView, type TreeViewProps } from "./tree/TreeView.js";
-import type { Project } from "./useProject.js";
 
 interface SidebarProps extends TreeViewProps {
-  onChooseFolder: () => void;
-}
-
-function Notices({ project }: { project: Project }) {
-  const notices = [
-    ...(project.repairCopy
-      ? [`project.json gick inte att läsa. En kopia sparades som ${project.repairCopy}.`]
-      : []),
-    ...project.conflicts.map((copy) => `Konfliktkopia: ${copy.fileName}`),
-    ...project.notDownloaded.map((file) => `Hämtar ${file.sceneId} från molnet…`),
-    ...project.recoverable.map(() => "Osparad text från en krasch kan återställas"),
-  ];
-  if (notices.length === 0) return null;
-  return (
-    <ul className="sidebar-notices" aria-label="Att se över">
-      {notices.map((notice) => (
-        <li key={notice}>{notice}</li>
-      ))}
-    </ul>
-  );
+  onShowShelf: () => void;
+  onShowSyncCopy: (copy: SceneFileRef) => void;
 }
 
 function NewButton({ onAdd }: Pick<SidebarProps, "onAdd">) {
@@ -63,9 +46,9 @@ export function Sidebar(props: SidebarProps) {
         </span>
         <span className="brand-name">Penna</span>
       </div>
-      <button className="project-card" onClick={props.onChooseFolder} title="Byt projektmapp">
+      <button className="project-card" onClick={props.onShowShelf} title="Till bokhyllan">
         <span className="project-name">{props.project.name}</span>
-        <span className="project-hint">Byt mapp</span>
+        <span className="project-hint">Bokhylla</span>
       </button>
       <section className="structure" aria-label="Struktur">
         <div className="section-heading">
@@ -74,7 +57,7 @@ export function Sidebar(props: SidebarProps) {
         </div>
         <TreeView {...props} />
       </section>
-      <Notices project={props.project} />
+      <SyncNotices project={props.project} onShowSyncCopy={props.onShowSyncCopy} />
     </nav>
   );
 }

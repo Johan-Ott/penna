@@ -79,7 +79,8 @@ export function useProject(onFolderChange: () => void) {
     [writeTree],
   );
   useFolderWatch(dir, refresh, onFolderChange);
-  return { project, open, choose, refresh, updateTree, treeFailure };
+  const close = useCallback(() => setProject(null), []);
+  return { project, open, close, choose, refresh, updateTree, treeFailure };
 }
 
 function useFolderWatch(dir: string | null, refresh: () => Promise<void>, onChange: () => void) {

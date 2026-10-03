@@ -11,7 +11,7 @@ function context() {
     tree: withSpecialFolders([
       { id: "kap1", kind: "chapter", title: "Brevet", children: [{ id: "scene1", kind: "scene" }] },
     ]),
-    summaries: { scene1: { title: "Köket", words: 10 } },
+    summaries: { scene1: { title: "Köket", words: 10, status: "idé" } },
   } as unknown as Project;
   const value: PaletteContext = {
     project,
@@ -23,6 +23,7 @@ function context() {
     toggleFocusMode: () => undefined,
     openSearch: () => undefined,
     chooseFolder: () => undefined,
+    showShelf: () => undefined,
   };
   return { value, opened, settings: () => settings };
 }

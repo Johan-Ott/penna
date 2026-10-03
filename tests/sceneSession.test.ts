@@ -6,6 +6,7 @@ import {
   createSceneSession,
   openScene,
   renameScene,
+  setSceneStatus,
   resolveConflict,
   sceneEdited,
   type DiskConflict,
@@ -151,5 +152,27 @@ describe("closeScene", () => {
     await vi.advanceTimersByTimeAsync(2000);
 
     expect(await files.readText(SCENE_PATH)).toBe(SCENE);
+  });
+});
+
+describe("setSceneStatus", () => {
+  it("changes the status of the open scene and keeps what is being written", async () => {
+    const { files, session, type } = setup();
+    await openScene(session, "/bok", "01J9Z4K2QX");
+    type("Brevet låg kvar.\n");
+
+    await setSceneStatus(session, "/bok", "01J9Z4K2QX", "klar");
+
+    expect(await files.readText(SCENE_PATH)).toBe(
+      "---\nid: 01J9Z4K2QX\ntitle: Köket\nstatus: klar\n---\nBrevet låg kvar.\n",
+    );
+  });
+
+  it("changes the status of a scene that is not open", async () => {
+    const { files, session } = setup();
+
+    await setSceneStatus(session, "/bok", "01J9Z4K2QX", "utkast");
+
+    expect(await files.readText(SCENE_PATH)).toContain("status: utkast\n");
   });
 });

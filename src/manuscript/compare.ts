@@ -1,3 +1,5 @@
+import { parseMarkdown } from "./parseMarkdown.js";
+
 const CONTEXT_WORDS = 5;
 const MAX_LENGTH = 80;
 
@@ -21,4 +23,10 @@ export function differingExcerpts(mine: string, theirs: string) {
   const contextLength = wordsBefore.slice(-CONTEXT_WORDS).join("").length;
   const start = wordsBefore.length > CONTEXT_WORDS ? difference - contextLength : 0;
   return { mine: excerptFrom(mine, start), theirs: excerptFrom(theirs, start) };
+}
+
+/** A scene body as the writer sees it, without markdown marks, blocks joined by a space. */
+export function plainText(markdown: string): string {
+  const doc = parseMarkdown(markdown);
+  return doc.textBetween(0, doc.content.size, " ");
 }

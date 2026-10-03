@@ -4,6 +4,8 @@ import {
   newSceneText,
   sceneTitle,
   withSceneTitle,
+  sceneStatus,
+  withSceneStatus,
   splitSceneFile,
 } from "../src/manuscript/sceneFile";
 
@@ -82,5 +84,24 @@ describe("withSceneTitle", () => {
 
     expect(sceneTitle(renamed)).toBe("Isen");
     expect(splitSceneFile(`${renamed}Text.`).body).toBe("Text.");
+  });
+});
+
+describe("scene status", () => {
+  it("reads the status from the front matter, with idé when there is none", () => {
+    expect(sceneStatus(splitSceneFile(SCENE).frontMatter)).toBe("utkast");
+    expect(sceneStatus("")).toBe("idé");
+  });
+
+  it("writes a new status and keeps the other lines", () => {
+    const frontMatter = splitSceneFile(SCENE).frontMatter;
+
+    const changed = withSceneStatus(frontMatter, "klar");
+
+    expect(changed).toBe("---\nid: 01J9Z4K2QX\ntitle: Köket\nstatus: klar\n---\n");
+  });
+
+  it("adds a status line to front matter that has none", () => {
+    expect(sceneStatus(withSceneStatus("---\nid: 1\n---\n", "redigering"))).toBe("redigering");
   });
 });

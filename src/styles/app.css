@@ -926,3 +926,441 @@ button {
   margin: 0;
   padding: 16px;
 }
+
+/* Start: blank while the last project opens, so nothing flashes by */
+.app-starting {
+  height: 100vh;
+  background: var(--bg);
+}
+
+.welcome-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Onboarding, as in the design: one card with five steps */
+.onboarding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--bg-subtle);
+  font-size: 14px;
+}
+
+.onboarding-card {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 560px;
+  max-width: 100%;
+  min-height: 620px;
+  padding: 40px 48px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+}
+
+.onboarding-top,
+.onboarding-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.onboarding-nav .spacer {
+  flex-grow: 1;
+}
+
+.brand-mark.medium {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-card);
+  font-size: 18px;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.progress-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-control);
+  transition: width 0.2s;
+}
+
+.progress-dots .done,
+.progress-dots .current {
+  background: var(--primary);
+}
+
+.progress-dots .current {
+  width: 20px;
+}
+
+.onboarding-body {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.onboarding-title {
+  margin: 0;
+  font: 600 30px/1.2 var(--font-prose);
+}
+
+.onboarding-title.large {
+  font-size: 34px;
+}
+
+.onboarding-text {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.onboarding-field,
+.onboarding-form,
+.choice-list,
+.promise-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onboarding-form {
+  gap: 14px;
+}
+
+.promise-text {
+  gap: 2px;
+}
+
+.field-label {
+  font-weight: 500;
+}
+
+.onboarding-field input {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+}
+
+.onboarding-field input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.field-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.segmented.fit {
+  width: fit-content;
+}
+
+.segmented.fit button {
+  height: 32px;
+  padding: 0 16px;
+}
+
+.segmented button:disabled {
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+.promise {
+  display: flex;
+  gap: 14px;
+}
+
+.promise-mark {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--surface-hover);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid var(--border-control);
+  border-radius: 10px;
+  background: var(--bg);
+  text-align: left;
+}
+
+.choice[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--bg-panel);
+}
+
+.choice:hover {
+  border-color: var(--text-muted);
+}
+
+.choice-hint {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.chip-row {
+  display: flex;
+  gap: 6px;
+}
+
+.chip-row .chip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.chip[aria-checked="true"] {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.tip-keys {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  color: var(--text-tree);
+  font: 12px var(--font-ui);
+}
+
+.button.large {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.onboarding-problem {
+  margin: 0;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Bookshelf, as in the design */
+.shelf-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-panel);
+}
+
+.shelf-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.shelf-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.shelf {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 56px 96px;
+}
+
+.shelf-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.shelf-heading h1 {
+  margin: 0;
+  font: 600 36px var(--font-prose);
+}
+
+.shelf-summary {
+  color: var(--text-muted);
+}
+
+.books {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 48px;
+  padding: 0 24px;
+}
+
+.book {
+  display: flex;
+  flex-direction: column;
+  width: 258px;
+}
+
+.book-cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 210px;
+  height: 300px;
+  padding: 24px 20px;
+  border: 0;
+  border-radius: 3px 8px 8px 3px;
+  box-shadow:
+    inset 6px 0 0 rgba(0, 0, 0, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.15s;
+}
+
+button.book-cover:hover {
+  transform: translateY(-4px);
+}
+
+.cover-black {
+  background: #1c1c1c;
+  color: #ffffff;
+}
+
+.cover-light {
+  background: #d9d9d9;
+  color: #111111;
+}
+
+.cover-dark {
+  background: #5a5a5a;
+  color: #ffffff;
+}
+
+.cover-white {
+  background: #ffffff;
+  color: #111111;
+}
+
+.book-kind {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.book-title {
+  font: 600 26px/1.15 var(--font-prose);
+  overflow-wrap: anywhere;
+}
+
+.book-words {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.book-cover.new-book {
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--text-dim);
+  border-radius: var(--radius-card);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.book-cover.missing {
+  border: 1px dashed var(--text-dim);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+/* Each book carries its own piece of the shelf, so the shelf follows when books wrap. */
+.shelf-board {
+  height: 10px;
+  margin-right: -1px;
+  border-radius: 2px;
+  background: var(--border-control);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.book-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 210px;
+  margin-top: 24px;
+}
+
+.book-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-weight: 500;
+}
+
+.book-percent,
+.book-updated {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.book-updated {
+  font-size: 12px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-hover);
+}
+
+.progress-bar div {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+/* In dark mode the black cover would melt into the background. */
+:root[data-theme="dark"] .cover-black {
+  outline: 1px solid rgba(255, 255, 255, 0.1);
+  outline-offset: -1px;
+}
+
+.book-meta .link-button {
+  padding: 0;
+}
+
+.dialog-actions .push-left {
+  margin-right: auto;
+}

@@ -23,18 +23,41 @@ function createView(
   return view;
 }
 
+// ProseMirror asks these on every update, so the app can switch them without a new state.
+function useModeSwitches() {
+  const typewriterRef = useRef(false);
+  const isTypewriterOn = useCallback(() => typewriterRef.current, []);
+  const editableRef = useRef(false);
+  const isEditable = useCallback(() => editableRef.current, []);
+  return { typewriterRef, isTypewriterOn, editableRef, isEditable };
+}
+
+// A hidden editor can not take focus. A request made while it is hidden is kept until
+// `focusIfRequested` runs after the editor is shown.
+function useFocusRequest(viewRef: React.RefObject<EditorView | null>) {
+  const isRequested = useRef(false);
+  const requestFocus = useCallback(() => {
+    const view = viewRef.current;
+    if (view?.dom.offsetParent) return view.focus();
+    isRequested.current = true;
+  }, [viewRef]);
+  const focusIfRequested = useCallback(() => {
+    if (!isRequested.current || !viewRef.current?.dom.offsetParent) return;
+    isRequested.current = false;
+    viewRef.current.focus();
+  }, [viewRef]);
+  return { requestFocus, focusIfRequested };
+}
+
 /** Owns one ProseMirror view. React re-renders on every transaction through `editorState`. */
 export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
   const onDocChangeRef = useRef(onDocChange);
   onDocChangeRef.current = onDocChange;
-  const typewriterRef = useRef(false);
-  const isTypewriterOn = useCallback(() => typewriterRef.current, []);
-  const editableRef = useRef(false);
-  const isEditable = useCallback(() => editableRef.current, []);
+  const { typewriterRef, isTypewriterOn, editableRef, isEditable } = useModeSwitches();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
-  // isTypewriterOn reads a ref and never changes, so mount and load need no dependencies.
+  // The switches read refs and never change, so mount and load need no dependencies.
   const mount = useCallback((element: HTMLDivElement | null) => {
     viewRef.current?.destroy();
     viewRef.current = element
@@ -55,5 +78,6 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
     if (view && command(view.state, view.dispatch, view) && shouldFocus) view.focus();
   }, []);
 
-  return { mount, load, run, editorState, viewRef, typewriterRef, editableRef };
+  const focus = useFocusRequest(viewRef);
+  return { mount, load, run, editorState, viewRef, typewriterRef, editableRef, ...focus };
 }

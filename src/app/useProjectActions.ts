@@ -3,7 +3,14 @@ import { insertAfter, insertNode, type NodeKind, type TreeNode } from "../projec
 import { chapterOf } from "../project/treeLabels.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { platform } from "./platform.js";
-import { createScene, openScene, renameScene, type SceneSession } from "./sceneSession.js";
+import type { SceneStatus } from "../manuscript/sceneFile.js";
+import {
+  createScene,
+  openScene,
+  renameScene,
+  setSceneStatus,
+  type SceneSession,
+} from "./sceneSession.js";
 import type { Placement } from "./tree/treeMenus.js";
 import type { Project } from "./useProject.js";
 
@@ -37,6 +44,31 @@ function place(tree: TreeNode[], node: TreeNode, placement: Placement, openScene
   return insertAfter(tree, node, afterId);
 }
 
+// Title and status live in each scene file; after a change the tree reads them again.
+function useSceneFileActions({
+  project,
+  session,
+  refresh,
+}: Omit<ProjectActionsInput, "updateTree">) {
+  const renameSceneTitle = useCallback(
+    async (id: string, title: string) => {
+      if (!project) return;
+      await renameScene(session, project.dir, id, title);
+      await refresh();
+    },
+    [project, session, refresh],
+  );
+  const setStatus = useCallback(
+    async (id: string, status: SceneStatus) => {
+      if (!project) return;
+      await setSceneStatus(session, project.dir, id, status);
+      await refresh();
+    },
+    [project, session, refresh],
+  );
+  return { renameSceneTitle, setStatus };
+}
+
 /** Creating and renaming things in the project: scene files and the tree in project.json. */
 export function useProjectActions({ project, session, updateTree, refresh }: ProjectActionsInput) {
   // Returns the new node's id, so the tree can start renaming it.
@@ -56,13 +88,5 @@ export function useProjectActions({ project, session, updateTree, refresh }: Pro
     },
     [project, session, updateTree, refresh],
   );
-  const renameSceneTitle = useCallback(
-    async (id: string, title: string) => {
-      if (!project) return;
-      await renameScene(session, project.dir, id, title);
-      await refresh();
-    },
-    [project, session, refresh],
-  );
-  return { newItem, renameSceneTitle };
+  return { newItem, ...useSceneFileActions({ project, session, refresh }) };
 }

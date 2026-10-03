@@ -21,8 +21,8 @@ const tree: TreeNode[] = withSpecialFolders([
   },
 ]);
 const summaries = {
-  scene1: { title: "Köket", words: 1240 },
-  scene2: { title: "Isen", words: 6060 },
+  scene1: { title: "Köket", words: 1240, status: "utkast" as const },
+  scene2: { title: "Isen", words: 6060, status: "utkast" as const },
 };
 const find = (id: string) => findNode(tree, id)?.node as TreeNode;
 

@@ -1,17 +1,27 @@
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
-import { sceneTitle, splitSceneFile } from "../manuscript/sceneFile.js";
+import {
+  sceneStatus,
+  sceneTitle,
+  splitSceneFile,
+  type SceneStatus,
+} from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 
 export interface SceneSummary {
   title: string;
   words: number;
+  status: SceneStatus;
 }
 
 function summarize(text: string): SceneSummary {
   const { frontMatter, body } = splitSceneFile(text);
   const title = sceneTitle(frontMatter) ?? "Namnlös scen";
-  return { title, words: countDocumentWords(parseMarkdown(body)) };
+  return {
+    title,
+    words: countDocumentWords(parseMarkdown(body)),
+    status: sceneStatus(frontMatter),
+  };
 }
 
 // Every autosave makes the folder watcher read the project again, so a scene is only parsed

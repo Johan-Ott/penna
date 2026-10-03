@@ -33,6 +33,7 @@ export interface PaletteContext {
   toggleFocusMode: () => void;
   openSearch: () => void;
   chooseFolder: () => void;
+  showShelf: () => void;
 }
 
 const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
@@ -134,6 +135,7 @@ function switchEntries({
   settings,
   changeSettings: change,
   chooseFolder,
+  showShelf,
 }: PaletteContext): PaletteEntry[] {
   const flip = (label: string, key: "darkTheme" | "indent" | "typewriter") =>
     command(`${label} ${onOff(settings[key])}`, () => change(changeTo({ [key]: !settings[key] })));
@@ -144,7 +146,8 @@ function switchEntries({
     ...FOCUS_MODES.map(([focus, label]) =>
       command(`Fokus: ${label}`, () => change(changeTo({ focus }))),
     ),
-    command("Byt projektmapp", chooseFolder),
+    command("Bokhylla", showShelf),
+    command("Öppna projektmapp…", chooseFolder),
   ];
 }
 

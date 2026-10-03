@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "The folder the user picks in the dialog is added to the fs scope by the dialog plugin.",
+  "description": "Penna reads and writes in the home and Documents folders, where the Penna library lives, and in any folder picked in the dialog. persisted-scope keeps picked folders across restarts.",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -16,6 +16,23 @@
     "fs:allow-stat",
     "fs:allow-exists",
     "fs:allow-watch",
-    "fs:allow-unwatch"
+    "fs:allow-unwatch",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$HOME"
+        },
+        {
+          "path": "$HOME/**"
+        },
+        {
+          "path": "$DOCUMENT"
+        },
+        {
+          "path": "$DOCUMENT/**"
+        }
+      ]
+    }
   ]
 }

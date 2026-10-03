@@ -1,5 +1,13 @@
 import { isSpecialFolder, TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
+import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
 import type { MenuItem } from "../Menu.js";
+
+const STATUS_LABELS: Record<SceneStatus, string> = {
+  idé: "Idé",
+  utkast: "Utkast",
+  redigering: "Redigering",
+  klar: "Klar",
+};
 
 /** Where a new node goes: inside a node (at its end), after a node, or as chosen by the app. */
 export type Placement = { inside: string } | { after: string } | null;
@@ -10,6 +18,8 @@ export interface TreeMenuActions {
   rename: (node: TreeNode) => void;
   trash: (node: TreeNode) => void;
   restore: (node: TreeNode) => void;
+  setStatus: (node: TreeNode, status: SceneStatus) => void;
+  statusOf: (node: TreeNode) => SceneStatus | null;
 }
 
 /** The add button and a right-click on empty space offer the same four things. */
@@ -44,6 +54,18 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return byKind[node.kind];
 }
 
+// The status is written to the scene file and drives the status and progress on the shelf.
+function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
+  if (node.kind !== "scene") return [];
+  const current = actions.statusOf(node);
+  return SCENE_STATUSES.map((status, index) => ({
+    label: `Status: ${STATUS_LABELS[status]}`,
+    isChecked: status === current,
+    separatorBefore: index === 0,
+    onSelect: () => actions.setStatus(node, status),
+  }));
+}
+
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return [
     {
@@ -70,5 +92,5 @@ export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuAct
     firstAdded && open.length > 0
       ? [{ ...firstAdded, separatorBefore: true }, ...restAdded]
       : added;
-  return [...open, ...separatedAdd, ...editItems(node, actions)];
+  return [...open, ...separatedAdd, ...statusItems(node, actions), ...editItems(node, actions)];
 }

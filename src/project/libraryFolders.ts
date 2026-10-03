@@ -1,0 +1,34 @@
+export interface LibraryCandidate {
+  id: string;
+  label: string;
+  hint: string;
+  /** The Penna folder to create. Its parent is the cloud folder, which must already exist. */
+  path: string;
+}
+
+interface KnownFolders {
+  home: string;
+  documents: string;
+}
+
+/**
+ * Where a Penna folder could live, as in the onboarding design. The platform shows only the
+ * cloud folders that exist on this computer; "Bara den här datorn" is always offered.
+ */
+export function libraryCandidates({ home, documents }: KnownFolders): LibraryCandidate[] {
+  const appleSync = "Mac, iPhone, iPad";
+  return [
+    { id: "icloud", label: "iCloud Drive", hint: appleSync, path: `${home}/iCloudDrive/Penna` },
+    {
+      id: "icloud-mac",
+      label: "iCloud Drive",
+      hint: appleSync,
+      path: `${home}/Library/Mobile Documents/com~apple~CloudDocs/Penna`,
+    },
+    { id: "dropbox", label: "Dropbox", hint: "Alla enheter", path: `${home}/Dropbox/Penna` },
+    { id: "onedrive", label: "OneDrive", hint: "Alla enheter", path: `${home}/OneDrive/Penna` },
+    { id: "local", label: "Bara den här datorn", hint: "Ingen synk", path: `${documents}/Penna` },
+  ];
+}
+
+export const parentOf = (path: string) => path.slice(0, path.lastIndexOf("/"));

@@ -55,11 +55,23 @@ function moveFocus(event: KeyboardEvent<HTMLDivElement>, onClose: () => void) {
   if (step !== undefined) items[(index + step + items.length) % items.length]?.focus();
 }
 
+// A pure choice menu opens on the current choice; any other menu on its first item.
+function focusIndexOf(items: MenuItem[]) {
+  const isChoiceMenu = items.every((item) => item.isChecked !== undefined);
+  return isChoiceMenu
+    ? Math.max(
+        0,
+        items.findIndex((item) => item.isChecked),
+      )
+    : 0;
+}
+
 /** One menu for the whole app: right-click, the add button and the style picker. */
 export function Menu({ x, y, items, label, onClose }: MenuProps) {
   useDismiss(onClose);
   const { ref, position } = useFittedPosition(x, y);
   const hasChecks = items.some((item) => item.isChecked !== undefined);
+  const focusIndex = focusIndexOf(items);
   return createPortal(
     <div
       ref={ref}
@@ -75,7 +87,7 @@ export function Menu({ x, y, items, label, onClose }: MenuProps) {
           key={item.label}
           item={item}
           hasChecks={hasChecks}
-          isFirst={index === 0}
+          isFocused={index === focusIndex}
           onClose={onClose}
         />
       ))}
@@ -87,7 +99,7 @@ export function Menu({ x, y, items, label, onClose }: MenuProps) {
 function MenuRow(props: {
   item: MenuItem;
   hasChecks: boolean;
-  isFirst: boolean;
+  isFocused: boolean;
   onClose: () => void;
 }) {
   const { item } = props;
@@ -95,9 +107,9 @@ function MenuRow(props: {
     <>
       {item.separatorBefore && <div className="menu-separator" role="separator" />}
       <button
-        role={props.hasChecks ? "menuitemradio" : "menuitem"}
-        aria-checked={props.hasChecks ? item.isChecked === true : undefined}
-        autoFocus={item.isChecked ?? props.isFirst}
+        role={item.isChecked === undefined ? "menuitem" : "menuitemradio"}
+        aria-checked={item.isChecked}
+        autoFocus={props.isFocused}
         onClick={() => {
           props.onClose();
           item.onSelect();

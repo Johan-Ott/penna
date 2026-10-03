@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { differingExcerpts } from "../src/manuscript/compare";
+import { differingExcerpts, plainText } from "../src/manuscript/compare";
 
 describe("differingExcerpts", () => {
   it("shows the words around the first difference in both versions", () => {
@@ -25,5 +25,15 @@ describe("differingExcerpts", () => {
 
     expect(excerpts.mine.endsWith("…")).toBe(true);
     expect(excerpts.mine.length).toBeLessThanOrEqual(81);
+  });
+});
+
+describe("plainText", () => {
+  it("drops the markdown marks so excerpts read like the editor", () => {
+    const markdown = "Brevet låg där. *Kuvertet* var **gult**.\n\n– Vet du?\n";
+
+    const text = plainText(markdown);
+
+    expect(text).toBe("Brevet låg där. Kuvertet var gult. – Vet du?");
   });
 });

@@ -24,8 +24,8 @@ describe("readSceneSummaries", () => {
     const summaries = await readSceneSummaries(files, "/bok", ["SCENE1", "SCENE2"]);
 
     expect(summaries).toEqual({
-      SCENE1: { title: "Köket", words: 3 },
-      SCENE2: { title: "Namnlös scen", words: 2 },
+      SCENE1: { title: "Köket", words: 3, status: "idé" },
+      SCENE2: { title: "Namnlös scen", words: 2, status: "idé" },
     });
   });
 });

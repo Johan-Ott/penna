@@ -36,10 +36,31 @@ export function newSceneText(id: string, title: string): string {
   return `---\nid: ${id}\ntitle: ${yamlValue(title)}\nstatus: idé\n---\n`;
 }
 
-/** The front matter with a new title, every other line kept as it was. */
-export function withSceneTitle(frontMatter: string, title: string): string {
-  const line = `title: ${yamlValue(title)}`;
+// Replaces the line `key: ...`, or adds it last, just before the closing `---`.
+function withField(frontMatter: string, key: string, value: string): string {
+  const line = `${key}: ${value}`;
+  const pattern = new RegExp(`^${key}:.*$`, "m");
   if (frontMatter === "") return `---\n${line}\n---\n`;
-  if (TITLE_LINE.test(frontMatter)) return frontMatter.replace(TITLE_LINE, () => line);
-  return frontMatter.replace(/^---\r?\n/, (opening) => `${opening}${line}\n`);
+  if (pattern.test(frontMatter)) return frontMatter.replace(pattern, () => line);
+  return frontMatter.replace(
+    /(\r?\n)---(\r?\n)?$/,
+    (closing, lineEnd: string) => `${lineEnd}${line}${closing}`,
+  );
 }
+
+/** The front matter with a new title, every other line kept as it was. */
+export const withSceneTitle = (frontMatter: string, title: string) =>
+  withField(frontMatter, "title", yamlValue(title));
+
+export const SCENE_STATUSES = ["idé", "utkast", "redigering", "klar"] as const;
+export type SceneStatus = (typeof SCENE_STATUSES)[number];
+
+const STATUS_LINE = /^status:[ \t]*(\S+)/m;
+
+export function sceneStatus(frontMatter: string): SceneStatus {
+  const value = STATUS_LINE.exec(frontMatter)?.[1] ?? "";
+  return (SCENE_STATUSES as readonly string[]).includes(value) ? (value as SceneStatus) : "idé";
+}
+
+export const withSceneStatus = (frontMatter: string, status: SceneStatus) =>
+  withField(frontMatter, "status", status);

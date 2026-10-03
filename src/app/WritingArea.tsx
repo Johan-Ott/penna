@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import {
@@ -145,6 +145,8 @@ export function WritingArea(props: WritingAreaProps) {
   const panels = usePanels();
   useWritingKeys(props, panels);
   editor.typewriterRef.current = props.isFocusMode && settings.typewriter;
+  const { focusIfRequested } = editor;
+  useEffect(() => focusIfRequested(), [props.hasScene, focusIfRequested]);
   return (
     <main className="writing">
       <WritingHeader
