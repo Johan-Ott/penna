@@ -13,8 +13,8 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react-jsx"
   },
-  "include": ["src", "tests", "ui"],
-  "exclude": ["ui/build"]
+  "include": ["src", "tests", "vite.config.ts"]
 }

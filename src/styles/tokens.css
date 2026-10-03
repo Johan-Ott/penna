@@ -1,0 +1,55 @@
+/* Grayscale only, black as the primary colour. Light values from the spec, dark from the canvas.
+   data-theme is set by useWritingSettings: dark when the writer asks, otherwise as the system. */
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f5f5f5;
+  --bg-panel: #fafafa;
+  --surface-hover: #e6e6e6;
+  --border: #e5e5e5;
+  --border-soft: #eeeeee;
+  --border-control: #e0e0e0;
+  --text: #111111;
+  --text-prose: #1a1a1a;
+  --text-tree: #3d3d3d;
+  --text-muted: #5c5c5c;
+  --text-label: #6b6b6b;
+  --text-dim: #c2c2c2;
+  --primary: #111111;
+  --on-primary: #ffffff;
+  --match: #ececec;
+  --match-current: #d4d4d4;
+  --selection: #dcdcdc;
+
+  --font-ui: "Geist Sans", system-ui, sans-serif;
+  --font-prose: "Literata", Georgia, serif;
+  --radius-button: 6px;
+  --radius-card: 8px;
+  --radius-dialog: 14px;
+  --sidebar-width: 240px;
+  --shadow-dialog: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #141414;
+  --bg-subtle: #1b1b1b;
+  --bg-panel: #181818;
+  --surface-hover: #2c2c2c;
+  --border: #2a2a2a;
+  --border-soft: #262626;
+  --border-control: #333333;
+  --text: #f2f2f2;
+  --text-prose: #e6e6e6;
+  --text-tree: #c8c8c8;
+  --text-muted: #a3a3a3;
+  --text-label: #999999;
+  --text-dim: #4a4a4a;
+  --primary: #f2f2f2;
+  --on-primary: #141414;
+  --match: #2e2e2e;
+  --match-current: #4a4a4a;
+  --selection: #3a3a3a;
+  --shadow-dialog: 0 10px 30px rgba(0, 0, 0, 0.5);
+}

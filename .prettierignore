@@ -3,5 +3,4 @@ dist
 src-tauri/target
 package-lock.json
 docs/design
-ui/build
 src-tauri/gen

@@ -1,0 +1,101 @@
+/* The manuscript as in the Skriv design: Literata 19 px, line height 1.8, 600 px wide. */
+.manuscript {
+  width: var(--prose-width, 600px);
+  max-width: 100%;
+  margin: 0 auto;
+  font-family: var(--prose-font, var(--font-prose));
+  font-size: var(--prose-size, 19px);
+  line-height: var(--prose-line-height, 1.8);
+  color: var(--text-prose);
+}
+
+.manuscript .ProseMirror {
+  min-height: 60vh;
+  padding-bottom: 40vh;
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.manuscript p {
+  margin: 0;
+}
+
+/* Book style: every paragraph is indented except the first after a break or a style. */
+.manuscript p + p {
+  text-indent: var(--prose-indent, 1.5em);
+}
+
+.manuscript .scene-break {
+  margin: 1em 0;
+  text-align: center;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.manuscript .style {
+  margin: 0.6em 0 0.6em 1.5em;
+}
+
+.manuscript .style-brev {
+  font-style: italic;
+}
+
+.manuscript .style-dikt p + p,
+.manuscript .style-brev p + p,
+.manuscript .style-citat p + p,
+.manuscript .style-meddelande p + p {
+  text-indent: 0;
+}
+
+.manuscript .style-meddelande {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.manuscript .raw-block {
+  margin: 0.6em 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 14px;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+}
+
+.manuscript .raw-inline {
+  color: var(--text-muted);
+}
+
+.manuscript .ProseMirror-search-match {
+  background: var(--match);
+  border-radius: 3px;
+}
+
+.manuscript .ProseMirror-active-search-match {
+  background: var(--match-current);
+}
+
+.manuscript .empty-scene::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+/* Focus mode: everything but the paragraph or sentence being written is dimmed. */
+.manuscript.focus-stycke .ProseMirror,
+.manuscript.focus-mening .ProseMirror {
+  color: var(--text-dim);
+  transition: color 0.2s;
+}
+
+.manuscript.focus-stycke .focused-block,
+.manuscript.focus-mening .focused-sentence {
+  color: var(--text-prose);
+}
+
+/* Room below so even the last line can sit at typewriter height; the room above is on .page. */
+.manuscript.typewriter .ProseMirror {
+  padding-bottom: 60vh;
+}

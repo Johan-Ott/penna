@@ -2,7 +2,7 @@ import eslintJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["node_modules", "dist", "src-tauri/target", "src-tauri/gen", "ui/build"] },
+  { ignores: ["node_modules", "dist", "src-tauri/target", "src-tauri/gen"] },
   eslintJs.configs.recommended,
   ...tseslint.configs.strict,
   {

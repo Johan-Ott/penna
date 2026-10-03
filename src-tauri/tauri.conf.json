@@ -4,13 +4,22 @@
   "version": "0.0.1",
   "identifier": "se.penna.app",
   "build": {
-    "frontendDist": "../ui",
-    "beforeDevCommand": "npm run build:ui",
-    "beforeBuildCommand": "npm run build:ui"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev:web",
+    "beforeBuildCommand": "npm run build:web"
   },
   "app": {
-    "withGlobalTauri": true,
-    "windows": [{ "title": "Penna", "width": 1100, "height": 760 }]
+    "windows": [
+      {
+        "title": "Penna",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 900,
+        "minHeight": 600,
+        "dragDropEnabled": false
+      }
+    ]
   },
   "bundle": {
     "active": false,

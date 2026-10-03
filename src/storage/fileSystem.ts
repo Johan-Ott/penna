@@ -1,4 +1,4 @@
-// The same storage logic runs on Node in tests and on Tauri in the app.
+// The same storage logic runs on Node in tests, on Tauri in the app and in memory in a browser.
 export interface FileSystem {
   readText(path: string): Promise<string>;
   writeText(path: string, text: string): Promise<void>;
@@ -8,6 +8,8 @@ export interface FileSystem {
   list(dir: string): Promise<string[]>;
   /** Milliseconds since 1970, or null when the file is missing. */
   modifiedAt(path: string): Promise<number | null>;
+  /** Creates the folder and any missing parents. */
+  makeDir(dir: string): Promise<void>;
 }
 
 // Forward slashes work on Windows in both Node and Tauri.
