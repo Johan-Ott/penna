@@ -13,6 +13,8 @@ import {
   DEFAULT_SETTINGS,
   nextLineHeight,
   nextWidth,
+  THEME_LABELS,
+  type Theme,
   type FocusMode,
   type ProseFont,
   type WritingSettings,
@@ -22,6 +24,7 @@ import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import type { PaletteEntry } from "./paletteSearch.js";
+import { VIEWS, type View } from "../Sidebar.js";
 
 export interface PaletteContext {
   project: Project;
@@ -34,6 +37,10 @@ export interface PaletteContext {
   openSearch: () => void;
   chooseFolder: () => void;
   showShelf: () => void;
+  /** Null when no scene is open. */
+  showSnapshots: (() => void) | null;
+  openSettings: () => void;
+  showView: (view: View) => void;
 }
 
 const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
@@ -85,6 +92,11 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command("Ny mapp", () => context.add("folder")),
     command("Sök och ersätt", context.openSearch, "Ctrl+F"),
     command("Fokusläge", context.toggleFocusMode, "Ctrl+Shift+F"),
+    ...(context.showSnapshots ? [command("Ögonblicksbilder", context.showSnapshots)] : []),
+    command("Inställningar", context.openSettings, "Ctrl+,"),
+    ...VIEWS.map(([view, label, keys]) =>
+      command(`Gå till ${label}`, () => context.showView(view), keys),
+    ),
     command("Fetstil", () => run(toggleBold), "Ctrl+B"),
     command("Kursiv", () => run(toggleItalic), "Ctrl+I"),
     command("Rensa formatering", () => run(clearFormatting)),
@@ -137,10 +149,12 @@ function switchEntries({
   chooseFolder,
   showShelf,
 }: PaletteContext): PaletteEntry[] {
-  const flip = (label: string, key: "darkTheme" | "indent" | "typewriter") =>
+  const flip = (label: string, key: "indent" | "typewriter") =>
     command(`${label} ${onOff(settings[key])}`, () => change(changeTo({ [key]: !settings[key] })));
   return [
-    flip("Mörkt tema", "darkTheme"),
+    ...(Object.keys(THEME_LABELS) as Theme[]).map((theme) =>
+      command(`Utseende: ${THEME_LABELS[theme]}`, () => change(changeTo({ theme }))),
+    ),
     flip("Indrag första rad", "indent"),
     flip("Typewriter", "typewriter"),
     ...FOCUS_MODES.map(([focus, label]) =>

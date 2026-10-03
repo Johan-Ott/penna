@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
-import { loadSettings, saveSettings, type WritingSettings } from "../editor/writingSettings.js";
+import {
+  loadSettings,
+  saveSettings,
+  type Theme,
+  type WritingSettings,
+} from "../editor/writingSettings.js";
 import { browserStorage } from "./browserStorage.js";
 
 export type SettingsChange = (current: WritingSettings) => WritingSettings;
 
-// Dark when the writer asks for it, otherwise as the system says.
-function useTheme(isDarkForced: boolean) {
+// Light or dark as the writer chose, or as the system says.
+function useTheme(theme: Theme) {
   useEffect(() => {
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
     const apply = () => {
-      document.documentElement.dataset["theme"] =
-        isDarkForced || systemDark.matches ? "dark" : "light";
+      const isDark = theme === "system" ? systemDark.matches : theme === "mörkt";
+      document.documentElement.dataset["theme"] = isDark ? "dark" : "light";
     };
     apply();
     systemDark.addEventListener("change", apply);
     return () => systemDark.removeEventListener("change", apply);
-  }, [isDarkForced]);
+  }, [theme]);
 }
 
 export function useWritingSettings() {
@@ -28,6 +33,6 @@ export function useWritingSettings() {
       return next;
     });
   }, []);
-  useTheme(settings.darkTheme);
+  useTheme(settings.theme);
   return { settings, update };
 }

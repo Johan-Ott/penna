@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import {
@@ -12,6 +13,7 @@ import type { SceneChapter } from "../project/treeLabels.js";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 import { FocusHeader } from "./FocusHeader.js";
+import type { Today } from "./useWritingStats.js";
 import { SaveToast, TreeFailureToast } from "./SaveToast.js";
 import { Toolbar } from "./Toolbar.js";
 import { useEscape, useShortcut } from "./useShortcut.js";
@@ -19,6 +21,11 @@ import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 
 interface WritingAreaProps {
+  /** Hidden, not removed, while another view shows: the editor keeps its scene and undo. */
+  isHidden: boolean;
+  manuscriptSearch: ManuscriptScope;
+  replaceToast: ReactNode;
+  today: Today;
   editor: ReturnType<typeof useEditorView>;
   breadcrumb: string[];
   focusLocation: string;
@@ -140,31 +147,51 @@ function Page({
   );
 }
 
+// What floats over the page: the settings and search panels, and the toasts.
+function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
+  return (
+    <>
+      {props.isSettingsOpen && (
+        <WritingSettingsPanel
+          settings={props.settings}
+          onChange={props.onChangeSettings}
+          showsFocusOptions={props.isFocusMode}
+        />
+      )}
+      {props.isSearchOpen && (
+        <SearchPanel
+          {...props.editor}
+          manuscript={props.manuscriptSearch}
+          onClose={() => props.setSearchOpen(false)}
+        />
+      )}
+      <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
+      <TreeFailureToast failure={props.treeFailure} />
+      {props.replaceToast}
+    </>
+  );
+}
+
 export function WritingArea(props: WritingAreaProps) {
   const { editor, settings } = props;
   const panels = usePanels();
   useWritingKeys(props, panels);
   editor.typewriterRef.current = props.isFocusMode && settings.typewriter;
+  editor.typographyRef.current = settings.typography;
+  editor.spellcheckRef.current = settings.spellcheck;
+  // The spellcheck attribute is read when the view updates, so a change updates it at once.
+  useEffect(() => editor.viewRef.current?.setProps({}), [settings.spellcheck, editor.viewRef]);
   const { focusIfRequested } = editor;
   useEffect(() => focusIfRequested(), [props.hasScene, focusIfRequested]);
   return (
-    <main className="writing">
+    <main className={props.isHidden ? "writing hidden" : "writing"}>
       <WritingHeader
         {...props}
         isSettingsOpen={panels.isSettingsOpen}
         onToggleSettings={() => panels.setSettingsOpen(!panels.isSettingsOpen)}
       />
       <Page {...props} />
-      {panels.isSettingsOpen && (
-        <WritingSettingsPanel
-          settings={settings}
-          onChange={props.onChangeSettings}
-          showsFocusOptions={props.isFocusMode}
-        />
-      )}
-      {props.isSearchOpen && <SearchPanel {...editor} onClose={() => props.setSearchOpen(false)} />}
-      <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
-      <TreeFailureToast failure={props.treeFailure} />
+      <Floating {...props} isSettingsOpen={panels.isSettingsOpen} />
     </main>
   );
 }

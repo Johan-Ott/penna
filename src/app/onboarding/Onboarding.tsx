@@ -4,6 +4,8 @@ import { continueFrom, LAST_STEP, useOnboarding, type OnboardingState } from "./
 
 interface OnboardingProps {
   knownLibraryDir: string | null;
+  /** The goal a new project starts with, from Inställningar. */
+  defaultDailyGoal: number;
   /** 1 for a first start; 4 when a returning writer makes a new project. */
   startStep: number;
   onFinish: (projectDir: string, libraryDir: string | null) => void;
@@ -65,7 +67,7 @@ function Navigation({
   startStep,
   onFinish,
   onCancel,
-}: { state: OnboardingState } & Omit<OnboardingProps, "knownLibraryDir">) {
+}: { state: OnboardingState } & Omit<OnboardingProps, "knownLibraryDir" | "defaultDailyGoal">) {
   return (
     <div className="onboarding-nav">
       {state.step === startStep && startStep > 1 && (
@@ -85,8 +87,9 @@ function Navigation({
 }
 
 /** The first start, as in the design: five short steps and then straight into a scene. */
-export function Onboarding({ knownLibraryDir, startStep, onFinish, onCancel }: OnboardingProps) {
-  const state = useOnboarding(knownLibraryDir, startStep);
+export function Onboarding(props: OnboardingProps) {
+  const { startStep, onFinish, onCancel } = props;
+  const state = useOnboarding(props);
   return (
     <main className="onboarding">
       <div className="onboarding-card">

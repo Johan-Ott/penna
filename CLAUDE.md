@@ -43,6 +43,25 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   (`storage/syncFiles.ts`, `atomicWrite.ts`) and settled in `app/syncRepairs.ts`. What the
   writer chooses away goes to the project's `trash/` folder, never deleted. Crash text is settled
   in a dialog before any scene opens, because the next save would write over the temp file.
+- Words per day live in the project's `stats.json` as `{ "2026-10-02": 812 }` (`project/stats.ts`).
+  Each scene save adds what it changed (`onSaved` in `sceneSession.ts`), so moving or trashing
+  scenes never counts as writing. The daily goal is `dailyGoal` in project.json.
+- Search (Ctrl+F) covers the whole manuscript by default ("Hela manuset"). Other scenes are
+  searched with the same prosemirror-search plugin as the editor (`editor/manuscriptSearch.ts`),
+  so counts match. "Alla" writes every scene file and can be undone while no one wrote in them
+  since (`app/manuscriptReplace.ts`, `app/useManuscriptSearch.ts`).
+- Snapshots are copies of the scene file in `snapshots/<scene id>/2026-10-02T14-03.md`, marked
+  `snapshot: automatisk|manuell` (`project/snapshots.ts`). An automatic one keeps the text from
+  before a save when the scene had none, or when the text moved 100+ words from the last one.
+  Restoring snapshots the current text first (`app/snapshotActions.ts`).
+- Inställningar (Ctrl+, or the palette) lives in `app/settings/`. Writing settings (theme,
+  font, spellcheck, Swedish typography) are in `penna.writing`; author name, default daily goal
+  and automatic snapshots in `penna.app`. Editor switches are read through refs on every
+  update (`useEditorView`), so changing them needs no new editor state.
+- Views of a project (Skriv, Framsteg; G S / G F) are listed in `VIEWS` in `Sidebar.tsx` and held
+  in `useWritingMode`. The writing area stays mounted but hidden in other views, so the editor
+  keeps its scene and undo. Framsteg's numbers are pure functions in `project/progress.ts`; the
+  goals (`dailyGoal`, `totalGoal`, `deadline`) live in project.json, written by `updateFields`.
 - Tauri may read and write under $HOME and $DOCUMENT without a dialog (capabilities), and
   `tauri-plugin-persisted-scope` keeps folders picked in the dialog across restarts.
 - `npm run icons` rebuilds the app icons from `src-tauri/icons/icon-source.svg`.

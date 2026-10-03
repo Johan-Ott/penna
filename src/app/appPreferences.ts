@@ -8,6 +8,11 @@ export interface AppPreferences {
   lastProjectDir: string | null;
   /** Projects opened from outside the library, so the shelf can show them too. */
   knownProjects: string[];
+  /** Used in export; empty until the writer gives one. */
+  authorName: string;
+  /** The daily goal a new project starts with. */
+  defaultDailyGoal: number;
+  isAutoSnapshotOn: boolean;
 }
 
 export const START_PREFERENCES: AppPreferences = {
@@ -15,10 +20,15 @@ export const START_PREFERENCES: AppPreferences = {
   libraryDir: null,
   lastProjectDir: null,
   knownProjects: [],
+  authorName: "",
+  defaultDailyGoal: 1000,
+  isAutoSnapshotOn: true,
 };
 
 const STORAGE_KEY = "penna.app";
 const textOrNull = (value: unknown) => (typeof value === "string" ? value : null);
+const isGoal = (value: unknown): value is number =>
+  typeof value === "number" && Number.isInteger(value) && value > 0;
 
 export function loadPreferences(storage: KeyValueStorage): AppPreferences {
   const stored = readStoredObject(storage, STORAGE_KEY);
@@ -29,6 +39,11 @@ export function loadPreferences(storage: KeyValueStorage): AppPreferences {
     knownProjects: Array.isArray(stored["knownProjects"])
       ? stored["knownProjects"].filter((dir): dir is string => typeof dir === "string")
       : [],
+    authorName: textOrNull(stored["authorName"]) ?? "",
+    defaultDailyGoal: isGoal(stored["defaultDailyGoal"])
+      ? stored["defaultDailyGoal"]
+      : START_PREFERENCES.defaultDailyGoal,
+    isAutoSnapshotOn: stored["isAutoSnapshotOn"] !== false,
   };
 }
 

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 
@@ -28,6 +29,34 @@ export function TreeFailureToast({ failure }: { failure: SaveFailure | null }) {
     <div className="toast" role="alert">
       <span>Ordningen i strukturen kunde inte sparas. {FAILURE_MESSAGES[failure]}</span>
       <span className="toast-meta">Sparas vid nästa ändring</span>
+    </div>
+  );
+}
+
+const TOAST_MS = 8000;
+
+/** "Ändrade 3 förekomster av ”Sjöbergh”" after replacing in the whole manuscript, with Ångra. */
+export function ReplaceToast(props: {
+  done: { count: number; search: string } | null;
+  onUndo: () => void;
+  onDismiss: () => void;
+}) {
+  const { done, onDismiss } = props;
+  useEffect(() => {
+    if (!done) return;
+    const timer = setTimeout(onDismiss, TOAST_MS);
+    return () => clearTimeout(timer);
+  }, [done, onDismiss]);
+  if (!done) return null;
+  const noun = done.count === 1 ? "förekomst" : "förekomster";
+  return (
+    <div className="toast inverted" role="status">
+      <span>
+        Ändrade {done.count.toLocaleString("sv-SE")} {noun} av ”{done.search}”
+      </span>
+      <button className="link-button" onClick={props.onUndo}>
+        Ångra
+      </button>
     </div>
   );
 }

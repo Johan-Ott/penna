@@ -1364,3 +1364,462 @@ button.book-cover:hover {
 .dialog-actions .push-left {
   margin-right: auto;
 }
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.sidebar-footer .sidebar-notices {
+  margin: 0;
+}
+
+.today-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+}
+
+.today-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.today-label {
+  font-weight: 500;
+}
+
+.today-words,
+.today-streak {
+  color: var(--text-muted);
+}
+
+.today-streak {
+  font-size: 12px;
+}
+
+.toast.inverted {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.toast.inverted .link-button {
+  color: var(--on-primary);
+  opacity: 0.75;
+}
+
+/* Snapshots, as in the design: the list on the left, the comparison on the right. */
+.snapshots-dialog {
+  width: 820px;
+}
+
+.dialog-heading.row {
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.snapshots {
+  display: flex;
+  height: 420px;
+  max-height: 70vh;
+  overflow: hidden;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-dialog);
+}
+
+.snapshot-list {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 2px;
+  width: 220px;
+  padding: 8px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+
+.snapshot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.snapshot-item:hover {
+  background: var(--surface-hover);
+}
+
+.snapshot-item.chosen {
+  background: var(--surface-hover);
+}
+
+.snapshot-item.chosen .snapshot-title {
+  font-weight: 500;
+}
+
+.snapshot-meta,
+.snapshot-empty {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.snapshot-empty {
+  margin: 8px 10px;
+  line-height: 1.5;
+}
+
+.snapshot-take {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.snapshot-view {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.snapshot-text {
+  flex-grow: 1;
+  overflow-y: auto;
+  font: 14px/1.7 var(--font-prose);
+  white-space: pre-wrap;
+}
+
+.snapshot-text del {
+  color: var(--text-muted);
+}
+
+.snapshot-text ins {
+  background: var(--selection);
+  text-decoration: none;
+}
+
+.snapshot-view .restore {
+  align-self: flex-start;
+}
+
+/* Inställningar, as in the design: tabs on the left, one setting per row. */
+.settings-dialog {
+  display: flex;
+  width: 820px;
+  max-width: 100%;
+  height: 600px;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  border: 1px solid var(--border-control);
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow: var(--shadow-dialog);
+}
+
+.settings-tabs {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 2px;
+  width: 200px;
+  padding: 16px 10px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+.settings-tab {
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.settings-tab:hover {
+  background: var(--bg-panel);
+}
+
+.settings-tab.chosen {
+  background: var(--surface-hover);
+  font-weight: 500;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
+  min-width: 0;
+  padding: 28px 32px;
+  overflow-y: auto;
+}
+
+.settings-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.settings-heading h1 {
+  margin: 0;
+  font: 600 22px var(--font-prose);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.settings-row .setting-hint {
+  overflow-wrap: anywhere;
+}
+
+.settings-control {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.settings-text,
+.settings-number {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.settings-text {
+  width: 220px;
+}
+
+.settings-number {
+  width: 96px;
+  text-align: right;
+}
+
+.settings-row kbd {
+  padding: 2px 8px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 12px;
+}
+
+/* The views of a project in the sidebar: Skriv, Framsteg. */
+.view-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.view-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.view-item:hover {
+  background: var(--bg-panel);
+}
+
+.view-item.chosen {
+  background: var(--surface-hover);
+  font-weight: 500;
+}
+
+.view-keys {
+  color: var(--text-label);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.writing.hidden {
+  display: none;
+}
+
+/* Framsteg, as in the design. */
+.progress-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.toolbar-title {
+  font-weight: 500;
+}
+
+.progress-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 40px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.progress-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.progress-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.kpi {
+  gap: 8px;
+}
+
+.kpi-label,
+.kpi-sub {
+  color: var(--text-muted);
+}
+
+.kpi-sub {
+  font-size: 12px;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.progress-title {
+  font-weight: 500;
+}
+
+.progress-bar.large,
+.progress-bar.large div {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-rows: repeat(7, 16px);
+  grid-auto-columns: 16px;
+  grid-auto-flow: column;
+  gap: 5px;
+}
+
+.heat {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+.heat.future {
+  background: transparent;
+}
+
+.heat.level-0 {
+  background: var(--heat-0);
+}
+
+.heat.level-1 {
+  background: var(--heat-1);
+}
+
+.heat.level-2 {
+  background: var(--heat-2);
+}
+
+.heat.level-3 {
+  background: var(--heat-3);
+}
+
+.heat.level-4 {
+  background: var(--heat-4);
+}
+
+.heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.heat-legend .heat {
+  width: 12px;
+  height: 12px;
+}
+
+.chapter-bar {
+  display: grid;
+  grid-template-columns: 130px 1fr 52px;
+  align-items: center;
+  gap: 12px;
+}
+
+.chapter-bar .kpi-sub {
+  text-align: right;
+}
+
+.chapter-name {
+  overflow: hidden;
+  color: var(--text-tree);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-bar .progress-bar div {
+  background: var(--text-tree);
+}
+
+.goals-dialog {
+  width: 380px;
+}

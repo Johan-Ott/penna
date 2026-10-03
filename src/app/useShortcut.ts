@@ -37,3 +37,34 @@ export function useEscape(action: () => void) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 }
+
+// Keys typed into the manuscript or a field are text, not commands.
+const isTyping = (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement | null;
+  const hasModifier = event.ctrlKey || event.metaKey || event.altKey;
+  return hasModifier || !target || target.isContentEditable || !!target.closest("input, textarea");
+};
+
+const GO_WAIT_MS = 1000;
+
+/**
+ * "G S", "G F": G and then a letter, as in the design's menu, when nothing is being typed.
+ * `onLetter` says whether the letter led somewhere.
+ */
+export function useGoKeys(onLetter: (letter: string) => boolean) {
+  const onLetterRef = useRef(onLetter);
+  onLetterRef.current = onLetter;
+  useEffect(() => {
+    let isWaiting = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTyping(event)) return;
+      if (isWaiting && onLetterRef.current(event.key.toLowerCase())) event.preventDefault();
+      isWaiting = event.key.toLowerCase() === "g";
+      clearTimeout(timer);
+      timer = setTimeout(() => (isWaiting = false), GO_WAIT_MS);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+}

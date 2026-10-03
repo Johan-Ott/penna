@@ -45,10 +45,17 @@ function useLibraryChoice(knownLibraryDir: string | null) {
 }
 
 /** The steps of the first start: welcome, promises, folder, first project, done. */
-export function useOnboarding(knownLibraryDir: string | null, startStep: number) {
+/** Where the onboarding starts: the folder Penna knows, the step, and the goal to suggest. */
+export interface OnboardingStart {
+  knownLibraryDir: string | null;
+  startStep: number;
+  defaultDailyGoal: number;
+}
+
+export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: OnboardingStart) {
   const [step, setStep] = useState(startStep);
   const [mode, setMode] = useState<ProjectMode>("new");
-  const [details, setDetails] = useState(START_DETAILS);
+  const [details, setDetails] = useState({ ...START_DETAILS, dailyGoal: defaultDailyGoal });
   const [projectDir, setProjectDir] = useState<string | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const library = useLibraryChoice(knownLibraryDir);

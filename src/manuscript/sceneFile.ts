@@ -15,12 +15,13 @@ export function joinSceneFile(parts: SceneFileParts): string {
   return parts.frontMatter + parts.body;
 }
 
-const TITLE_LINE = /^title:[ \t]*(.*?)[ \t]*$/m;
+const fieldLine = (key: string) => new RegExp(`^${key}:[ \\t]*(.*?)[ \\t]*$`, "m");
 // A plain YAML value may not contain ": " or start with a quote, so such titles are quoted.
 const NEEDS_QUOTES = /: |^["'#&*!|>%@`]/;
 
-export function sceneTitle(frontMatter: string): string | null {
-  const value = TITLE_LINE.exec(frontMatter)?.[1];
+/** A text field of the front matter, unquoted, or null when it is missing or empty. */
+export function readField(frontMatter: string, key: string): string | null {
+  const value = fieldLine(key).exec(frontMatter)?.[1];
   if (value === undefined || value === "") return null;
   if (!value.startsWith('"')) return value;
   try {
@@ -29,6 +30,8 @@ export function sceneTitle(frontMatter: string): string | null {
     return value;
   }
 }
+
+export const sceneTitle = (frontMatter: string) => readField(frontMatter, "title");
 
 const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
 
@@ -48,9 +51,12 @@ function withField(frontMatter: string, key: string, value: string): string {
   );
 }
 
-/** The front matter with a new title, every other line kept as it was. */
+/** The front matter with one text field set, every other line kept as it was. */
+export const withTextField = (frontMatter: string, key: string, value: string) =>
+  withField(frontMatter, key, yamlValue(value));
+
 export const withSceneTitle = (frontMatter: string, title: string) =>
-  withField(frontMatter, "title", yamlValue(title));
+  withTextField(frontMatter, "title", title);
 
 export const SCENE_STATUSES = ["idé", "utkast", "redigering", "klar"] as const;
 export type SceneStatus = (typeof SCENE_STATUSES)[number];

@@ -105,6 +105,28 @@ describe("scene session", () => {
   });
 });
 
+describe("onSaved", () => {
+  it("reports the text before and after each save", async () => {
+    const files = createMemoryFileSystem({ [SCENE_PATH]: SCENE });
+    let editorDoc: Node | null = null;
+    const saves: string[][] = [];
+    const session = createSceneSession(files, {
+      editor: { load: (doc) => (editorDoc = doc), currentDoc: () => editorDoc },
+      onScene: () => undefined,
+      onConflict: () => undefined,
+      onSaveStatus: () => undefined,
+      onSaved: (scene, before, after) => saves.push([scene.dir, scene.id, before, after]),
+    });
+    await openScene(session, "/bok", "01J9Z4K2QX");
+    editorDoc = parseMarkdown("Brevet låg kvar.\n");
+
+    sceneEdited(session, editorDoc);
+    await session.autosave.flush();
+
+    expect(saves).toEqual([["/bok", "01J9Z4K2QX", SCENE, await files.readText(SCENE_PATH)]]);
+  });
+});
+
 describe("renameScene", () => {
   it("renames the open scene at once, without losing what is being written", async () => {
     const { files, session, type } = setup();

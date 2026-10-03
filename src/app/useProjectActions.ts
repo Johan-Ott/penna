@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { insertAfter, insertNode, type NodeKind, type TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import { newSceneId } from "../storage/sceneId.js";
@@ -89,4 +89,18 @@ export function useProjectActions({ project, session, updateTree, refresh }: Pro
     [project, session, updateTree, refresh],
   );
   return { newItem, ...useSceneFileActions({ project, session, refresh }) };
+}
+
+// New chapters, parts and folders start with their name ready to type; scenes open in the editor.
+export function useTreeHandlers(actions: ReturnType<typeof useProjectActions>) {
+  const [renameRequestId, setRenameRequestId] = useState<string | null>(null);
+  return {
+    renameRequestId,
+    onRenameScene: (id: string, title: string) => void actions.renameSceneTitle(id, title),
+    onSetSceneStatus: (id: string, status: SceneStatus) => void actions.setStatus(id, status),
+    onAdd: (kind: NodeKind, placement: Placement) =>
+      void actions.newItem(kind, placement).then((id) => {
+        if (id && kind !== "scene") setRenameRequestId(id);
+      }),
+  };
 }

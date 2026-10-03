@@ -36,23 +36,48 @@ async function readProject(dir: string): Promise<Project> {
   };
 }
 
-// Tree changes are written one at a time, so an older order never lands after a newer one.
-function useTreeWriter(projectRef: React.RefObject<Project | null>) {
+// project.json is written one change at a time, so an older version never lands after a newer.
+function useProjectWriter(projectRef: React.RefObject<Project | null>) {
   const [treeFailure, setTreeFailure] = useState<SaveFailure | null>(null);
   const queue = useRef(Promise.resolve());
-  const writeTree = useCallback(
-    (tree: TreeNode[]) => {
+  const write = useCallback(
+    (fields: Record<string, unknown>, tree: TreeNode[]) => {
       const project = projectRef.current;
       if (!project) return Promise.resolve();
       queue.current = queue.current
-        .then(() => writeProjectFile(platform.fileSystem, project.dir, project.fields, tree))
+        .then(() => writeProjectFile(platform.fileSystem, project.dir, fields, tree))
         .then(() => setTreeFailure(null))
         .catch((error: unknown) => setTreeFailure(describeSaveError(error)));
       return queue.current;
     },
     [projectRef],
   );
-  return { writeTree, treeFailure };
+  return { write, treeFailure };
+}
+
+// The tree and the other fields of project.json change on screen at once and are then written.
+function useProjectUpdates(
+  projectRef: React.RefObject<Project | null>,
+  setProject: React.Dispatch<React.SetStateAction<Project | null>>,
+) {
+  const { write, treeFailure } = useProjectWriter(projectRef);
+  const update = useCallback(
+    (change: { tree?: TreeNode[]; fields?: Record<string, unknown> }) => {
+      const project = projectRef.current;
+      if (!project) return Promise.resolve();
+      const tree = change.tree ?? project.tree;
+      const fields = { ...project.fields, ...change.fields };
+      setProject((current) => current && { ...current, tree, fields });
+      return write(fields, tree);
+    },
+    [projectRef, setProject, write],
+  );
+  const updateTree = useCallback((tree: TreeNode[]) => update({ tree }), [update]);
+  const updateFields = useCallback(
+    (fields: Record<string, unknown>) => update({ fields }),
+    [update],
+  );
+  return { updateTree, updateFields, treeFailure };
 }
 
 /** The project folder the writer picked, read again whenever something in it changes. */
@@ -60,7 +85,7 @@ export function useProject(onFolderChange: () => void) {
   const [project, setProject] = useState<Project | null>(null);
   const projectRef = useRef<Project | null>(null);
   projectRef.current = project;
-  const { writeTree, treeFailure } = useTreeWriter(projectRef);
+  const updates = useProjectUpdates(projectRef, setProject);
   const dir = project?.dir ?? null;
 
   const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
@@ -71,16 +96,9 @@ export function useProject(onFolderChange: () => void) {
     const folder = await platform.pickFolder();
     if (folder) await open(folder);
   }, [open]);
-  const updateTree = useCallback(
-    (tree: TreeNode[]) => {
-      setProject((current) => current && { ...current, tree });
-      return writeTree(tree);
-    },
-    [writeTree],
-  );
   useFolderWatch(dir, refresh, onFolderChange);
   const close = useCallback(() => setProject(null), []);
-  return { project, open, close, choose, refresh, updateTree, treeFailure };
+  return { project, open, close, choose, refresh, ...updates };
 }
 
 function useFolderWatch(dir: string | null, refresh: () => Promise<void>, onChange: () => void) {

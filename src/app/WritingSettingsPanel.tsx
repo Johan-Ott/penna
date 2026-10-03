@@ -2,13 +2,14 @@ import {
   changeSize,
   nextLineHeight,
   nextWidth,
+  toggleDark,
   type FocusMode,
   type ProseFont,
   type WritingSettings,
 } from "../editor/writingSettings.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 
-type Switch = "typewriter" | "indent" | "darkTheme";
+type Switch = "typewriter" | "indent";
 
 const changeTo =
   (changes: Partial<WritingSettings>): SettingsChange =>
@@ -175,8 +176,8 @@ export function WritingSettingsPanel(props: PanelProps) {
       <Toggle
         label="Mörkt tema"
         hint="Följer annars systemet"
-        isOn={settings.darkTheme}
-        onFlip={() => onChange(toggle("darkTheme"))}
+        isOn={settings.theme === "mörkt"}
+        onFlip={() => onChange(toggleDark)}
       />
     </div>
   );

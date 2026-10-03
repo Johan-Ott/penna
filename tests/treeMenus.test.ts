@@ -11,6 +11,7 @@ const actions: TreeMenuActions = {
   restore: noop,
   setStatus: noop,
   statusOf: () => "utkast",
+  showSnapshots: () => undefined,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));
@@ -30,6 +31,7 @@ describe("tree menus", () => {
   it("gives a scene a complete menu", () => {
     expect(labels(rowMenu(node("scene"), false, actions))).toEqual([
       "Öppna",
+      "Ögonblicksbilder…",
       "| Ny scen efter",
       "Nytt kapitel efter",
       "| Status: Idé",

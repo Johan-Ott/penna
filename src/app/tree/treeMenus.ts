@@ -20,6 +20,7 @@ export interface TreeMenuActions {
   restore: (node: TreeNode) => void;
   setStatus: (node: TreeNode, status: SceneStatus) => void;
   statusOf: (node: TreeNode) => SceneStatus | null;
+  showSnapshots: (node: TreeNode) => void;
 }
 
 /** The add button and a right-click on empty space offer the same four things. */
@@ -86,7 +87,12 @@ export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuAct
   const added = newItemsFor(node, actions);
   if (isSpecialFolder(node.id)) return added;
   const open =
-    node.kind === "scene" ? [{ label: "Öppna", onSelect: () => actions.open(node) }] : [];
+    node.kind === "scene"
+      ? [
+          { label: "Öppna", onSelect: () => actions.open(node) },
+          { label: "Ögonblicksbilder…", onSelect: () => actions.showSnapshots(node) },
+        ]
+      : [];
   const [firstAdded, ...restAdded] = added;
   const separatedAdd =
     firstAdded && open.length > 0

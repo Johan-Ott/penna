@@ -3,17 +3,17 @@ import type { Command, EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { useCallback, useRef, useState } from "react";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
-import { createEditorState } from "./editorState.js";
+import { createEditorState, type EditorSwitches } from "./editorState.js";
 
 function createView(
   element: HTMLElement,
-  isTypewriterOn: () => boolean,
-  isEditable: () => boolean,
+  switches: ViewSwitches,
   onState: (state: EditorState, docChanged: boolean) => void,
 ) {
   const view: EditorView = new EditorView(element, {
-    state: createEditorState(schema.node("doc"), isTypewriterOn),
-    editable: isEditable,
+    state: createEditorState(schema.node("doc"), switches),
+    editable: switches.isEditable,
+    attributes: () => ({ spellcheck: switches.isSpellcheckOn() ? "true" : "false" }),
     dispatchTransaction(transaction) {
       const next = view.state.apply(transaction);
       view.updateState(next);
@@ -23,13 +23,24 @@ function createView(
   return view;
 }
 
+interface ViewSwitches extends EditorSwitches {
+  isEditable: () => boolean;
+  isSpellcheckOn: () => boolean;
+}
+
 // ProseMirror asks these on every update, so the app can switch them without a new state.
 function useModeSwitches() {
   const typewriterRef = useRef(false);
-  const isTypewriterOn = useCallback(() => typewriterRef.current, []);
+  const typographyRef = useRef(true);
+  const spellcheckRef = useRef(true);
   const editableRef = useRef(false);
-  const isEditable = useCallback(() => editableRef.current, []);
-  return { typewriterRef, isTypewriterOn, editableRef, isEditable };
+  const [switches] = useState<ViewSwitches>(() => ({
+    isTypewriterOn: () => typewriterRef.current,
+    isTypographyOn: () => typographyRef.current,
+    isSpellcheckOn: () => spellcheckRef.current,
+    isEditable: () => editableRef.current,
+  }));
+  return { switches, refs: { typewriterRef, typographyRef, spellcheckRef, editableRef } };
 }
 
 // A hidden editor can not take focus. A request made while it is hidden is kept until
@@ -54,14 +65,14 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
   const onDocChangeRef = useRef(onDocChange);
   onDocChangeRef.current = onDocChange;
-  const { typewriterRef, isTypewriterOn, editableRef, isEditable } = useModeSwitches();
+  const { switches, refs } = useModeSwitches();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
   // The switches read refs and never change, so mount and load need no dependencies.
   const mount = useCallback((element: HTMLDivElement | null) => {
     viewRef.current?.destroy();
     viewRef.current = element
-      ? createView(element, isTypewriterOn, isEditable, (state, docChanged) => {
+      ? createView(element, switches, (state, docChanged) => {
           setEditorState(state);
           if (docChanged) onDocChangeRef.current(state.doc);
         })
@@ -69,7 +80,7 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
     setEditorState(viewRef.current?.state ?? null);
   }, []);
   const load = useCallback((doc: Node) => {
-    viewRef.current?.updateState(createEditorState(doc, isTypewriterOn));
+    viewRef.current?.updateState(createEditorState(doc, switches));
     setEditorState(viewRef.current?.state ?? null);
   }, []);
 
@@ -79,5 +90,5 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   }, []);
 
   const focus = useFocusRequest(viewRef);
-  return { mount, load, run, editorState, viewRef, typewriterRef, editableRef, ...focus };
+  return { mount, load, run, editorState, viewRef, ...refs, ...focus };
 }

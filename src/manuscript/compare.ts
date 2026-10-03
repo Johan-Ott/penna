@@ -26,7 +26,7 @@ export function differingExcerpts(mine: string, theirs: string) {
 }
 
 /** A scene body as the writer sees it, without markdown marks, blocks joined by a space. */
-export function plainText(markdown: string): string {
+export function plainText(markdown: string, blockSeparator = " "): string {
   const doc = parseMarkdown(markdown);
-  return doc.textBetween(0, doc.content.size, " ");
+  return doc.textBetween(0, doc.content.size, blockSeparator);
 }

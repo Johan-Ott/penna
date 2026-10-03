@@ -22,6 +22,9 @@ function context() {
     changeSettings: (change) => (settings = change(settings)),
     toggleFocusMode: () => undefined,
     openSearch: () => undefined,
+    showSnapshots: null,
+    openSettings: () => undefined,
+    showView: () => undefined,
     chooseFolder: () => undefined,
     showShelf: () => undefined,
   };

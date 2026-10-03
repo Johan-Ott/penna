@@ -27,6 +27,12 @@
   --radius-dialog: 14px;
   --sidebar-width: 240px;
   --shadow-dialog: 0 10px 30px rgba(0, 0, 0, 0.08);
+  /* Framsteg's map of the last weeks, from no words to more than the goal. */
+  --heat-0: #efefef;
+  --heat-1: #cfcfcf;
+  --heat-2: #9a9a9a;
+  --heat-3: #5a5a5a;
+  --heat-4: #111111;
 
   color-scheme: light;
 }
@@ -52,4 +58,9 @@
   --match-current: #4a4a4a;
   --selection: #3a3a3a;
   --shadow-dialog: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --heat-0: #232323;
+  --heat-1: #3a3a3a;
+  --heat-2: #6b6b6b;
+  --heat-3: #a3a3a3;
+  --heat-4: #f2f2f2;
 }

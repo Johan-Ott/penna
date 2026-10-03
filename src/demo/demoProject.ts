@@ -34,6 +34,7 @@ const SCENE_IDS = {
 
 const PROJECT = {
   title: "Vintervägen",
+  dailyGoal: 500,
   tree: [
     {
       id: "01J9Z4K2QX00000000000000P1",

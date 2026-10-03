@@ -3,6 +3,7 @@ import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/
 export type ProseFont = "serif" | "sans" | "mono";
 export type TextWidth = "smal" | "normal" | "bred";
 export type FocusMode = "av" | "mening" | "stycke";
+export type Theme = "ljust" | "mörkt" | "system";
 
 /** How the manuscript looks and behaves. Saved per writer, not per project. */
 export interface WritingSettings {
@@ -13,7 +14,11 @@ export interface WritingSettings {
   indent: boolean;
   focus: FocusMode;
   typewriter: boolean;
-  darkTheme: boolean;
+  theme: Theme;
+  /** The system spell checker underlines misspelled words. */
+  spellcheck: boolean;
+  /** -- becomes a dash and "quotes" become Swedish ones while typing. */
+  typography: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -24,7 +29,9 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   indent: true,
   focus: "stycke",
   typewriter: true,
-  darkTheme: false,
+  theme: "system",
+  spellcheck: true,
+  typography: true,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -36,6 +43,7 @@ const FONTS: Record<ProseFont, string> = {
   sans: '"Geist Sans", system-ui, sans-serif',
   mono: '"Geist Mono", Consolas, monospace',
 };
+const THEMES: Record<Theme, true> = { ljust: true, mörkt: true, system: true };
 const WIDTHS: Record<TextWidth, string> = { smal: "520px", normal: "600px", bred: "720px" };
 
 const isOneOf = <T extends string>(value: unknown, options: Record<T, unknown>): value is T =>
@@ -56,7 +64,11 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     indent: pick("indent", isBoolean),
     focus: pick("focus", (value) => ["av", "mening", "stycke"].includes(value as string)),
     typewriter: pick("typewriter", isBoolean),
-    darkTheme: pick("darkTheme", isBoolean),
+    // Before the theme had three choices, dark was a switch on top of the system theme.
+    theme:
+      stored["darkTheme"] === true ? "mörkt" : pick("theme", (value) => isOneOf(value, THEMES)),
+    spellcheck: pick("spellcheck", isBoolean),
+    typography: pick("typography", isBoolean),
   };
 }
 
@@ -88,3 +100,15 @@ export function proseStyle(settings: WritingSettings): Record<string, string> {
     "--prose-indent": settings.indent ? "1.5em" : "0",
   };
 }
+
+export const THEME_LABELS: Record<Theme, string> = {
+  ljust: "Ljust",
+  mörkt: "Mörkt",
+  system: "System",
+};
+
+/** The dark switch in the Aa panel: dark, or back to following the system. */
+export const toggleDark = (settings: WritingSettings): WritingSettings => ({
+  ...settings,
+  theme: settings.theme === "mörkt" ? "system" : "mörkt",
+});

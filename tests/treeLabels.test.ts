@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   chapterOf,
+  chapterWords,
+  manuscriptWords,
   nodeLabel,
   nodeMeta,
   nodeWords,
@@ -25,6 +27,18 @@ const summaries = {
   scene2: { title: "Isen", words: 6060, status: "utkast" as const },
 };
 const find = (id: string) => findNode(tree, id)?.node as TreeNode;
+
+describe("words in the manuscript", () => {
+  it("lists each chapter with its number and words, and sums the manuscript", () => {
+    const chapters = chapterWords(tree, summaries);
+
+    expect(chapters).toEqual([
+      { id: "kap1", label: "1. Arvid", words: 1240 },
+      { id: "kap2", label: "2. Brevet", words: 6060 },
+    ]);
+    expect(manuscriptWords(tree, summaries)).toBe(7300);
+  });
+});
 
 describe("tree labels", () => {
   it("numbers parts with roman numerals and chapters with digits", () => {

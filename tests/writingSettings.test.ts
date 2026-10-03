@@ -47,6 +47,24 @@ describe("writing settings", () => {
     expect(settings.indent).toBe(false);
   });
 
+  it("follow the system theme until the writer picks one, and keep an old dark choice", () => {
+    const fresh = loadSettings(memoryStorage());
+    const old = loadSettings(
+      memoryStorage({ "penna.writing": JSON.stringify({ darkTheme: true }) }),
+    );
+    const picked = loadSettings(
+      memoryStorage({ "penna.writing": JSON.stringify({ theme: "ljust" }) }),
+    );
+
+    expect([fresh.theme, old.theme, picked.theme]).toEqual(["system", "mörkt", "ljust"]);
+  });
+
+  it("have spelling and Swedish typography on from the start", () => {
+    const settings = loadSettings(memoryStorage());
+
+    expect(settings).toMatchObject({ spellcheck: true, typography: true });
+  });
+
   it("survive storage that is broken or blocked", () => {
     const broken = {
       getItem: () => {

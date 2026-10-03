@@ -28,6 +28,9 @@ describe("app preferences", () => {
       libraryDir: "C:/OneDrive/Penna",
       lastProjectDir: "C:/OneDrive/Penna/Isen.penna",
       knownProjects: ["D:/Arkiv/Fyren.penna"],
+      authorName: "Elin Berg",
+      defaultDailyGoal: 750,
+      isAutoSnapshotOn: false,
     };
 
     savePreferences(storage, preferences);
@@ -39,6 +42,28 @@ describe("app preferences", () => {
     const storage = memoryStorage({ "penna.app": '{"isOnboardingDone":"ja","libraryDir":5}' });
 
     expect(loadPreferences(storage)).toEqual(START_PREFERENCES);
+  });
+});
+
+describe("settings in the app preferences", () => {
+  it("start with no author, 1 000 words a day and automatic snapshots on", () => {
+    const preferences = loadPreferences(memoryStorage());
+
+    expect(preferences).toMatchObject({
+      authorName: "",
+      defaultDailyGoal: 1000,
+      isAutoSnapshotOn: true,
+    });
+  });
+
+  it("keep a daily goal only when it is a positive whole number", () => {
+    const goals = ["0", "-5", "12.5", '"mycket"'].map(
+      (goal) =>
+        loadPreferences(memoryStorage({ "penna.app": `{"defaultDailyGoal":${goal}}` }))
+          .defaultDailyGoal,
+    );
+
+    expect(goals).toEqual([1000, 1000, 1000, 1000]);
   });
 });
 

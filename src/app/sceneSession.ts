@@ -35,6 +35,8 @@ export interface SceneSessionHooks {
   onScene(scene: OpenScene | null): void;
   onConflict(conflict: DiskConflict | null): void;
   onSaveStatus(status: SaveStatus): void;
+  /** After each scene save, with the text before and after, for the words-per-day count. */
+  onSaved?: (scene: { dir: string; id: string }, before: string, after: string) => void;
 }
 
 export interface SceneSession {
@@ -54,7 +56,10 @@ export function createSceneSession(fileSystem: FileSystem, hooks: SceneSessionHo
   const autosave = createAutosave({
     write: async (text) => {
       const scene = current.scene;
-      if (scene) await writeAtomic(fileSystem, scenePath(scene.dir, scene.id), text);
+      if (!scene) return;
+      const before = autosave.lastSavedText();
+      await writeAtomic(fileSystem, scenePath(scene.dir, scene.id), text);
+      hooks.onSaved?.(scene, before, text);
     },
     onStatus: hooks.onSaveStatus,
   });

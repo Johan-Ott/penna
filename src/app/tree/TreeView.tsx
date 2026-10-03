@@ -31,6 +31,7 @@ export interface TreeViewProps {
   onChangeTree: (tree: TreeNode[]) => void;
   onRenameScene: (id: string, title: string) => void;
   onSetSceneStatus: (id: string, status: SceneStatus) => void;
+  onShowSnapshots: (id: string) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
 }
 
@@ -112,6 +113,7 @@ function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
     restore: (node) => actions.restore(node),
     setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
     statusOf: (node) => props.project.summaries[node.id]?.status ?? null,
+    showSnapshots: (node) => props.onShowSnapshots(node.id),
   };
 }
 

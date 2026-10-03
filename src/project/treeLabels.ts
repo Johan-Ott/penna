@@ -1,5 +1,11 @@
 import type { SceneSummary } from "./sceneSummaries.js";
-import { findNode, numberNodes, type TreeNode } from "./tree.js";
+import {
+  findNode,
+  manuscriptNodes,
+  manuscriptSceneIds,
+  numberNodes,
+  type TreeNode,
+} from "./tree.js";
 
 type Summaries = Record<string, SceneSummary>;
 
@@ -72,3 +78,15 @@ export function chapterOf(tree: TreeNode[], sceneId: string): SceneChapter | nul
   if (number === undefined) return null;
   return { id: chapter.id, number, title: chapter.title ?? "", isFirstScene: found.index === 0 };
 }
+
+/** "Ord per kapitel" in Framsteg: each chapter of the manuscript with its label and words. */
+export const chapterWords = (tree: TreeNode[], summaries: Summaries) =>
+  manuscriptNodes(tree, "chapter").map((node) => ({
+    id: node.id,
+    label: nodeLabel(node, tree, summaries),
+    words: nodeWords(node, summaries),
+  }));
+
+/** All words in the manuscript, Research and Papperskorg left out. */
+export const manuscriptWords = (tree: TreeNode[], summaries: Summaries) =>
+  manuscriptSceneIds(tree).reduce((sum, id) => sum + (summaries[id]?.words ?? 0), 0);

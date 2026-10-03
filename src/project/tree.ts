@@ -129,8 +129,12 @@ function collect(nodes: TreeNode[], wanted: NodeKind): TreeNode[] {
 
 const manuscript = (tree: TreeNode[]) => tree.filter((node) => !isSpecial(node.id));
 
+/** Nodes of one kind in the manuscript, in reading order; Research and Papperskorg left out. */
+export const manuscriptNodes = (tree: TreeNode[], kind: NodeKind) =>
+  collect(manuscript(tree), kind);
+
 export const manuscriptSceneIds = (tree: TreeNode[]) =>
-  collect(manuscript(tree), "scene").map((node) => node.id);
+  manuscriptNodes(tree, "scene").map((node) => node.id);
 
 /** Scene files the tree does not know go to the end of the manuscript; none are removed. */
 export function reconcileScenes(tree: TreeNode[], sceneIdsOnDisk: string[]) {

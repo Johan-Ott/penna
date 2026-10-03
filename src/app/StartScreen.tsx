@@ -64,6 +64,7 @@ export function StartScreen({ app }: StartScreenProps) {
     return (
       <Onboarding
         knownLibraryDir={preferences.libraryDir}
+        defaultDailyGoal={preferences.defaultDailyGoal}
         startStep={onboardingStep}
         onFinish={finish}
         onCancel={() => setOnboardingStep(0)}
