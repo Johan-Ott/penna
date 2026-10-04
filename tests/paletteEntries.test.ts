@@ -29,6 +29,10 @@ function context() {
     describe: () => "Elins farbror",
     openCard: () => undefined,
     newNote: () => undefined,
+    splitScene: null,
+    mergeScene: null,
+    read: () => undefined,
+    openChapterId: null,
     chooseFolder: () => undefined,
     showShelf: () => undefined,
   };
@@ -68,7 +72,7 @@ describe("paletteEntries", () => {
 
   it("finds a note by name under its sort, with who it is, and opens it", () => {
     const shown: string[] = [];
-    const arvid = { id: "01ARVID", sortId: CHARACTERS_ID, name: "Arvid" };
+    const arvid = { id: "01ARVID", sortId: CHARACTERS_ID, name: "Arvid", sortLabel: "Personer" };
     const value = {
       ...context().value,
       cards: [arvid],

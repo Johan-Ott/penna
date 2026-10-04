@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
-import { t } from "../i18n/i18n.js";
+import { countWordsBetween } from "../manuscript/wordCount.js";
+import { numberLocale, t } from "../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
@@ -26,6 +27,18 @@ function MarkButton(props: {
     >
       {props.mark === "bold" ? "B" : "I"}
     </button>
+  );
+}
+
+// How long the marked passage is, quietly at the end of the bar.
+function SelectedWords({ editorState }: { editorState: EditorState | null }) {
+  if (!editorState) return null;
+  const { from, to } = editorState.selection;
+  const words = countWordsBetween(editorState.doc, from, to);
+  return (
+    <span className="selection-words">
+      {words === 1 ? t("1 ord") : t("{count} ord", { count: words.toLocaleString(numberLocale()) })}
+    </span>
   );
 }
 
@@ -80,6 +93,7 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
       <button className="icon-button" onClick={onComment}>
         {t("Kommentera")}
       </button>
+      <SelectedWords editorState={editor.editorState} />
     </div>
   );
 }

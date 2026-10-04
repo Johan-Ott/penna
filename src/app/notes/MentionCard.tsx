@@ -48,16 +48,18 @@ function connectionLine(project: Project, noteId: string) {
 /** The card shown when a name in the text is clicked: who it is, who they are to others. */
 export function MentionCard(props: {
   notes: Notes;
-  project: Project;
+  /** The series and the book: a note's connections are kept where the note lives. */
+  homes: Project[];
   onOpenNote: (id: string) => void;
 }) {
-  const { notes, project } = props;
+  const { notes, homes } = props;
   const cardRef = useCloseOnOutside(notes.hideMention);
   const shown = notes.mention;
   const card = notes.cards.find((candidate) => candidate.id === shown?.id);
   if (!shown || !card) return null;
   const description = notes.descriptionOf(card.id);
-  const connections = connectionLine(project, card.id);
+  const home = homes.find((candidate) => candidate.summaries[card.id]);
+  const connections = home ? connectionLine(home, card.id) : "";
   const place = placeOf(shown.box);
   return (
     <div ref={cardRef} className="mention-card" role="dialog" aria-label={card.name} style={place}>

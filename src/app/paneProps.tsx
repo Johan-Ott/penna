@@ -7,14 +7,16 @@ import { ReplaceToast } from "./SaveToast.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
 import { SelectionBar } from "./SelectionBar.js";
 import { TextHeader } from "./TextHeader.js";
-import { openIfOnDisk } from "./useSceneSession.js";
+import { openInHome } from "./notes/noteHomes.js";
+import { SeriesNotes } from "./tree/TreeView.js";
 import type { OpenScene } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 
-const openText = (app: AppState, project: Project) => (id: string) => {
+// A scene or note opens in Skriv from whichever folder holds it, the book or its series.
+const openText = (app: AppState) => (id: string) => {
   app.writingMode.setView("skriv");
-  openIfOnDisk(app.session, project, id);
+  openInHome(app.session, app.homes, id);
 };
 
 // "Kapitel 8 · Köket" in the focus mode's header.
@@ -24,24 +26,34 @@ function focusLocation(project: Project, scene: OpenScene | null) {
   return chapter ? t("Kapitel {number} · {title}", { number: chapter.number, title }) : title;
 }
 
+function sceneHeader(app: AppState, project: Project, sceneId: string) {
+  return (
+    <TextHeader
+      project={project}
+      sceneId={sceneId}
+      onChangeTree={(tree: TreeNode[]) => void app.updateTree(tree)}
+      onReadChapter={(chapterId) => app.writingMode.read(chapterId)}
+    />
+  );
+}
+
 // A note gets its sort, name, connections and mentions; a scene its chapter and when.
 function textParts(app: AppState, project: Project) {
   const scene = app.scene;
   if (!scene) return { header: null, footer: null };
-  const onChangeTree = (tree: TreeNode[]) => void app.updateTree(tree);
-  const sortId = noteSortOf(project, scene.id);
-  if (sortId === null) {
-    return {
-      header: <TextHeader project={project} sceneId={scene.id} onChangeTree={onChangeTree} />,
-      footer: null,
-    };
-  }
+  const home = app.homes.find((candidate) => noteSortOf(candidate, scene.id) !== null);
+  const sortId = home ? noteSortOf(home, scene.id) : null;
+  if (!home || sortId === null)
+    return { header: sceneHeader(app, project, scene.id), footer: null };
+  const isInSeries = home !== project;
   const noteProps = {
-    project,
+    project: home,
+    book: project,
     noteId: scene.id,
     notes: app.notes,
-    onOpen: openText(app, project),
-    onSaveFields: (fields: Record<string, unknown>) => void app.updateFields(fields),
+    onOpen: openText(app),
+    onSaveFields: (fields: Record<string, unknown>) =>
+      void (isInSeries ? app.seriesState.updateSeriesFields(fields) : app.updateFields(fields)),
   };
   return {
     header: <NoteHeader {...noteProps} sortId={sortId} />,
@@ -55,7 +67,7 @@ export function sidebarProps(app: AppState, project: Project) {
   return {
     project,
     openSceneId: writingMode.view === "skriv" ? (app.scene?.id ?? null) : null,
-    onOpenScene: openText(app, project),
+    onOpenScene: openText(app),
     isContentsShown: writingMode.view === "innehall",
     onShowContents: () => writingMode.setView("innehall"),
     onShowSyncCopy: (copy: SceneFileRef) => void app.syncCopy.showSyncCopy(copy),
@@ -65,6 +77,32 @@ export function sidebarProps(app: AppState, project: Project) {
     onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
     ...app.treeHandlers,
     onSetNoteLink: (id: string, isLinked: boolean) => void app.actions.notes.setLink(id, isLinked),
+    seriesNotes: app.series && <SeriesNotes {...seriesTreeProps(app, app.series)} />,
+    canMergeOpenScene: app.sceneSplit.canMerge,
+    onMergeWithNext: app.sceneSplit.merge,
+    onJoinSeries: (folder: string | null) => void app.seriesChoice.joinSeries(folder),
+    onCreateSeries: (title: string, noteIds: string[]) =>
+      void app.seriesChoice.createAndJoin(title, noteIds),
+    ...(app.series
+      ? { onMoveToSeries: (id: string) => void app.seriesChoice.moveToSeries([id]) }
+      : {}),
+  };
+}
+
+/** The series' part of the sidebar: its notes, renamed and moved in the series' own tree. */
+function seriesTreeProps(app: AppState, series: Project) {
+  const { actions, writingMode } = app;
+  return {
+    project: series,
+    name: series.name,
+    openSceneId: writingMode.view === "skriv" ? (app.scene?.id ?? null) : null,
+    onOpenScene: openText(app),
+    onChangeTree: (tree: TreeNode[]) => void app.seriesState.updateSeriesTree(tree),
+    onShowSnapshots: (id: string) => app.snapshots.show(id, series.dir),
+    onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
+    ...app.seriesTreeHandlers,
+    onSetNoteLink: (id: string, isLinked: boolean) =>
+      void actions.series.notes.setLink(id, isLinked),
   };
 }
 

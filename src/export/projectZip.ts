@@ -11,9 +11,13 @@ async function addFolder(fileSystem: FileSystem, zip: JSZip, dir: string, zipDir
   }
 }
 
-/** The whole project folder as a zip, for a backup or to send with a support question. */
-export async function projectZip(fileSystem: FileSystem, dir: string): Promise<Uint8Array> {
+/**
+ * Whole folders as one zip, each under its own name: a book and, when it has one, its series.
+ * For a backup or to send with a support question.
+ */
+export async function projectZip(fileSystem: FileSystem, dirs: string[]): Promise<Uint8Array> {
   const zip = new JSZip();
-  await addFolder(fileSystem, zip, dir, dir.slice(dir.lastIndexOf("/") + 1));
+  for (const dir of dirs)
+    await addFolder(fileSystem, zip, dir, dir.slice(dir.lastIndexOf("/") + 1));
   return zip.generateAsync({ type: "uint8array", compression: "DEFLATE" });
 }

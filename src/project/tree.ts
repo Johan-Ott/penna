@@ -86,7 +86,7 @@ export function findNode(
   return null;
 }
 
-function removeNode(tree: TreeNode[], id: string): TreeNode[] {
+export function removeNode(tree: TreeNode[], id: string): TreeNode[] {
   return tree
     .filter((node) => node.id !== id)
     .map((node) => (node.children ? { ...node, children: removeNode(node.children, id) } : node));
@@ -232,3 +232,12 @@ function pathTo(tree: TreeNode[], id: string): string[] | null {
 
 /** The ids of every node above `id`, from the root down; empty when `id` is not in the tree. */
 export const ancestorIds = (tree: TreeNode[], id: string) => pathTo(tree, id) ?? [];
+
+/** The scene right after `id` under the same parent, which Slå ihop med nästa takes in. */
+export function nextSceneSibling(tree: TreeNode[], id: string): string | null {
+  const found = findNode(tree, id);
+  if (!found) return null;
+  const siblings = found.parent ? (found.parent.children ?? []) : tree;
+  const next = siblings[found.index + 1];
+  return next?.kind === "scene" ? next.id : null;
+}

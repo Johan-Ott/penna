@@ -53,18 +53,27 @@ export function openIfOnDisk(session: SceneSession, project: Project, id: string
   if (project.scenes.includes(id)) void openScene(session, project.dir, id);
 }
 
+// A note open from the book's series belongs to this book too, so it is kept open.
+const isTextOf = (
+  openDir: string | undefined,
+  bookDir: string | undefined,
+  seriesDir: string | null,
+) => openDir !== undefined && (openDir === bookDir || openDir === seriesDir);
+
 // A project opens on its first scene with the cursor ready. A new project never keeps the
 // previous project's scene open; with no scenes, none is open. Crash text is settled first.
 export function useOpenFirstScene(
   project: Project | null,
   session: SceneSession,
   focusEditor: () => void,
+  seriesDir: string | null,
 ) {
   useEffect(() => {
-    if (!project || session.scene?.dir === project.dir || project.recoverable.length > 0) return;
+    const isOwnText = isTextOf(session.scene?.dir, project?.dir, seriesDir);
+    if (!project || isOwnText || project.recoverable.length > 0) return;
     const onDisk = manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
     const firstScene = onDisk[0] ?? project.scenes[0];
     if (!firstScene) return void closeScene(session);
     void openScene(session, project.dir, firstScene).then(focusEditor);
-  }, [project, session, focusEditor]);
+  }, [project, session, focusEditor, seriesDir]);
 }

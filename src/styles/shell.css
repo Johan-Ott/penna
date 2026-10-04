@@ -247,7 +247,7 @@
   text-transform: uppercase;
 }
 
-.sidebar-heading:first-child {
+.tree > .sidebar-heading:first-child {
   padding-top: 6px;
 }
 
@@ -919,4 +919,91 @@
   width: 100%;
   min-height: 100%;
   background: transparent;
+}
+
+/* A series on the shelf: its name over its row of books. */
+.shelf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shelf-series {
+  margin: 0;
+  color: var(--text-label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* The marked passage's length, after the selection bar's buttons. */
+.selection-words {
+  padding: 0 8px 0 6px;
+  border-left: 1px solid var(--border-soft);
+  color: var(--text-label);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Läs: a chapter or the whole book in a row, set like the text in Skriv */
+.read-view {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.read-column {
+  padding: 48px 0 120px;
+}
+
+.read-back {
+  margin-bottom: 24px;
+  font-family: var(--font-ui);
+}
+
+.read-chapter {
+  margin: 48px 0 8px;
+  color: var(--text);
+  font: 600 32px/1.2 var(--font-prose);
+}
+
+.read-scene-title {
+  display: block;
+  margin: 28px 0 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font: 12px var(--font-ui);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.read-text {
+  cursor: text;
+}
+
+.text-place {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.read-link,
+.contents-read {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font: inherit;
+  letter-spacing: 0;
+  text-decoration: underline;
+  text-transform: none;
+}
+
+.contents-read {
+  display: block;
+  margin-top: 8px;
 }

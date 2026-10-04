@@ -3,6 +3,7 @@ import { ExportError, type Typography } from "../../export/book.js";
 import { buildEpub } from "../../export/epub.js";
 import { TypstError } from "../../export/typstCompile.js";
 import { typstSource } from "../../export/typstBook.js";
+import { seriesDirOf } from "../../project/series.js";
 import { projectZip } from "../../export/projectZip.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
 import { standardManuscript } from "../../export/standardManuscript.js";
@@ -108,7 +109,10 @@ const BACKUP_KIND: FileKind = { name: t("Zip-arkiv"), extension: "zip" };
 // The whole folder, snapshots and comments included, named with today's date.
 async function saveBackup(project: Project): Promise<ExportState> {
   try {
-    const bytes = await projectZip(platform.fileSystem, project.dir);
+    const seriesDir = seriesDirOf(project.dir, project.fields);
+    const hasSeries = seriesDir !== null && (await platform.folderExists(seriesDir));
+    const dirs = hasSeries ? [project.dir, seriesDir] : [project.dir];
+    const bytes = await projectZip(platform.fileSystem, dirs);
     const name = `${project.name} ${new Date().toISOString().slice(0, 10)}.zip`;
     const path = await platform.saveFile(name, bytes, BACKUP_KIND);
     return path ? { kind: "saved", fileName: fileNameOf(path), path } : { kind: "idle" };

@@ -8,6 +8,7 @@ const SHORTCUTS: [string, string][] = [
   [t("Lämna fokusläget"), "Esc"],
   [t("Ny scen"), "Ctrl Alt N"],
   [t("Scenbrytning"), "Ctrl Enter"],
+  [t("Dela scenen vid markören"), "Ctrl Shift Enter"],
   [t("Kommentera markeringen"), "Ctrl Shift M"],
   [t("Fetstil"), "Ctrl B"],
   [t("Kursiv"), "Ctrl I"],

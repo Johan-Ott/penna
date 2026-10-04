@@ -17,9 +17,10 @@ export interface Project extends OpenedProject {
   isReadOnly: boolean;
 }
 
-const folderName = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
+const folderName = (dir: string) =>
+  (dir.split("/").pop() ?? dir).replace(/\.penna$/, "").replace(/\.serie$/, "");
 
-async function readProject(dir: string): Promise<Project> {
+export async function readProject(dir: string): Promise<Project> {
   const fileSystem = platform.fileSystem;
   const listing = await openProjectFolder(fileSystem, dir);
   const file = await readProjectFile(fileSystem, dir, listing.scenes);
@@ -59,7 +60,7 @@ function useProjectWriter(projectRef: React.RefObject<Project | null>) {
 }
 
 // The tree and the other fields of project.json change on screen at once and are then written.
-function useProjectUpdates(
+export function useProjectUpdates(
   projectRef: React.RefObject<Project | null>,
   setProject: React.Dispatch<React.SetStateAction<Project | null>>,
 ) {
@@ -80,7 +81,7 @@ function useProjectUpdates(
     (fields: Record<string, unknown>) => update({ fields }),
     [update],
   );
-  return { updateTree, updateFields, treeFailure };
+  return { updateTree, updateFields, updateProject: update, treeFailure };
 }
 
 /** The project folder the writer picked, read again whenever something in it changes. */
@@ -104,7 +105,11 @@ export function useProject(onFolderChange: () => void) {
   return { project, open, close, choose, refresh, ...updates };
 }
 
-function useFolderWatch(dir: string | null, refresh: () => Promise<void>, onChange: () => void) {
+export function useFolderWatch(
+  dir: string | null,
+  refresh: () => Promise<void>,
+  onChange: () => void,
+) {
   useEffect(() => {
     if (!dir) return;
     const stopWatching = platform.watchFolder(dir, () => {

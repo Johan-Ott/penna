@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { isLinkedByDefault } from "../../project/cards.js";
-import { CHARACTERS_ID, sortsOf } from "../../project/tree.js";
+import { CHARACTERS_ID, findNode, sortsOf } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
-import { Switch } from "../settings/controls.js";
+import { Choice, Switch } from "../settings/controls.js";
 import { useEscape } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
 import type { NewNote } from "./useNoteActions.js";
@@ -10,9 +10,11 @@ import { t } from "../../i18n/i18n.js";
 
 interface NewNoteDialogProps {
   project: Project;
+  /** The book's series, or null; a note goes there unless the writer keeps it to the book. */
+  series: Project | null;
   /** The sort chosen at the start, such as the one whose empty state asked for a note. */
   sortId: string | null;
-  onCreate: (note: NewNote) => void;
+  onCreate: (note: NewNote, isInSeries: boolean) => void;
   onClose: () => void;
 }
 
@@ -121,11 +123,59 @@ function useNoteForm(initialSort: string) {
   return { name, setName, sortId, pick, newSort, setNewSort, isLinked, flip, note, isReady };
 }
 
+const startsInSeries = ({ series, sortId }: NewNoteDialogProps) =>
+  series !== null && (sortId === null || findNode(series.tree, sortId) !== null);
+
+// In a book of a series: the series, where every book finds the note, or only this book.
+function HomeChoice(props: {
+  series: Project;
+  isInSeries: boolean;
+  onChange: (isInSeries: boolean) => void;
+}) {
+  return (
+    <div className="field">
+      <span className="field-label">{t("Var")}</span>
+      <Choice
+        label={t("Var")}
+        value={props.isInSeries ? "serie" : "bok"}
+        options={[
+          ["serie", props.series.name],
+          ["bok", t("Bara den här boken")],
+        ]}
+        onSelect={(value) => props.onChange(value === "serie")}
+      />
+    </div>
+  );
+}
+
+// The folder the note goes in; changing it starts over on Personer, which both have.
+function useHome(props: NewNoteDialogProps, form: Form) {
+  const [isInSeries, setInSeries] = useState(() => startsInSeries(props));
+  const home = isInSeries && props.series ? props.series : props.project;
+  const changeHome = (next: boolean) => (setInSeries(next), form.pick(CHARACTERS_ID));
+  return { isInSeries, home, changeHome };
+}
+
+/** Avbryt and the button that saves, as Ny anteckning and Serie end. */
+export function DialogActions(props: { isReady: boolean; label?: string; onClose: () => void }) {
+  return (
+    <div className="dialog-actions">
+      <button type="button" className="button ghost" onClick={props.onClose}>
+        {t("Avbryt")}
+      </button>
+      <button type="submit" className="button primary" disabled={!props.isReady}>
+        {props.label ?? t("Skapa")}
+      </button>
+    </div>
+  );
+}
+
 /** Ny anteckning: a name, a sort, and whether the name is linked wherever it is written. */
 export function NewNoteDialog(props: NewNoteDialogProps) {
   const form = useNoteForm(props.sortId ?? CHARACTERS_ID);
+  const { isInSeries, home, changeHome } = useHome(props, form);
   useEscape(props.onClose);
-  const create = () => form.isReady && (props.onCreate(form.note), props.onClose());
+  const create = () => form.isReady && (props.onCreate(form.note, isInSeries), props.onClose());
   return (
     <div className="dialog-backdrop" onClick={props.onClose}>
       <form
@@ -136,15 +186,11 @@ export function NewNoteDialog(props: NewNoteDialogProps) {
         onClick={(event) => event.stopPropagation()}
         onSubmit={(event) => (event.preventDefault(), create())}
       >
-        <NoteFields form={form} project={props.project} />
-        <div className="dialog-actions">
-          <button type="button" className="button ghost" onClick={props.onClose}>
-            {t("Avbryt")}
-          </button>
-          <button type="submit" className="button primary" disabled={!form.isReady}>
-            {t("Skapa")}
-          </button>
-        </div>
+        {props.series && (
+          <HomeChoice series={props.series} isInSeries={isInSeries} onChange={changeHome} />
+        )}
+        <NoteFields form={form} project={home} />
+        <DialogActions isReady={form.isReady} onClose={props.onClose} />
       </form>
     </div>
   );

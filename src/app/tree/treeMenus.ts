@@ -27,6 +27,11 @@ export interface TreeMenuActions {
   setLink: (node: TreeNode, isLinked: boolean) => void;
   /** Ny anteckning, with the sort already chosen. */
   newNote: (sortId: string) => void;
+  /** Moves a book's note into the book's series; null when the book is in no series. */
+  moveToSeries: ((node: TreeNode) => void) | null;
+  /** Whether a scene is the open one with a scene after it to take in. */
+  canMerge: (node: TreeNode) => boolean;
+  mergeWithNext: () => void;
 }
 
 /** The add button and a right-click on empty space offer the same four things. */
@@ -72,6 +77,7 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
 function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null {
   const isLinked = actions.linkOf(node);
   if (isLinked === null) return null;
+  const { moveToSeries } = actions;
   return [
     {
       label: t("Koppla namnet i texten"),
@@ -79,6 +85,9 @@ function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null 
       separatorBefore: true,
       onSelect: () => actions.setLink(node, !isLinked),
     },
+    ...(moveToSeries
+      ? [{ label: t("Flytta till serien"), onSelect: () => moveToSeries(node) }]
+      : []),
   ];
 }
 
@@ -124,6 +133,9 @@ export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuAct
       ? [
           { label: t("Öppna"), onSelect: () => actions.open(node) },
           { label: t("Versioner…"), onSelect: () => actions.showSnapshots(node) },
+          ...(actions.canMerge(node)
+            ? [{ label: t("Slå ihop med nästa scen"), onSelect: actions.mergeWithNext }]
+            : []),
         ]
       : [];
   const [firstAdded, ...restAdded] = added;

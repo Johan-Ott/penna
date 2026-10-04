@@ -8,6 +8,7 @@ interface TextHeaderProps {
   project: Project;
   sceneId: string;
   onChangeTree: (tree: TreeNode[]) => void;
+  onReadChapter: (chapterId: string) => void;
 }
 
 // "När: dag 3, kväll", written straight into the header and saved when it is left.
@@ -42,12 +43,19 @@ function headingOf(project: Project, sceneId: string) {
  * Above a scene: "Kapitel 8 · Köket", and when it happens. The chapter's title opens its first
  * scene, as in a printed book. "När" belongs to the chapter, as in Innehåll.
  */
-export function TextHeader({ project, sceneId, onChangeTree }: TextHeaderProps) {
+export function TextHeader({ project, sceneId, onChangeTree, onReadChapter }: TextHeaderProps) {
   const { chapter, place, whenId, when } = headingOf(project, sceneId);
   return (
     <header className="text-header">
       <div className="text-eyebrow">
-        <span>{place}</span>
+        <span className="text-place">
+          {place}
+          {chapter && (
+            <button className="read-link" onClick={() => onReadChapter(chapter.id)}>
+              {t("Läs kapitlet")}
+            </button>
+          )}
+        </span>
         <WhenField
           when={when}
           onSave={(text) => onChangeTree(withNodeText(project.tree, whenId, "when", text))}

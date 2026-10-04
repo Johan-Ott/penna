@@ -18,11 +18,13 @@ export function useSnapshots(project: Project | null, session: SceneSession) {
     setSnapshots(await listSnapshots(platform.fileSystem, ref));
   };
   // The dialog compares with the open scene, so a scene picked in the tree is opened first.
-  const show = async (id: string) => {
+  // A note from the series lies in the series' folder, which the caller then names.
+  const show = async (id: string, dir?: string) => {
     if (!project) return;
-    if (session.scene?.id !== id && !(await openScene(session, project.dir, id))) return;
-    setScene({ dir: project.dir, id });
-    await reload({ dir: project.dir, id });
+    const where = dir ?? (session.scene?.id === id ? session.scene.dir : project.dir);
+    if (session.scene?.id !== id && !(await openScene(session, where, id))) return;
+    setScene({ dir: where, id });
+    await reload({ dir: where, id });
   };
   const afterwards = (action: (ref: SceneRef) => Promise<unknown>) => {
     if (scene) void action(scene).then(() => reload(scene));
@@ -32,7 +34,7 @@ export function useSnapshots(project: Project | null, session: SceneSession) {
     snapshots,
     chosen,
     choose: setChosen,
-    show: (id: string) => void show(id),
+    show: (id: string, dir?: string) => void show(id, dir),
     take: (label: string) => afterwards((ref) => takeManualSnapshot(session, ref, label)),
     restore: (snapshot: Snapshot) =>
       afterwards((ref) => restoreSnapshot(session, ref, snapshot, Date.now())),

@@ -1,4 +1,4 @@
-import type { ShelfBook } from "../../project/shelf.js";
+import { shelfGroups, type ShelfBook } from "../../project/shelf.js";
 import { Book } from "./Book.js";
 import { useShelf } from "./useShelf.js";
 import { t, numberLocale } from "../../i18n/i18n.js";
@@ -48,6 +48,33 @@ function summary(books: ShelfBook[]) {
   });
 }
 
+function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
+  return (
+    <div className="book">
+      <button className="book-cover new-book" onClick={onNewProject}>
+        {t("+ Nytt projekt")}
+      </button>
+      <div className="shelf-board" />
+    </div>
+  );
+}
+
+// Books on their own in the first row, then a row per series under its name.
+function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
+  const groups = shelfGroups(props.books);
+  return groups.map((group, groupIndex) => (
+    <section key={group.series ?? ""} className="shelf-group">
+      {group.series && <h2 className="shelf-series">{group.series}</h2>}
+      <div className="books">
+        {group.books.map((book) => (
+          <Book key={book.dir} book={book} index={props.books.indexOf(book)} {...props} />
+        ))}
+        {groupIndex === groups.length - 1 && <NewBook {...props} />}
+      </div>
+    </section>
+  ));
+}
+
 /** "Din bokhylla": every project as a book, with its status and when it was last written in. */
 export function Bookshelf(props: BookshelfProps) {
   const books = useShelf(props.libraryDir, props.knownProjects);
@@ -59,19 +86,7 @@ export function Bookshelf(props: BookshelfProps) {
           {books && <span className="shelf-summary">{summary(books)}</span>}
         </div>
         {books?.length === 0 && <EmptyShelf {...props} />}
-        {books && books.length > 0 && (
-          <div className="books">
-            {books.map((book, index) => (
-              <Book key={book.dir} book={book} index={index} {...props} />
-            ))}
-            <div className="book">
-              <button className="book-cover new-book" onClick={props.onNewProject}>
-                {t("+ Nytt projekt")}
-              </button>
-              <div className="shelf-board" />
-            </div>
-          </div>
-        )}
+        {books && books.length > 0 && <ShelfRows books={books} {...props} />}
       </main>
     </div>
   );

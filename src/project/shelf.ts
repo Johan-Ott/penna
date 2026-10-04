@@ -2,6 +2,7 @@ import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
 import { readSceneSummaries, type SceneSummary } from "./sceneSummaries.js";
+import { seriesTitle } from "./series.js";
 import { manuscriptSceneIds, type TreeNode } from "./tree.js";
 import { t } from "../i18n/i18n.js";
 
@@ -16,6 +17,8 @@ export interface ShelfBook {
   updatedAt: number | null;
   /** The folder is gone: moved, renamed or on a disk that is not connected. */
   isMissing: boolean;
+  /** The series the book belongs to, by name, or null. */
+  series: string | null;
 }
 
 const STATUS_LABELS: Record<SceneStatus, string> = {
@@ -77,9 +80,10 @@ async function readProjectFields(fileSystem: FileSystem, dir: string) {
       unknown
     >;
     const tree = Array.isArray(parsed["tree"]) ? (parsed["tree"] as TreeNode[]) : [];
-    return { title: parsed["title"], type: parsed["type"], tree };
+    const series = typeof parsed["series"] === "string" ? seriesTitle(parsed["series"]) : null;
+    return { title: parsed["title"], type: parsed["type"], tree, series };
   } catch {
-    return { title: undefined, type: undefined, tree: [] };
+    return { title: undefined, type: undefined, tree: [], series: null };
   }
 }
 
@@ -112,6 +116,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
       progress: 0,
       updatedAt: null,
       isMissing: true,
+      series: null,
     };
   }
   const fields = await readProjectFields(fileSystem, dir);
@@ -126,6 +131,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
     progress: bookProgress(scenes),
     updatedAt: await lastChange(fileSystem, dir, sceneIds),
     isMissing: false,
+    series: fields.series,
   };
 }
 
@@ -143,4 +149,13 @@ export async function readShelf(
   const dirs = [...new Set([...inLibrary, ...knownDirs])];
   const books = await Promise.all(dirs.map((dir) => readBook(fileSystem, dir)));
   return [...books.filter((book) => !book.isMissing), ...books.filter((book) => book.isMissing)];
+}
+
+/** The shelf in rows: books on their own first, then each series with its books together. */
+export function shelfGroups(books: ShelfBook[]) {
+  const names = [...new Set(books.map((book) => book.series))];
+  const ordered = [null, ...names.filter((name) => name !== null)];
+  return ordered
+    .map((series) => ({ series, books: books.filter((book) => book.series === series) }))
+    .filter((group) => group.books.length > 0);
 }

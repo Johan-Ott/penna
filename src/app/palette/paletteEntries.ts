@@ -24,9 +24,9 @@ import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import type { PaletteEntry } from "./paletteSearch.js";
+import { cardEntries, sceneEntries } from "./bookEntries.js";
 import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
-import { nodeLabel } from "../../project/treeLabels.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
@@ -44,14 +44,22 @@ export interface PaletteContext {
   showSnapshots: (() => void) | null;
   openSettings: () => void;
   showView: (view: View) => void;
-  cards: Card[];
+  /** The linked notes, from the series and the book, each with its sort's name. */
+  cards: (Card & { sortLabel: string })[];
   /** "Elins farbror": the first sentence of a note, beside its name. */
   describe: (id: string) => string;
   openCard: (id: string) => void;
   newNote: () => void;
+  /** Null when there is nothing to split or merge. */
+  splitScene: (() => void) | null;
+  mergeScene: (() => void) | null;
+  /** Läs: a chapter, or the whole book when null. */
+  read: (chapterId: string | null) => void;
+  /** The chapter of the open scene, or null. */
+  openChapterId: string | null;
 }
 
-const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
+export const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
   id: `kommando:${label}`,
   label,
   group: "Kommandon",
@@ -99,6 +107,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Ny del"), () => context.add("part")),
     command(t("Ny mapp"), () => context.add("folder")),
     command(t("Ny anteckning"), context.newNote),
+    ...sceneEntries(context),
     command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
     command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),
     ...(context.showSnapshots
@@ -174,25 +183,6 @@ function switchEntries({
     command(t("Bokhylla"), showShelf),
     command(t("Öppna projektmapp…"), chooseFolder),
   ];
-}
-
-// Ctrl+K finds the notes too, grouped by their sort, and each opens in the editor.
-function cardEntries({ project, cards, describe, openCard, newNote }: PaletteContext) {
-  const sortName = (id: string) => {
-    const sort = findNode(project.tree, id)?.node;
-    return sort ? nodeLabel(sort, project.tree, project.summaries) : "";
-  };
-  const entries = cards.map((card): PaletteEntry => {
-    const hint = describe(card.id);
-    return {
-      id: `kort:${card.id}`,
-      label: card.name,
-      group: sortName(card.sortId),
-      run: () => openCard(card.id),
-      ...(hint ? { hint } : {}),
-    };
-  });
-  return [...entries, command(t("Ny anteckning"), newNote)];
 }
 
 /** Everything the command palette can find: scenes, chapters, characters, commands, settings. */

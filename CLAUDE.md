@@ -97,6 +97,12 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   sorts in Ny anteckning. Mentions are counted from the manuscript text, never stored; a note's
   page shows them under Nämns i. Connections ("Elin, brorsdotter") are project.json `connections`.
   Older projects' Karaktärer, Tidslinje and Research folders become sorts when they are read.
+- A series is a folder beside its books (`Vintervägen.serie`), built like a project but holding
+  only sorts (`project/series.ts`). A book names it in project.json `series` (the folder name),
+  and `useSeries` reads, watches and writes it beside the book. Notes live in "homes": the series
+  first, then the book (`notes/noteHomes.ts`); the sidebar shows the series' sorts and the book's
+  own only when they hold notes. Moving notes into a series renames their files there
+  (`moveNotesToSeries`), so nothing is copied or deleted; an open note is closed first.
 - Names of notes are underlined in the open scene by a decoration plugin (`editor/mentions.ts`);
   nothing is written into the scene file. The editor only gets `{ id, pattern }` pairs from
   `useMentionLinks`; a click shows `MentionCard`.
@@ -133,6 +139,11 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   1200 px it covers the text. Under 960 px the sidebar starts hidden and floats over the card when
   shown (Ctrl+. or the sidebar button; `isSidebarOpen` in `useWritingMode`). The smallest window
   is 720 × 500.
+- Läs (view `las`, `contents/ReadView.tsx`) shows a chapter or the whole book in a row, drawn
+  read-only with the editor's own schema; a click opens that scene in Skriv at the paragraph
+  (`cursorAtBlock`). Dela scenen (Ctrl+Shift+Enter) moves the text after the cursor to a new
+  scene after it; Slå ihop med nästa scen takes the next scene's text in and moves that scene to
+  Papperskorg (`sceneSplitActions.ts`, `editor/sceneSplit.ts`).
 - The top bar has no formatting buttons: bold, italic and style are on the selection bar, a scene
   break is typed as `***` on an empty line (an input rule in `editorState.ts`) or Ctrl+Enter.
 - Editor switches (typewriter, typography, spellcheck, mentions, repetitions, comments) are one

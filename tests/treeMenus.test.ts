@@ -15,6 +15,9 @@ const actions: TreeMenuActions = {
   linkOf: () => null,
   setLink: noop,
   newNote: noop,
+  moveToSeries: null,
+  canMerge: () => false,
+  mergeWithNext: noop,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));
@@ -101,6 +104,39 @@ describe("tree menus", () => {
     expect(labels(items)).not.toContain("Status: Utkast");
     expect(items.find((item) => item.label === "Koppla namnet i texten")?.isChecked).toBe(true);
     expect(changes).toEqual([false]);
+  });
+
+  it("offers to move a book's note into the series when the book is in one", () => {
+    const moved: string[] = [];
+    const inSeries: TreeMenuActions = {
+      ...actions,
+      linkOf: () => true,
+      moveToSeries: (note) => moved.push(note.id),
+    };
+
+    rowMenu(node("scene", "arvid"), false, inSeries)
+      .find((item) => item.label === "Flytta till serien")
+      ?.onSelect();
+
+    expect(moved).toEqual(["arvid"]);
+  });
+
+  it("offers to merge the open scene with the next one when there is one", () => {
+    const merged: string[] = [];
+    const withNext: TreeMenuActions = {
+      ...actions,
+      canMerge: (scene) => scene.id === "s1",
+      mergeWithNext: () => merged.push("s1"),
+    };
+
+    rowMenu(node("scene", "s1"), false, withNext)
+      .find((item) => item.label === "Slå ihop med nästa scen")
+      ?.onSelect();
+
+    expect(merged).toEqual(["s1"]);
+    expect(labels(rowMenu(node("scene", "s2"), false, withNext))).not.toContain(
+      "Slå ihop med nästa scen",
+    );
   });
 
   it("offers nothing on Papperskorg itself and only a way back for things in it", () => {

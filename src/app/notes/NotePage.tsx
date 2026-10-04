@@ -8,7 +8,10 @@ import { Connections } from "./Connections.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface NotePageProps {
+  /** Where the note lives: the series, or the book itself. */
   project: Project;
+  /** The open book, whose chapters the note is named in. */
+  book: Project;
   noteId: string;
   notes: Notes;
   onOpen: (id: string) => void;
@@ -35,7 +38,7 @@ export function noteSortOf(project: Project, id: string) {
 /** Above a note: its sort, where it is named, its name and its connections. */
 export function NoteHeader(props: NotePageProps & { sortId: string }) {
   const { project, noteId } = props;
-  const chapters = mentionedChapters(project, props.notes.mentions.get(noteId));
+  const chapters = mentionedChapters(props.book, props.notes.mentions.get(noteId));
   return (
     <header className="note-header">
       <div className="text-eyebrow">
@@ -53,7 +56,7 @@ export function NoteHeader(props: NotePageProps & { sortId: string }) {
 }
 
 /** Below a note: every scene that names it, with the sentence, in reading order. */
-export function NoteMentions({ project, noteId, notes, onOpen }: NotePageProps) {
+export function NoteMentions({ book: project, noteId, notes, onOpen }: NotePageProps) {
   const mentions = notes.mentions.get(noteId);
   if (!mentions || mentions.sceneIds.length === 0) return null;
   const placeOf = (id: string) => {

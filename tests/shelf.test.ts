@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { bookProgress, bookStatus, readShelf, whenUpdated } from "../src/project/shelf";
+import {
+  bookProgress,
+  bookStatus,
+  readShelf,
+  shelfGroups,
+  whenUpdated,
+} from "../src/project/shelf";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -54,5 +60,23 @@ describe("readShelf", () => {
       ["Saltstank", true],
     ]);
     expect(books[0]).toMatchObject({ kind: "Roman", words: 2, status: "Klar", progress: 100 });
+  });
+});
+
+describe("shelfGroups", () => {
+  it("keeps the books of a series together under its name, books on their own first", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/A.penna/project.json": '{"title":"Isen","series":"Vintern.serie","tree":[]}',
+      "/Penna/B.penna/project.json": '{"title":"Fristående","tree":[]}',
+      "/Penna/C.penna/project.json": '{"title":"Fyren","series":"Vintern.serie","tree":[]}',
+    });
+    const books = await readShelf(files, "/Penna", []);
+
+    const groups = shelfGroups(books);
+
+    expect(groups.map((group) => [group.series, group.books.map((book) => book.title)])).toEqual([
+      [null, ["Fristående"]],
+      ["Vintern", ["Isen", "Fyren"]],
+    ]);
   });
 });

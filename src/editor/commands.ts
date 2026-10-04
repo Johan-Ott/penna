@@ -109,3 +109,18 @@ export const clearFormatting: Command = (state, dispatch) => {
   dispatch?.(transaction);
   return true;
 };
+
+/** Moves the cursor to the start of the `index`th block, as a click in the reading view asks. */
+export const cursorAtBlock =
+  (index: number): Command =>
+  (state, dispatch) => {
+    let position = 0;
+    state.doc.forEach((_block, offset, blockIndex) => {
+      if (blockIndex <= index) position = offset + 1;
+    });
+    const selection = TextSelection.near(
+      state.doc.resolve(Math.min(position, state.doc.content.size)),
+    );
+    dispatch?.(state.tr.setSelection(selection).scrollIntoView());
+    return true;
+  };

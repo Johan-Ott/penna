@@ -1,6 +1,9 @@
 import type { MouseEvent } from "react";
 import type { AppState } from "../App.js";
 import { ContentsView } from "../contents/ContentsView.js";
+import { ReadView } from "../contents/ReadView.js";
+import { cursorAtBlock } from "../../editor/commands.js";
+import { openScene } from "../sceneSession.js";
 import { useMenuButton } from "../Menu.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
@@ -79,22 +82,43 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
   );
 }
 
-// The card in the middle: the text being written, with Innehåll laid over it when chosen.
+// A click in Läs: back to Skriv in that scene, with the cursor at the paragraph clicked.
+function openAt(app: AppState, project: Project, sceneId: string, blockIndex: number) {
+  app.writingMode.setView("skriv");
+  void openScene(app.session, project.dir, sceneId).then(
+    (isOpen) => isOpen && app.editor.run(cursorAtBlock(blockIndex)),
+  );
+}
+
+function Contents({ app, project }: ScreenProps) {
+  return (
+    <ContentsView
+      project={project}
+      onOpenScene={sidebarProps(app, project).onOpenScene}
+      onChangeTree={(tree) => void app.updateTree(tree)}
+      onSaveFields={(fields) => void app.updateFields(fields)}
+      onSetStatus={(ids, status) =>
+        ids.forEach((id) => app.treeHandlers.onSetSceneStatus(id, status))
+      }
+      onReadBook={() => app.writingMode.read(null)}
+    />
+  );
+}
+
+// The card in the middle: the text being written, with Innehåll or Läs laid over it.
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
-  const saveFields = (fields: Record<string, unknown>) => void app.updateFields(fields);
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
       <WritingArea {...writingAreaProps(app, project)} />
-      {writingMode.view === "innehall" && (
-        <ContentsView
+      {writingMode.view === "innehall" && <Contents app={app} project={project} />}
+      {writingMode.view === "las" && (
+        <ReadView
           project={project}
-          onOpenScene={sidebarProps(app, project).onOpenScene}
-          onChangeTree={(tree) => void app.updateTree(tree)}
-          onSaveFields={saveFields}
-          onSetStatus={(ids, status) =>
-            ids.forEach((id) => app.treeHandlers.onSetSceneStatus(id, status))
-          }
+          chapterId={writingMode.readChapterId}
+          settings={writingMode.settings}
+          onOpenAt={(sceneId, blockIndex) => openAt(app, project, sceneId, blockIndex)}
+          onBack={() => writingMode.setView("skriv")}
         />
       )}
     </div>
@@ -117,10 +141,11 @@ function Floating({ app, project }: ScreenProps) {
       {app.newNoteSort !== false && (
         <NewNoteDialog
           project={project}
+          series={app.series}
           sortId={app.newNoteSort}
-          onCreate={(note) => {
+          onCreate={(note, isInSeries) => {
             writingMode.setView("skriv");
-            void app.actions.notes.newNote(note);
+            void (isInSeries ? app.actions.series : app.actions).notes.newNote(note);
           }}
           onClose={() => app.setNewNoteSort(false)}
         />
@@ -134,6 +159,7 @@ function Floating({ app, project }: ScreenProps) {
 export function ProjectScreen({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const menu = useAppMenu({ app, project });
+  useShortcut("enter", app.sceneSplit.split, { shift: true });
   const isPublishing = writingMode.view === "publicera";
   const classes = [
     "app",

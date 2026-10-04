@@ -60,3 +60,7 @@ export function sidebarSections(rows: TreeRow[]) {
   }
   return sections;
 }
+
+/** The rows without sorts that hold nothing, as a book in a series shows its own notes. */
+export const withoutEmptySorts = (rows: TreeRow[]) =>
+  rows.filter((row) => !(row.node.kind === "sort" && (row.node.children ?? []).length === 0));

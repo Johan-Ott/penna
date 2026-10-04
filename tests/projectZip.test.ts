@@ -12,7 +12,7 @@ describe("projectZip", () => {
       "/Penna/Annat.penna/project.json": "{}",
     });
 
-    const bytes = await projectZip(files, "/Penna/Isen.penna");
+    const bytes = await projectZip(files, ["/Penna/Isen.penna"]);
 
     const zip = await JSZip.loadAsync(bytes);
     const paths = Object.values(zip.files)
@@ -25,5 +25,18 @@ describe("projectZip", () => {
       "Isen.penna/snapshots/s1/2026-10-04T10-00.md",
     ]);
     expect(await zip.file("Isen.penna/scenes/s1.md")?.async("string")).toBe("Brevet låg där.");
+  });
+
+  it("packs the book's series beside the book, so both unpack into the library together", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/Isen.penna/project.json": '{"series":"Vintern.serie"}',
+      "/Penna/Vintern.serie/scenes/arvid.md": "Fiskare.",
+    });
+
+    const bytes = await projectZip(files, ["/Penna/Isen.penna", "/Penna/Vintern.serie"]);
+
+    const zip = await JSZip.loadAsync(bytes);
+    expect(await zip.file("Vintern.serie/scenes/arvid.md")?.async("string")).toBe("Fiskare.");
+    expect(zip.file("Isen.penna/project.json")).not.toBeNull();
   });
 });

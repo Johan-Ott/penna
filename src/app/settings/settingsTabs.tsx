@@ -148,7 +148,9 @@ function ZipRow({ onExportZip }: { onExportZip: () => void }) {
   return (
     <Row
       label={t("Exportera allt som zip")}
-      hint={t("Hela projektmappen, med versioner och kommentarer.")}
+      hint={t(
+        "Hela projektmappen med versioner och kommentarer, och seriens mapp om boken har en.",
+      )}
     >
       <button className="button secondary small" onClick={onExportZip}>
         {t("Spara som zip…")}

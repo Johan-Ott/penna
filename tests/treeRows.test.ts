@@ -14,7 +14,7 @@ import {
   TRASH_ID,
   type TreeNode,
 } from "../src/project/tree";
-import { dropMove, sidebarSections, visibleRows } from "../src/project/treeRows";
+import { dropMove, sidebarSections, visibleRows, withoutEmptySorts } from "../src/project/treeRows";
 
 const scene = (id: string): TreeNode => ({ id, kind: "scene" });
 
@@ -140,5 +140,16 @@ describe("sidebarSections", () => {
       NOTES_ID,
     ]);
     expect(sections.trash.map((row) => row.node.id)).toEqual([TRASH_ID]);
+  });
+});
+
+describe("withoutEmptySorts", () => {
+  it("keeps only the sorts that hold notes, with their notes", () => {
+    const tree = insertNode(sampleTree(), scene("arvid"), CHARACTERS_ID, 0);
+    const notes = sidebarSections(visibleRows(tree, new Set())).notes;
+
+    const kept = withoutEmptySorts(notes);
+
+    expect(kept.map((row) => row.node.id)).toEqual([CHARACTERS_ID, "arvid"]);
   });
 });

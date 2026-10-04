@@ -5,6 +5,7 @@ import {
   manuscriptSceneIds,
   moveNode,
   moveToTrash,
+  nextSceneSibling,
   numberNodes,
   rebuildTree,
   reconcileScenes,
@@ -182,5 +183,14 @@ describe("scenes on disk", () => {
     const tree = rebuildTree(["01B", "01A"]);
 
     expect(tree.map((node) => node.id)).toEqual(["01A", "01B", ...FIXED]);
+  });
+});
+
+describe("nextSceneSibling", () => {
+  it("finds the next scene in the same chapter, and nothing after the last", () => {
+    const tree = sampleTree();
+
+    expect(nextSceneSibling(tree, "s1")).toBe("s2");
+    expect(nextSceneSibling(tree, "s2")).toBeNull();
   });
 });

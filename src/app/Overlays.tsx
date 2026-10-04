@@ -27,6 +27,7 @@ import type { SettingsChange } from "./useWritingSettings.js";
 
 interface OverlayParts {
   project: Project | null;
+  homes: Project[];
   scene: OpenScene | null;
   session: SceneSession;
   conflict: DiskConflict | null;
@@ -74,7 +75,7 @@ function MentionLayer({ app }: { app: OverlayParts }) {
     notes.hideMention();
     app.cards.open(id);
   };
-  return <MentionCard notes={notes} project={project} onOpenNote={openNote} />;
+  return <MentionCard notes={notes} homes={app.homes} onOpenNote={openNote} />;
 }
 
 /** What opens over the writing: dialogs and the command palette. */

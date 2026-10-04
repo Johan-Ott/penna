@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { plainText } from "../../manuscript/compare.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
-import { cardsOf, countMentions } from "../../project/cards.js";
-import { manuscriptSceneIds } from "../../project/tree.js";
+import { cardsOf, countMentions, type Card } from "../../project/cards.js";
+import { findNode, manuscriptSceneIds } from "../../project/tree.js";
+import { nodeLabel } from "../../project/treeLabels.js";
 import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
@@ -13,11 +14,17 @@ export interface ShownMention {
   box: DOMRect;
 }
 
-async function readTexts(project: Project, ids: string[]) {
+/** Which text to read: a scene or note, and the folder it lies in. */
+interface TextRef {
+  dir: string;
+  id: string;
+}
+
+async function readTexts(refs: TextRef[]) {
   const texts: Record<string, string> = {};
-  for (const id of ids) {
+  for (const { dir, id } of refs) {
     const file = await platform.fileSystem
-      .readText(joinPath(project.dir, `scenes/${id}.md`))
+      .readText(joinPath(dir, `scenes/${id}.md`))
       .catch(() => null);
     if (file !== null) texts[id] = plainText(splitSceneFile(file).body, "\n");
   }
@@ -25,30 +32,55 @@ async function readTexts(project: Project, ids: string[]) {
 }
 
 // Read only while a note or a name card is shown, so an ordinary save does not read the book.
-function useTexts(project: Project | null, ids: string[], isWanted: boolean) {
+// The texts are read again when the folders change, which a save does.
+function useTexts(refs: TextRef[], version: unknown, isWanted: boolean) {
   const [texts, setTexts] = useState<Record<string, string>>({});
-  const key = ids.join(",");
+  const key = refs.map((ref) => `${ref.dir}|${ref.id}`).join(",");
   useEffect(() => {
-    if (!project || !isWanted) return;
+    if (!isWanted) return;
     let isCurrent = true;
-    void readTexts(project, key ? key.split(",") : []).then((read) => isCurrent && setTexts(read));
+    const wanted = key ? key.split(",").map((entry) => entry.split("|")) : [];
+    void readTexts(wanted.map(([dir = "", id = ""]) => ({ dir, id }))).then(
+      (read) => isCurrent && setTexts(read),
+    );
     return () => void (isCurrent = false);
-  }, [project, key, isWanted]);
+  }, [key, version, isWanted]);
   return texts;
+}
+
+/** A linked note, with the folder it lives in and its sort's name for the palette. */
+export interface NoteCard extends Card {
+  dir: string;
+  sortLabel: string;
+}
+
+function noteCards(homes: Project[]): NoteCard[] {
+  return homes.flatMap((home) =>
+    cardsOf(home.tree, home.summaries).map((card) => {
+      const sort = findNode(home.tree, card.sortId)?.node;
+      const sortLabel = sort ? nodeLabel(sort, home.tree, home.summaries) : "";
+      return { ...card, dir: home.dir, sortLabel };
+    }),
+  );
 }
 
 // "Fiskare, fyrens siste vakt": the first sentence of a note says who or what it is.
 const firstSentence = (text: string) => (text.trim().match(/^[^.!?\n]*/)?.[0] ?? "").trim();
 
-/** The notes linked in the text, where each is named, and the name card shown over the text. */
-export function useNotes(project: Project | null, isNoteOpen: boolean) {
-  const cards = useMemo(() => (project ? cardsOf(project.tree, project.summaries) : []), [project]);
+/**
+ * The notes linked in the text, where each is named in the book, and the name card.
+ * `homes` must keep its identity between renders (useMemo), or the texts are read every time.
+ */
+export function useNotes(homes: Project[], book: Project | null, isNoteOpen: boolean) {
+  const cards = useMemo(() => noteCards(homes), [homes]);
   const [mention, setMention] = useState<ShownMention | null>(null);
   const isWanted = isNoteOpen || mention !== null;
-  const manuscriptIds = useMemo(() => (project ? manuscriptSceneIds(project.tree) : []), [project]);
-  const cardIds = useMemo(() => cards.map((card) => card.id), [cards]);
-  const manuscript = useTexts(project, manuscriptIds, isWanted);
-  const noteTexts = useTexts(project, cardIds, isWanted);
+  const manuscriptRefs = useMemo(
+    () => (book ? manuscriptSceneIds(book.tree).map((id) => ({ dir: book.dir, id })) : []),
+    [book],
+  );
+  const manuscript = useTexts(manuscriptRefs, book, isWanted);
+  const noteTexts = useTexts(cards, homes, isWanted);
   const mentions = useMemo(() => countMentions(cards, manuscript), [cards, manuscript]);
   return {
     cards,

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
@@ -11,7 +11,10 @@ import { useReminder } from "./reminder.js";
 import { useSpellLanguage } from "./useSpellLanguage.js";
 import { useMentionLinks } from "./notes/useMentionLinks.js";
 import { cardActions } from "./notes/cardActions.js";
-import { useProject } from "./useProject.js";
+import { useProject, type Project } from "./useProject.js";
+import { useSeries } from "./useSeries.js";
+import { useSeriesActions } from "./notes/useSeriesActions.js";
+import { homesOf } from "./notes/noteHomes.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
@@ -22,9 +25,11 @@ import { useSyncCopy } from "./SyncLayer.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
 import { snapshotOnSave } from "../project/snapshots.js";
+import { chapterOf } from "../project/treeLabels.js";
 import { platform } from "./platform.js";
 import { useExport } from "./exporting/useExport.js";
 import { ProjectScreen } from "./shell/ProjectScreen.js";
+import { sceneSplitActions } from "./sceneSplitActions.js";
 
 // Back to the shelf: the scene is saved first, and a failed save keeps the project open.
 function useShowShelf(
@@ -55,6 +60,21 @@ function listenToSaves(
   };
 }
 
+// The book's series: read beside the book, with the same actions for its notes.
+function useSeriesParts(project: Project | null, session: SceneSession, onChange: () => void) {
+  const seriesState = useSeries(project, onChange);
+  const input = {
+    project: seriesState.series,
+    session,
+    updateTree: seriesState.updateSeriesTree,
+    refresh: seriesState.refreshSeries,
+  };
+  return {
+    seriesState,
+    seriesActions: { ...useProjectActions(input), notes: useNoteActions(input) },
+  };
+}
+
 // The project, the open scene, its comments and how the writer works: what the rest builds on.
 function useCoreState() {
   const sceneState = useSceneSession();
@@ -63,10 +83,16 @@ function useCoreState() {
   const projectState = useProject(onFolderChange);
   const { project, open, refresh, updateTree } = projectState;
   const startup = useStartup(open, project?.dir ?? null);
-  useOpenFirstScene(project, session, sceneState.editor.requestFocus);
+  const { seriesState, seriesActions } = useSeriesParts(project, session, onFolderChange);
+  const seriesDir = seriesState.series?.dir ?? null;
+  useOpenFirstScene(project, session, sceneState.editor.requestFocus, seriesDir);
   useSpellLanguage(project, session);
   const input = { project, session, updateTree, refresh };
-  const actions = { ...useProjectActions(input), notes: useNoteActions(input) };
+  const actions = {
+    ...useProjectActions(input),
+    notes: useNoteActions(input),
+    series: seriesActions,
+  };
   const author = startup.preferences.authorName;
   const comments = useComments({
     project,
@@ -74,21 +100,31 @@ function useCoreState() {
     editor: sceneState.editor,
     author,
   });
-  return { sceneState, projectState, startup, actions, comments, writingMode: useWritingMode() };
+  const writingMode = useWritingMode();
+  return { sceneState, projectState, seriesState, startup, actions, comments, writingMode };
 }
 
-// The notes linked in the text, the open note's mentions, and Ny anteckning.
+// The notes linked in the text, from the series and the book, and Ny anteckning.
 function useNotesParts(core: ReturnType<typeof useCoreState>) {
-  const { projectState, sceneState, writingMode, actions } = core;
+  const { projectState, sceneState, writingMode } = core;
   const { project } = projectState;
+  const { series } = core.seriesState;
+  const homes = useMemo(() => (project ? homesOf(project, series) : []), [project, series]);
   const noteId = sceneState.scene?.id ?? null;
-  const isNoteOpen = project !== null && noteId !== null && noteSortOf(project, noteId) !== null;
-  const notes = useNotes(project, isNoteOpen);
+  const isNoteOpen = noteId !== null && homes.some((home) => noteSortOf(home, noteId) !== null);
+  const notes = useNotes(homes, project, isNoteOpen);
   useMentionLinks(sceneState.editor, notes);
   const [newNoteSort, setNewNoteSort] = useState<string | null | false>(false);
-  const { session } = sceneState;
-  const cards = cardActions({ project, session, actions, setView: writingMode.setView });
-  return { notes, cards, newNoteSort, setNewNoteSort };
+  const cards = cardActions({ homes, session: sceneState.session, setView: writingMode.setView });
+  const seriesChoice = useSeriesActions({
+    book: project,
+    series,
+    session: sceneState.session,
+    updateBook: projectState.updateProject,
+    updateSeries: core.seriesState.updateSeries,
+    refreshSeries: core.seriesState.refreshSeries,
+  });
+  return { homes, series, notes, cards, newNoteSort, setNewNoteSort, seriesChoice };
 }
 
 type PaletteParts = ReturnType<typeof useCoreState> &
@@ -98,6 +134,7 @@ type PaletteParts = ReturnType<typeof useCoreState> &
     treeHandlers: ReturnType<typeof useTreeHandlers>;
     showShelf: () => Promise<void>;
     snapshots: ReturnType<typeof useSnapshots>;
+    sceneSplit: ReturnType<typeof sceneSplitActions>;
   };
 
 function paletteContextOf(app: PaletteParts): PaletteContext | null {
@@ -124,6 +161,10 @@ function paletteContextOf(app: PaletteParts): PaletteContext | null {
     describe: app.notes.descriptionOf,
     openCard: app.cards.open,
     newNote: () => app.setNewNoteSort(null),
+    splitScene: app.scene ? app.sceneSplit.split : null,
+    read: writingMode.read,
+    openChapterId: app.scene ? (chapterOf(project.tree, app.scene.id)?.id ?? null) : null,
+    mergeScene: app.sceneSplit.canMerge ? app.sceneSplit.merge : null,
   };
 }
 
@@ -133,6 +174,7 @@ function useAppState() {
   const { session } = sceneState;
   const { project, refresh, updateTree } = projectState;
   const treeHandlers = useTreeHandlers(core.actions);
+  const seriesTreeHandlers = useTreeHandlers(core.actions.series);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
   const syncCopy = useSyncCopy(project, session, updateTree, refresh);
@@ -141,12 +183,15 @@ function useAppState() {
   const isSearchOpen = writingMode.isSearchOpen;
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
   listenToSaves(sceneState.savedRef, recordSave, startup.preferences.isAutoSnapshotOn);
+  const input = { project, session, editor: sceneState.editor, updateTree, refresh };
+  const sceneSplit = sceneSplitActions(input);
   const zip = useExport(project, startup.preferences.authorName, projectState.updateFields);
   const parts = { ...core, ...sceneState, ...projectState, ...useNotesParts(core) };
   const newProjectAsked = useRef(false);
   const app = {
     ...parts,
-    ...{ treeHandlers, showShelf, snapshots, syncCopy, stats, today, search, zip, newProjectAsked },
+    ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncCopy, stats, today },
+    ...{ search, zip, newProjectAsked, sceneSplit },
   };
   return { ...app, palette: usePalette(paletteContextOf(app)) };
 }

@@ -22,6 +22,7 @@ interface ContentsProps {
   onChangeTree: (tree: TreeNode[]) => void;
   onSaveFields: (fields: Record<string, unknown>) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
+  onReadBook: () => void;
 }
 
 const format = (words: number) => words.toLocaleString(numberLocale());
@@ -175,6 +176,9 @@ export function ContentsView(props: ContentsProps) {
         <header className="contents-header">
           <h1>{project.name}</h1>
           <span className="contents-meta">{metaLine(project)}</span>
+          <button className="link-button quiet contents-read" onClick={props.onReadBook}>
+            {t("Läs hela boken")}
+          </button>
         </header>
         <div className="contents-bar">
           <h2>{t("Innehåll")}</h2>

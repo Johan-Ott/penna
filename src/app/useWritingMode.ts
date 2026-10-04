@@ -4,8 +4,11 @@ import { useGoKeys, useShortcut } from "./useShortcut.js";
 import { useWritingSettings } from "./useWritingSettings.js";
 import { t } from "../i18n/i18n.js";
 
-/** Skriv shows the open text (a scene or a note), Innehåll the book, Publicera the finished book. */
-export type View = "skriv" | "innehall" | "publicera";
+/**
+ * Skriv shows the open text (a scene or a note), Innehåll the book, Läs a chapter or the whole
+ * book in a row, Publicera the finished book.
+ */
+export type View = "skriv" | "innehall" | "las" | "publicera";
 export const VIEWS: [View, string, string][] = [
   ["skriv", t("Skriv"), "G S"],
   ["innehall", t("Innehåll"), "G I"],
@@ -30,6 +33,19 @@ function useReviewState() {
   const [reviewCount, setReviewCount] = useState<number | null>(null);
   const review = { isOpen: isReviewOpen, count: reviewCount };
   return { review, isReviewOpen, setReviewOpen, setReviewCount };
+}
+
+// Läs shows one chapter, or the whole book when the chapter is null.
+function useReading(setView: (view: View) => void) {
+  const [readChapterId, setReadChapterId] = useState<string | null>(null);
+  const read = useCallback(
+    (chapterId: string | null) => {
+      setReadChapterId(chapterId);
+      setView("las");
+    },
+    [setView],
+  );
+  return { readChapterId, read };
 }
 
 // The width under which the sidebar floats over the card instead of standing beside it.
@@ -67,6 +83,7 @@ export function useWritingMode() {
     onToggleFocus,
     isProgressOpen,
     setProgressOpen,
+    ...useReading(setView),
     ...useReviewState(),
     ...useSearchMode(),
     ...useSidebar(),
