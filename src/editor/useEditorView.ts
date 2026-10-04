@@ -4,6 +4,8 @@ import { EditorView } from "prosemirror-view";
 import { useCallback, useRef, useState } from "react";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { createEditorState, type EditorSwitches } from "./editorState.js";
+import type { MentionMatcher } from "./mentions.js";
+import type { CommentAnchor } from "./commentMarks.js";
 
 function createView(
   element: HTMLElement,
@@ -28,19 +30,46 @@ interface ViewSwitches extends EditorSwitches {
   isSpellcheckOn: () => boolean;
 }
 
+/** What the app switches while the writer types; set on `editor.modes.current`. */
+export interface EditorModes {
+  isTypewriterOn: boolean;
+  isTypographyOn: boolean;
+  isSpellcheckOn: boolean;
+  isEditable: boolean;
+  mentionMatchers: MentionMatcher[];
+  onMention: (id: string, box: DOMRect) => void;
+  repeatWindow: number | null;
+  commentAnchors: CommentAnchor[];
+  onComment: (id: string) => void;
+}
+
+const START_MODES: EditorModes = {
+  isTypewriterOn: false,
+  isTypographyOn: true,
+  isSpellcheckOn: true,
+  isEditable: false,
+  mentionMatchers: [],
+  onMention: () => undefined,
+  repeatWindow: null,
+  commentAnchors: [],
+  onComment: () => undefined,
+};
+
 // ProseMirror asks these on every update, so the app can switch them without a new state.
 function useModeSwitches() {
-  const typewriterRef = useRef(false);
-  const typographyRef = useRef(true);
-  const spellcheckRef = useRef(true);
-  const editableRef = useRef(false);
+  const modes = useRef<EditorModes>({ ...START_MODES });
   const [switches] = useState<ViewSwitches>(() => ({
-    isTypewriterOn: () => typewriterRef.current,
-    isTypographyOn: () => typographyRef.current,
-    isSpellcheckOn: () => spellcheckRef.current,
-    isEditable: () => editableRef.current,
+    isTypewriterOn: () => modes.current.isTypewriterOn,
+    isTypographyOn: () => modes.current.isTypographyOn,
+    isSpellcheckOn: () => modes.current.isSpellcheckOn,
+    isEditable: () => modes.current.isEditable,
+    mentionMatchers: () => modes.current.mentionMatchers,
+    onMention: (id, box) => modes.current.onMention(id, box),
+    repeatWindow: () => modes.current.repeatWindow,
+    commentAnchors: () => modes.current.commentAnchors,
+    onComment: (id) => modes.current.onComment(id),
   }));
-  return { switches, refs: { typewriterRef, typographyRef, spellcheckRef, editableRef } };
+  return { switches, modes };
 }
 
 // A hidden editor can not take focus. A request made while it is hidden is kept until
@@ -65,7 +94,7 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
   const onDocChangeRef = useRef(onDocChange);
   onDocChangeRef.current = onDocChange;
-  const { switches, refs } = useModeSwitches();
+  const { switches, modes } = useModeSwitches();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
   // The switches read refs and never change, so mount and load need no dependencies.
@@ -90,5 +119,5 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   }, []);
 
   const focus = useFocusRequest(viewRef);
-  return { mount, load, run, editorState, viewRef, ...refs, ...focus };
+  return { mount, load, run, editorState, viewRef, modes, ...focus };
 }

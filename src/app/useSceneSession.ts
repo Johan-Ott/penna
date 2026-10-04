@@ -25,7 +25,7 @@ export function useSceneSession() {
   const editor = useEditorView((doc) => {
     if (sessionRef.current) sceneEdited(sessionRef.current, doc);
   });
-  const { load, viewRef, editableRef } = editor;
+  const { load, viewRef, modes } = editor;
 
   const session = useMemo(
     () =>
@@ -33,14 +33,14 @@ export function useSceneSession() {
         editor: { load, currentDoc: () => viewRef.current?.state.doc ?? null },
         // Set before the scene's text loads, so the editor is writable exactly when a scene is open.
         onScene: (opened) => {
-          editableRef.current = opened !== null;
+          modes.current.isEditable = opened !== null;
           setScene(opened && { ...opened });
         },
         onConflict: setConflict,
         onSaveStatus: setSaveStatus,
         onSaved: (scene, before, after) => savedRef.current?.(scene, before, after),
       }),
-    [load, viewRef, editableRef],
+    [load, viewRef, modes],
   );
   sessionRef.current = session;
   useEffect(() => platform.guardClose(() => session.autosave.flush()), [session]);

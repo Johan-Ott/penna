@@ -1,13 +1,13 @@
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import { describe, expect, it } from "vitest";
-import { createEditorState } from "../src/editor/editorState";
+import { createEditorState, DEFAULT_SWITCHES } from "../src/editor/editorState";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 
 // Types one character at the end of "Hej-" through the editor's input rules.
 function typeAfter(text: string, typed: string, isTypographyOn: boolean) {
   let state: EditorState = createEditorState(parseMarkdown(`${text}\n`), {
-    isTypewriterOn: () => false,
+    ...DEFAULT_SWITCHES,
     isTypographyOn: () => isTypographyOn,
   });
   const end = state.doc.content.size - 1;

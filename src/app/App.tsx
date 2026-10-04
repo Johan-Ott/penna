@@ -1,41 +1,28 @@
 import { useCallback } from "react";
-import type { TreeNode } from "../project/tree.js";
-import type { SceneFileRef } from "../storage/syncFiles.js";
-import { chapterOf } from "../project/treeLabels.js";
-import { checkDisk, closeScene, type OpenScene, type SceneSession } from "./sceneSession.js";
+import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
 import { Sidebar } from "./Sidebar.js";
-import { ProgressView } from "./progress/ProgressView.js";
-import { ExportView } from "./exporting/ExportView.js";
+import { OtherViews } from "./OtherViews.js";
+import { usePlanning } from "./planning/usePlanning.js";
+import { useComments } from "./review/useComments.js";
+import { useMentionLinks } from "./planning/useMentionLinks.js";
+import { cardActions, type CardActions } from "./planning/cardActions.js";
 import { useProject, type Project } from "./useProject.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
 import { useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
-import { ReplaceToast } from "./SaveToast.js";
 import { StartScreen } from "./StartScreen.js";
 import { useSyncCopy } from "./SyncLayer.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
 import { WritingArea } from "./WritingArea.js";
+import { sidebarProps, writingAreaProps } from "./paneProps.js";
 import { Overlays } from "./Overlays.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
 import { snapshotOnSave } from "../project/snapshots.js";
 import { platform } from "./platform.js";
-
-// The path above the text, and the chapter heading that opens a chapter's first scene.
-function sceneHeadings(project: Project, scene: OpenScene | null) {
-  const chapter = scene ? chapterOf(project.tree, scene.id) : null;
-  const chapterPart = chapter ? [`Kapitel ${chapter.number} · ${chapter.title}`] : [];
-  const sceneTitle = scene?.title ?? "";
-  return {
-    breadcrumb: [project.name, ...chapterPart, sceneTitle].filter((part) => part !== ""),
-    hasScene: scene !== null,
-    focusLocation: chapter ? `Kapitel ${chapter.number} · ${sceneTitle}` : sceneTitle,
-    chapterHeading: chapter?.isFirstScene ? chapter : null,
-  };
-}
 
 type AppParts = ReturnType<typeof useSceneSession> &
   ReturnType<typeof useProject> & {
@@ -43,7 +30,18 @@ type AppParts = ReturnType<typeof useSceneSession> &
     treeHandlers: ReturnType<typeof useTreeHandlers>;
     showShelf: () => Promise<void>;
     snapshots: ReturnType<typeof useSnapshots>;
+    planning: ReturnType<typeof usePlanning>;
+    cards: CardActions;
   };
+
+// Characters in the palette open their card in the editor.
+function planningCommands({ planning, cards }: AppParts) {
+  return {
+    cards: planning.cards,
+    openCard: cards.open,
+    newCharacter: () => cards.create("person"),
+  };
+}
 
 function paletteContextOf(parts: AppParts): PaletteContext | null {
   const { project, session, writingMode } = parts;
@@ -65,6 +63,7 @@ function paletteContextOf(parts: AppParts): PaletteContext | null {
     showSnapshots: parts.scene ? () => parts.snapshots.show(parts.scene?.id ?? "") : null,
     openSettings: writingMode.settingsDialog.open,
     showView: writingMode.setView,
+    ...planningCommands(parts),
   };
 }
 
@@ -97,7 +96,8 @@ function listenToSaves(
   };
 }
 
-function useAppState() {
+// The project, the open scene, its comments and how the writer works: what the rest builds on.
+function useCoreState() {
   const sceneState = useSceneSession();
   const { session } = sceneState;
   const onFolderChange = useCallback(() => void checkDisk(session), [session]);
@@ -106,67 +106,65 @@ function useAppState() {
   const startup = useStartup(open, project?.dir ?? null);
   useOpenFirstScene(project, session, sceneState.editor.requestFocus);
   const actions = useProjectActions({ project, session, updateTree, refresh });
-  const writingMode = useWritingMode();
+  const author = startup.preferences.authorName;
+  const comments = useComments({
+    project,
+    scene: sceneState.scene,
+    editor: sceneState.editor,
+    author,
+  });
+  return { sceneState, projectState, startup, actions, comments, writingMode: useWritingMode() };
+}
+
+// Planera's cards, linked in the text and opened in the editor like scenes.
+function usePlanningParts({
+  project,
+  sceneState,
+  writingMode,
+  actions,
+}: {
+  project: Project | null;
+  sceneState: ReturnType<typeof useSceneSession>;
+  writingMode: ReturnType<typeof useWritingMode>;
+  actions: ReturnType<typeof useProjectActions>;
+}) {
+  const planning = usePlanning(project, writingMode.view === "planera");
+  useMentionLinks(sceneState.editor, planning);
+  const { session } = sceneState;
+  return {
+    planning,
+    cards: cardActions({ project, session, actions, setView: writingMode.setView }),
+  };
+}
+
+function useAppState() {
+  const { sceneState, projectState, startup, actions, writingMode, comments } = useCoreState();
+  const { session } = sceneState;
+  const { project, refresh, updateTree } = projectState;
   const treeHandlers = useTreeHandlers(actions);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
-  const parts = { ...sceneState, ...projectState, writingMode, treeHandlers, showShelf, snapshots };
+  const { planning, cards } = usePlanningParts({ project, sceneState, writingMode, actions });
+  const parts = {
+    cards,
+    ...sceneState,
+    ...projectState,
+    writingMode,
+    treeHandlers,
+    showShelf,
+    snapshots,
+    planning,
+  };
   const palette = usePalette(paletteContextOf(parts));
   const syncCopy = useSyncCopy(project, session, updateTree, refresh);
   const { stats, today, recordSave } = useWritingStats(project);
-  const search = useManuscriptSearch({
-    ...sceneState,
-    project,
-    refresh,
-    isSearchOpen: writingMode.isSearchOpen,
-  });
+  const isSearchOpen = writingMode.isSearchOpen;
+  const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
   listenToSaves(sceneState.savedRef, recordSave, startup.preferences.isAutoSnapshotOn);
-  return { ...parts, actions, palette, startup, syncCopy, stats, today, search };
+  return { ...parts, actions, palette, startup, syncCopy, stats, today, search, comments };
 }
 
-// "Gå till scenen" after a failed export: the scene is found by the title the error named.
-function openSceneTitled(app: ReturnType<typeof useAppState>, project: Project, title: string) {
-  const id = Object.keys(project.summaries).find((key) => project.summaries[key]?.title === title);
-  if (!id) return;
-  app.writingMode.setView("skriv");
-  openIfOnDisk(app.session, project, id);
-}
-
-function sidebarProps(app: ReturnType<typeof useAppState>, project: Project) {
-  const { session, writingMode } = app;
-  return {
-    project,
-    openSceneId: app.scene?.id ?? null,
-    onOpenScene: (id: string) => {
-      writingMode.setView("skriv");
-      openIfOnDisk(session, project, id);
-    },
-    view: writingMode.view,
-    onView: writingMode.setView,
-    onShowSyncCopy: (copy: SceneFileRef) => void app.syncCopy.showSyncCopy(copy),
-    onShowSnapshots: app.snapshots.show,
-    onChangeTree: (tree: TreeNode[]) => void app.updateTree(tree),
-    onShowShelf: () => void app.showShelf(),
-    today: app.today,
-    ...app.treeHandlers,
-  };
-}
-
-function writingAreaProps(app: ReturnType<typeof useAppState>, project: Project) {
-  return {
-    editor: app.editor,
-    isHidden: app.writingMode.view !== "skriv",
-    ...sceneHeadings(project, app.scene),
-    ...app.writingMode,
-    saveStatus: app.saveStatus,
-    today: app.today,
-    treeFailure: app.treeFailure,
-    manuscriptSearch: app.search.scope,
-    replaceToast: <ReplaceToast {...app.search} />,
-    onRetrySave: () => void app.session.autosave.flush(),
-    onNewScene: () => void app.actions.newItem("scene"),
-  };
-}
+export type AppState = ReturnType<typeof useAppState>;
 
 export function App() {
   const app = useAppState();
@@ -177,21 +175,7 @@ export function App() {
     <div className={app.writingMode.isFocusMode ? "app focus-mode" : "app"}>
       <Sidebar {...sidebarProps(app, project)} />
       <WritingArea {...writingAreaProps(app, project)} />
-      {app.writingMode.view === "exportera" && (
-        <ExportView
-          project={project}
-          generalAuthor={app.startup.preferences.authorName}
-          onSaveFields={(fields) => void app.updateFields(fields)}
-          onOpenScene={(title) => openSceneTitled(app, project, title)}
-        />
-      )}
-      {app.writingMode.view === "framsteg" && (
-        <ProgressView
-          project={project}
-          stats={app.stats}
-          onSaveGoals={(fields) => void app.updateFields(fields)}
-        />
-      )}
+      <OtherViews app={app} project={project} />
       <Overlays app={app} />
     </div>
   );

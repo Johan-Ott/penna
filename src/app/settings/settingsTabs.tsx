@@ -1,5 +1,6 @@
 import {
   changeSize,
+  REPEAT_WINDOWS,
   THEME_LABELS,
   type ProseFont,
   type Theme,
@@ -116,7 +117,7 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
   );
 }
 
-type EditorSwitch = "typewriter" | "spellcheck" | "typography";
+type EditorSwitch = "typewriter" | "spellcheck" | "typography" | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   ["typewriter", "Typewriter-läge", "Raden du skriver på stannar mitt på skärmen i fokusläget."],
   ["spellcheck", "Stavningskontroll", "Systemets ordlista stryker under felstavade ord."],
@@ -125,7 +126,28 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     "Svensk typografi medan du skriver",
     'Två bindestreck blir talstreck och "citat" blir ”citat”.',
   ],
+  ["review", "Granskning", "Namnstavning och upprepningar, i texten och i en panel bredvid."],
 ];
+
+const WINDOWS = REPEAT_WINDOWS.map((sentences): [string, string] => [
+  String(sentences),
+  String(sentences),
+]);
+
+function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
+  return (
+    <Row label="Upprepningsfönster" hint="Hur många meningar som ska skilja samma ord åt.">
+      <Choice
+        label="Upprepningsfönster"
+        value={String(settings.repeatWindow)}
+        options={WINDOWS}
+        onSelect={(value) =>
+          onChangeSettings((current) => ({ ...current, repeatWindow: Number(value) }))
+        }
+      />
+    </Row>
+  );
+}
 
 export function EditorTab(props: TabProps) {
   const { settings, onChangeSettings } = props;
@@ -151,6 +173,7 @@ export function EditorTab(props: TabProps) {
           />
         </Row>
       ))}
+      <RepeatWindowRow {...props} />
     </>
   );
 }
@@ -174,41 +197,6 @@ export function SnapshotsTab({ preferences, updatePreferences }: TabProps) {
         label="Var bilderna sparas"
         hint="I projektmappen, under snapshots. Penna raderar aldrig en bild."
       />
-    </>
-  );
-}
-
-const SHORTCUTS: [string, string][] = [
-  ["Kommandopalett", "Ctrl K"],
-  ["Sök och ersätt", "Ctrl F"],
-  ["Fokusläge", "Ctrl Shift F"],
-  ["Lämna fokusläget", "Esc"],
-  ["Ny scen", "Ctrl Alt N"],
-  ["Scenbrytning", "Ctrl Enter"],
-  ["Fetstil", "Ctrl B"],
-  ["Kursiv", "Ctrl I"],
-  ["Större och mindre text", "Ctrl + och Ctrl −"],
-  ["Byt namn i strukturen", "F2"],
-  ["Inställningar", "Ctrl ,"],
-];
-
-export function ShortcutsTab() {
-  return SHORTCUTS.map(([label, keys]) => (
-    <Row key={label} label={label}>
-      <kbd>{keys}</kbd>
-    </Row>
-  ));
-}
-
-export function AboutTab() {
-  return (
-    <>
-      <Row label="Version">{__APP_VERSION__}</Row>
-      <Row
-        label="Integritet"
-        hint="Penna samlar inte in någon data, och ingen text lämnar datorn."
-      />
-      <Row label="Typsnitt" hint="Literata och Geist, under SIL Open Font License." />
     </>
   );
 }

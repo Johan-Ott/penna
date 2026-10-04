@@ -25,6 +25,9 @@ function context() {
     showSnapshots: null,
     openSettings: () => undefined,
     showView: () => undefined,
+    cards: [],
+    openCard: () => undefined,
+    newCharacter: () => undefined,
     chooseFolder: () => undefined,
     showShelf: () => undefined,
   };
@@ -60,5 +63,21 @@ describe("paletteEntries", () => {
     const focus = paletteEntries(value).find((entry) => entry.label === "Fokusläge");
 
     expect(focus?.shortcut).toBe("Ctrl+Shift+F");
+  });
+
+  it("finds a character by name and opens its card", () => {
+    const shown: string[] = [];
+    const arvid = { id: "01ARVID", kind: "person" as const, name: "Arvid" };
+    const value = {
+      ...context().value,
+      cards: [arvid],
+      openCard: (id: string) => shown.push(id),
+    };
+
+    const entry = paletteEntries(value).find((candidate) => candidate.label === "Arvid");
+    entry?.run();
+
+    expect(entry).toMatchObject({ group: "Karaktärer" });
+    expect(shown).toEqual(["01ARVID"]);
   });
 });

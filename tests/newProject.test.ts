@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { libraryCandidates } from "../src/project/libraryFolders";
 import { createProject, copyExampleProject, projectFolderName } from "../src/project/newProject";
+import { splitManuscript } from "../src/import/markdownImport";
 import { readProjectFile } from "../src/project/projectFile";
 import { manuscriptSceneIds } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
@@ -36,6 +37,21 @@ describe("createProject", () => {
 
     expect(created.dir).toBe("/Penna/Vintervägen 2.penna");
     expect(await files.readText("/Penna/Vintervägen.penna/project.json")).toBe("{}");
+  });
+
+  it("writes an imported book as scene files under its parts and chapters", async () => {
+    const files = createMemoryFileSystem({});
+    const book = splitManuscript("# Brevet\n\nBrevet låg där.\n\n***\n\nIsen bar.\n");
+
+    const created = await createProject(files, "/Penna", details, book);
+
+    const project = await readProjectFile(files, created.dir, []);
+    const sceneIds = manuscriptSceneIds(project.tree);
+    expect(project.tree[0]).toMatchObject({ kind: "chapter", title: "Brevet" });
+    expect(sceneIds).toHaveLength(2);
+    expect(created.sceneId).toBe(sceneIds[0]);
+    const second = await files.readText(`${created.dir}/scenes/${sceneIds[1]}.md`);
+    expect(second).toContain("title: Isen bar\nstatus: utkast\n---\nIsen bar.\n");
   });
 
   it("copies the example project into the library", async () => {

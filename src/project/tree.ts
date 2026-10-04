@@ -8,15 +8,21 @@ export interface TreeNode {
   children?: TreeNode[];
 }
 
+export const CHARACTERS_ID = "karaktarer";
+export const PLACES_ID = "platser";
 export const RESEARCH_ID = "research";
 export const TRASH_ID = "trash";
 
+// Characters and places are ordinary scene files kept in folders of their own, beside the
+// manuscript, so they are written, moved and thrown away like any scene.
 const SPECIAL_FOLDERS: TreeNode[] = [
+  { id: CHARACTERS_ID, kind: "folder", title: "Karaktärer" },
+  { id: PLACES_ID, kind: "folder", title: "Platser" },
   { id: RESEARCH_ID, kind: "folder", title: "Research" },
   { id: TRASH_ID, kind: "folder", title: "Papperskorg" },
 ];
 
-const isSpecial = (id: string) => id === RESEARCH_ID || id === TRASH_ID;
+const isSpecial = (id: string) => SPECIAL_FOLDERS.some((folder) => folder.id === id);
 
 const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
   root: ["part", "chapter", "scene", "folder"],
@@ -26,7 +32,7 @@ const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
   scene: [],
 };
 
-/** The manuscript first, then Research and Papperskorg, which always exist. */
+/** The manuscript first, then Karaktärer, Platser, Research and Papperskorg, which always exist. */
 export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
   const ordinary = tree.filter((node) => !isSpecial(node.id));
   const special = SPECIAL_FOLDERS.map(
@@ -132,6 +138,10 @@ const manuscript = (tree: TreeNode[]) => tree.filter((node) => !isSpecial(node.i
 /** Nodes of one kind in the manuscript, in reading order; Research and Papperskorg left out. */
 export const manuscriptNodes = (tree: TreeNode[], kind: NodeKind) =>
   collect(manuscript(tree), kind);
+
+/** The scenes kept in one folder and its subfolders, such as all the cards in Karaktärer. */
+export const sceneIdsIn = (tree: TreeNode[], folderId: string) =>
+  collect(findNode(tree, folderId)?.node.children ?? [], "scene").map((node) => node.id);
 
 export const manuscriptSceneIds = (tree: TreeNode[]) =>
   manuscriptNodes(tree, "scene").map((node) => node.id);

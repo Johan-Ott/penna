@@ -9,9 +9,11 @@ import {
   createProject,
   type ProjectDetails,
 } from "../../project/newProject.js";
-import { platform } from "../platform.js";
+import { importManuscript } from "../../import/importManuscript.js";
+import { ImportError } from "../../import/markdownImport.js";
+import { platform, type PickedFile } from "../platform.js";
 
-export type ProjectMode = "new" | "open";
+export type ProjectMode = "new" | "import" | "open";
 
 export const LAST_STEP = 5;
 
@@ -63,8 +65,8 @@ export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: 
     setProblem(null);
     try {
       await work();
-    } catch {
-      setProblem(failure);
+    } catch (error) {
+      setProblem(error instanceof ImportError ? error.message : failure);
     }
   };
   return {
@@ -113,6 +115,18 @@ export async function openExample(state: OnboardingState) {
     state.setProjectDir(await copyExampleProject(platform.fileSystem, libraryDir));
     state.setStep(5);
   }, "Exempelprojektet kunde inte sparas i mappen.");
+}
+
+/** Writes the picked manuscript as a new project, named after the file unless a title is set. */
+export async function importFile(state: OnboardingState, picked: PickedFile) {
+  const libraryDir = state.libraryDir;
+  if (!libraryDir) return;
+  await state.attempt(async () => {
+    const { title, book } = await importManuscript(platform.fileSystem, picked);
+    const details = { ...state.details, title: state.details.title.trim() || title };
+    state.setProjectDir((await createProject(platform.fileSystem, libraryDir, details, book)).dir);
+    state.setStep(5);
+  }, "Filen kunde inte läsas. Spara den som .docx eller text och försök igen.");
 }
 
 export async function openExisting(state: OnboardingState) {

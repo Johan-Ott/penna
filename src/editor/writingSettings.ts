@@ -19,6 +19,10 @@ export interface WritingSettings {
   spellcheck: boolean;
   /** -- becomes a dash and "quotes" become Swedish ones while typing. */
   typography: boolean;
+  /** Name spelling and repeated words, marked in the text and listed beside it. */
+  review: boolean;
+  /** A word used again within this many sentences is marked. */
+  repeatWindow: number;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -32,12 +36,15 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   theme: "system",
   spellcheck: true,
   typography: true,
+  review: true,
+  repeatWindow: 3,
 };
 
 const STORAGE_KEY = "penna.writing";
 const MIN_SIZE = 14;
 const MAX_SIZE = 28;
 const LINE_HEIGHTS = [1.5, 1.6, 1.8, 2];
+export const REPEAT_WINDOWS = [2, 3, 4, 5];
 const FONTS: Record<ProseFont, string> = {
   serif: '"Literata", Georgia, serif',
   sans: '"Geist Sans", system-ui, sans-serif',
@@ -69,6 +76,8 @@ function validated(stored: Record<string, unknown>): WritingSettings {
       stored["darkTheme"] === true ? "mörkt" : pick("theme", (value) => isOneOf(value, THEMES)),
     spellcheck: pick("spellcheck", isBoolean),
     typography: pick("typography", isBoolean),
+    review: pick("review", isBoolean),
+    repeatWindow: pick("repeatWindow", (value) => REPEAT_WINDOWS.includes(value as number)),
   };
 }
 

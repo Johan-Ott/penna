@@ -26,10 +26,23 @@ const ISEN = `Isen bar. Den hade burit sedan jul, men Elin gick ändå nära str
 På kvällen kom Maja över med en termos.
 `;
 
+// Characters are written like scenes; these two show how Penna finds them in the text.
+const ELIN = `Trettioåtta. Lämnade ön när hon var arton och har inte varit tillbaka sedan pappans begravning.
+
+Säger sällan vad hon tänker, men skriver allt i en svart anteckningsbok.
+`;
+
+const ARVID = `Elins farbror. Fiskare, och fyrens siste vakt innan den automatiserades.
+
+Vet mer om brevet än han vill säga.
+`;
+
 const SCENE_IDS = {
   koket: "01J9Z4K2QX0000000000000001",
   isen: "01J9Z4K2QX0000000000000002",
   fyren: "01J9Z4K2QX0000000000000003",
+  elin: "01J9Z4K2QX0000000000000004",
+  arvid: "01J9Z4K2QX0000000000000005",
 };
 
 const PROJECT = {
@@ -58,6 +71,15 @@ const PROJECT = {
         },
       ],
     },
+    {
+      id: "karaktarer",
+      kind: "folder",
+      title: "Karaktärer",
+      children: [
+        { id: SCENE_IDS.elin, kind: "scene" },
+        { id: SCENE_IDS.arvid, kind: "scene" },
+      ],
+    },
   ],
 };
 
@@ -67,4 +89,6 @@ export const DEMO_PROJECT_FILES: Record<string, string> = {
   ...scene(SCENE_IDS.koket, "Köket", "utkast", KOKET),
   ...scene(SCENE_IDS.isen, "Isen", "utkast", ISEN),
   ...scene(SCENE_IDS.fyren, "Fyren", "idé", ""),
+  ...scene(SCENE_IDS.elin, "Elin", "utkast", ELIN),
+  ...scene(SCENE_IDS.arvid, "Arvid", "utkast", ARVID),
 };

@@ -24,7 +24,7 @@ interface ToolbarProps {
 
 type FormatProps = Pick<ToolbarProps, "editorState" | "run">;
 
-function MarkButton(props: FormatProps & { mark: "bold" | "italic"; label: string }) {
+export function MarkButton(props: FormatProps & { mark: "bold" | "italic"; label: string }) {
   const isPressed = props.editorState !== null && isMarkActive(props.editorState, props.mark);
   const command = props.mark === "bold" ? toggleBold : toggleItalic;
   return (

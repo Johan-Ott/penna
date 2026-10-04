@@ -3,7 +3,7 @@ import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile } from "@tauri-apps/plugin-fs";
 import { documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
-import type { FileKind, Platform } from "./platform.js";
+import type { FileKind, PickKind, Platform } from "./platform.js";
 
 // Windows paths come with backslashes and sometimes a trailing one; Penna uses forward slashes.
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
@@ -35,14 +35,15 @@ async function saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind
 }
 
 // The dialog grants Penna the picked file, so it can be read wherever it lies.
-async function pickImage() {
-  const picked = await open({ filters: [{ name: "Bild", extensions: ["jpg", "jpeg", "png"] }] });
-  return typeof picked === "string" ? readFile(picked) : null;
+async function pickFile(kind: PickKind) {
+  const picked = await open({ filters: [kind] });
+  if (typeof picked !== "string") return null;
+  return { path: withForwardSlashes(picked), bytes: await readFile(picked) };
 }
 
 export const tauriPlatform: Platform = {
   saveFile,
-  pickImage,
+  pickFile,
   fileSystem: tauriFileSystem,
   knownFolders: async () => ({
     home: withForwardSlashes(await homeDir()),

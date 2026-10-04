@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readProjectFile, writeProjectFile } from "../src/project/projectFile";
-import { RESEARCH_ID, TRASH_ID } from "../src/project/tree";
+import { CHARACTERS_ID, PLACES_ID, RESEARCH_ID, TRASH_ID } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const PROJECT_PATH = "/bok/project.json";
@@ -22,7 +22,14 @@ describe("readProjectFile", () => {
 
     const project = await readProjectFile(files, "/bok", ["s2", "s1"]);
 
-    expect(project.tree.map((node) => node.id)).toEqual(["s1", "s2", RESEARCH_ID, TRASH_ID]);
+    expect(project.tree.map((node) => node.id)).toEqual([
+      "s1",
+      "s2",
+      CHARACTERS_ID,
+      PLACES_ID,
+      RESEARCH_ID,
+      TRASH_ID,
+    ]);
   });
 
   it("keeps a copy of a broken project.json and rebuilds the tree", async () => {
@@ -30,10 +37,16 @@ describe("readProjectFile", () => {
 
     const project = await readProjectFile(files, "/bok", ["s1"]);
 
-    expect(project.tree.map((node) => node.id)).toEqual(["s1", RESEARCH_ID, TRASH_ID]);
+    expect(project.tree.map((node) => node.id)).toEqual([
+      "s1",
+      CHARACTERS_ID,
+      PLACES_ID,
+      RESEARCH_ID,
+      TRASH_ID,
+    ]);
     expect(project.repairCopy).toMatch(/^project\.json\.trasig-/);
     expect(await files.readText(`/bok/${project.repairCopy ?? ""}`)).toBe('{ "tree": [ trasig');
-    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(3);
+    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(5);
   });
 
   it("treats a tree with invalid nodes as broken", async () => {

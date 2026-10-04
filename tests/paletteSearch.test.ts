@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { searchPalette, type PaletteEntry } from "../src/app/palette/paletteSearch";
+import { inGroups, searchPalette, type PaletteEntry } from "../src/app/palette/paletteSearch";
 
 const entry = (label: string, group: PaletteEntry["group"] = "Kommandon"): PaletteEntry => ({
   id: label,
@@ -50,5 +50,21 @@ describe("searchPalette", () => {
 describe("searchPalette with short queries", () => {
   it("does not match letters spread over a label when only two are typed", () => {
     expect(labels("is")).toEqual(["Isen"]);
+  });
+});
+
+describe("inGroups", () => {
+  it("shows every kind of result in the design's group order, best first within a group", () => {
+    const found = [
+      entry("Ny karaktär", "Kommandon"),
+      entry("Arvid", "Karaktärer"),
+      entry("Udden", "Platser"),
+      entry("Köket", "Scener"),
+      entry("Anna", "Karaktärer"),
+    ];
+
+    const labels = inGroups(found).map((result) => result.label);
+
+    expect(labels).toEqual(["Köket", "Arvid", "Anna", "Udden", "Ny karaktär"]);
   });
 });

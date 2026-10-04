@@ -1,6 +1,10 @@
+import { useState, type DragEvent, type ReactNode } from "react";
+import { MANUSCRIPT_FILES } from "../../import/importManuscript.js";
 import type { ProjectDetails } from "../../project/newProject.js";
+import { platform } from "../platform.js";
 import {
   continueFrom,
+  importFile,
   openExample,
   openExisting,
   type OnboardingState,
@@ -98,8 +102,61 @@ function OpenProjectChoices({ state }: { state: OnboardingState }) {
   );
 }
 
+// A dropped file has no path in the browser view, so it is read from its bytes.
+async function dropFile(state: OnboardingState, event: DragEvent) {
+  event.preventDefault();
+  const file = event.dataTransfer.files[0];
+  if (file)
+    await importFile(state, { path: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
+}
+
+async function pickFile(state: OnboardingState) {
+  const picked = await platform.pickFile(MANUSCRIPT_FILES);
+  if (picked) await importFile(state, picked);
+}
+
+function ImportChoices({ state }: { state: OnboardingState }) {
+  const [isOver, setOver] = useState(false);
+  return (
+    <>
+      <div
+        className={isOver ? "drop-zone over" : "drop-zone"}
+        onDragOver={(event) => (event.preventDefault(), setOver(true))}
+        onDragLeave={() => setOver(false)}
+        onDrop={(event) => (setOver(false), void dropFile(state, event))}
+      >
+        <span className="field-label">Släpp ditt manus här</span>
+        <span className="choice-hint">
+          Word (.docx), Scrivener (.scriv), Markdown eller text.
+          <br />
+          Kapitel delas upp vid rubrikerna.
+        </span>
+        <button className="button secondary" onClick={() => void pickFile(state)}>
+          Välj fil…
+        </button>
+      </div>
+      <button className="link-button quiet" onClick={() => void openExample(state)}>
+        Eller öppna exempelprojektet
+      </button>
+    </>
+  );
+}
+
+const CHOICES: Record<ProjectMode, (state: OnboardingState) => ReactNode> = {
+  new: (state) => (
+    <NewProjectFields
+      details={state.details}
+      onChange={state.setDetails}
+      onSubmit={() => void continueFrom(state)}
+    />
+  ),
+  import: (state) => <ImportChoices state={state} />,
+  open: (state) => <OpenProjectChoices state={state} />,
+};
+
 const MODES: [ProjectMode, string][] = [
   ["new", "Nytt projekt"],
+  ["import", "Importera"],
   ["open", "Öppna befintligt"],
 ];
 
@@ -119,15 +176,7 @@ export function ProjectStep({ state, isFirst }: { state: OnboardingState; isFirs
           </button>
         ))}
       </div>
-      {state.mode === "new" ? (
-        <NewProjectFields
-          details={state.details}
-          onChange={state.setDetails}
-          onSubmit={() => void continueFrom(state)}
-        />
-      ) : (
-        <OpenProjectChoices state={state} />
-      )}
+      {CHOICES[state.mode](state)}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
+import { refreshRepetitions } from "../editor/repetitionMarks.js";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import {
@@ -21,6 +22,9 @@ import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 
 interface WritingAreaProps {
+  /** The review panel beside the text, or nothing. */
+  aside: ReactNode;
+  selectionBar: ReactNode;
   /** Hidden, not removed, while another view shows: the editor keeps its scene and undo. */
   isHidden: boolean;
   manuscriptSearch: ManuscriptScope;
@@ -165,6 +169,7 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
           onClose={() => props.setSearchOpen(false)}
         />
       )}
+      {props.selectionBar}
       <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
       <TreeFailureToast failure={props.treeFailure} />
       {props.replaceToast}
@@ -176,9 +181,13 @@ export function WritingArea(props: WritingAreaProps) {
   const { editor, settings } = props;
   const panels = usePanels();
   useWritingKeys(props, panels);
-  editor.typewriterRef.current = props.isFocusMode && settings.typewriter;
-  editor.typographyRef.current = settings.typography;
-  editor.spellcheckRef.current = settings.spellcheck;
+  const modes = editor.modes.current;
+  modes.isTypewriterOn = props.isFocusMode && settings.typewriter;
+  modes.isTypographyOn = settings.typography;
+  modes.isSpellcheckOn = settings.spellcheck;
+  modes.repeatWindow = settings.review ? settings.repeatWindow : null;
+  const { run } = editor;
+  useEffect(() => run(refreshRepetitions, false), [settings.review, settings.repeatWindow, run]);
   // The spellcheck attribute is read when the view updates, so a change updates it at once.
   useEffect(() => editor.viewRef.current?.setProps({}), [settings.spellcheck, editor.viewRef]);
   const { focusIfRequested } = editor;
@@ -190,7 +199,10 @@ export function WritingArea(props: WritingAreaProps) {
         isSettingsOpen={panels.isSettingsOpen}
         onToggleSettings={() => panels.setSettingsOpen(!panels.isSettingsOpen)}
       />
-      <Page {...props} />
+      <div className="writing-body">
+        <Page {...props} />
+        {props.aside}
+      </div>
       <Floating {...props} isSettingsOpen={panels.isSettingsOpen} />
     </main>
   );

@@ -14,8 +14,20 @@ export interface Platform {
   guardClose(isSafeToClose: () => Promise<boolean>): () => void;
   /** Asks where to save an export and writes it whole; the saved path, or null if cancelled. */
   saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind): Promise<string | null>;
-  /** Lets the writer pick a JPG or PNG; its bytes, or null if cancelled. */
-  pickImage(): Promise<Uint8Array | null>;
+  /** Lets the writer pick a file of the given kinds; its path and bytes, or null if cancelled. */
+  pickFile(kind: PickKind): Promise<PickedFile | null>;
+}
+
+/** What the open dialog offers, for example { name: "Bild", extensions: ["jpg", "png"] }. */
+export interface PickKind {
+  name: string;
+  extensions: string[];
+}
+
+/** In the browser the path is only the file's name. */
+export interface PickedFile {
+  path: string;
+  bytes: Uint8Array;
 }
 
 /** What the save dialog offers, for example { name: "Word", extension: "docx" }. */

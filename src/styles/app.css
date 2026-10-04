@@ -2043,3 +2043,359 @@ button.book-cover:hover {
   align-items: flex-start;
   gap: 4px;
 }
+
+/* Planera, as in the design: tabs in the header, characters as cards. */
+.plan-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.plan-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.plan-tabs .toolbar-title {
+  margin-right: 12px;
+}
+
+.plan-tab {
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+}
+
+.plan-tab.chosen {
+  background: var(--surface-hover);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.plan-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px 40px;
+}
+
+.plan-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.plan-heading h1 {
+  margin: 0;
+  font: 600 28px var(--font-prose);
+}
+
+.entity-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.entity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+.entity-card:hover {
+  border-color: var(--border-control);
+  background: var(--bg-panel);
+}
+
+.entity-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.entity-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: var(--surface-hover);
+  color: var(--text-tree);
+  font-weight: 500;
+}
+
+.entity-name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.entity-note {
+  color: var(--text-tree);
+  font: 14px/1.6 var(--font-prose);
+}
+
+.entity-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Names of known cards in the text, and the card a click on one shows. */
+.manuscript .mention {
+  border-bottom: 1px solid var(--text-dim);
+  cursor: pointer;
+}
+
+.manuscript .mention:hover {
+  border-bottom-color: var(--text);
+}
+
+.mention-card {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 300px;
+  padding: 16px;
+  border: 1px solid var(--border-control);
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: var(--shadow-dialog);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.entity-avatar.small {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+}
+
+.mention-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mention-foot {
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.mention-foot .link-button {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.mention-excerpt {
+  margin: 0;
+  color: var(--text-tree);
+  font: 14px/1.6 var(--font-prose);
+}
+
+/* Granskning, as in the design: a panel beside the text, and dots under repeated words. */
+.writing-body {
+  display: flex;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.manuscript .repeat {
+  border-bottom: 2px dotted var(--text-label);
+}
+
+.review-panel {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 24px;
+  width: 320px;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid var(--border-soft);
+  background: var(--bg-panel);
+}
+
+.focus-mode .review-panel {
+  display: none;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-heading {
+  color: var(--text-label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.review-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.review-chip {
+  padding: 4px 10px;
+  border: 1px solid var(--border-control);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.review-chip:hover {
+  border-color: var(--primary);
+}
+
+.review-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+}
+
+.review-title {
+  font-weight: 500;
+}
+
+.review-text,
+.review-empty {
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.review-empty {
+  margin: 0;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* On a narrow window the text needs the room more than the panel does. */
+@media (max-width: 1100px) {
+  .review-panel {
+    display: none;
+  }
+}
+
+/* Comments: grey behind the commented words, as in the design, and the cards in the panel. */
+.manuscript .commented {
+  border-radius: 3px;
+  background: var(--match);
+  cursor: pointer;
+}
+
+.review-item.focused {
+  border-color: var(--primary);
+}
+
+.comment-quote {
+  color: var(--text-muted);
+  font-family: var(--font-prose);
+  font-style: italic;
+}
+
+.comment-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border-soft);
+}
+
+.comment-writer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comment-writer textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+/* Onboarding's import: a dashed area that takes a dropped manuscript. */
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 180px;
+  border: 1px dashed var(--heat-1);
+  border-radius: 12px;
+  background: var(--bg-panel);
+  text-align: center;
+}
+
+.drop-zone.over {
+  border-color: var(--text);
+}
+
+.drop-zone .choice-hint {
+  line-height: 1.5;
+}
+
+.drop-zone + .link-button {
+  align-self: flex-start;
+}
+
+/* Beside selected text: bold, italic, style and comment. */
+.selection-bar {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  box-shadow: var(--shadow-dialog);
+}

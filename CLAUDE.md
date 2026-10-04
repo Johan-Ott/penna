@@ -71,6 +71,34 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   writer picks a picture (`cover.jpg`/`cover.png` in the project folder, `project/cover.ts`; an
   older picture goes to trash/). The book id (ISBN, else `bookId` in project.json) stays between exports.
   Check an exported book with W3C epubcheck (needs Java): `java -jar epubcheck.jar bok.epub`.
+- Import lives in `src/import/`, used by onboarding's Importera. Every format becomes Markdown and
+  then a book (`ImportedNode[]`, `markdownImport.ts`): with two heading levels the top is parts and
+  the next chapters, deeper headings name scenes, and `***` splits scenes. DOCX goes through
+  mammoth's HTML (`docxImport.ts`); Scrivener is picked by its .scrivx, whose binder's draft gives
+  the tree and each text's RTF (`scrivenerImport.ts`, `rtf.ts`). `paragraphs.ts` writes the text
+  with the editor's own serializer, so escaping matches a saved scene. `createProject` takes the book.
+- Characters and places are ordinary scene files in the fixed tree folders Karaktärer and Platser
+  (`project/cards.ts`; a decided change from the spec's entities.json, see docs/spec.md). The
+  title is the name. Planera (G P) is only an overview of those folders; mentions are counted
+  from the titles in the manuscript text, never stored. The palette finds them too.
+- Names of cards are underlined in the open scene by a decoration plugin (`editor/mentions.ts`);
+  nothing is written into the scene file. The editor only gets `{ id, pattern }` pairs from
+  `useMentionLinks`; a click shows `MentionCard` with how the card's text begins.
+- Granskning (`app/review/`) works on the open scene only, as the spec says of visible text:
+  repeated words (`manuscript/review.ts`, dots via `editor/repetitionMarks.ts`, sentences counted
+  across paragraphs, names and small common words left out) and names one or two letters from a
+  card title. "Ändra alla" replaces in the whole manuscript through the search's replace, so Ångra
+  undoes it in one step; "Ignorera" keeps the word in `ignoredNames` in project.json.
+- Comments live in `comments/<scene id>.json` in the spec's shape (`project/comments.ts`), anchored
+  by quote, prefix and suffix and found again with `locate`, so they survive edits; a reply is a
+  comment with `replyTo` (our addition). Ctrl+Shift+M on a selection starts one; they show in the
+  review panel (`app/review/`), which appears when Granskning is on or the scene has comments.
+  `useComments` lives in the app state, so the selection bar (`SelectionBar.tsx`: bold, italic,
+  style, comment) reaches it too. Right-click keeps the system menu for its spelling suggestions.
+- Spellcheck uses WebView2's language, set by `--lang` in tauri.conf.json's additionalBrowserArgs
+  (WebView2 otherwise follows the Windows display language, not the page's `lang`).
+- Editor switches (typewriter, typography, spellcheck, mentions, repetitions, comments) are one
+  object, `editor.modes.current`, read by ProseMirror on every update.
 - Tauri may read and write under $HOME and $DOCUMENT without a dialog (capabilities), and
   `tauri-plugin-persisted-scope` keeps folders picked in the dialog across restarts.
 - `npm run icons` rebuilds the app icons from `src-tauri/icons/icon-source.svg`.

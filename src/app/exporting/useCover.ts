@@ -3,6 +3,8 @@ import { findCover, saveCover, type CoverPicture } from "../../project/cover.js"
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
+const PICTURE = { name: "Bild", extensions: ["jpg", "jpeg", "png"] };
+
 /** The project's cover picture, with a URL the page can show, and a way to pick a new one. */
 export function useCover(project: Project) {
   const [picture, setPicture] = useState<CoverPicture | null>(null);
@@ -15,10 +17,10 @@ export function useCover(project: Project) {
   useEffect(() => void reload(), [reload]);
   const url = usePictureUrl(picture);
   const choose = async () => {
-    const bytes = await platform.pickImage();
-    if (!bytes) return;
+    const picked = await platform.pickFile(PICTURE);
+    if (!picked) return;
     try {
-      await saveCover(platform.fileSystem, dir, bytes);
+      await saveCover(platform.fileSystem, dir, picked.bytes);
       setProblem(null);
       await reload();
     } catch (error) {

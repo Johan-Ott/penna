@@ -25,6 +25,7 @@ import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import type { PaletteEntry } from "./paletteSearch.js";
 import { VIEWS, type View } from "../Sidebar.js";
+import type { Card } from "../../project/cards.js";
 
 export interface PaletteContext {
   project: Project;
@@ -41,6 +42,9 @@ export interface PaletteContext {
   showSnapshots: (() => void) | null;
   openSettings: () => void;
   showView: (view: View) => void;
+  cards: Card[];
+  openCard: (id: string) => void;
+  newCharacter: () => void;
 }
 
 const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
@@ -165,10 +169,22 @@ function switchEntries({
   ];
 }
 
-/** Everything the command palette can find: scenes, chapters, commands and settings. */
+// "Hoppa till karaktär", as the spec asks of Ctrl+K: each card opens in the editor.
+function cardEntries({ cards, openCard, newCharacter }: PaletteContext): PaletteEntry[] {
+  const entries = cards.map((card): PaletteEntry => ({
+    id: `kort:${card.id}`,
+    label: card.name,
+    group: card.kind === "person" ? "Karaktärer" : "Platser",
+    run: () => openCard(card.id),
+  }));
+  return [...entries, command("Ny karaktär", newCharacter)];
+}
+
+/** Everything the command palette can find: scenes, chapters, characters, commands, settings. */
 export function paletteEntries(context: PaletteContext): PaletteEntry[] {
   return [
     ...placeEntries(context),
+    ...cardEntries(context),
     ...writingEntries(context),
     ...textEntries(context),
     ...switchEntries(context),

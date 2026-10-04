@@ -1,5 +1,12 @@
 import { useCallback, useState } from "react";
-import { insertAfter, insertNode, type NodeKind, type TreeNode } from "../project/tree.js";
+import {
+  CHARACTERS_ID,
+  insertAfter,
+  insertNode,
+  PLACES_ID,
+  type NodeKind,
+  type TreeNode,
+} from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { platform } from "./platform.js";
@@ -27,6 +34,14 @@ const NEW_TITLES: Record<NodeKind, string> = {
   part: "Ny del",
   folder: "Ny mapp",
 };
+
+// A scene made in Karaktärer or Platser is a card, and is named like one.
+function newSceneTitle(placement: Placement) {
+  if (placement && "inside" in placement && placement.inside === CHARACTERS_ID)
+    return "Ny karaktär";
+  if (placement && "inside" in placement && placement.inside === PLACES_ID) return "Ny plats";
+  return NEW_TITLES.scene;
+}
 
 // Without a placement, a scene goes after the open scene and a chapter after the chapter
 // being written in; parts and folders go last in the manuscript.
@@ -77,7 +92,7 @@ export function useProjectActions({ project, session, updateTree, refresh }: Pro
       if (!project) return null;
       const isScene = kind === "scene";
       const id = isScene
-        ? await createScene(platform.fileSystem, project.dir, NEW_TITLES.scene)
+        ? await createScene(platform.fileSystem, project.dir, newSceneTitle(placement))
         : newSceneId();
       const node: TreeNode = isScene
         ? { id, kind }

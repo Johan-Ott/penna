@@ -37,7 +37,7 @@ function CurrentStep({ state, isFirst }: { state: OnboardingState; isFirst: bool
   return <DoneStep />;
 }
 
-// "Fortsätt" on every step, "Börja skriva" on the last; opening a project has its own buttons.
+// "Fortsätt" on every step, "Börja skriva" on the last; importing and opening have their own.
 function PrimaryButton({
   state,
   onFinish,
@@ -54,7 +54,7 @@ function PrimaryButton({
       </button>
     );
   }
-  if (state.step === 4 && state.mode === "open") return null;
+  if (state.step === 4 && state.mode !== "new") return null;
   return (
     <button className="button primary large" onClick={() => void continueFrom(state)}>
       Fortsätt

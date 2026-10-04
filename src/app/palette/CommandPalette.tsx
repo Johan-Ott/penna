@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { searchPalette, type PaletteEntry } from "./paletteSearch.js";
+import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
 
 interface CommandPaletteProps {
   entries: PaletteEntry[];
@@ -7,11 +7,6 @@ interface CommandPaletteProps {
 }
 
 const MAX_RESULTS = 40;
-const GROUP_ORDER: PaletteEntry["group"][] = ["Scener", "Kapitel", "Kommandon"];
-
-// Results are shown in groups, as in the design; the best match comes first within a group.
-const grouped = (found: PaletteEntry[]) =>
-  GROUP_ORDER.flatMap((group) => found.filter((entry) => entry.group === group));
 
 function usePaletteSelection(found: PaletteEntry[], onClose: () => void) {
   const [selected, setSelected] = useState(0);
@@ -103,8 +98,8 @@ function PaletteInput(props: {
       <SearchIcon />
       <input
         autoFocus
-        placeholder="Sök scen, kapitel eller kommando"
-        aria-label="Sök scen, kapitel eller kommando"
+        placeholder="Sök scen, kapitel, karaktär eller kommando"
+        aria-label="Sök scen, kapitel, karaktär eller kommando"
         value={props.query}
         onChange={(event) => props.onQuery(event.target.value)}
         onKeyDown={props.onKeyDown}
@@ -116,7 +111,7 @@ function PaletteInput(props: {
 /** Ctrl+K: jump to a scene or chapter, or run any command, by typing a few letters. */
 export function CommandPalette({ entries, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
-  const found = grouped(searchPalette(entries, query).slice(0, MAX_RESULTS));
+  const found = inGroups(searchPalette(entries, query).slice(0, MAX_RESULTS));
   const selection = usePaletteSelection(found, onClose);
   return (
     <div className="palette-backdrop" onPointerDown={onClose}>

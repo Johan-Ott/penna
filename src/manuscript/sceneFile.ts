@@ -33,14 +33,14 @@ export function readField(frontMatter: string, key: string): string | null {
 
 export const sceneTitle = (frontMatter: string) => readField(frontMatter, "title");
 
-const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
+export const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
 
 export function newSceneText(id: string, title: string): string {
   return `---\nid: ${id}\ntitle: ${yamlValue(title)}\nstatus: idé\n---\n`;
 }
 
 // Replaces the line `key: ...`, or adds it last, just before the closing `---`.
-function withField(frontMatter: string, key: string, value: string): string {
+export function withField(frontMatter: string, key: string, value: string): string {
   const line = `${key}: ${value}`;
   const pattern = new RegExp(`^${key}:.*$`, "m");
   if (frontMatter === "") return `---\n${line}\n---\n`;

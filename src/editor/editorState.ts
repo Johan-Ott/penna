@@ -8,7 +8,10 @@ import { EditorState } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
+import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
+import { repetitionsPlugin } from "./repetitionMarks.js";
+import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
 
 // Swedish typography as the writer types: Swedish uses ” for both opening and closing quotes.
 // Each rule asks whether it is on, so the setting can change without a new editor state.
@@ -24,11 +27,24 @@ export function typographyRules(isOn: () => boolean): InputRule[] {
 export interface EditorSwitches {
   isTypewriterOn: () => boolean;
   isTypographyOn: () => boolean;
+  /** The names of the project's cards, underlined where the text mentions them. */
+  mentionMatchers: () => MentionMatcher[];
+  onMention: (id: string, box: DOMRect) => void;
+  /** Sentences a word may not be repeated within; null when the review is off. */
+  repeatWindow: () => number | null;
+  /** The open scene's comments, marked where their quotes are. */
+  commentAnchors: () => CommentAnchor[];
+  onComment: (id: string) => void;
 }
 
-const DEFAULT_SWITCHES: EditorSwitches = {
+export const DEFAULT_SWITCHES: EditorSwitches = {
   isTypewriterOn: () => false,
   isTypographyOn: () => true,
+  mentionMatchers: () => [],
+  onMention: () => undefined,
+  repeatWindow: () => null,
+  commentAnchors: () => [],
+  onComment: () => undefined,
 };
 
 const writingKeys = keymap({
@@ -55,6 +71,9 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       keymap(baseKeymap),
       focusPlugin(),
       typewriterPlugin(switches.isTypewriterOn),
+      mentionsPlugin(switches.mentionMatchers, switches.onMention),
+      repetitionsPlugin(switches.repeatWindow),
+      commentsPlugin(switches.commentAnchors, switches.onComment),
       placeholder("Börja skriva…"),
     ],
   });

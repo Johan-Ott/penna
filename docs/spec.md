@@ -36,7 +36,6 @@ från molnsynk. Håller inte detta måste teknikvalet ses över.
 ```
 Vintervägen.penna/
   project.json      titel, mål, trädets ordning, bokdesign
-  entities.json     karaktärer, platser, föremål
   stats.json        ord per dag
   scenes/<ULID>.md  en fil per scen, front matter id/title/status, CommonMark
   notes/  comments/  snapshots/  trash/
@@ -50,3 +49,12 @@ Vintervägen.penna/
 | Filen ändras utanför appen                                   | Inga osparade ändringar: ladda om tyst. Annars konfliktdialog                     |
 | Molnfil inte nedladdad (iCloud)                              | Visa "Hämtar…", ingen redigering förrän filen är lokal                            |
 | Krasch eller strömavbrott                                    | Skriv till tempfil och byt namn. Vid start: erbjud återställning av nyare tempfil |
+
+## Avvikelser från specen (beslutade av Johan)
+
+- Karaktärer och platser är vanliga scenfiler (titel och prosa) i två fasta mappar i
+  strukturen, Karaktärer och Platser, i stället för poster i `entities.json`. De skrivs, flyttas
+  och slängs som scener. Titeln är namnet som Penna letar efter i texten. Alias, relationer och
+  andra fält läggs till senare, när de behövs. Skäl: allt är prosa, grunden först.
+- Ett svar på en kommentar är en egen kommentar med fältet `replyTo` (kommentarens id) och
+  inget citat. Specens kommentarsmodell har inget fält för svar.
