@@ -2,6 +2,7 @@ import type { Command, EditorState } from "prosemirror-state";
 import { useState } from "react";
 import { currentStyle, setStyle, STYLE_LABELS, type StyleChoice } from "../editor/commands.js";
 import { Menu } from "./Menu.js";
+import { t } from "../i18n/i18n.js";
 
 interface StylePickerProps {
   editorState: EditorState | null;
@@ -53,7 +54,9 @@ export function StylePicker({ editorState, run }: StylePickerProps) {
         {STYLE_LABELS[style]}
         <ChevronDown />
       </button>
-      {menuAt && <Menu {...menuAt} label="Stil" items={items} onClose={() => setMenuAt(null)} />}
+      {menuAt && (
+        <Menu {...menuAt} label={t("Stil")} items={items} onClose={() => setMenuAt(null)} />
+      )}
     </>
   );
 }

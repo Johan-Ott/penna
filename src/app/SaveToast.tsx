@@ -1,23 +1,26 @@
 import { useEffect } from "react";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
+import { t, numberLocale } from "../i18n/i18n.js";
 
 const FAILURE_MESSAGES: Record<SaveFailure, string> = {
-  blocked: "Filen används av ett annat program, ofta molnsynken, eller är skrivskyddad.",
-  diskFull: "Disken är full.",
-  readOnly: "Enheten är skrivskyddad.",
-  folderMissing: "Projektmappen hittas inte. Är disken eller molnmappen ansluten?",
-  unknown: "Scenen kunde inte sparas.",
+  blocked: t("Filen används av ett annat program, ofta molnsynken, eller är skrivskyddad."),
+  diskFull: t("Disken är full."),
+  readOnly: t("Enheten är skrivskyddad."),
+  folderMissing: t("Projektmappen hittas inte. Är disken eller molnmappen ansluten?"),
+  unknown: t("Scenen kunde inte sparas."),
 };
 
 export function SaveToast({ status, onRetry }: { status: SaveStatus | null; onRetry: () => void }) {
   if (status?.kind !== "failed") return null;
   return (
     <div className="toast" role="alert">
-      <span>{FAILURE_MESSAGES[status.reason]} Din text finns kvar i appen.</span>
-      <span className="toast-meta">Försöker igen…</span>
+      <span>
+        {t("{reason} Din text finns kvar i appen.", { reason: FAILURE_MESSAGES[status.reason] })}
+      </span>
+      <span className="toast-meta">{t("Försöker igen…")}</span>
       <button className="link-button" onClick={onRetry}>
-        Försök nu
+        {t("Försök nu")}
       </button>
     </div>
   );
@@ -27,8 +30,12 @@ export function TreeFailureToast({ failure }: { failure: SaveFailure | null }) {
   if (!failure) return null;
   return (
     <div className="toast" role="alert">
-      <span>Ordningen i strukturen kunde inte sparas. {FAILURE_MESSAGES[failure]}</span>
-      <span className="toast-meta">Sparas vid nästa ändring</span>
+      <span>
+        {t("Ordningen i strukturen kunde inte sparas. {reason}", {
+          reason: FAILURE_MESSAGES[failure],
+        })}
+      </span>
+      <span className="toast-meta">{t("Sparas vid nästa ändring")}</span>
     </div>
   );
 }
@@ -37,8 +44,8 @@ export function ReadOnlyNotice({ isReadOnly }: { isReadOnly: boolean }) {
   if (!isReadOnly) return null;
   return (
     <div className="toast" role="status">
-      <span>Projektet är sparat av en nyare version av Penna och går bara att läsa.</span>
-      <span className="toast-meta">Uppdatera Penna för att skriva i det</span>
+      <span>{t("Projektet är sparat av en nyare version av Penna och går bara att läsa.")}</span>
+      <span className="toast-meta">{t("Uppdatera Penna för att skriva i det")}</span>
     </div>
   );
 }
@@ -58,14 +65,18 @@ export function ReplaceToast(props: {
     return () => clearTimeout(timer);
   }, [done, onDismiss]);
   if (!done) return null;
-  const noun = done.count === 1 ? "förekomst" : "förekomster";
+  const noun = done.count === 1 ? t("förekomst") : t("förekomster");
   return (
     <div className="toast inverted" role="status">
       <span>
-        Ändrade {done.count.toLocaleString("sv-SE")} {noun} av ”{done.search}”
+        {t("Ändrade {count} {noun} av ”{search}”", {
+          count: done.count.toLocaleString(numberLocale()),
+          noun,
+          search: done.search,
+        })}
       </span>
       <button className="link-button" onClick={props.onUndo}>
-        Ångra
+        {t("Ångra")}
       </button>
     </div>
   );

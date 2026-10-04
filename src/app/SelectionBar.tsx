@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
+import { t } from "../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
@@ -64,19 +65,20 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
   const hasFocus = useEditorFocus(editor);
   const position = hasFocus ? barPosition(editor) : null;
   if (!position) return null;
+  const marks = { editorState: editor.editorState, run: editor.run };
   return (
     <div
       className="selection-bar"
       role="toolbar"
-      aria-label="Markering"
+      aria-label={t("Markering")}
       style={position}
       onMouseDown={(event) => event.preventDefault()}
     >
-      <MarkButton editorState={editor.editorState} run={editor.run} mark="bold" label="Fetstil" />
-      <MarkButton editorState={editor.editorState} run={editor.run} mark="italic" label="Kursiv" />
+      <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
+      <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
       <StylePicker editorState={editor.editorState} run={editor.run} />
       <button className="icon-button" onClick={onComment}>
-        Kommentera
+        {t("Kommentera")}
       </button>
     </div>
   );

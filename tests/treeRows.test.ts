@@ -10,12 +10,11 @@ import {
   CHARACTERS_ID,
   NOTES_ID,
   PLACES_ID,
-  TIMELINE_ID,
-  RESEARCH_ID,
+  THINGS_ID,
   TRASH_ID,
   type TreeNode,
 } from "../src/project/tree";
-import { dropMove, visibleRows } from "../src/project/treeRows";
+import { dropMove, sidebarSections, visibleRows } from "../src/project/treeRows";
 
 const scene = (id: string): TreeNode => ({ id, kind: "scene" });
 
@@ -47,9 +46,8 @@ describe("visibleRows", () => {
       "2:s3",
       `0:${CHARACTERS_ID}`,
       `0:${PLACES_ID}`,
-      `0:${TIMELINE_ID}`,
+      `0:${THINGS_ID}`,
       `0:${NOTES_ID}`,
-      `0:${RESEARCH_ID}`,
       `0:${TRASH_ID}`,
     ]);
   });
@@ -123,5 +121,24 @@ describe("insertNode inside a node that can not hold it", () => {
     const tree = insertNode(sampleTree(), { id: "kap9", kind: "chapter", children: [] }, "kap1", 0);
 
     expect(childIds(tree, "del1")).toEqual(["kap1", "kap9", "kap2"]);
+  });
+});
+
+describe("sidebarSections", () => {
+  it("splits the rows into the book, the notes in their sorts, and Papperskorg", () => {
+    const tree = insertNode(sampleTree(), scene("arvid"), CHARACTERS_ID, 0);
+    const rows = visibleRows(tree, new Set(["del1"]));
+
+    const sections = sidebarSections(rows);
+
+    expect(sections.book.map((row) => row.node.id)).toEqual(["del1"]);
+    expect(sections.notes.map((row) => row.node.id)).toEqual([
+      CHARACTERS_ID,
+      "arvid",
+      PLACES_ID,
+      THINGS_ID,
+      NOTES_ID,
+    ]);
+    expect(sections.trash.map((row) => row.node.id)).toEqual([TRASH_ID]);
   });
 });

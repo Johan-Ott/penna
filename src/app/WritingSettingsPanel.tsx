@@ -8,6 +8,7 @@ import {
   type WritingSettings,
 } from "../editor/writingSettings.js";
 import type { SettingsChange } from "./useWritingSettings.js";
+import { t } from "../i18n/i18n.js";
 
 type Switch = "typewriter" | "indent";
 
@@ -30,7 +31,7 @@ interface PanelProps {
   showsFocusOptions: boolean;
 }
 
-const WIDTH_LABELS = { smal: "Smal", normal: "Normal", bred: "Bred" } as const;
+const WIDTH_LABELS = { smal: t("Smal"), normal: t("Normal"), bred: t("Bred") } as const;
 
 function Segmented<T extends string>(props: {
   label: string;
@@ -91,13 +92,19 @@ function ValueRow(props: { label: string; value: string; onNext: () => void }) {
 function SizeStepper({ settings, onChange }: Pick<PanelProps, "settings" | "onChange">) {
   return (
     <div className="setting-row">
-      <span>Storlek</span>
+      <span>{t("Storlek")}</span>
       <span className="stepper">
-        <button aria-label="Mindre" onClick={() => onChange((current) => changeSize(current, -1))}>
+        <button
+          aria-label={t("Mindre")}
+          onClick={() => onChange((current) => changeSize(current, -1))}
+        >
           –
         </button>
         <span>{settings.size}</span>
-        <button aria-label="Större" onClick={() => onChange((current) => changeSize(current, 1))}>
+        <button
+          aria-label={t("Större")}
+          onClick={() => onChange((current) => changeSize(current, 1))}
+        >
           +
         </button>
       </span>
@@ -115,19 +122,19 @@ function TypographySettings({ settings, onChange }: PanelProps) {
   return (
     <>
       <Segmented
-        label="Typsnitt"
+        label={t("Typsnitt")}
         value={settings.font}
         options={fonts}
         onSelect={(font) => set({ font })}
       />
       <SizeStepper settings={settings} onChange={onChange} />
       <ValueRow
-        label="Radavstånd"
+        label={t("Radavstånd")}
         value={String(settings.lineHeight).replace(".", ",")}
         onNext={() => onChange(cycleLineHeight)}
       />
       <ValueRow
-        label="Textbredd"
+        label={t("Textbredd")}
         value={WIDTH_LABELS[settings.width]}
         onNext={() => onChange(cycleWidth)}
       />
@@ -138,21 +145,21 @@ function TypographySettings({ settings, onChange }: PanelProps) {
 function FocusSettings({ settings, onChange }: PanelProps) {
   const set = (changes: Partial<WritingSettings>) => onChange(changeTo(changes));
   const modes: [FocusMode, string][] = [
-    ["av", "Av"],
-    ["mening", "Mening"],
-    ["stycke", "Stycke"],
+    ["av", t("Av")],
+    ["mening", t("Mening")],
+    ["stycke", t("Stycke")],
   ];
   return (
     <>
       <Segmented
-        label="Fokus"
+        label={t("Fokus")}
         value={settings.focus}
         options={modes}
         onSelect={(focus) => set({ focus })}
       />
       <Toggle
-        label="Typewriter"
-        hint="Raden du skriver stannar mitt på skärmen"
+        label={t("Typewriter")}
+        hint={t("Raden du skriver stannar mitt på skärmen")}
         isOn={settings.typewriter}
         onFlip={() => onChange(toggle("typewriter"))}
       />
@@ -163,19 +170,19 @@ function FocusSettings({ settings, onChange }: PanelProps) {
 export function WritingSettingsPanel(props: PanelProps) {
   const { settings, onChange } = props;
   return (
-    <div className="settings-panel" role="dialog" aria-label="Skrivinställningar">
+    <div className="settings-panel" role="dialog" aria-label={t("Skrivinställningar")}>
       <TypographySettings {...props} />
       <div className="settings-divider" />
       {props.showsFocusOptions && <FocusSettings {...props} />}
       <Toggle
-        label="Indrag första rad"
-        hint="Bokstil: inget indrag efter rubrik"
+        label={t("Indrag första rad")}
+        hint={t("Bokstil: inget indrag efter rubrik")}
         isOn={settings.indent}
         onFlip={() => onChange(toggle("indent"))}
       />
       <Toggle
-        label="Mörkt tema"
-        hint="Följer annars systemet"
+        label={t("Mörkt tema")}
+        hint={t("Följer annars systemet")}
         isOn={settings.theme === "mörkt"}
         onFlip={() => onChange(toggleDark)}
       />

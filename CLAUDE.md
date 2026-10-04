@@ -17,10 +17,11 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   block keeps the text it was read from, so untouched blocks are saved byte for byte.
 - `src/storage/`: everything that touches disk goes through the `FileSystem` interface
   (`nodeFileSystem` in tests, `tauriFileSystem` in the app, `memoryFileSystem` in a browser).
-- `src/project/`: project.json and the tree (parts, chapters, scenes, folders). Tree edits are
-  pure functions in `tree.ts`. A scene node has no title: the title lives in the scene file's
-  front matter, so moving a scene changes project.json only. Research and Papperskorg always
-  exist (ids `research`, `trash`).
+- `src/project/`: project.json and the tree (parts, chapters, scenes, folders, sorts). Tree edits
+  are pure functions in `tree.ts`. A scene node has no title: the title lives in the scene file's
+  front matter, so moving a scene changes project.json only. A chapter (or a loose scene) can hold
+  `summary` and `when` for Innehåll. The sorts Personer, Platser, Saker, Övrigt (ids `karaktarer`,
+  `platser`, `saker`, `anteckningar`) and Papperskorg (`trash`) always exist.
 - `src/editor/`: ProseMirror commands, keys, Swedish typography, search panel, focus and
   typewriter plugins. Writing settings (`writingSettings.ts`) are per writer, kept in the
   webview's localStorage until the Inställningar screen exists. Typography applies everywhere;
@@ -58,9 +59,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   font, spellcheck, Swedish typography) are in `penna.writing`; author name, default daily goal
   and automatic snapshots in `penna.app`. Editor switches are read through refs on every
   update (`useEditorView`), so changing them needs no new editor state.
-- Views of a project (Skriv, Framsteg; G S / G F) are listed in `VIEWS` in `Sidebar.tsx` and held
-  in `useWritingMode`. The writing area stays mounted but hidden in other views, so the editor
-  keeps its scene and undo. Framsteg's numbers are pure functions in `project/progress.ts`; the
+- Views of a project (Skriv, Innehåll, Publicera; G S / G I / G P) are listed in `VIEWS` in
+  `useWritingMode.ts`. The writing area stays mounted but hidden in other views, so the editor
+  keeps its scene and undo. Framsteg is a popover from the top bar; its numbers are pure functions in `project/progress.ts`; the
   goals (`dailyGoal`, `totalGoal`, `deadline`) live in project.json, written by `updateFields`.
 - Export lives in `src/export/`: `book.ts` reads the manuscript in order (`bookOutline`) and every
   scene before anything is written; `standardManuscript.ts` builds the DOCX with `docx` (npm), as
@@ -71,31 +72,38 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   writer picks a picture (`cover.jpg`/`cover.png` in the project folder, `project/cover.ts`; an
   older picture goes to trash/). The book id (ISBN, else `bookId` in project.json) stays between exports.
   Check an exported book with W3C epubcheck (needs Java): `java -jar epubcheck.jar bok.epub`.
-- Print PDF and Bokdesign use Typst as WebAssembly in the web view (a decided change from the
+- Print PDF and Publicera's preview use Typst as WebAssembly in the web view (a decided change from the
   spec's Rust, see docs/spec.md), so the preview and the PDF come from one compilation path.
   `export/typstText.ts` turns scenes into Typst markup (every code character escaped),
-  `typstTemplate.ts` is the Klassisk theme, `typstBook.ts` puts the book together and
+  `typstTemplate.ts` holds the three themes (Klassisk, Modern, Luftig: headings and margins), the
+  running head and folio and the anfang, which Typst measures to sink two lines into the text
+  (the paragraph is passed as a list of words). `typstBook.ts` puts the book together and
   `typstCompile.ts` runs Typst with assets passed in: fetched in the app (`app/typstAssets.ts`),
   read from disk in tests. Fonts are static TTFs in `public/fonts` with their OFL licences; Typst
   never loads fonts from the internet. The design lives in project.json `design` (`bookDesign.ts`).
   The pages around the story are in `export/bookParts.ts`: cover, title, copyright and dedication
   before, thanks and about the author after. Their texts are `dedication`, `thanks` and
-  `aboutAuthor` in project.json, written in Exportera when the part is ticked.
+  `aboutAuthor` in project.json, written in Publicera's Bokuppgifter when the part is ticked.
 - Import lives in `src/import/`, used by onboarding's Importera. Every format becomes Markdown and
   then a book (`ImportedNode[]`, `markdownImport.ts`): with two heading levels the top is parts and
   the next chapters, deeper headings name scenes, and `***` splits scenes. DOCX goes through
   mammoth's HTML (`docxImport.ts`); Scrivener is picked by its .scrivx, whose binder's draft gives
   the tree and each text's RTF (`scrivenerImport.ts`, `rtf.ts`). `paragraphs.ts` writes the text
   with the editor's own serializer, so escaping matches a saved scene. `createProject` takes the book.
-- Characters and places are ordinary scene files in the fixed tree folders Karaktärer and Platser
-  (`project/cards.ts`; a decided change from the spec's entities.json, see docs/spec.md). The
-  title is the name. Planera (G P) is only an overview of those folders; mentions are counted
-  from the titles in the manuscript text, never stored. The palette finds them too.
-  Tidslinje and Anteckningar are two more fixed folders of scene files (`entriesIn`), listed in
-  Planera in tree order (`planning/PlanList.tsx`); the timeline is reordered by dragging in the tree.
-- Names of cards are underlined in the open scene by a decoration plugin (`editor/mentions.ts`);
+- Notes are ordinary scene files in sorts (tree nodes of kind `sort`), shown under Anteckningar in
+  the sidebar (`app/notes/`; a decided change from the spec's entities.json, see docs/spec.md).
+  The title is the name. A note's name is linked in the text unless its front matter says
+  `link: false`; in Övrigt only when it says `link: true` (`cards.ts`). The writer can add own
+  sorts in Ny anteckning. Mentions are counted from the manuscript text, never stored; a note's
+  page shows them under Nämns i. Connections ("Elin, brorsdotter") are project.json `connections`.
+  Older projects' Karaktärer, Tidslinje and Research folders become sorts when they are read.
+- Names of notes are underlined in the open scene by a decoration plugin (`editor/mentions.ts`);
   nothing is written into the scene file. The editor only gets `{ id, pattern }` pairs from
-  `useMentionLinks`; a click shows `MentionCard` with how the card's text begins.
+  `useMentionLinks`; a click shows `MentionCard`.
+- The shell (`app/shell/`): the top bar (menu, sidebar, back and forward, Skriv or Publicera, the
+  day's words that open Framsteg, search, focus), the sidebar beside a white card, and Publicera in
+  their place. Innehåll lists chapters with what happens, when and status; Tidsordning is the
+  order the writer drags them into (project.json `timeOrder`).
 - Granskning (`app/review/`) works on the open scene only, as the spec says of visible text:
   repeated words (`manuscript/review.ts`, dots via `editor/repetitionMarks.ts`, sentences counted
   across paragraphs, names and small common words left out) and names one or two letters from a
@@ -117,9 +125,14 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
 - project.json carries `formatVersion` (`FORMAT_VERSION` in `projectFile.ts`, now 1), stamped on
   every write. A newer one opens read-only (`project.isReadOnly`): no project.json writes, no new
   scenes, the editor not editable. When format 2 comes, add its migration step in `readProjectFile`.
-- Narrow windows are CSS only (end of `app.css`): under 1200 px the review panel waits behind a
-  tab and covers the text when opened; under 960 px the sidebar folds away and Ctrl+. shows it
-  (`isSidebarOpen` in `useWritingMode`). The smallest window is 720 × 500.
+- The top bar shows today's words against the daily goal. The reminder (`reminder.ts`)
+  sends a local notice after the chosen hour when nothing is written; it needs Penna open.
+- Publicera's export reports progress per chapter while scenes are read (`bookMaterial` onProgress);
+  Avbryt bumps the run number so an old run's file is never saved.
+- Layout lives in `styles/shell.css`. Granska opens from the chip at the card's corner; under
+  1200 px it covers the text. Under 960 px the sidebar starts hidden and floats over the card when
+  shown (Ctrl+. or the sidebar button; `isSidebarOpen` in `useWritingMode`). The smallest window
+  is 720 × 500.
 - The top bar has no formatting buttons: bold, italic and style are on the selection bar, a scene
   break is typed as `***` on an empty line (an input rule in `editorState.ts`) or Ctrl+Enter.
 - Editor switches (typewriter, typography, spellcheck, mentions, repetitions, comments) are one
@@ -138,3 +151,24 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   rules (typography) only fire with `document.execCommand("insertText")` one character at a time.
 - Stopping a background `npx vite` leaves its node process on port 1420; stop that process too,
   or the next server serves stale modules.
+
+## Releasing
+
+- `npm run version -- 1.0.3` sets the version in package.json, tauri.conf.json and Cargo.toml.
+  Commit, tag `v1.0.3` and push: `.github/workflows/release.yml` builds Windows and macOS with
+  `tauri.release.conf.json` (bundling and updater files on) into a draft GitHub release.
+- Publishing the draft makes its `latest.json` the newest; the app asks for it once at start
+  (`UpdateNotice.tsx`) and offers to restart into the new version. Updates are signed: the public
+  key is in tauri.conf.json, the private key is `~/.tauri/penna-updater.key` on Johan's computer
+  and the GitHub secret `TAURI_SIGNING_PRIVATE_KEY`. Losing it means users must reinstall once.
+
+## Interface language
+
+- Every interface text goes through `t()` (`src/i18n/i18n.ts`) with the Swedish text as the key:
+  `t("Ny scen")`, `t("{count} ord", { count })`. English lives in `src/i18n/en.json`. A test reads
+  every `t("…")` in src and fails on a missing or unused English entry. ESLint allows `t` as a
+  short name (id-length exceptions) for this.
+- The language is set by `src/i18n/startLanguage.ts`, imported first in main.tsx, so lists made
+  when modules load are translated too. Changing it in Inställningar saves and reloads.
+- Book text is not interface text: exports use the book's language (`export/bookWords.ts`), and
+  the fixed tree folders keep their Swedish titles in project.json but show translated.

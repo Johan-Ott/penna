@@ -1,16 +1,16 @@
 import type { SceneSession } from "../sceneSession.js";
-import type { View } from "../Sidebar.js";
+import type { View } from "../useWritingMode.js";
 import type { useProjectActions } from "../useProjectActions.js";
 import type { Project } from "../useProject.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 
 export interface CardActions {
   open: (id: string) => void;
-  /** A new text in a planning folder: Karaktärer, Platser, Tidslinje or Anteckningar. */
+  /** A new note in a sort, such as Personer. */
   create: (folderId: string) => void;
 }
 
-/** A card or list entry is a scene: it opens in Skriv, and a new one is made in its folder. */
+/** A note is a scene: it opens in Skriv, and a new one is made in its sort. */
 export function cardActions(parts: {
   project: Project | null;
   session: SceneSession;

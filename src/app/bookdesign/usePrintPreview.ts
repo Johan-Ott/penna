@@ -6,6 +6,7 @@ import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
 import { bookMaterial, printInput } from "../exporting/bookMaterial.js";
+import { t } from "../../i18n/i18n.js";
 
 // Waits for the writer to stop clicking before setting the pages again.
 const SETTLE_MS = 300;
@@ -36,7 +37,8 @@ export function usePrintPreview(project: Project, generalAuthor: string): Previe
       previewSvg(project, generalAuthor)
         .then((svg) => isCurrent && setPreview({ kind: "ready", svg }))
         .catch((error: unknown) => {
-          const reason = error instanceof TypstError ? error.message : "Boken kunde inte sättas.";
+          const reason =
+            error instanceof TypstError ? error.message : t("Boken kunde inte sättas.");
           if (isCurrent) setPreview({ kind: "failed", reason });
         });
     }, SETTLE_MS);

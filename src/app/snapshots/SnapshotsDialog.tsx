@@ -6,6 +6,7 @@ import { diffWords } from "../../manuscript/wordDiff.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
 import { useEscape } from "../useShortcut.js";
 import type { useSnapshots } from "./useSnapshots.js";
+import { t, numberLocale } from "../../i18n/i18n.js";
 
 type SnapshotState = ReturnType<typeof useSnapshots>;
 
@@ -17,7 +18,8 @@ interface SnapshotsDialogProps {
   nowWords: number;
 }
 
-const formatWords = (words: number) => `${words.toLocaleString("sv-SE")} ord`;
+const formatWords = (words: number) =>
+  t("{count} ord", { count: words.toLocaleString(numberLocale()) });
 
 function itemLabels(snapshot: Snapshot, now: number) {
   const when = snapshotWhen(snapshot.time, now);
@@ -38,14 +40,14 @@ function TakeSnapshot({ onTake }: { onTake: (label: string) => void }) {
   return (
     <div className="snapshot-take">
       <input
-        aria-label="Namn på ögonblicksbilden"
-        placeholder="Namn, t.ex. Före omskrivning"
+        aria-label={t("Namn på versionen")}
+        placeholder={t("Namn, t.ex. Före omskrivning")}
         value={label}
         onChange={(event) => setLabel(event.target.value)}
         onKeyDown={(event) => event.key === "Enter" && take()}
       />
       <button className="button secondary small" onClick={take}>
-        Ta ögonblicksbild
+        {t("Spara version")}
       </button>
     </div>
   );
@@ -66,14 +68,14 @@ function SnapshotList({ state, nowWords }: Pick<SnapshotsDialogProps, "state" | 
   );
   return (
     <div className="snapshot-list">
-      {item("now", "Nu", formatWords(nowWords))}
+      {item("now", t("Nu"), formatWords(nowWords))}
       {state.snapshots.map((snapshot) => {
         const { title, meta } = itemLabels(snapshot, now);
         return item(snapshot.fileName, title, meta);
       })}
       {state.snapshots.length === 0 && (
         <p className="snapshot-empty">
-          Inga bilder än. Penna tar en själv när du skriver om en större del av scenen.
+          {t("Inga versioner än. Penna sparar en själv när du skriver om en större del av texten.")}
         </p>
       )}
       <TakeSnapshot onTake={state.take} />
@@ -101,7 +103,7 @@ function Comparison({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "no
         })}
       </div>
       <button className="button primary small restore" onClick={() => state.restore(snapshot)}>
-        Återställ den här versionen
+        {t("Återställ den här versionen")}
       </button>
     </>
   );
@@ -121,10 +123,10 @@ export function SnapshotsDialog(props: SnapshotsDialogProps) {
       >
         <div className="dialog-heading row">
           <span id="snapshots-title" className="dialog-title">
-            Ögonblicksbilder av ”{props.sceneTitle}”
+            {t("Versioner av ”{title}”", { title: props.sceneTitle })}
           </span>
           <button className="link-button quiet" onClick={state.close}>
-            Stäng
+            {t("Stäng")}
           </button>
         </div>
         <div className="snapshots">

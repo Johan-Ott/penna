@@ -1,49 +1,71 @@
-export type NodeKind = "part" | "chapter" | "scene" | "folder";
+/** A sort holds notes of one kind, such as Personer; the writer can add sorts of their own. */
+export type NodeKind = "part" | "chapter" | "scene" | "folder" | "sort";
 
-/** A scene node has no title: the scene's title lives in its own file's front matter. */
+/**
+ * A scene node has no title: the scene's title lives in its own file's front matter.
+ * `summary` and `when` are what Innehåll shows for a chapter, or a scene outside a chapter.
+ */
 export interface TreeNode {
   id: string;
   kind: NodeKind;
   title?: string;
+  summary?: string;
+  when?: string;
   children?: TreeNode[];
 }
 
 export const CHARACTERS_ID = "karaktarer";
 export const PLACES_ID = "platser";
-export const TIMELINE_ID = "tidslinje";
+export const THINGS_ID = "saker";
+/** Övrigt: notes whose names are not linked in the text unless the writer asks. */
 export const NOTES_ID = "anteckningar";
-export const RESEARCH_ID = "research";
 export const TRASH_ID = "trash";
 
-// Characters, places, the timeline's events and notes are ordinary scene files kept in folders of
-// their own, beside the manuscript, so they are written, moved and thrown away like any scene.
-const SPECIAL_FOLDERS: TreeNode[] = [
-  { id: CHARACTERS_ID, kind: "folder", title: "Karaktärer" },
-  { id: PLACES_ID, kind: "folder", title: "Platser" },
-  { id: TIMELINE_ID, kind: "folder", title: "Tidslinje" },
-  { id: NOTES_ID, kind: "folder", title: "Anteckningar" },
-  { id: RESEARCH_ID, kind: "folder", title: "Research" },
-  { id: TRASH_ID, kind: "folder", title: "Papperskorg" },
+// Notes are ordinary scene files kept in sorts beside the manuscript, so they are written, moved
+// and thrown away like any scene. These four always exist; the ids are kept from older projects.
+const FIXED_SORTS: { id: string; kind: "sort"; title: string }[] = [
+  { id: CHARACTERS_ID, kind: "sort", title: "Personer" },
+  { id: PLACES_ID, kind: "sort", title: "Platser" },
+  { id: THINGS_ID, kind: "sort", title: "Saker" },
+  { id: NOTES_ID, kind: "sort", title: "Övrigt" },
 ];
+const TRASH: TreeNode = { id: TRASH_ID, kind: "folder", title: "Papperskorg" };
 
-const isSpecial = (id: string) => SPECIAL_FOLDERS.some((folder) => folder.id === id);
+// Older projects had these as fixed folders; with texts in them they become sorts of their own.
+const RETIRED_FOLDERS = ["tidslinje", "research"];
+
+const isSpecial = (id: string) => id === TRASH_ID || FIXED_SORTS.some((sort) => sort.id === id);
+const isNoteSide = (node: TreeNode) =>
+  node.kind === "sort" || node.id === TRASH_ID || RETIRED_FOLDERS.includes(node.id);
 
 const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
-  root: ["part", "chapter", "scene", "folder"],
+  root: ["part", "chapter", "scene", "folder", "sort"],
   part: ["chapter", "scene"],
   chapter: ["scene"],
-  folder: ["part", "chapter", "scene", "folder"],
+  folder: ["part", "chapter", "scene", "folder", "sort"],
+  sort: ["scene"],
   scene: [],
 };
 
-/** The manuscript first, then Karaktärer, Platser, Research and Papperskorg, which always exist. */
+/** The manuscript first, then the four fixed sorts, the writer's own sorts and Papperskorg. */
 export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
-  const ordinary = tree.filter((node) => !isSpecial(node.id));
-  const special = SPECIAL_FOLDERS.map(
-    (folder) => tree.find((node) => node.id === folder.id) ?? { ...folder, children: [] },
-  );
-  return [...ordinary, ...special];
+  const ordinary = tree.filter((node) => !isNoteSide(node) && !isSpecial(node.id));
+  const fixed = FIXED_SORTS.map((sort) => {
+    const found = tree.find((node) => node.id === sort.id);
+    return found
+      ? { ...found, kind: "sort" as const, title: sort.title }
+      : { ...sort, children: [] };
+  });
+  const own = tree
+    .filter((node) => isNoteSide(node) && !isSpecial(node.id))
+    .filter((node) => node.kind === "sort" || (node.children ?? []).length > 0)
+    .map((node) => ({ ...node, kind: "sort" as const }));
+  const trash = tree.find((node) => node.id === TRASH_ID) ?? { ...TRASH, children: [] };
+  return [...ordinary, ...fixed, ...own, trash];
 }
+
+/** The sorts in the order the sidebar lists them. */
+export const sortsOf = (tree: TreeNode[]) => tree.filter((node) => node.kind === "sort");
 
 export interface FoundNode {
   node: TreeNode;
@@ -98,8 +120,10 @@ export function insertNode(
     const canHold = !parent || ALLOWED_CHILDREN[parent.kind].includes(node.kind);
     return canHold ? insertInto(tree, node, parentId, index) : insertAfter(tree, node, parentId);
   }
-  const ordinaryCount = tree.filter((candidate) => !isSpecial(candidate.id)).length;
-  return insertAt(tree, node, Math.min(index, ordinaryCount));
+  // Manuscript nodes go before the sorts; a sort always goes last, just before Papperskorg.
+  if (node.kind === "sort") return insertAt(tree, node, tree.length - 1);
+  const manuscriptEnd = tree.length - sortsOf(tree).length - 1;
+  return insertAt(tree, node, Math.max(0, Math.min(index, manuscriptEnd)));
 }
 
 /**
@@ -137,13 +161,13 @@ function collect(nodes: TreeNode[], wanted: NodeKind): TreeNode[] {
   ]);
 }
 
-const manuscript = (tree: TreeNode[]) => tree.filter((node) => !isSpecial(node.id));
+const manuscript = (tree: TreeNode[]) => tree.filter((node) => !isNoteSide(node));
 
-/** Nodes of one kind in the manuscript, in reading order; Research and Papperskorg left out. */
+/** Nodes of one kind in the manuscript, in reading order; notes and Papperskorg left out. */
 export const manuscriptNodes = (tree: TreeNode[], kind: NodeKind) =>
   collect(manuscript(tree), kind);
 
-/** The scenes kept in one folder and its subfolders, such as all the cards in Karaktärer. */
+/** The scenes kept in one folder or sort, such as all the notes in Personer. */
 export const sceneIdsIn = (tree: TreeNode[], folderId: string) =>
   collect(findNode(tree, folderId)?.node.children ?? [], "scene").map((node) => node.id);
 

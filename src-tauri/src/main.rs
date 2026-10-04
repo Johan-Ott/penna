@@ -58,6 +58,11 @@ fn main() {
         // Remembers folders picked in the dialog, so the last project opens after a restart.
         .plugin(tauri_plugin_persisted_scope::init())
         .plugin(tauri_plugin_dialog::init())
+        // Updates are signed releases on GitHub; the app restarts into the new version.
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_notification::init())
         .invoke_handler(tauri::generate_handler![set_spell_language])
         .setup(|app| {
             let language = saved_language(app.handle());

@@ -79,7 +79,7 @@ describe("typstSource", () => {
     expect(source).toContain("height: 230mm");
     expect(source).toContain('font: "Literata"');
     expect(source).toContain('#kapitel("Kapitel 1", "Brevet")');
-    expect(source).toContain("#anfang[B]revet");
+    expect(source).toContain('#anfang("B", ([revet], [låg], [på], [#emph[bordet]\\(alltid).],))');
     expect(source).toContain("#scenbrytning[\\* \\* \\*]");
   });
 

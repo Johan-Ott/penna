@@ -1,8 +1,10 @@
 import type { OutlineItem } from "./book.js";
 
-/** How the printed book looks, kept in project.json under `design`. v1 has one theme. */
+/** How the printed book looks, kept in project.json under `design`. */
+export type BookTheme = "klassisk" | "modern" | "luftig";
+
 export interface BookDesign {
-  theme: "klassisk";
+  theme: BookTheme;
   /** Width × height in millimetres, as "130x200". */
   trim: string;
   bodyFont: string;
@@ -11,6 +13,8 @@ export interface BookDesign {
   dropCap: boolean;
   sceneBreak: string;
 }
+
+export const BOOK_THEMES: BookTheme[] = ["klassisk", "modern", "luftig"];
 
 export const TRIMS: [string, string][] = [
   ["125x190", "12,5 × 19 cm"],
@@ -21,7 +25,8 @@ export const TRIMS: [string, string][] = [
 export const BODY_FONTS = ["Literata", "EB Garamond"];
 export const BODY_SIZES = [10, 10.5, 11, 11.5];
 // The marks the design offers between scenes: stars, an asterism and a long dash.
-export const SCENE_BREAKS = ["* * *", "⁂", "—"];
+const LONG_DASH = String.fromCharCode(0x2014);
+export const SCENE_BREAKS = ["* * *", "⁂", LONG_DASH];
 
 export const DEFAULT_DESIGN: BookDesign = {
   theme: "klassisk",
@@ -40,7 +45,7 @@ export function designOf(fields: Record<string, unknown>): BookDesign {
   const stored = (fields["design"] ?? {}) as Record<string, unknown>;
   const trims = TRIMS.map(([trim]) => trim);
   return {
-    theme: "klassisk",
+    theme: oneOf(stored["theme"], BOOK_THEMES, DEFAULT_DESIGN.theme),
     trim: oneOf(stored["trim"], trims, DEFAULT_DESIGN.trim),
     bodyFont: oneOf(stored["bodyFont"], BODY_FONTS, DEFAULT_DESIGN.bodyFont),
     bodySize: oneOf(stored["bodySize"], BODY_SIZES, DEFAULT_DESIGN.bodySize),

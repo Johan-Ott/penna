@@ -12,6 +12,7 @@ import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
 import { repetitionsPlugin } from "./repetitionMarks.js";
 import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
+import { t } from "../i18n/i18n.js";
 
 // Swedish typography as the writer types: Swedish uses ” for both opening and closing quotes.
 // Each rule asks whether it is on, so the setting can change without a new editor state.
@@ -84,7 +85,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       mentionsPlugin(switches.mentionMatchers, switches.onMention),
       repetitionsPlugin(switches.repeatWindow),
       commentsPlugin(switches.commentAnchors, switches.onComment),
-      placeholder("Börja skriva…"),
+      placeholder(t("Börja skriva…")),
     ],
   });
 }

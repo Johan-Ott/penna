@@ -7,6 +7,7 @@ import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
 import { manuscriptSceneIds, withSpecialFolders, type TreeNode } from "./tree.js";
+import { t } from "../i18n/i18n.js";
 
 export interface ProjectDetails {
   title: string;
@@ -21,7 +22,7 @@ const UNSAFE_IN_NAMES = /[\\/:*?"<>|]/g;
 
 export function projectFolderName(title: string): string {
   const name = title.replace(UNSAFE_IN_NAMES, "").replace(/\s+/g, " ").trim();
-  return `${name || "Namnlöst projekt"}.penna`;
+  return `${name || t("Namnlöst projekt")}.penna`;
 }
 
 /** A project folder in the library that does not exist yet: "Isen.penna", "Isen 2.penna", ... */
@@ -36,8 +37,8 @@ async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title:
 const EMPTY_BOOK: ImportedNode[] = [
   {
     kind: "chapter",
-    title: "Första kapitlet",
-    children: [{ kind: "scene", title: "Första scenen", body: "" }],
+    title: t("Första kapitlet"),
+    children: [{ kind: "scene", title: t("Första scenen"), body: "" }],
   },
 ];
 
@@ -78,7 +79,7 @@ export async function createProject(
   const tree = await writeBook(fileSystem, dir, book);
   const sceneId = manuscriptSceneIds(tree)[0] ?? null;
   const fields = {
-    title: details.title.trim() || "Namnlöst projekt",
+    title: details.title.trim() || t("Namnlöst projekt"),
     type: details.type,
     dailyGoal: details.dailyGoal,
     ...(details.deadline ? { deadline: details.deadline } : {}),

@@ -25,30 +25,6 @@ button {
   outline-offset: 2px;
 }
 
-.app {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 14px 10px;
-  overflow-y: auto;
-  background: var(--bg-subtle);
-  border-right: 1px solid var(--border);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 8px;
-}
-
 .brand-mark {
   display: flex;
   align-items: center;
@@ -68,61 +44,6 @@ button {
   font-size: 26px;
 }
 
-.brand-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.project-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-card);
-  background: var(--bg);
-  text-align: left;
-}
-
-.project-name {
-  font-weight: 500;
-}
-
-.project-hint,
-.section-heading > span {
-  font-size: 11px;
-  color: var(--text-label);
-}
-
-.section-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px 6px;
-}
-
-.section-heading > span {
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.small-icon-button {
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--text-muted);
-}
-
-.scene-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 .tree-row {
   width: 100%;
   height: 28px;
@@ -137,14 +58,12 @@ button {
 }
 
 .tree-row:hover,
-.small-icon-button:hover,
 .icon-button:hover {
   background: var(--surface-hover);
 }
 
 .tree-row.active {
   background: var(--surface-hover);
-  font-weight: 500;
 }
 
 .sidebar-notices {
@@ -177,34 +96,6 @@ button {
   border-bottom: 1px solid var(--border-soft);
 }
 
-.breadcrumb {
-  display: flex;
-  gap: 8px;
-  overflow: hidden;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.breadcrumb span + span::before {
-  content: "/";
-  margin-right: 8px;
-}
-
-.breadcrumb .current {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.toolbar-actions,
-.save-indicator {
-  display: flex;
-  align-items: center;
-}
-
-.toolbar-actions {
-  gap: 16px;
-}
-
 .icon-button {
   min-width: 30px;
   height: 30px;
@@ -232,18 +123,6 @@ button {
   border: 0;
   border-radius: var(--radius-button);
   background: transparent;
-}
-
-.save-indicator,
-.word-count {
-  gap: 6px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.save-indicator.failed {
-  color: var(--text);
-  font-weight: 500;
 }
 
 .page {
@@ -503,20 +382,14 @@ button {
   background: var(--surface-hover);
 }
 
-/* As in the design: top-level rows in semibold black, deeper rows in a softer grey. */
+/* As in the design: top-level rows and the open text in black, deeper rows in a softer grey. */
 .tree .tree-row {
   color: var(--text-tree);
 }
 
 .tree .tree-row.top-level,
-.tree .tree-row.active,
-.manuscript-row {
+.tree .tree-row.active {
   color: var(--text);
-  font-weight: 500;
-}
-
-.manuscript-row {
-  padding-left: 10px;
 }
 
 .tree-row.missing .tree-label {
@@ -600,35 +473,6 @@ button {
   height: 1px;
   margin: 4px 6px;
   background: var(--border-soft);
-}
-
-/* Chapter heading above a chapter's first scene */
-.chapter-heading {
-  width: 600px;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.chapter-label {
-  color: var(--text-label);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.chapter-heading h1 {
-  margin: 8px 0 32px;
-  color: var(--text);
-  font: 600 36px/1.2 var(--font-prose);
-}
-
-/* Focus mode: no sidebar, no toolbar, only the text */
-.app.focus-mode {
-  grid-template-columns: 1fr;
-}
-
-.app.focus-mode .sidebar {
-  display: none;
 }
 
 .focus-header {
@@ -1158,27 +1002,13 @@ button {
 }
 
 /* Bookshelf, as in the design */
+/* The shelf fills the white card under the top bar. */
 .shelf-screen {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: var(--bg-panel);
-}
-
-.shelf-header {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  padding: 0 32px;
-  border-bottom: 1px solid var(--border-soft);
-  background: var(--bg);
-}
-
-.shelf-actions {
-  display: flex;
-  gap: 8px;
+  flex-grow: 1;
+  min-width: 0;
+  overflow-y: auto;
 }
 
 .shelf {
@@ -1352,45 +1182,6 @@ button.book-cover:hover {
 
 .dialog-actions .push-left {
   margin-right: auto;
-}
-
-.sidebar-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.sidebar-footer .sidebar-notices {
-  margin: 0;
-}
-
-.today-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--bg);
-}
-
-.today-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.today-label {
-  font-weight: 500;
-}
-
-.today-words,
-.today-streak {
-  color: var(--text-muted);
-}
-
-.today-streak {
-  font-size: 12px;
 }
 
 .toast.inverted {
@@ -1622,75 +1413,11 @@ button.book-cover:hover {
   font-size: 12px;
 }
 
-/* The views of a project in the sidebar: Skriv, Framsteg. */
-.view-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.view-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 32px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-}
-
-.view-item:hover {
-  background: var(--bg-panel);
-}
-
-.view-item.chosen {
-  background: var(--surface-hover);
-  font-weight: 500;
-}
-
-.view-keys {
-  color: var(--text-label);
-  font-size: 11px;
-  font-weight: 400;
-}
-
 .writing.hidden {
   display: none;
 }
 
-/* Framsteg, as in the design. */
-.progress-view {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow-y: auto;
-}
-
-.toolbar-title {
-  font-weight: 500;
-}
-
-.progress-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 32px 40px;
-}
-
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.progress-columns {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
+/* A card in Framsteg, such as the one shown before any writing. */
 
 .progress-card {
   display: flex;
@@ -1700,24 +1427,12 @@ button.book-cover:hover {
   border: 1px solid var(--border);
   border-radius: 10px;
 }
-
-.kpi {
-  gap: 8px;
-}
-
-.kpi-label,
 .kpi-sub {
   color: var(--text-muted);
 }
 
 .kpi-sub {
   font-size: 12px;
-}
-
-.kpi-value {
-  font-size: 28px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
 }
 
 .progress-row {
@@ -1774,19 +1489,6 @@ button.book-cover:hover {
   background: var(--heat-4);
 }
 
-.heat-legend {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.heat-legend .heat {
-  width: 12px;
-  height: 12px;
-}
-
 .chapter-bar {
   display: grid;
   grid-template-columns: 130px 1fr 52px;
@@ -1813,19 +1515,7 @@ button.book-cover:hover {
   width: 380px;
 }
 
-/* Exportera, as in the design: format, the book's details, a preview of the first page. */
-.export-view {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.export-columns {
-  display: grid;
-  flex-grow: 1;
-  grid-template-columns: 360px 320px minmax(0, 1fr);
-  min-height: 0;
-}
+/* Bokuppgifter and the export in Publicera, and the previews of the first page. */
 
 .export-column {
   display: flex;
@@ -1835,17 +1525,6 @@ button.book-cover:hover {
   overflow-y: auto;
   border-right: 1px solid var(--border-soft);
 }
-
-.export-formats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0 0 8px;
-  padding: 0;
-  border: 0;
-}
-
-.export-formats legend,
 .export-heading {
   padding: 0 0 10px;
   font-weight: 500;
@@ -1854,35 +1533,6 @@ button.book-cover:hover {
 .export-heading.spaced {
   margin-top: 8px;
 }
-
-.export-format {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-}
-
-.export-format[aria-pressed="true"] {
-  border-color: var(--primary);
-  background: var(--bg-panel);
-}
-
-.export-format:disabled {
-  opacity: 0.6;
-}
-
-.export-format-title {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.export-group,
 .export-field {
   display: flex;
   flex-direction: column;
@@ -1977,14 +1627,6 @@ button.book-cover:hover {
   box-shadow: var(--shadow-dialog);
 }
 
-.export-view {
-  position: relative;
-}
-
-.export-group .segmented {
-  width: fit-content;
-}
-
 .export-error-actions {
   display: flex;
   align-items: center;
@@ -2033,121 +1675,6 @@ button.book-cover:hover {
   gap: 4px;
 }
 
-/* Planera, as in the design: tabs in the header, characters as cards. */
-.plan-view {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow-y: auto;
-}
-
-.plan-tabs {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.plan-tabs .toolbar-title {
-  margin-right: 12px;
-}
-
-.plan-tab {
-  height: 28px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: transparent;
-  color: var(--text-muted);
-  font: inherit;
-}
-
-.plan-tab.chosen {
-  background: var(--surface-hover);
-  color: var(--text);
-  font-weight: 500;
-}
-
-.plan-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 32px 40px;
-}
-
-.plan-heading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.plan-heading h1 {
-  margin: 0;
-  font: 600 28px var(--font-prose);
-}
-
-.entity-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.entity-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-}
-
-.entity-card:hover {
-  border-color: var(--border-control);
-  background: var(--bg-panel);
-}
-
-.entity-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.entity-avatar {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 18px;
-  background: var(--surface-hover);
-  color: var(--text-tree);
-  font-weight: 500;
-}
-
-.entity-name {
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.entity-note {
-  color: var(--text-tree);
-  font: 14px/1.6 var(--font-prose);
-}
-
-.entity-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-soft);
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
 /* Names of known cards in the text, and the card a click on one shows. */
 .manuscript .mention {
   border-bottom: 1px solid var(--text-dim);
@@ -2173,37 +1700,6 @@ button.book-cover:hover {
   font-family: var(--font-ui);
   font-size: 13px;
   line-height: 1.4;
-}
-
-.entity-avatar.small {
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
-}
-
-.mention-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.mention-foot {
-  align-items: center;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-soft);
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.mention-foot .link-button {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.mention-excerpt {
-  margin: 0;
-  color: var(--text-tree);
-  font: 14px/1.6 var(--font-prose);
 }
 
 /* Granskning, as in the design: a panel beside the text, and dots under repeated words. */
@@ -2301,34 +1797,8 @@ button.book-cover:hover {
   gap: 8px;
 }
 
-/* On a narrow window the text needs the room more than the panel does. */
-.review-tab,
-.review-close {
-  display: none;
-}
-
 /* Under 1200 px the review panel lies over the text instead of beside it. */
 @media (max-width: 1199px) {
-  .writing-body {
-    position: relative;
-  }
-
-  .review-panel:not(.open) {
-    display: none;
-  }
-
-  .review-tab {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 10;
-    display: block;
-  }
-
-  .review-close {
-    display: inline;
-  }
-
   .review-panel {
     position: absolute;
     top: 0;
@@ -2429,43 +1899,6 @@ button.book-cover:hover {
   background: var(--bg);
 }
 
-/* Planera's Tidslinje and Anteckningar: one row per text, numbered on the timeline. */
-.plan-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.plan-row {
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--bg);
-  text-align: left;
-}
-
-.plan-row:hover {
-  background: var(--bg-subtle);
-}
-
-.plan-number {
-  min-width: 20px;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.plan-row-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .export-part {
   display: flex;
   flex-direction: column;
@@ -2478,123 +1911,154 @@ button.book-cover:hover {
   resize: vertical;
 }
 
-/* Under 960 px the sidebar folds away; Ctrl+. shows it over the text. */
-.sidebar-backdrop {
-  display: none;
-}
+/* The design step in Publicera: theme, sizes, the drop cap and the scene break. */
 
-@media (max-width: 959px) {
-  .app {
-    grid-template-columns: 1fr;
-  }
-
-  .app > .sidebar {
-    display: none;
-  }
-
-  .app.sidebar-open > .sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 30;
-    display: flex;
-    width: var(--sidebar-width);
-    box-shadow: var(--shadow-dialog);
-  }
-
-  .app.sidebar-open > .sidebar-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 29;
-    display: block;
-  }
-}
-
-/* Bokdesign: the book's look on the left, its first pages as Typst sets them on the right. */
-.design-view {
+.design-block {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
+  gap: 8px;
 }
 
-.design-columns {
+.design-label {
+  font-weight: 500;
+}
+
+.theme-cards,
+.break-choices {
   display: grid;
-  flex-grow: 1;
-  grid-template-columns: minmax(320px, 420px) 1fr;
-  min-height: 0;
-}
-
-.design-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 24px;
-  overflow-y: auto;
-  border-right: 1px solid var(--border-soft);
-}
-
-.design-settings .settings-control {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .theme-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border: 1px solid var(--primary);
+  gap: 2px;
+  padding: 12px 0 10px;
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-card);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.theme-card[aria-checked="true"],
+.break-choices button[aria-checked="true"] {
+  border-color: var(--primary);
+  color: var(--text);
 }
 
 .theme-sample {
-  font: 600 16px var(--font-prose);
+  color: var(--text);
+  font: 400 19px var(--font-prose);
 }
 
-.design-styles {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 24px;
+.theme-card.modern .theme-sample {
+  font-family: var(--font-ui);
 }
 
-.design-style {
+.theme-card.luftig .theme-sample {
+  font-style: italic;
+}
+
+.design-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-soft);
+  gap: 12px;
+}
+
+.design-select {
+  max-width: 60%;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  text-align: right;
+  cursor: pointer;
+}
+
+.break-choices button {
+  height: 32px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text-muted);
 }
 
 .print-preview {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
   overflow-y: auto;
   background: var(--bg-subtle);
 }
 
+.print-preview > .setting-hint {
+  align-self: flex-start;
+}
+
+.print-pages {
+  width: 100%;
+  max-width: 680px;
+}
+
 .print-pages svg {
   width: 100%;
-  max-width: 420px;
   height: auto;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.08));
 }
 
 /* The printed page is white in both themes, as paper is. */
 .print-sheet {
   fill: #ffffff;
-  stroke: var(--border);
+  stroke: var(--border-soft);
   stroke-width: 0.5;
 }
 
-.export-backup {
+/* The e-book on a reader's screen, reflowed by the device. */
+.ebook-screen {
+  width: 360px;
+  height: 620px;
+  border: 10px solid var(--text);
+  border-radius: 28px;
+  background: #ffffff;
+}
+
+/* At the foot of the page while writing: today's words against the goal and the minutes written. */
+
+.no-stats {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  margin-top: 24px;
+  gap: 8px;
+}
+
+/* Exportera while it runs: the chapter being read, a bar and Avbryt. */
+.export-running {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 360px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  box-shadow: var(--shadow-dialog);
+}
+
+.export-running-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.export-running .link-button {
+  align-self: flex-start;
 }

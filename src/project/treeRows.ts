@@ -1,4 +1,4 @@
-import { findNode, moveNode, type FoundNode, type TreeNode } from "./tree.js";
+import { findNode, moveNode, TRASH_ID, type FoundNode, type TreeNode } from "./tree.js";
 
 export interface TreeRow {
   node: TreeNode;
@@ -44,4 +44,19 @@ function dropInside(tree: TreeNode[], dragged: FoundNode, row: TreeRow) {
   const childCount = row.node.children?.length ?? 0;
   const isAlreadyInside = dragged.parent?.id === row.node.id;
   return moveNode(tree, dragged.node.id, row.node.id, childCount - (isAlreadyInside ? 1 : 0));
+}
+
+/** The sidebar's three parts: the book, the notes in their sorts, and Papperskorg last. */
+export function sidebarSections(rows: TreeRow[]) {
+  const sections = { book: [] as TreeRow[], notes: [] as TreeRow[], trash: [] as TreeRow[] };
+  let section = sections.book;
+  for (const row of rows) {
+    if (row.depth === 0) {
+      if (row.node.kind === "sort") section = sections.notes;
+      else if (row.node.id === TRASH_ID) section = sections.trash;
+      else section = sections.book;
+    }
+    section.push(row);
+  }
+  return sections;
 }

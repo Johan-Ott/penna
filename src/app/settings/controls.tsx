@@ -16,6 +16,7 @@ export function Row(props: { label: string; hint?: string; children?: ReactNode 
 export function Switch(props: { label: string; isOn: boolean; onFlip: () => void }) {
   return (
     <button
+      type="button"
       className="toggle"
       role="switch"
       aria-checked={props.isOn}
@@ -37,6 +38,7 @@ export function Choice<T extends string>(props: {
     <div className="segmented" role="radiogroup" aria-label={props.label}>
       {props.options.map(([value, text]) => (
         <button
+          type="button"
           key={value}
           role="radio"
           aria-checked={value === props.value}

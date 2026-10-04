@@ -33,6 +33,13 @@ export function readField(frontMatter: string, key: string): string | null {
 
 export const sceneTitle = (frontMatter: string) => readField(frontMatter, "title");
 
+/** `link: true` or `link: false` in a note; anything else follows the note's sort. */
+export function noteLink(frontMatter: string): boolean | null {
+  const value = readField(frontMatter, "link");
+  if (value === "true" || value === "false") return value === "true";
+  return null;
+}
+
 export const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
 
 export function newSceneText(id: string, title: string): string {

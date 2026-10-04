@@ -52,12 +52,13 @@ Vintervägen.penna/
 
 ## Avvikelser från specen (beslutade av Johan)
 
-- Karaktärer och platser är vanliga scenfiler (titel och prosa) i två fasta mappar i
-  strukturen, Karaktärer och Platser, i stället för poster i `entities.json`. De skrivs, flyttas
-  och slängs som scener. Titeln är namnet som Penna letar efter i texten. Alias, relationer och
-  andra fält läggs till senare, när de behövs. Skäl: allt är prosa, grunden först.
-- Tidslinje och Anteckningar följer samma regel: två fasta mappar i strukturen med vanliga
-  scenfiler, i stället för `notes/`. Tidslinjens ordning är trädets ordning.
+- Anteckningar (personer, platser, saker, övrigt och egna sorter) är vanliga scenfiler (titel
+  och prosa) i sorter i strukturen, i stället för poster i `entities.json` och `notes/`. De
+  skrivs, flyttas och slängs som scener. Titeln är namnet som Penna letar efter i texten;
+  `link: false` i en antecknings front matter stänger av kopplingen. Kopplingar mellan
+  anteckningar ligger i project.json. Skäl: allt är prosa, grunden först.
+- Tidslinjen är fältet När på kapitlen och en egen Tidsordning i Innehåll, i stället för en
+  mapp.
 - Typst körs som WebAssembly i webbvyn, inte inbäddat via Rust. Förhandsvisningen och PDF:en
   kommer då från samma kompilering, och allt kan provas utan Tauri-fönstret. Kostnad: cirka
   28 MB WASM i appen, som bara laddas när en bok sätts.

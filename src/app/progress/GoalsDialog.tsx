@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { projectGoals } from "../../project/progress.js";
 import { useEscape } from "../useShortcut.js";
+import { t } from "../../i18n/i18n.js";
 
 interface GoalsDialogProps {
   fields: Record<string, unknown>;
@@ -12,9 +13,9 @@ type GoalKey = "dailyGoal" | "totalGoal" | "deadline";
 type GoalForm = Record<GoalKey, string>;
 
 const FIELDS: [GoalKey, string, string][] = [
-  ["dailyGoal", "Dagligt ordmål", "Det som räknas i Idag."],
-  ["totalGoal", "Slutmål", "Hur långt manuset ska bli, i ord."],
-  ["deadline", "Deadline", "Lämna tom om det inte finns någon."],
+  ["dailyGoal", t("Dagligt ordmål"), t("Det som räknas i Idag.")],
+  ["totalGoal", t("Slutmål"), t("Hur långt manuset ska bli, i ord.")],
+  ["deadline", t("Deadline"), t("Lämna tom om det inte finns någon.")],
 ];
 
 const wholeNumber = (text: string) => {
@@ -67,17 +68,17 @@ export function GoalsDialog({ fields, onSave, onClose }: GoalsDialogProps) {
         className="dialog goals-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Mål för projektet"
+        aria-label={t("Mål för projektet")}
         onClick={(event) => event.stopPropagation()}
       >
-        <span className="dialog-title">Mål för projektet</span>
+        <span className="dialog-title">{t("Mål för projektet")}</span>
         <GoalFields form={form} onChange={setForm} />
         <div className="dialog-actions">
           <button className="button secondary" onClick={onClose}>
-            Avbryt
+            {t("Avbryt")}
           </button>
           <button className="button primary" onClick={save}>
-            Spara
+            {t("Spara")}
           </button>
         </div>
       </div>

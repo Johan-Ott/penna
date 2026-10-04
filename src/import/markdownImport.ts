@@ -1,3 +1,4 @@
+import { t } from "../i18n/i18n.js";
 /** A book brought in from another program, before it is written as a Penna project. */
 export type ImportedNode =
   | { kind: "part" | "chapter"; title: string; children: ImportedNode[] }
@@ -32,7 +33,7 @@ export function titleFromText(body: string): string {
     .split(/\s+/)
     .map((word) => word.replace(/[^\p{L}\p{N}’'-]/gu, ""))
     .filter(Boolean);
-  return words.slice(0, TITLE_WORDS).join(" ") || "Namnlös scen";
+  return words.slice(0, TITLE_WORDS).join(" ") || t("Namnlös scen");
 }
 
 // A scene's text, split at scene breaks; empty pieces are left out.

@@ -11,12 +11,15 @@ import {
 import type { Command, EditorState } from "prosemirror-state";
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { applyQuery, type ManuscriptScope } from "./manuscriptSearch.js";
+import { t } from "../i18n/i18n.js";
 
 interface SearchPanelProps {
   editorState: EditorState | null;
   run: (command: Command, shouldFocus?: boolean) => void;
   onClose: () => void;
   manuscript?: ManuscriptScope | undefined;
+  /** What the search starts with, as when the palette opened it. */
+  initialSearch?: string | undefined;
 }
 
 function matchPosition(editorState: EditorState | null) {
@@ -28,8 +31,9 @@ function matchPosition(editorState: EditorState | null) {
 
 // Opening another scene gives the editor a fresh state, so the query is put back whenever
 // the editor has a different query.
-function useSearchQuery(run: SearchPanelProps["run"], editorState: EditorState | null) {
-  const [search, setSearch] = useState("");
+function useSearchQuery(props: SearchPanelProps) {
+  const { run, editorState } = props;
+  const [search, setSearch] = useState(props.initialSearch ?? "");
   const [replace, setReplace] = useState("");
   const [wholeWord, setWholeWord] = useState(false);
   const [caseSensitive, setCaseSensitive] = useState(false);
@@ -83,14 +87,14 @@ function FindRow(props: {
     <div className="search-row">
       <input
         autoFocus
-        aria-label="Sök"
-        placeholder="Sök"
+        aria-label={t("Sök")}
+        placeholder={t("Sök")}
         value={props.query.search}
         onChange={(event) => props.query.setSearch(event.target.value)}
         onKeyDown={props.onKey}
       />
       <span className="search-count">
-        {total === 0 ? "Inga träffar" : `${current || "–"} av ${total}`}
+        {total === 0 ? t("Inga träffar") : `${current || "–"} av ${total}`}
       </span>
     </div>
   );
@@ -104,8 +108,8 @@ function ReplaceRow(props: {
   return (
     <div className="search-row">
       <input
-        aria-label="Ersätt med"
-        placeholder="Ersätt med"
+        aria-label={t("Ersätt med")}
+        placeholder={t("Ersätt med")}
         value={props.query.replace}
         onChange={(event) => props.query.setReplace(event.target.value)}
         onKeyDown={(event) => {
@@ -115,10 +119,10 @@ function ReplaceRow(props: {
         }}
       />
       <button className="button secondary small" onClick={props.actions.replaceOne}>
-        Ersätt
+        {t("Ersätt")}
       </button>
       <button className="button primary small" onClick={props.actions.replaceEvery}>
-        Alla
+        {t("Alla")}
       </button>
     </div>
   );
@@ -143,20 +147,22 @@ function SearchOptions({
 }: {
   query: SearchQueryState;
   manuscript?: ManuscriptScope | undefined;
+  /** What the search starts with, as when the palette opened it. */
+  initialSearch?: string | undefined;
 }) {
   return (
     <div className="search-options">
       {manuscript && (
         <Chip isOn={manuscript.isOn} onToggle={manuscript.toggle}>
-          Hela manuset
+          {t("Hela manuset")}
         </Chip>
       )}
       <Chip isOn={query.wholeWord} onToggle={() => query.setWholeWord(!query.wholeWord)}>
-        Hela ord
+        {t("Hela ord")}
       </Chip>
       <Chip
         isOn={query.caseSensitive}
-        label="Skilj på stora och små bokstäver"
+        label={t("Skilj på stora och små bokstäver")}
         onToggle={() => query.setCaseSensitive(!query.caseSensitive)}
       >
         Aa
@@ -166,7 +172,7 @@ function SearchOptions({
 }
 
 export function SearchPanel(props: SearchPanelProps) {
-  const query = useSearchQuery(props.run, props.editorState);
+  const query = useSearchQuery(props);
   const actions = searchActions(props, query.query);
   const onSearchKey = (event: KeyboardEvent) => {
     if (event.key === "Escape") {

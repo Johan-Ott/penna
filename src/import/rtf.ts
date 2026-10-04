@@ -36,7 +36,7 @@ const WORDS = new Map([
   ["lquote", "‘"],
   ["rquote", "’"],
   ["endash", "–"],
-  ["emdash", "—"],
+  ["emdash", String.fromCharCode(0x2014)],
   ["bullet", "•"],
 ]);
 const SYMBOLS = new Map([

@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { useMenuButton } from "./Menu.js";
+import { appMenu } from "./shell/appMenu.js";
+import { ShelfTopbar } from "./shell/Topbar.js";
+import { SettingsLayer, SHORTCUTS_TAB } from "./settings/SettingsDialog.js";
+import type { useWritingMode } from "./useWritingMode.js";
+import { t } from "../i18n/i18n.js";
 import { copyExampleProject } from "../project/newProject.js";
 import type { ShelfBook } from "../project/shelf.js";
 import { forgetProject, type AppPreferences } from "./appPreferences.js";
@@ -12,6 +18,9 @@ interface StartScreenProps {
     open: (dir: string) => Promise<void>;
     choose: () => Promise<void>;
     startup: { preferences: AppPreferences; updatePreferences: (change: PreferenceChange) => void };
+    writingMode: ReturnType<typeof useWritingMode>;
+    /** Nytt projekt was chosen in an open book: the shelf starts on the new project's step. */
+    newProjectAsked: { current: boolean };
   };
 }
 
@@ -54,31 +63,69 @@ function shelfHandlers(app: StartScreenProps["app"]) {
   };
 }
 
+// The shelf's top bar has only the menu: new project, open a folder, settings and help.
+function ShelfFrame(props: StartScreenProps & { onNewProject: () => void; children: ReactNode }) {
+  const { app } = props;
+  const settings = app.writingMode.settingsDialog;
+  const menu = useMenuButton(
+    t("Meny"),
+    appMenu({
+      showShelf: () => undefined,
+      newProject: props.onNewProject,
+      openFolder: () => void app.choose(),
+      showVersions: null,
+      exportZip: null,
+      openSettings: () => settings.open(),
+      openShortcuts: () => settings.open(SHORTCUTS_TAB),
+    }),
+  );
+  return (
+    <div className="shelf-app">
+      <ShelfTopbar title={t("Bokhylla")} onMenu={menu.open} />
+      <div className="main-card">{props.children}</div>
+      {menu.menu}
+      <SettingsLayer {...app.startup} {...app.writingMode} dialog={settings} book={null} />
+    </div>
+  );
+}
+
+// The first time the onboarding; after Nytt projekt in a book, the new project's step.
+function useOnboardingStep(app: StartScreenProps["app"], projectStep: number) {
+  return useState(() => {
+    if (!app.startup.preferences.isOnboardingDone) return 1;
+    const isAsked = app.newProjectAsked.current;
+    app.newProjectAsked.current = false;
+    return isAsked ? projectStep : 0;
+  });
+}
+
 /** Before a project is open: the onboarding the first time, then the bookshelf. */
 export function StartScreen({ app }: StartScreenProps) {
   const { preferences } = app.startup;
-  const [onboardingStep, setOnboardingStep] = useState(preferences.isOnboardingDone ? 0 : 1);
-  const finish = (projectDir: string, libraryDir: string | null) =>
-    finishOnboarding(app, projectDir, libraryDir);
+  const projectStep = preferences.libraryDir ? 4 : 3;
+  const [onboardingStep, setOnboardingStep] = useOnboardingStep(app, projectStep);
   if (onboardingStep > 0) {
     return (
       <Onboarding
         knownLibraryDir={preferences.libraryDir}
         defaultDailyGoal={preferences.defaultDailyGoal}
         startStep={onboardingStep}
-        onFinish={finish}
+        onFinish={(projectDir, libraryDir) => finishOnboarding(app, projectDir, libraryDir)}
         onCancel={() => setOnboardingStep(0)}
       />
     );
   }
+  const newProject = () => setOnboardingStep(projectStep);
   return (
-    <Bookshelf
-      libraryDir={preferences.libraryDir}
-      knownProjects={preferences.knownProjects}
-      onOpen={(dir) => void app.open(dir)}
-      onNewProject={() => setOnboardingStep(preferences.libraryDir ? 4 : 3)}
-      onOpenFolder={() => void app.choose()}
-      {...shelfHandlers(app)}
-    />
+    <ShelfFrame app={app} onNewProject={newProject}>
+      <Bookshelf
+        libraryDir={preferences.libraryDir}
+        knownProjects={preferences.knownProjects}
+        onOpen={(dir) => void app.open(dir)}
+        onNewProject={newProject}
+        onOpenFolder={() => void app.choose()}
+        {...shelfHandlers(app)}
+      />
+    </ShelfFrame>
   );
 }

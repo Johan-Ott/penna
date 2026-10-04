@@ -12,10 +12,12 @@ import type { useSnapshots } from "./snapshots/useSnapshots.js";
 import { CrashDialog, SyncCopyDialog, type useSyncCopy } from "./SyncLayer.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import type { Project } from "./useProject.js";
-import { MentionCard } from "./planning/MentionCard.js";
-import type { usePlanning } from "./planning/usePlanning.js";
-import type { CardActions } from "./planning/cardActions.js";
-import type { View } from "./Sidebar.js";
+import { MentionCard } from "./notes/MentionCard.js";
+import type { Notes } from "./notes/useNotes.js";
+import type { CardActions } from "./notes/cardActions.js";
+import type { View } from "./useWritingMode.js";
+import { ExportStatus } from "./exporting/ExportPanels.js";
+import type { useExport } from "./exporting/useExport.js";
 import type { WritingSettings } from "../editor/writingSettings.js";
 import { SettingsLayer, type useSettingsDialog } from "./settings/SettingsDialog.js";
 import { bookLanguage } from "../project/bookLanguage.js";
@@ -34,14 +36,16 @@ interface OverlayParts {
   syncCopy: ReturnType<typeof useSyncCopy>;
   snapshots: ReturnType<typeof useSnapshots>;
   palette: ReturnType<typeof usePalette>;
-  planning: ReturnType<typeof usePlanning>;
+  notes: Notes;
   cards: CardActions;
+  zip: ReturnType<typeof useExport>;
   startup: Pick<ReturnType<typeof useStartup>, "preferences" | "updatePreferences">;
   writingMode: {
     settings: WritingSettings;
     onChangeSettings: (change: SettingsChange) => void;
     settingsDialog: ReturnType<typeof useSettingsDialog>;
     setView: (view: View) => void;
+    openSearchWith: (text: string) => void;
   };
 }
 
@@ -62,15 +66,15 @@ function ConflictLayer(props: {
   );
 }
 
-// "Öppna kort" opens the card in the editor.
+// "Öppna anteckningen" opens the note in the editor.
 function MentionLayer({ app }: { app: OverlayParts }) {
-  const { planning, project } = app;
+  const { notes, project } = app;
   if (!project) return null;
-  const openCard = (id: string) => {
-    planning.hideMention();
+  const openNote = (id: string) => {
+    notes.hideMention();
     app.cards.open(id);
   };
-  return <MentionCard planning={planning} project={project} onOpenCard={openCard} />;
+  return <MentionCard notes={notes} project={project} onOpenNote={openNote} />;
 }
 
 /** What opens over the writing: dialogs and the command palette. */
@@ -83,7 +87,19 @@ function bookSettings(app: OverlayParts) {
       await app.updateFields({ language });
       await applySpellLanguage(app.session, language);
     },
+    onExportZip: app.zip.backup,
   };
+}
+
+function PaletteLayer({ app }: { app: OverlayParts }) {
+  if (!app.palette.isOpen) return null;
+  const search = (text: string) => {
+    app.writingMode.setView("skriv");
+    app.writingMode.openSearchWith(text);
+  };
+  return (
+    <CommandPalette entries={app.palette.entries} onClose={app.palette.close} onSearch={search} />
+  );
 }
 
 export function Overlays({ app }: { app: OverlayParts }) {
@@ -104,9 +120,8 @@ export function Overlays({ app }: { app: OverlayParts }) {
         book={bookSettings(app)}
       />
       <MentionLayer app={app} />
-      {app.palette.isOpen && (
-        <CommandPalette entries={app.palette.entries} onClose={app.palette.close} />
-      )}
+      <PaletteLayer app={app} />
+      <ExportStatus exporter={app.zip} onOpenScene={() => undefined} />
     </>
   );
 }

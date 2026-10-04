@@ -2,6 +2,7 @@ import { useState } from "react";
 import { locate, type Comment } from "../../project/comments.js";
 import { snapshotWhen } from "../../project/snapshots.js";
 import type { useComments } from "./useComments.js";
+import { t } from "../../i18n/i18n.js";
 
 type Comments = ReturnType<typeof useComments>;
 
@@ -26,7 +27,7 @@ function Writer(props: { label: string; onSend: (body: string) => void; onCancel
           {props.label}
         </button>
         <button className="button secondary small" onClick={props.onCancel}>
-          Avbryt
+          {t("Avbryt")}
         </button>
       </div>
     </div>
@@ -51,17 +52,18 @@ function CommentActions({ comment, comments }: { comment: Comment; comments: Com
     comments.reply(comment, body);
     setReplying(false);
   };
-  if (isReplying) return <Writer label="Svara" onSend={send} onCancel={() => setReplying(false)} />;
+  if (isReplying)
+    return <Writer label={t("Svara")} onSend={send} onCancel={() => setReplying(false)} />;
   return (
     <div className="review-actions">
       <button className="link-button" onClick={() => setReplying(true)}>
-        Svara
+        {t("Svara")}
       </button>
       <button
         className="link-button quiet"
         onClick={() => comments.setResolved(comment.id, !comment.resolved)}
       >
-        {comment.resolved ? "Öppna igen" : "Lös"}
+        {comment.resolved ? t("Öppna igen") : t("Lös")}
       </button>
     </div>
   );
@@ -72,7 +74,7 @@ function Draft({ comments }: { comments: Comments }) {
   return (
     <div className="review-item focused">
       <span className="comment-quote">”{comments.draft.quote}”</span>
-      <Writer label="Kommentera" onSend={comments.add} onCancel={comments.cancel} />
+      <Writer label={t("Kommentera")} onSend={comments.add} onCancel={comments.cancel} />
     </div>
   );
 }
@@ -81,7 +83,7 @@ function ResolvedToggle(props: { count: number; isShowing: boolean; onToggle: ()
   if (props.count === 0) return null;
   return (
     <button className="link-button quiet" onClick={props.onToggle}>
-      {props.isShowing ? "Dölj lösta" : `Visa lösta (${props.count})`}
+      {props.isShowing ? t("Dölj lösta") : t("Visa lösta ({count})", { count: props.count })}
     </button>
   );
 }
@@ -97,7 +99,9 @@ function CommentCard(props: {
   return (
     <div className={props.isFocused ? "review-item focused" : "review-item"}>
       <span className="comment-quote">”{comment.quote}”</span>
-      {!props.isPlaced && <span className="kpi-sub">Citatet finns inte längre i texten.</span>}
+      {!props.isPlaced && (
+        <span className="kpi-sub">{t("Citatet finns inte längre i texten.")}</span>
+      )}
       <span>{comment.body}</span>
       <span className="kpi-sub">{byline(comment)}</span>
       <Replies replies={props.replies} />
@@ -115,7 +119,7 @@ export function CommentsSection({ comments, text }: { comments: Comments; text: 
   if (top.length === 0 && !comments.draft) return null;
   return (
     <section className="review-section">
-      <span className="review-heading">Kommentarer</span>
+      <span className="review-heading">{t("Kommentarer")}</span>
       <Draft comments={comments} />
       {shown.map((comment) => (
         <CommentCard

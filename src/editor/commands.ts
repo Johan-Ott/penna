@@ -3,15 +3,16 @@ import type { Node, ResolvedPos } from "prosemirror-model";
 import { TextSelection, type Command, type EditorState } from "prosemirror-state";
 import { findWrapping, liftTarget } from "prosemirror-transform";
 import { manuscriptSchema as schema, type StyleName } from "../manuscript/schema.js";
+import { t } from "../i18n/i18n.js";
 
 export type StyleChoice = StyleName | "brodtext";
 
 export const STYLE_LABELS: Record<StyleChoice, string> = {
-  brodtext: "Brödtext",
-  brev: "Brev",
-  citat: "Citat",
-  dikt: "Dikt",
-  meddelande: "Meddelande",
+  brodtext: t("Brödtext"),
+  brev: t("Brev"),
+  citat: t("Citat"),
+  dikt: t("Dikt"),
+  meddelande: t("Meddelande"),
 };
 
 export const toggleBold = toggleMark(schema.marks.bold);

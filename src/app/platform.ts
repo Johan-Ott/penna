@@ -18,6 +18,18 @@ export interface Platform {
   pickFile(kind: PickKind): Promise<PickedFile | null>;
   /** Spellcheck in the book's language; in the app the window restarts when it changes. */
   setSpellLanguage(language: string): Promise<void>;
+  /** A newer signed release of Penna, or null when this is the newest or nothing could be asked. */
+  checkForUpdate(): Promise<AppUpdate | null>;
+  /** Shows a saved file in Explorer or Finder; missing where there is no file manager. */
+  showInFolder?: (path: string) => Promise<void>;
+  /** A system notice, as for the daily reminder; asks for permission the first time. */
+  notify(title: string, body: string): Promise<void>;
+}
+
+export interface AppUpdate {
+  version: string;
+  /** Downloads, installs and restarts into the new version. */
+  install(): Promise<void>;
 }
 
 /** What the open dialog offers, for example { name: "Bild", extensions: ["jpg", "png"] }. */

@@ -1,7 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { Card } from "../../project/cards.js";
 import type { useReview } from "./useReview.js";
+import { t } from "../../i18n/i18n.js";
 
 interface ReviewPanelProps {
   /** Null when Granskning is off and only the comments are shown. */
@@ -11,19 +12,26 @@ interface ReviewPanelProps {
   onOpenCard: (id: string) => void;
   onReplaceAll: (suspect: NameSuspect) => void;
   onIgnore: (word: string) => void;
-  /** Kept open in a narrow window, as while a comment is being written. */
+  /** Kept open, as while a comment is being written. */
   isPinnedOpen: boolean;
+  /** Opened and closed from the Granska button in the top bar. */
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+  /** Tells the top bar how much there is to look at, or null when the panel goes away. */
+  onCount: (count: number | null) => void;
+  commentCount: number;
 }
 
-const NUMBER_WORDS = ["noll", "en", "två", "tre", "fyra", "fem", "sex"];
+const NUMBER_WORDS = [t("noll"), t("en"), t("två"), t("tre"), t("fyra"), t("fem"), t("sex")];
 const inWords = (count: number) => NUMBER_WORDS[count] ?? String(count);
-const times = (count: number) => (count === 1 ? "en gång" : `${inWords(count)} gånger`);
+const times = (count: number) =>
+  count === 1 ? t("en gång") : t("{count} gånger", { count: inWords(count) });
 
 function InChapter({ cards, onOpenCard }: { cards: Card[]; onOpenCard: (id: string) => void }) {
   if (cards.length === 0) return null;
   return (
     <section className="review-section">
-      <span className="review-heading">I kapitlet</span>
+      <span className="review-heading">{t("I kapitlet")}</span>
       <div className="review-chips">
         {cards.map((card) => (
           <button key={card.id} className="review-chip" onClick={() => onOpenCard(card.id)}>
@@ -41,16 +49,20 @@ function SpellingItem(
   const { suspect } = props;
   return (
     <div className="review-item">
-      <span className="review-title">Namnstavning</span>
+      <span className="review-title">{t("Namnstavning")}</span>
       <span className="review-text">
-        ”{suspect.word}” står {times(suspect.count)} i scenen. Menade du {suspect.suggestion}?
+        {t("”{word}” står {times} i scenen. Menade du {suggestion}?", {
+          word: suspect.word,
+          times: times(suspect.count),
+          suggestion: suspect.suggestion,
+        })}
       </span>
       <div className="review-actions">
         <button className="button primary small" onClick={() => props.onReplaceAll(suspect)}>
-          Ändra alla
+          {t("Ändra alla")}
         </button>
         <button className="button secondary small" onClick={() => props.onIgnore(suspect.word)}>
-          Ignorera
+          {t("Ignorera")}
         </button>
       </div>
     </div>
@@ -60,19 +72,23 @@ function SpellingItem(
 function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useReview> }) {
   const { suspects, repeats } = props.review;
   if (suspects.length + repeats.length === 0) {
-    return <p className="review-empty">Inget att se över i den här scenen.</p>;
+    return <p className="review-empty">{t("Inget att se över i den här scenen.")}</p>;
   }
   return (
     <section className="review-section">
-      <span className="review-heading">Att se över</span>
+      <span className="review-heading">{t("Att se över")}</span>
       {suspects.map((suspect) => (
         <SpellingItem key={suspect.word} suspect={suspect} {...props} />
       ))}
       {repeats.map((repeat) => (
         <div key={repeat.word} className="review-item">
-          <span className="review-title">Upprepning</span>
+          <span className="review-title">{t("Upprepning")}</span>
           <span className="review-text">
-            ”{repeat.word}” {times(repeat.count)} inom {inWords(props.repeatWindow)} meningar.
+            {t("”{word}” {times} inom {window} meningar.", {
+              word: repeat.word,
+              times: times(repeat.count),
+              window: inWords(props.repeatWindow),
+            })}
           </span>
         </div>
       ))}
@@ -80,39 +96,35 @@ function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useRevie
   );
 }
 
-/** Granskning, as in the design: who is in the chapter, and what in the scene to look at again. */
-function ReviewHeader(props: { review: ReviewPanelProps["review"]; onClose: () => void }) {
-  const { review } = props;
-  const count = review ? review.suspects.length + review.repeats.length : 0;
+function ReviewHeader(props: { onClose: () => void }) {
   return (
     <div className="review-header">
-      <span className="progress-title">Granskning</span>
-      {review && <span className="kpi-sub">{count === 1 ? "1 sak" : `${count} saker`}</span>}
-      <button className="link-button quiet review-close" onClick={props.onClose}>
-        Stäng
+      <span className="progress-title">{t("Granska")}</span>
+      <button className="review-close" aria-label={t("Stäng granskning")} onClick={props.onClose}>
+        ×
       </button>
     </div>
   );
 }
 
-// In a narrow window the panel covers the text, so it waits behind a tab until asked for.
+// The top bar shows the count on its Granska button; it goes away with the panel.
+function useCountInTopbar(count: number, onCount: (count: number | null) => void) {
+  useEffect(() => onCount(count), [count, onCount]);
+  useEffect(() => () => onCount(null), [onCount]);
+}
+
+/** Granska, as in the design: what there is to look at, beside the text when asked for. */
 export function ReviewPanel(props: ReviewPanelProps) {
   const { review } = props;
-  const [isOpen, setOpen] = useState(false);
-  const isShown = isOpen || props.isPinnedOpen;
+  const count = (review ? review.suspects.length + review.repeats.length : 0) + props.commentCount;
+  useCountInTopbar(count, props.onCount);
+  const isShown = props.isOpen || props.isPinnedOpen;
   return (
-    <>
-      {!isShown && (
-        <button className="button secondary small review-tab" onClick={() => setOpen(true)}>
-          Granskning
-        </button>
-      )}
-      <aside className={isShown ? "review-panel open" : "review-panel"} aria-label="Granskning">
-        <ReviewHeader review={review} onClose={() => setOpen(false)} />
-        {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
-        {review && <ToLookAt {...props} review={review} />}
-        {props.commentsSection}
-      </aside>
-    </>
+    <aside className={isShown ? "review-panel open" : "review-panel"} aria-label={t("Granskning")}>
+      <ReviewHeader onClose={() => props.onOpenChange(false)} />
+      {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
+      {review && <ToLookAt {...props} review={review} />}
+      {props.commentsSection}
+    </aside>
   );
 }

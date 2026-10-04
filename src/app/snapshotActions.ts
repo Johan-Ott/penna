@@ -3,6 +3,7 @@ import { takeSnapshot, type SceneRef, type Snapshot } from "../project/snapshots
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath } from "../storage/fileSystem.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
+import { t } from "../i18n/i18n.js";
 
 /**
  * Puts a snapshot's text back. What is there now is snapshotted first, as the spec asks, and
@@ -17,7 +18,7 @@ export async function restoreSnapshot(
   if (!(await session.autosave.flush())) return false;
   const path = joinPath(scene.dir, `scenes/${scene.id}.md`);
   const current = await session.fileSystem.readText(path);
-  await takeSnapshot(session.fileSystem, scene, current, { time, label: "Före återställning" });
+  await takeSnapshot(session.fileSystem, scene, current, { time, label: t("Före återställning") });
   const { frontMatter } = splitSceneFile(current);
   await writeAtomic(session.fileSystem, path, joinSceneFile({ frontMatter, body: snapshot.body }));
   if (session.scene?.dir === scene.dir && session.scene.id === scene.id) {

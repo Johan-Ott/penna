@@ -1,4 +1,5 @@
 import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
+import { t } from "../i18n/i18n.js";
 
 export type ProseFont = "serif" | "sans" | "mono";
 export type TextWidth = "smal" | "normal" | "bred";
@@ -111,9 +112,9 @@ export function proseStyle(settings: WritingSettings): Record<string, string> {
 }
 
 export const THEME_LABELS: Record<Theme, string> = {
-  ljust: "Ljust",
-  mörkt: "Mörkt",
-  system: "System",
+  ljust: t("Ljust"),
+  mörkt: t("Mörkt"),
+  system: t("System"),
 };
 
 /** The dark switch in the Aa panel: dark, or back to following the system. */

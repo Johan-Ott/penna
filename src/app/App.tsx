@@ -1,16 +1,17 @@
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
-import { Sidebar } from "./Sidebar.js";
-import { OtherViews } from "./OtherViews.js";
-import { CHARACTERS_ID } from "../project/tree.js";
-import { usePlanning } from "./planning/usePlanning.js";
+import { useNotes } from "./notes/useNotes.js";
+import { useNoteActions } from "./notes/useNoteActions.js";
+import { noteSortOf } from "./notes/NotePage.js";
 import { useComments } from "./review/useComments.js";
+import { UpdateNotice } from "./UpdateNotice.js";
+import { useReminder } from "./reminder.js";
 import { useSpellLanguage } from "./useSpellLanguage.js";
-import { useMentionLinks } from "./planning/useMentionLinks.js";
-import { cardActions, type CardActions } from "./planning/cardActions.js";
-import { useProject, type Project } from "./useProject.js";
+import { useMentionLinks } from "./notes/useMentionLinks.js";
+import { cardActions } from "./notes/cardActions.js";
+import { useProject } from "./useProject.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
@@ -19,55 +20,11 @@ import { useManuscriptSearch } from "./useManuscriptSearch.js";
 import { StartScreen } from "./StartScreen.js";
 import { useSyncCopy } from "./SyncLayer.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
-import { WritingArea } from "./WritingArea.js";
-import { sidebarProps, writingAreaProps } from "./paneProps.js";
-import { Overlays } from "./Overlays.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
 import { snapshotOnSave } from "../project/snapshots.js";
 import { platform } from "./platform.js";
-
-type AppParts = ReturnType<typeof useSceneSession> &
-  ReturnType<typeof useProject> & {
-    writingMode: ReturnType<typeof useWritingMode>;
-    treeHandlers: ReturnType<typeof useTreeHandlers>;
-    showShelf: () => Promise<void>;
-    snapshots: ReturnType<typeof useSnapshots>;
-    planning: ReturnType<typeof usePlanning>;
-    cards: CardActions;
-  };
-
-// Characters in the palette open their card in the editor.
-function planningCommands({ planning, cards }: AppParts) {
-  return {
-    cards: planning.cards,
-    openCard: cards.open,
-    newCharacter: () => cards.create(CHARACTERS_ID),
-  };
-}
-
-function paletteContextOf(parts: AppParts): PaletteContext | null {
-  const { project, session, writingMode } = parts;
-  if (!project) return null;
-  return {
-    project,
-    settings: writingMode.settings,
-    openScene: (id) => {
-      writingMode.setView("skriv");
-      openIfOnDisk(session, project, id);
-    },
-    add: (kind) => parts.treeHandlers.onAdd(kind, null),
-    run: parts.editor.run,
-    changeSettings: writingMode.onChangeSettings,
-    toggleFocusMode: writingMode.onToggleFocus,
-    openSearch: () => writingMode.setSearchOpen(true),
-    chooseFolder: () => void parts.choose(),
-    showShelf: () => void parts.showShelf(),
-    showSnapshots: parts.scene ? () => parts.snapshots.show(parts.scene?.id ?? "") : null,
-    openSettings: writingMode.settingsDialog.open,
-    showView: writingMode.setView,
-    ...planningCommands(parts),
-  };
-}
+import { useExport } from "./exporting/useExport.js";
+import { ProjectScreen } from "./shell/ProjectScreen.js";
 
 // Back to the shelf: the scene is saved first, and a failed save keeps the project open.
 function useShowShelf(
@@ -82,7 +39,7 @@ function useShowShelf(
   }, [session, close, update]);
 }
 
-// Each scene save feeds the words-per-day count and the automatic snapshots.
+// Each scene save feeds the words-per-day count and the automatic versions.
 function listenToSaves(
   savedRef: ReturnType<typeof useSceneSession>["savedRef"],
   recordSave: (dir: string, before: string, after: string) => void,
@@ -91,7 +48,7 @@ function listenToSaves(
   savedRef.current = (scene, before, after) => {
     recordSave(scene.dir, before, after);
     if (!isAutoSnapshotOn) return;
-    // A missed automatic snapshot loses no text, so it is not shown as an error.
+    // A missed automatic version loses no text, so it is not shown as an error.
     void snapshotOnSave(platform.fileSystem, scene, { before, after }, Date.now()).catch(
       () => undefined,
     );
@@ -108,7 +65,8 @@ function useCoreState() {
   const startup = useStartup(open, project?.dir ?? null);
   useOpenFirstScene(project, session, sceneState.editor.requestFocus);
   useSpellLanguage(project, session);
-  const actions = useProjectActions({ project, session, updateTree, refresh });
+  const input = { project, session, updateTree, refresh };
+  const actions = { ...useProjectActions(input), notes: useNoteActions(input) };
   const author = startup.preferences.authorName;
   const comments = useComments({
     project,
@@ -119,70 +77,91 @@ function useCoreState() {
   return { sceneState, projectState, startup, actions, comments, writingMode: useWritingMode() };
 }
 
-// Planera's cards, linked in the text and opened in the editor like scenes.
-function usePlanningParts({
-  project,
-  sceneState,
-  writingMode,
-  actions,
-}: {
-  project: Project | null;
-  sceneState: ReturnType<typeof useSceneSession>;
-  writingMode: ReturnType<typeof useWritingMode>;
-  actions: ReturnType<typeof useProjectActions>;
-}) {
-  const planning = usePlanning(project, writingMode.view === "planera");
-  useMentionLinks(sceneState.editor, planning);
+// The notes linked in the text, the open note's mentions, and Ny anteckning.
+function useNotesParts(core: ReturnType<typeof useCoreState>) {
+  const { projectState, sceneState, writingMode, actions } = core;
+  const { project } = projectState;
+  const noteId = sceneState.scene?.id ?? null;
+  const isNoteOpen = project !== null && noteId !== null && noteSortOf(project, noteId) !== null;
+  const notes = useNotes(project, isNoteOpen);
+  useMentionLinks(sceneState.editor, notes);
+  const [newNoteSort, setNewNoteSort] = useState<string | null | false>(false);
   const { session } = sceneState;
+  const cards = cardActions({ project, session, actions, setView: writingMode.setView });
+  return { notes, cards, newNoteSort, setNewNoteSort };
+}
+
+type PaletteParts = ReturnType<typeof useCoreState> &
+  ReturnType<typeof useSceneSession> &
+  ReturnType<typeof useProject> &
+  ReturnType<typeof useNotesParts> & {
+    treeHandlers: ReturnType<typeof useTreeHandlers>;
+    showShelf: () => Promise<void>;
+    snapshots: ReturnType<typeof useSnapshots>;
+  };
+
+function paletteContextOf(app: PaletteParts): PaletteContext | null {
+  const { project, session, writingMode } = app;
+  if (!project) return null;
   return {
-    planning,
-    cards: cardActions({ project, session, actions, setView: writingMode.setView }),
+    project,
+    settings: writingMode.settings,
+    openScene: (id) => {
+      writingMode.setView("skriv");
+      openIfOnDisk(session, project, id);
+    },
+    add: (kind) => app.treeHandlers.onAdd(kind, null),
+    run: app.editor.run,
+    changeSettings: writingMode.onChangeSettings,
+    toggleFocusMode: writingMode.onToggleFocus,
+    openSearch: () => writingMode.setSearchOpen(true),
+    chooseFolder: () => void app.choose(),
+    showShelf: () => void app.showShelf(),
+    showSnapshots: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
+    openSettings: () => writingMode.settingsDialog.open(),
+    showView: writingMode.setView,
+    cards: app.notes.cards,
+    describe: app.notes.descriptionOf,
+    openCard: app.cards.open,
+    newNote: () => app.setNewNoteSort(null),
   };
 }
 
 function useAppState() {
-  const { sceneState, projectState, startup, actions, writingMode, comments } = useCoreState();
+  const core = useCoreState();
+  const { sceneState, projectState, startup, writingMode } = core;
   const { session } = sceneState;
   const { project, refresh, updateTree } = projectState;
-  const treeHandlers = useTreeHandlers(actions);
+  const treeHandlers = useTreeHandlers(core.actions);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
-  const { planning, cards } = usePlanningParts({ project, sceneState, writingMode, actions });
-  const parts = {
-    cards,
-    ...sceneState,
-    ...projectState,
-    writingMode,
-    treeHandlers,
-    showShelf,
-    snapshots,
-    planning,
-  };
-  const palette = usePalette(paletteContextOf(parts));
   const syncCopy = useSyncCopy(project, session, updateTree, refresh);
   const { stats, today, recordSave } = useWritingStats(project);
+  useReminder(startup.preferences.reminderHour, today.words);
   const isSearchOpen = writingMode.isSearchOpen;
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
   listenToSaves(sceneState.savedRef, recordSave, startup.preferences.isAutoSnapshotOn);
-  return { ...parts, actions, palette, startup, syncCopy, stats, today, search, comments };
+  const zip = useExport(project, startup.preferences.authorName, projectState.updateFields);
+  const parts = { ...core, ...sceneState, ...projectState, ...useNotesParts(core) };
+  const newProjectAsked = useRef(false);
+  const app = {
+    ...parts,
+    ...{ treeHandlers, showShelf, snapshots, syncCopy, stats, today, search, zip, newProjectAsked },
+  };
+  return { ...app, palette: usePalette(paletteContextOf(app)) };
 }
 
 export type AppState = ReturnType<typeof useAppState>;
 
+// The update notice sits outside both screens, so it asks once and stays dismissed.
 export function App() {
   const app = useAppState();
   const { project } = app;
   if (app.startup.isStarting) return <div className="app-starting" />;
-  if (!project) return <StartScreen app={app} />;
-  const { isFocusMode, isSidebarOpen, setSidebarOpen } = app.writingMode;
-  const classes = ["app", isFocusMode && "focus-mode", isSidebarOpen && "sidebar-open"];
   return (
-    <div className={classes.filter(Boolean).join(" ")}>
-      <Sidebar {...sidebarProps(app, project)} />
-      <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
-      <WritingArea {...writingAreaProps(app, project)} />
-      <OtherViews app={app} project={project} />
-      <Overlays app={app} />
-    </div>
+    <>
+      {project ? <ProjectScreen app={app} project={project} /> : <StartScreen app={app} />}
+      <UpdateNotice session={app.session} />
+    </>
   );
 }

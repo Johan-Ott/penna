@@ -1,4 +1,5 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
+import { t, numberLocale } from "../../i18n/i18n.js";
 
 // The covers of the design, in turn: black, light grey, dark grey and white.
 const COVERS = ["cover-black", "cover-light", "cover-dark", "cover-white"];
@@ -19,7 +20,9 @@ function Cover({ book, index, onOpen }: Pick<BookProps, "book" | "index" | "onOp
     >
       <span className="book-kind">{book.kind}</span>
       <span className="book-title">{book.title}</span>
-      <span className="book-words">{book.words.toLocaleString("sv-SE")} ord</span>
+      <span className="book-words">
+        {t("{count} ord", { count: book.words.toLocaleString(numberLocale()) })}
+      </span>
     </button>
   );
 }
@@ -29,7 +32,7 @@ function BookMeta({ book }: { book: ShelfBook }) {
     <div className="book-meta">
       <div className="book-status">
         <span>{book.status}</span>
-        <span className="book-percent">{book.progress} %</span>
+        <span className="book-percent">{book.progress}%</span>
       </div>
       <div
         className="progress-bar"
@@ -37,7 +40,10 @@ function BookMeta({ book }: { book: ShelfBook }) {
         aria-valuenow={book.progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`${book.title}: ${book.progress} procent klart`}
+        aria-label={t("{title}: {progress} procent klart", {
+          title: book.title,
+          progress: book.progress,
+        })}
       >
         <div style={{ width: `${book.progress}%` }} />
       </div>
@@ -58,18 +64,18 @@ function MissingBook({
     <div className="book">
       <div className="book-cover missing">
         <span className="book-title">{book.title}</span>
-        <span className="book-words">Hittas inte</span>
+        <span className="book-words">{t("Hittas inte")}</span>
       </div>
       <div className="shelf-board" />
       <div className="book-meta">
         <span className="book-updated">
-          Mappen har flyttats eller döpts om. Texten finns kvar där du lade den.
+          {t("Mappen har flyttats eller döpts om. Texten finns kvar där du lade den.")}
         </span>
         <button className="link-button" onClick={() => onLocate(book)}>
-          Leta upp mappen
+          {t("Leta upp mappen")}
         </button>
         <button className="link-button quiet" onClick={() => onForget(book)}>
-          Ta bort från hyllan
+          {t("Ta bort från hyllan")}
         </button>
       </div>
     </div>

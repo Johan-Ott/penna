@@ -10,31 +10,32 @@ import {
   type OnboardingState,
   type ProjectMode,
 } from "./useOnboarding.js";
+import { t, numberLocale } from "../../i18n/i18n.js";
 
 type FieldProps = { details: ProjectDetails; onChange: (details: ProjectDetails) => void };
 
 const TYPES: [string, string][] = [
-  ["roman", "Roman"],
-  ["noveller", "Noveller"],
-  ["fackbok", "Fackbok"],
-  ["annat", "Annat"],
+  ["roman", t("Roman")],
+  ["noveller", t("Noveller")],
+  ["fackbok", t("Fackbok")],
+  ["annat", t("Annat")],
 ];
 
 function GoalFields({ details, onChange }: FieldProps) {
   return (
     <div className="field-pair">
       <label className="onboarding-field">
-        <span className="field-label">Dagligt ordmål</span>
+        <span className="field-label">{t("Dagligt ordmål")}</span>
         <input
           inputMode="numeric"
-          value={details.dailyGoal.toLocaleString("sv-SE")}
+          value={details.dailyGoal.toLocaleString(numberLocale())}
           onChange={(event) =>
             onChange({ ...details, dailyGoal: Number(event.target.value.replace(/\D/g, "")) })
           }
         />
       </label>
       <label className="onboarding-field">
-        <span className="field-label">Deadline (valfritt)</span>
+        <span className="field-label">{t("Deadline (valfritt)")}</span>
         <input
           type="date"
           value={details.deadline}
@@ -47,7 +48,7 @@ function GoalFields({ details, onChange }: FieldProps) {
 
 function TypeChips({ details, onChange }: FieldProps) {
   return (
-    <div className="chip-row" role="radiogroup" aria-label="Sorts bok">
+    <div className="chip-row" role="radiogroup" aria-label={t("Sorts bok")}>
       {TYPES.map(([type, label]) => (
         <button
           key={type}
@@ -73,10 +74,10 @@ function NewProjectFields(props: FieldProps & { onSubmit: () => void }) {
       }}
     >
       <label className="onboarding-field">
-        <span className="field-label">Titel</span>
+        <span className="field-label">{t("Titel")}</span>
         <input
           autoFocus
-          placeholder="Arbetstitel duger"
+          placeholder={t("Arbetstitel duger")}
           value={props.details.title}
           onChange={(event) => props.onChange({ ...props.details, title: event.target.value })}
         />
@@ -91,12 +92,12 @@ function OpenProjectChoices({ state }: { state: OnboardingState }) {
   return (
     <div className="choice-list">
       <button className="choice" onClick={() => void openExisting(state)}>
-        <span className="field-label">Öppna befintlig mapp…</span>
-        <span className="choice-hint">Ett projekt du redan har</span>
+        <span className="field-label">{t("Öppna befintlig mapp…")}</span>
+        <span className="choice-hint">{t("Ett projekt du redan har")}</span>
       </button>
       <button className="choice" onClick={() => void openExample(state)}>
-        <span className="field-label">Öppna exempelprojektet</span>
-        <span className="choice-hint">Vintervägen, ett par scener att prova på</span>
+        <span className="field-label">{t("Öppna exempelprojektet")}</span>
+        <span className="choice-hint">{t("Vintervägen, ett par scener att prova på")}</span>
       </button>
     </div>
   );
@@ -125,18 +126,18 @@ function ImportChoices({ state }: { state: OnboardingState }) {
         onDragLeave={() => setOver(false)}
         onDrop={(event) => (setOver(false), void dropFile(state, event))}
       >
-        <span className="field-label">Släpp ditt manus här</span>
+        <span className="field-label">{t("Släpp ditt manus här")}</span>
         <span className="choice-hint">
-          Word (.docx), Scrivener (.scriv), Markdown eller text.
+          {t("Word (.docx), Scrivener (.scriv), Markdown eller text.")}
           <br />
-          Kapitel delas upp vid rubrikerna.
+          {t("Kapitel delas upp vid rubrikerna.")}
         </span>
         <button className="button secondary" onClick={() => void pickFile(state)}>
-          Välj fil…
+          {t("Välj fil…")}
         </button>
       </div>
       <button className="link-button quiet" onClick={() => void openExample(state)}>
-        Eller öppna exempelprojektet
+        {t("Eller öppna exempelprojektet")}
       </button>
     </>
   );
@@ -155,16 +156,16 @@ const CHOICES: Record<ProjectMode, (state: OnboardingState) => ReactNode> = {
 };
 
 const MODES: [ProjectMode, string][] = [
-  ["new", "Nytt projekt"],
-  ["import", "Importera"],
-  ["open", "Öppna befintligt"],
+  ["new", t("Nytt projekt")],
+  ["import", t("Importera")],
+  ["open", t("Öppna befintligt")],
 ];
 
 export function ProjectStep({ state, isFirst }: { state: OnboardingState; isFirst: boolean }) {
   return (
     <>
-      <h1 className="onboarding-title">{isFirst ? "Ditt första projekt" : "Nytt projekt"}</h1>
-      <div className="segmented fit" role="radiogroup" aria-label="Nytt eller befintligt">
+      <h1 className="onboarding-title">{isFirst ? t("Ditt första projekt") : t("Nytt projekt")}</h1>
+      <div className="segmented fit" role="radiogroup" aria-label={t("Nytt eller befintligt")}>
         {MODES.map(([mode, label]) => (
           <button
             key={mode}

@@ -1,3 +1,4 @@
+import "./i18n/startLanguage.js";
 import "@fontsource/geist-sans/400.css";
 import "@fontsource/geist-sans/500.css";
 import "@fontsource/geist-sans/600.css";
@@ -7,6 +8,7 @@ import "@fontsource/literata/400-italic.css";
 import "@fontsource/literata/600.css";
 import "./styles/tokens.css";
 import "./styles/app.css";
+import "./styles/shell.css";
 import "./editor/editor.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

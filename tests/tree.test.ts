@@ -12,12 +12,13 @@ import {
   withSpecialFolders,
   CHARACTERS_ID,
   NOTES_ID,
-  TIMELINE_ID,
   PLACES_ID,
-  RESEARCH_ID,
+  THINGS_ID,
   TRASH_ID,
   type TreeNode,
 } from "../src/project/tree";
+
+const FIXED = [CHARACTERS_ID, PLACES_ID, THINGS_ID, NOTES_ID, TRASH_ID];
 
 const scene = (id: string): TreeNode => ({ id, kind: "scene" });
 
@@ -39,29 +40,51 @@ const childIds = (tree: TreeNode[], id: string) =>
   findNode(tree, id)?.node.children?.map((child) => child.id);
 
 describe("special folders", () => {
-  it("always ends the tree with the planning folders, Research and Papperskorg", () => {
+  it("always ends the tree with the four note sorts and Papperskorg", () => {
     const tree = withSpecialFolders([scene("s1")]);
 
-    expect(tree.map((node) => node.id)).toEqual([
-      "s1",
-      CHARACTERS_ID,
-      PLACES_ID,
-      TIMELINE_ID,
-      NOTES_ID,
-      RESEARCH_ID,
-      TRASH_ID,
-    ]);
+    expect(tree.map((node) => node.id)).toEqual(["s1", ...FIXED]);
+    expect(tree.filter((node) => node.kind === "sort")).toHaveLength(4);
     expect(tree.at(-1)?.title).toBe("Papperskorg");
   });
 
-  it("keeps existing special folders and their content", () => {
+  it("keeps existing sorts and their notes", () => {
     const once = withSpecialFolders([scene("s1")]);
-    const withNote = insertNode(once, scene("s9"), RESEARCH_ID, 0);
+    const withNote = insertNode(once, scene("s9"), THINGS_ID, 0);
 
     const twice = withSpecialFolders(withNote);
 
-    expect(twice.length).toBe(7);
-    expect(childIds(twice, RESEARCH_ID)).toEqual(["s9"]);
+    expect(twice.length).toBe(6);
+    expect(childIds(twice, THINGS_ID)).toEqual(["s9"]);
+  });
+
+  it("turns the old fixed folders into sorts: own sorts when they hold texts, gone when empty", () => {
+    const old: TreeNode[] = [
+      scene("s1"),
+      { id: CHARACTERS_ID, kind: "folder", title: "Karaktärer", children: [scene("arvid")] },
+      { id: "tidslinje", kind: "folder", title: "Tidslinje", children: [scene("h1")] },
+      { id: "research", kind: "folder", title: "Research", children: [] },
+    ];
+
+    const tree = withSpecialFolders(old);
+
+    expect(tree.map((node) => node.id)).toEqual([
+      "s1",
+      ...FIXED.slice(0, 4),
+      "tidslinje",
+      TRASH_ID,
+    ]);
+    expect(findNode(tree, CHARACTERS_ID)?.node.kind).toBe("sort");
+    expect(childIds(tree, CHARACTERS_ID)).toEqual(["arvid"]);
+    expect(findNode(tree, "tidslinje")?.node).toMatchObject({ kind: "sort", title: "Tidslinje" });
+  });
+
+  it("puts a new own sort after the others, before Papperskorg", () => {
+    const own: TreeNode = { id: "egen", kind: "sort", title: "Fordon" };
+
+    const tree = insertNode(withSpecialFolders([scene("s1")]), own, null, 0);
+
+    expect(tree.map((node) => node.id)).toEqual(["s1", ...FIXED.slice(0, 4), "egen", TRASH_ID]);
   });
 });
 
@@ -127,8 +150,8 @@ describe("tree edits", () => {
 });
 
 describe("reading order", () => {
-  it("lists the manuscript's scenes in order, without research and trash", () => {
-    const tree = insertNode(moveToTrash(sampleTree(), "s2"), scene("r1"), RESEARCH_ID, 0);
+  it("lists the manuscript's scenes in order, without notes and trash", () => {
+    const tree = insertNode(moveToTrash(sampleTree(), "s2"), scene("r1"), NOTES_ID, 0);
 
     expect(manuscriptSceneIds(tree)).toEqual(["s1", "s3"]);
   });
@@ -145,16 +168,7 @@ describe("scenes on disk", () => {
   it("adds scene files the tree does not know to the end of the manuscript", () => {
     const result = reconcileScenes(sampleTree(), ["s1", "s2", "s3", "s4"]);
 
-    expect(result.tree.map((node) => node.id)).toEqual([
-      "del1",
-      "s4",
-      CHARACTERS_ID,
-      PLACES_ID,
-      TIMELINE_ID,
-      NOTES_ID,
-      RESEARCH_ID,
-      TRASH_ID,
-    ]);
+    expect(result.tree.map((node) => node.id)).toEqual(["del1", "s4", ...FIXED]);
   });
 
   it("reports scenes in the tree whose file is gone, without removing them", () => {
@@ -167,15 +181,6 @@ describe("scenes on disk", () => {
   it("rebuilds a tree from scene files in creation order", () => {
     const tree = rebuildTree(["01B", "01A"]);
 
-    expect(tree.map((node) => node.id)).toEqual([
-      "01A",
-      "01B",
-      CHARACTERS_ID,
-      PLACES_ID,
-      TIMELINE_ID,
-      NOTES_ID,
-      RESEARCH_ID,
-      TRASH_ID,
-    ]);
+    expect(tree.map((node) => node.id)).toEqual(["01A", "01B", ...FIXED]);
   });
 });

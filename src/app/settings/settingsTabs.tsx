@@ -8,14 +8,19 @@ import type { AppPreferences } from "../appPreferences.js";
 import type { PreferenceChange } from "../useStartup.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import { Choice, Row, Switch } from "./controls.js";
+import { t } from "../../i18n/i18n.js";
 
 export interface TabProps {
   preferences: AppPreferences;
   updatePreferences: (change: PreferenceChange) => void;
   settings: WritingSettings;
   onChangeSettings: (change: SettingsChange) => void;
-  /** The open book's language, or null on the bookshelf. */
-  book: { language: string; onChangeLanguage: (language: string) => void } | null;
+  /** The open book's language and its zip copy, or null on the bookshelf. */
+  book: {
+    language: string;
+    onChangeLanguage: (language: string) => void;
+    onExportZip: () => void;
+  } | null;
 }
 
 const FONTS: [ProseFont, string][] = [
@@ -29,11 +34,11 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
     onChangeSettings((current) => changeSize(current, direction));
   return (
     <span className="stepper">
-      <button aria-label="Mindre" onClick={step(-1)}>
+      <button aria-label={t("Mindre")} onClick={step(-1)}>
         –
       </button>
       <span>{settings.size}</span>
-      <button aria-label="Större" onClick={step(1)}>
+      <button aria-label={t("Större")} onClick={step(1)}>
         +
       </button>
     </span>
@@ -42,14 +47,18 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
 
 type EditorSwitch = "typewriter" | "spellcheck" | "typography" | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
-  ["typewriter", "Typewriter-läge", "Raden du skriver på stannar mitt på skärmen i fokusläget."],
-  ["spellcheck", "Stavningskontroll", "Systemets ordlista stryker under felstavade ord."],
+  [
+    "typewriter",
+    t("Typewriter-läge"),
+    t("Raden du skriver på stannar mitt på skärmen i fokusläget."),
+  ],
+  ["spellcheck", t("Stavningskontroll"), t("Systemets ordlista stryker under felstavade ord.")],
   [
     "typography",
-    "Svensk typografi medan du skriver",
+    t("Svensk typografi medan du skriver"),
     'Två bindestreck blir talstreck och "citat" blir ”citat”.',
   ],
-  ["review", "Granskning", "Namnstavning och upprepningar, i texten och i en panel bredvid."],
+  ["review", t("Granskning"), t("Namnstavning och upprepningar, i texten och i en panel bredvid.")],
 ];
 
 const WINDOWS = REPEAT_WINDOWS.map((sentences): [string, string] => [
@@ -59,9 +68,12 @@ const WINDOWS = REPEAT_WINDOWS.map((sentences): [string, string] => [
 
 function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
   return (
-    <Row label="Upprepningsfönster" hint="Hur många meningar som ska skilja samma ord åt.">
+    <Row
+      label={t("Upprepningsfönster")}
+      hint={t("Hur många meningar som ska skilja samma ord åt.")}
+    >
       <Choice
-        label="Upprepningsfönster"
+        label={t("Upprepningsfönster")}
         value={String(settings.repeatWindow)}
         options={WINDOWS}
         onSelect={(value) =>
@@ -72,41 +84,48 @@ function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
   );
 }
 
+function SwitchRows({ settings, onChangeSettings }: TabProps) {
+  return EDITOR_SWITCHES.map(([key, label, hint]) => (
+    <Row key={key} label={label} hint={hint}>
+      <Switch
+        label={label}
+        isOn={settings[key]}
+        onFlip={() => onChangeSettings((current) => ({ ...current, [key]: !current[key] }))}
+      />
+    </Row>
+  ));
+}
+
 export function EditorTab(props: TabProps) {
   const { settings, onChangeSettings } = props;
   return (
     <>
-      <Row label="Typsnitt" hint="Bara för skrivandet. Boken formges i Bokdesign.">
+      <Row label={t("Typsnitt")} hint={t("Bara för skrivandet. Boken formges i Bokdesign.")}>
         <Choice
-          label="Typsnitt"
+          label={t("Typsnitt")}
           value={settings.font}
           options={FONTS}
           onSelect={(font) => onChangeSettings((current) => ({ ...current, font }))}
         />
       </Row>
-      <Row label="Textstorlek" hint="Ctrl och plus eller minus ändrar den medan du skriver.">
+      <Row
+        label={t("Textstorlek")}
+        hint={t("Ctrl och plus eller minus ändrar den medan du skriver.")}
+      >
         <SizeStepper {...props} />
       </Row>
-      {EDITOR_SWITCHES.map(([key, label, hint]) => (
-        <Row key={key} label={label} hint={hint}>
-          <Switch
-            label={label}
-            isOn={settings[key]}
-            onFlip={() => onChangeSettings((current) => ({ ...current, [key]: !current[key] }))}
-          />
-        </Row>
-      ))}
+      <SwitchRows {...props} />
       <RepeatWindowRow {...props} />
     </>
   );
 }
 
-export function SnapshotsTab({ preferences, updatePreferences }: TabProps) {
+export function VersionsTab({ preferences, updatePreferences, book }: TabProps) {
   return (
     <>
-      <Row label="Automatiska bilder" hint="Sparas när en scen har ändrats mycket.">
+      <Row label={t("Automatiska versioner")} hint={t("Sparas när en text har ändrats mycket.")}>
         <Switch
-          label="Automatiska bilder"
+          label={t("Automatiska versioner")}
           isOn={preferences.isAutoSnapshotOn}
           onFlip={() =>
             updatePreferences((current) => ({
@@ -117,9 +136,23 @@ export function SnapshotsTab({ preferences, updatePreferences }: TabProps) {
         />
       </Row>
       <Row
-        label="Var bilderna sparas"
-        hint="I projektmappen, under snapshots. Penna raderar aldrig en bild."
+        label={t("Var versionerna sparas")}
+        hint={t("I projektmappen, under snapshots. Penna raderar aldrig en version.")}
       />
+      {book && <ZipRow onExportZip={book.onExportZip} />}
     </>
+  );
+}
+
+function ZipRow({ onExportZip }: { onExportZip: () => void }) {
+  return (
+    <Row
+      label={t("Exportera allt som zip")}
+      hint={t("Hela projektmappen, med versioner och kommentarer.")}
+    >
+      <button className="button secondary small" onClick={onExportZip}>
+        {t("Spara som zip…")}
+      </button>
+    </Row>
   );
 }

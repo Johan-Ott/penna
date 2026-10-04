@@ -47,6 +47,7 @@ const SCENE_IDS = {
 
 const PROJECT = {
   title: "Vintervägen",
+  type: "roman",
   dailyGoal: 500,
   tree: [
     {

@@ -1,7 +1,8 @@
 export interface PaletteEntry {
   id: string;
   label: string;
-  group: "Scener" | "Kapitel" | "Karaktärer" | "Platser" | "Kommandon";
+  /** Scener, Kapitel or Kommandon, or the name of a sort such as Personer for a note. */
+  group: string;
   shortcut?: string;
   /** Grey text on the right, such as the chapter a scene belongs to. */
   hint?: string;
@@ -45,15 +46,10 @@ export function searchPalette(entries: PaletteEntry[], query: string): PaletteEn
     .map((match) => match.entry);
 }
 
-// The order follows the type above, so a new kind of entry cannot be left out of the list.
-const GROUP_ORDER: Record<PaletteEntry["group"], number> = {
-  Scener: 0,
-  Kapitel: 1,
-  Karaktärer: 2,
-  Platser: 3,
-  Kommandon: 4,
-};
+// Notes first, as in the design, then scenes, chapters and commands.
+const GROUP_ORDER: Record<string, number> = { Scener: 1, Kapitel: 2, Kommandon: 3 };
+const rank = (entry: PaletteEntry) => GROUP_ORDER[entry.group] ?? 0;
 
 /** Results in groups, as in the design; the best match comes first within a group. */
 export const inGroups = (found: PaletteEntry[]) =>
-  [...found].sort((first, second) => GROUP_ORDER[first.group] - GROUP_ORDER[second.group]);
+  [...found].sort((first, second) => rank(first) - rank(second));

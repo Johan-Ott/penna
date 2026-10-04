@@ -2,24 +2,23 @@ import { useEffect, useRef, useState, type DragEvent, type MouseEvent } from "re
 import {
   ancestorIds,
   findNode,
-  isSpecialFolder,
-  manuscriptSceneIds,
   moveNode,
-  RESEARCH_ID,
+  sortsOf,
   TRASH_ID,
   type NodeKind,
   type TreeNode,
 } from "../../project/tree.js";
-import { visibleRows, type TreeRow as Row } from "../../project/treeRows.js";
+import { sidebarSections, visibleRows, type TreeRow as Row } from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
-import { nodeLabel, nodeMeta, shortWordCount } from "../../project/treeLabels.js";
+import { nodeLabel, nodeMeta } from "../../project/treeLabels.js";
+import { isLinkedByDefault } from "../../project/cards.js";
 import { Menu, type MenuItem } from "../Menu.js";
 import type { Project } from "../useProject.js";
-import { Chevron } from "./Chevron.js";
 import { addMenu, rowMenu, type Placement, type TreeMenuActions } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
+import { t } from "../../i18n/i18n.js";
 
 export interface TreeViewProps {
   project: Project;
@@ -30,47 +29,19 @@ export interface TreeViewProps {
   onChangeTree: (tree: TreeNode[]) => void;
   onRenameScene: (id: string, title: string) => void;
   onSetSceneStatus: (id: string, status: SceneStatus) => void;
+  onSetNoteLink: (id: string, isLinked: boolean) => void;
   onShowSnapshots: (id: string) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
+  /** Ny anteckning, with a sort already chosen or not. */
+  onNewNote: (sortId: string | null) => void;
 }
 
 type Actions = ReturnType<typeof useTreeActions>;
 type MenuState = { items: MenuItem[]; x: number; y: number } | null;
-
-function ManuscriptRow({ project, onDropHere }: { project: Project; onDropHere: () => void }) {
-  const sceneWords = manuscriptSceneIds(project.tree).map(
-    (id) => project.summaries[id]?.words ?? 0,
-  );
-  const words = sceneWords.reduce((sum, count) => sum + count, 0);
-  return (
-    <div
-      className="tree-row manuscript-row"
-      onDragOver={(event: DragEvent) => event.preventDefault()}
-      onDrop={(event: DragEvent) => (event.preventDefault(), onDropHere())}
-    >
-      <span className="tree-chevron">
-        <Chevron isOpen />
-      </span>
-      <span className="tree-label">Manus</span>
-      <span className="tree-meta">{shortWordCount(words)}</span>
-    </div>
-  );
-}
-
-// Manuscript rows sit one step in under the Manus row; Research and Papperskorg do not.
-function displayDepths(rows: Row[]) {
-  let isInSpecialFolder = false;
-  return rows.map((row) => {
-    if (row.depth === 0) isInSpecialFolder = isSpecialFolder(row.node.id);
-    return isInSpecialFolder ? row.depth : row.depth + 1;
-  });
-}
+type View = ReturnType<typeof useTreeViewState>;
 
 // A newly created node is shown, with its parents opened, and its name is ready to type.
-function useRenameRequest(
-  props: TreeViewProps,
-  view: { expand: (ids: string[]) => void; setRenamingId: (id: string) => void },
-) {
+function useRenameRequest(props: TreeViewProps, view: View) {
   const { renameRequestId, project } = props;
   const { expand, setRenamingId } = view;
   const handledId = useRef<string | null>(null);
@@ -84,9 +55,10 @@ function useRenameRequest(
   }, [renameRequestId, project.tree, expand, setRenamingId]);
 }
 
-function useTreeViewState() {
+// The sorts and Papperskorg start folded, as in the design; the book starts open.
+function useTreeViewState(tree: TreeNode[]) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(
-    () => new Set([RESEARCH_ID, TRASH_ID]),
+    () => new Set([...sortsOf(tree).map((sort) => sort.id), TRASH_ID]),
   );
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [menu, setMenu] = useState<MenuState>(null);
@@ -104,6 +76,7 @@ function useTreeViewState() {
 }
 
 function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
+  const { summaries } = props.project;
   return {
     open: (node) => actions.activate(node),
     add: props.onAdd,
@@ -111,14 +84,24 @@ function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
     trash: (node) => actions.trash(node),
     restore: (node) => actions.restore(node),
     setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
-    statusOf: (node) => props.project.summaries[node.id]?.status ?? null,
+    statusOf: (node) => summaries[node.id]?.status ?? null,
     showSnapshots: (node) => props.onShowSnapshots(node.id),
+    linkOf: (node) => noteLinkOf(props.project, node.id),
+    setLink: (node, isLinked) => props.onSetNoteLink(node.id, isLinked),
+    newNote: props.onNewNote,
   };
+}
+
+// Whether a note's name is linked in the text; null for anything that is not a note.
+function noteLinkOf(project: Project, id: string) {
+  const parent = findNode(project.tree, id)?.parent;
+  if (parent?.kind !== "sort") return null;
+  return project.summaries[id]?.link ?? isLinkedByDefault(parent.id);
 }
 
 function useTreeView(props: TreeViewProps) {
   const { project } = props;
-  const view = useTreeViewState();
+  const view = useTreeViewState(project.tree);
   useRenameRequest(props, view);
   const actions = useTreeActions({
     ...props,
@@ -127,8 +110,7 @@ function useTreeView(props: TreeViewProps) {
     startRename: view.setRenamingId,
   });
   const drag = useTreeDrag(project.tree, props.onChangeTree);
-  const rows = visibleRows(project.tree, view.collapsed);
-  const dropAtManuscriptEnd = () => {
+  const dropAtBookEnd = () => {
     if (drag.draggedId)
       props.onChangeTree(moveNode(project.tree, drag.draggedId, null, Number.MAX_SAFE_INTEGER));
   };
@@ -137,39 +119,75 @@ function useTreeView(props: TreeViewProps) {
     event.stopPropagation();
     if (items.length > 0) view.setMenu({ items, x: event.clientX, y: event.clientY });
   };
-  return { view, actions, drag, rows, depths: displayDepths(rows), dropAtManuscriptEnd, openMenu };
+  const sections = sidebarSections(visibleRows(project.tree, view.collapsed));
+  return { view, actions, drag, sections, dropAtBookEnd, openMenu };
 }
 
-export function TreeView(props: TreeViewProps) {
-  const { view, actions, drag, rows, depths, dropAtManuscriptEnd, openMenu } = useTreeView(props);
+type Tree = ReturnType<typeof useTreeView>;
+
+function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
+  const { view, actions, drag, openMenu } = tree;
   const menuFor = menuActions(actions, props);
+  return rows.map((row) => (
+    <TreeRow
+      key={row.node.id}
+      {...rowView(row, props, view.collapsed)}
+      isRenaming={view.renamingId === row.node.id}
+      dropHint={drag.dropHintFor(row.node.id)}
+      dragProps={drag.rowDragProps(row, actions.canEdit(row.node))}
+      {...rowHandlers(row, actions, view)}
+      {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
+      onContextMenu={(event) =>
+        openMenu(event, rowMenu(row.node, actions.isInTrash(row.node.id), menuFor))
+      }
+    />
+  ));
+}
+
+function SectionHeading(props: { label: string; onDrop?: () => void }) {
   return (
     <div
-      role="tree"
-      aria-label="Struktur"
-      className="tree"
-      onContextMenu={(event) => openMenu(event, addMenu(menuFor))}
+      role="none"
+      className="sidebar-heading"
+      onDragOver={(event: DragEvent) => props.onDrop && event.preventDefault()}
+      onDrop={(event: DragEvent) => (event.preventDefault(), props.onDrop?.())}
     >
-      <ManuscriptRow project={props.project} onDropHere={dropAtManuscriptEnd} />
-      {rows.map((row, index) => (
-        <TreeRow
-          key={row.node.id}
-          {...rowView(row, depths[index] ?? 0, props, view.collapsed)}
-          isRenaming={view.renamingId === row.node.id}
-          dropHint={drag.dropHintFor(row.node.id)}
-          dragProps={drag.rowDragProps(row, actions.canEdit(row.node))}
-          {...rowHandlers(row, actions, view)}
-          onContextMenu={(event) =>
-            openMenu(event, rowMenu(row.node, actions.isInTrash(row.node.id), menuFor))
-          }
-        />
-      ))}
-      {view.menu && <Menu {...view.menu} label="Struktur" onClose={() => view.setMenu(null)} />}
+      {props.label}
     </div>
   );
 }
 
-function rowHandlers(row: Row, actions: Actions, view: ReturnType<typeof useTreeViewState>) {
+/** Boken, Anteckningar and Papperskorg: one tree, so the arrow keys walk through all of it. */
+export function TreeView(props: TreeViewProps) {
+  const tree = useTreeView(props);
+  const { sections, view } = tree;
+  const menuFor = menuActions(tree.actions, props);
+  return (
+    <div
+      role="tree"
+      aria-label={t("Boken")}
+      className="tree"
+      onContextMenu={(event) => tree.openMenu(event, addMenu(menuFor))}
+    >
+      <SectionHeading label={t("Boken")} onDrop={tree.dropAtBookEnd} />
+      <Rows rows={sections.book} props={props} tree={tree} />
+      <SectionHeading label={t("Anteckningar")} />
+      <Rows rows={sections.notes} props={props} tree={tree} />
+      <button className="tree-add" onClick={() => props.onNewNote(null)}>
+        {t("+ Ny anteckning")}
+      </button>
+      <div className="tree-bottom">
+        <Rows rows={sections.trash} props={props} tree={tree} />
+      </div>
+      {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
+    </div>
+  );
+}
+
+// An empty sort has nothing to unfold; a click starts its first note instead.
+const isEmptySort = (node: TreeNode) => node.kind === "sort" && !node.children?.length;
+
+function rowHandlers(row: Row, actions: Actions, view: View) {
   return {
     onActivate: () => actions.activate(row.node),
     onToggle: () => view.toggle(row.node.id),
@@ -182,14 +200,14 @@ function rowHandlers(row: Row, actions: Actions, view: ReturnType<typeof useTree
   };
 }
 
-function rowView(row: Row, depth: number, props: TreeViewProps, collapsed: ReadonlySet<string>) {
+function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;
   const summary = props.project.summaries[node.id];
   const isInCloud = props.project.notDownloaded.some((file) => file.sceneId === node.id);
   return {
-    row: { ...row, depth },
+    row,
     label: isInCloud
-      ? "Hämtar från molnet…"
+      ? t("Hämtar från molnet…")
       : nodeLabel(node, props.project.tree, props.project.summaries),
     title: node.kind === "scene" ? (summary?.title ?? "") : (node.title ?? ""),
     meta: nodeMeta(node, props.project.summaries),

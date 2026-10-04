@@ -2,19 +2,23 @@ import { useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
 import { AboutTab, ShortcutsTab } from "./infoTabs.js";
 import { GeneralTab } from "./generalTab.js";
-import { EditorTab, SnapshotsTab, type TabProps } from "./settingsTabs.js";
+import { EditorTab, VersionsTab, type TabProps } from "./settingsTabs.js";
+import { t } from "../../i18n/i18n.js";
 
 const TABS: [string, (props: TabProps) => ReactNode][] = [
-  ["Allmänt", GeneralTab],
-  ["Editor", EditorTab],
-  ["Ögonblicksbilder", SnapshotsTab],
-  ["Kortkommandon", ShortcutsTab],
+  [t("Allmänt"), GeneralTab],
+  [t("Editor"), EditorTab],
+  [t("Versioner"), VersionsTab],
+  [t("Kortkommandon"), ShortcutsTab],
   ["Om Penna", AboutTab],
 ];
 
+/** Kortkommandon, opened straight from Hjälp och kortkommandon in the menu. */
+export const SHORTCUTS_TAB = 3;
+
 function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }) {
   return (
-    <nav className="settings-tabs" aria-label="Inställningar">
+    <nav className="settings-tabs" aria-label={t("Inställningar")}>
       {TABS.map(([label], index) => (
         <button
           key={label}
@@ -30,8 +34,8 @@ function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }
 }
 
 /** Inställningar, as in the design: the tabs on the left, one setting per row on the right. */
-export function SettingsDialog(props: TabProps & { onClose: () => void }) {
-  const [tab, setTab] = useState(0);
+export function SettingsDialog(props: TabProps & { startTab: number; onClose: () => void }) {
+  const [tab, setTab] = useState(props.startTab);
   useEscape(props.onClose);
   const [title, Content] = TABS[tab] ?? TABS[0] ?? ["", () => null];
   return (
@@ -40,7 +44,7 @@ export function SettingsDialog(props: TabProps & { onClose: () => void }) {
         className="settings-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Inställningar"
+        aria-label={t("Inställningar")}
         onClick={(event) => event.stopPropagation()}
       >
         <TabList tab={tab} onPick={setTab} />
@@ -48,7 +52,7 @@ export function SettingsDialog(props: TabProps & { onClose: () => void }) {
           <div className="settings-heading">
             <h1>{title}</h1>
             <button className="link-button quiet" onClick={props.onClose}>
-              Stäng
+              {t("Stäng")}
             </button>
           </div>
           <Content {...props} />
@@ -58,14 +62,18 @@ export function SettingsDialog(props: TabProps & { onClose: () => void }) {
   );
 }
 
-/** Whether Inställningar is open. Ctrl+, opens it, as in most desktop apps. */
+/** Which tab of Inställningar is open, or null. Ctrl+, opens it, as in most desktop apps. */
 export function useSettingsDialog() {
-  const [isOpen, setOpen] = useState(false);
-  useShortcut(",", () => setOpen(true));
-  return { isOpen, open: () => setOpen(true), close: () => setOpen(false) };
+  const [openTab, setOpenTab] = useState<number | null>(null);
+  useShortcut(",", () => setOpenTab(0));
+  return {
+    openTab,
+    open: (tab = 0) => setOpenTab(tab),
+    close: () => setOpenTab(null),
+  };
 }
 
 export function SettingsLayer(props: TabProps & { dialog: ReturnType<typeof useSettingsDialog> }) {
-  if (!props.dialog.isOpen) return null;
-  return <SettingsDialog {...props} onClose={props.dialog.close} />;
+  if (props.dialog.openTab === null) return null;
+  return <SettingsDialog {...props} startTab={props.dialog.openTab} onClose={props.dialog.close} />;
 }

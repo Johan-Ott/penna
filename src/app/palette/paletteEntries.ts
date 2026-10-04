@@ -24,8 +24,10 @@ import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import type { PaletteEntry } from "./paletteSearch.js";
-import { VIEWS, type View } from "../Sidebar.js";
+import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
+import { nodeLabel } from "../../project/treeLabels.js";
+import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
   project: Project;
@@ -43,8 +45,10 @@ export interface PaletteContext {
   openSettings: () => void;
   showView: (view: View) => void;
   cards: Card[];
+  /** "Elins farbror": the first sentence of a note, beside its name. */
+  describe: (id: string) => string;
   openCard: (id: string) => void;
-  newCharacter: () => void;
+  newNote: () => void;
 }
 
 const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({
@@ -60,10 +64,10 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
     const chapter = chapterOf(project.tree, id);
     return {
       id: `scen:${id}`,
-      label: project.summaries[id]?.title ?? "Namnlös scen",
+      label: project.summaries[id]?.title ?? t("Namnlös scen"),
       group: "Scener",
       run: () => openScene(id),
-      ...(chapter ? { hint: `Kapitel ${chapter.number}` } : {}),
+      ...(chapter ? { hint: t("Kapitel {number}", { number: chapter.number }) } : {}),
     };
   });
   const chapters = [...numberNodes(project.tree, "chapter")].flatMap(
@@ -90,26 +94,29 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(`Stil: ${STYLE_LABELS[style]}`, () => run(setStyle(style))),
   );
   return [
-    command("Ny scen", () => context.add("scene"), "Ctrl+Alt+N"),
-    command("Nytt kapitel", () => context.add("chapter")),
-    command("Ny del", () => context.add("part")),
-    command("Ny mapp", () => context.add("folder")),
-    command("Sök och ersätt", context.openSearch, "Ctrl+F"),
-    command("Fokusläge", context.toggleFocusMode, "Ctrl+Shift+F"),
-    ...(context.showSnapshots ? [command("Ögonblicksbilder", context.showSnapshots)] : []),
-    command("Inställningar", context.openSettings, "Ctrl+,"),
+    command(t("Ny scen"), () => context.add("scene"), "Ctrl+Alt+N"),
+    command(t("Nytt kapitel"), () => context.add("chapter")),
+    command(t("Ny del"), () => context.add("part")),
+    command(t("Ny mapp"), () => context.add("folder")),
+    command(t("Ny anteckning"), context.newNote),
+    command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
+    command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),
+    ...(context.showSnapshots
+      ? [command(t("Versioner av den här texten"), context.showSnapshots)]
+      : []),
+    command(t("Inställningar"), context.openSettings, "Ctrl+,"),
     ...VIEWS.map(([view, label, keys]) =>
-      command(`Gå till ${label}`, () => context.showView(view), keys),
+      command(t("Gå till {view}", { view: label }), () => context.showView(view), keys),
     ),
-    command("Fetstil", () => run(toggleBold), "Ctrl+B"),
-    command("Kursiv", () => run(toggleItalic), "Ctrl+I"),
-    command("Rensa formatering", () => run(clearFormatting)),
-    command("Scenbrytning", () => run(insertSceneBreak), "Ctrl+Enter"),
+    command(t("Fetstil"), () => run(toggleBold), "Ctrl+B"),
+    command(t("Kursiv"), () => run(toggleItalic), "Ctrl+I"),
+    command(t("Rensa formatering"), () => run(clearFormatting)),
+    command(t("Scenbrytning"), () => run(insertSceneBreak), "Ctrl+Enter"),
     ...styles,
   ];
 }
 
-const onOff = (isOn: boolean) => (isOn ? "av" : "på");
+const onOff = (isOn: boolean) => (isOn ? t("av") : t("på"));
 
 const FONTS: [ProseFont, string][] = [
   ["serif", "Serif"],
@@ -117,9 +124,9 @@ const FONTS: [ProseFont, string][] = [
   ["mono", "Mono"],
 ];
 const FOCUS_MODES: [FocusMode, string][] = [
-  ["av", "Av"],
-  ["mening", "Mening"],
-  ["stycke", "Stycke"],
+  ["av", t("Av")],
+  ["mening", t("Mening")],
+  ["stycke", t("Stycke")],
 ];
 
 const changeTo =
@@ -128,20 +135,20 @@ const changeTo =
 
 function textEntries({ changeSettings: change }: PaletteContext): PaletteEntry[] {
   return [
-    command("Större text", () => change((current) => changeSize(current, 1)), "Ctrl++"),
-    command("Mindre text", () => change((current) => changeSize(current, -1)), "Ctrl+-"),
+    command(t("Större text"), () => change((current) => changeSize(current, 1)), "Ctrl++"),
+    command(t("Mindre text"), () => change((current) => changeSize(current, -1)), "Ctrl+-"),
     command(
-      "Standardstorlek på texten",
+      t("Standardstorlek på texten"),
       () => change(changeTo({ size: DEFAULT_SETTINGS.size })),
       "Ctrl+0",
     ),
     ...FONTS.map(([font, label]) =>
       command(`Typsnitt: ${label}`, () => change(changeTo({ font }))),
     ),
-    command("Radavstånd: nästa", () =>
+    command(t("Radavstånd: nästa"), () =>
       change((current) => ({ ...current, lineHeight: nextLineHeight(current.lineHeight) })),
     ),
-    command("Textbredd: nästa", () =>
+    command(t("Textbredd: nästa"), () =>
       change((current) => ({ ...current, width: nextWidth(current.width) })),
     ),
   ];
@@ -159,25 +166,33 @@ function switchEntries({
     ...(Object.keys(THEME_LABELS) as Theme[]).map((theme) =>
       command(`Utseende: ${THEME_LABELS[theme]}`, () => change(changeTo({ theme }))),
     ),
-    flip("Indrag första rad", "indent"),
-    flip("Typewriter", "typewriter"),
+    flip(t("Indrag första rad"), "indent"),
+    flip(t("Typewriter"), "typewriter"),
     ...FOCUS_MODES.map(([focus, label]) =>
       command(`Fokus: ${label}`, () => change(changeTo({ focus }))),
     ),
-    command("Bokhylla", showShelf),
-    command("Öppna projektmapp…", chooseFolder),
+    command(t("Bokhylla"), showShelf),
+    command(t("Öppna projektmapp…"), chooseFolder),
   ];
 }
 
-// "Hoppa till karaktär", as the spec asks of Ctrl+K: each card opens in the editor.
-function cardEntries({ cards, openCard, newCharacter }: PaletteContext): PaletteEntry[] {
-  const entries = cards.map((card): PaletteEntry => ({
-    id: `kort:${card.id}`,
-    label: card.name,
-    group: card.kind === "person" ? "Karaktärer" : "Platser",
-    run: () => openCard(card.id),
-  }));
-  return [...entries, command("Ny karaktär", newCharacter)];
+// Ctrl+K finds the notes too, grouped by their sort, and each opens in the editor.
+function cardEntries({ project, cards, describe, openCard, newNote }: PaletteContext) {
+  const sortName = (id: string) => {
+    const sort = findNode(project.tree, id)?.node;
+    return sort ? nodeLabel(sort, project.tree, project.summaries) : "";
+  };
+  const entries = cards.map((card): PaletteEntry => {
+    const hint = describe(card.id);
+    return {
+      id: `kort:${card.id}`,
+      label: card.name,
+      group: sortName(card.sortId),
+      run: () => openCard(card.id),
+      ...(hint ? { hint } : {}),
+    };
+  });
+  return [...entries, command(t("Ny anteckning"), newNote)];
 }
 
 /** Everything the command palette can find: scenes, chapters, characters, commands, settings. */

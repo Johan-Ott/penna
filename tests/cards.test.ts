@@ -1,15 +1,9 @@
 import { describe, expect, it } from "vitest";
-import {
-  cardsOf,
-  chapterLabel,
-  countMentions,
-  entriesIn,
-  mentionPattern,
-} from "../src/project/cards";
+import { cardsOf, chapterRuns, countMentions, mentionPattern } from "../src/project/cards";
 import {
   CHARACTERS_ID,
+  NOTES_ID,
   PLACES_ID,
-  TIMELINE_ID,
   withSpecialFolders,
   type TreeNode,
 } from "../src/project/tree";
@@ -29,24 +23,39 @@ const tree: TreeNode[] = withSpecialFolders([
       },
     ],
   },
-  { id: PLACES_ID, kind: "folder", children: [{ id: "udden", kind: "scene" }] },
+  { id: PLACES_ID, kind: "sort", children: [{ id: "udden", kind: "scene" }] },
+  {
+    id: NOTES_ID,
+    kind: "sort",
+    children: [
+      { id: "slutet", kind: "scene" },
+      { id: "brevet", kind: "scene" },
+    ],
+  },
 ]);
-const summary = (title: string) => ({ title, words: 10, status: "idé" as const });
+const summary = (title: string, link?: boolean) => ({
+  title,
+  words: 10,
+  status: "idé" as const,
+  ...(link === undefined ? {} : { link }),
+});
 const summaries = {
   koket: summary("Köket"),
   arvid: summary("Arvid"),
   elin: summary("Elin Berg"),
-  udden: summary("Udden"),
+  udden: summary("Udden", false),
+  slutet: summary("Idéer om slutet"),
+  brevet: summary("Brevet", true),
 };
 
 describe("cardsOf", () => {
-  it("makes a card of every scene in Karaktärer and Platser, subfolders too, named by its title", () => {
+  it("links every note's name in the text, but Övrigt only when the note asks", () => {
     const cards = cardsOf(tree, summaries);
 
     expect(cards).toEqual([
-      { id: "arvid", kind: "person", name: "Arvid" },
-      { id: "elin", kind: "person", name: "Elin Berg" },
-      { id: "udden", kind: "plats", name: "Udden" },
+      { id: "arvid", sortId: CHARACTERS_ID, name: "Arvid" },
+      { id: "elin", sortId: CHARACTERS_ID, name: "Elin Berg" },
+      { id: "brevet", sortId: NOTES_ID, name: "Brevet" },
     ]);
   });
 
@@ -58,8 +67,8 @@ describe("cardsOf", () => {
 });
 
 describe("countMentions", () => {
-  const arvid = { id: "arvid", kind: "person" as const, name: "Arvid" };
-  const elin = { id: "elin", kind: "person" as const, name: "Elin" };
+  const arvid = { id: "arvid", sortId: CHARACTERS_ID, name: "Arvid" };
+  const elin = { id: "elin", sortId: CHARACTERS_ID, name: "Elin" };
   const scenes = {
     koket: "Arvid såg upp. Elin satte sig. Arvids händer skakade.",
     isen: "Elinor var inte Elin.",
@@ -69,8 +78,18 @@ describe("countMentions", () => {
   it("counts the name as a whole word, with the Swedish genitive s", () => {
     const mentions = countMentions([arvid, elin], scenes);
 
-    expect(mentions.get("arvid")).toEqual({ count: 2, sceneIds: ["koket"] });
-    expect(mentions.get("elin")).toEqual({ count: 2, sceneIds: ["koket", "isen"] });
+    expect(mentions.get("arvid")).toMatchObject({ count: 2, sceneIds: ["koket"] });
+    expect(mentions.get("elin")).toMatchObject({ count: 2, sceneIds: ["koket", "isen"] });
+  });
+
+  it("keeps the first sentence in each scene where the name is said, for Nämns i", () => {
+    const mentions = countMentions([arvid, elin], scenes);
+
+    expect(mentions.get("arvid")?.sentences).toEqual({ koket: "Arvid såg upp." });
+    expect(mentions.get("elin")?.sentences).toEqual({
+      koket: "Elin satte sig.",
+      isen: "Elinor var inte Elin.",
+    });
   });
 
   it("finds nothing for an empty name", () => {
@@ -80,40 +99,14 @@ describe("countMentions", () => {
   });
 });
 
-describe("chapterLabel", () => {
+describe("chapterRuns", () => {
   it("writes runs as ranges and the rest as a list, as the design does", () => {
     const labels = [
-      chapterLabel([1, 2, 3, 4, 5, 6, 7, 8]),
-      chapterLabel([1, 2, 5, 8]),
-      chapterLabel([]),
+      chapterRuns([1, 2, 3, 4, 5, 6, 7, 8]),
+      chapterRuns([8, 1, 2, 5, 2]),
+      chapterRuns([]),
     ];
 
-    expect(labels).toEqual(["Kap. 1–8", "Kap. 1, 2, 5, 8", "Inte i manuset än"]);
-  });
-});
-
-describe("entriesIn", () => {
-  it("lists a planning folder's texts in tree order, which is the timeline's order", () => {
-    const timeline = withSpecialFolders([
-      {
-        id: TIMELINE_ID,
-        kind: "folder",
-        children: [
-          { id: "isen", kind: "scene" },
-          { id: "brevet", kind: "scene" },
-        ],
-      },
-    ]);
-    const titles = {
-      isen: summary("1987: Henrik går ut på isen"),
-      brevet: summary("2007: Brevet"),
-    };
-
-    const entries = entriesIn(timeline, titles, TIMELINE_ID);
-
-    expect(entries.map((entry) => entry.title)).toEqual([
-      "1987: Henrik går ut på isen",
-      "2007: Brevet",
-    ]);
+    expect(labels).toEqual(["1–8", "1, 2, 5, 8", ""]);
   });
 });

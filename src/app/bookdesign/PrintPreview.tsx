@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { Project } from "../useProject.js";
 import { framePages } from "./framePages.js";
 import { usePrintPreview } from "./usePrintPreview.js";
+import { t } from "../../i18n/i18n.js";
 
 // Frames the pages each time Typst has drawn a new SVG into the container.
 function usePageFrames(svg: string | null) {
@@ -28,8 +29,8 @@ export function PrintPreview({
   const pages = usePageFrames(preview.kind === "ready" ? preview.svg : null);
   return (
     <div className="print-preview">
-      <span className="setting-hint">Förhandsvisning · första kapitlet</span>
-      {preview.kind === "working" && <p className="kpi-sub">Sätter boken…</p>}
+      <span className="setting-hint">{t("Förhandsvisning · första kapitlet")}</span>
+      {preview.kind === "working" && <p className="kpi-sub">{t("Sätter boken…")}</p>}
       {preview.kind === "failed" && (
         <p className="kpi-sub" role="alert">
           {preview.reason}

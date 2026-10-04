@@ -1,12 +1,13 @@
 import { isSpecialFolder, TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
 import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
 import type { MenuItem } from "../Menu.js";
+import { t } from "../../i18n/i18n.js";
 
-const STATUS_LABELS: Record<SceneStatus, string> = {
-  idé: "Idé",
-  utkast: "Utkast",
-  redigering: "Redigering",
-  klar: "Klar",
+export const STATUS_LABELS: Record<SceneStatus, string> = {
+  idé: t("Idé"),
+  utkast: t("Utkast"),
+  redigering: t("Redigering"),
+  klar: t("Klar"),
 };
 
 /** Where a new node goes: inside a node (at its end), after a node, or as chosen by the app. */
@@ -21,15 +22,20 @@ export interface TreeMenuActions {
   setStatus: (node: TreeNode, status: SceneStatus) => void;
   statusOf: (node: TreeNode) => SceneStatus | null;
   showSnapshots: (node: TreeNode) => void;
+  /** Whether a note's name is linked in the text, or null when the node is not a note. */
+  linkOf: (node: TreeNode) => boolean | null;
+  setLink: (node: TreeNode, isLinked: boolean) => void;
+  /** Ny anteckning, with the sort already chosen. */
+  newNote: (sortId: string) => void;
 }
 
 /** The add button and a right-click on empty space offer the same four things. */
 export function addMenu(actions: Pick<TreeMenuActions, "add">): MenuItem[] {
   return [
-    { label: "Ny scen", shortcut: "Ctrl+Alt+N", onSelect: () => actions.add("scene", null) },
-    { label: "Nytt kapitel", onSelect: () => actions.add("chapter", null) },
-    { label: "Ny del", onSelect: () => actions.add("part", null) },
-    { label: "Ny mapp", onSelect: () => actions.add("folder", null) },
+    { label: t("Ny scen"), shortcut: "Ctrl+Alt+N", onSelect: () => actions.add("scene", null) },
+    { label: t("Nytt kapitel"), onSelect: () => actions.add("chapter", null) },
+    { label: t("Ny del"), onSelect: () => actions.add("part", null) },
+    { label: t("Ny mapp"), onSelect: () => actions.add("folder", null) },
   ];
 }
 
@@ -41,26 +47,49 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
     onSelect: () => actions.add(kind, placement),
   });
   const byKind: Record<NodeKind, MenuItem[]> = {
-    scene: [item("Ny scen efter", "scene", after), item("Nytt kapitel efter", "chapter", after)],
+    scene: [
+      item(t("Ny scen efter"), "scene", after),
+      item(t("Nytt kapitel efter"), "chapter", after),
+    ],
     chapter: [
-      item("Ny scen i kapitlet", "scene", inside),
-      item("Nytt kapitel efter", "chapter", after),
+      item(t("Ny scen i kapitlet"), "scene", inside),
+      item(t("Nytt kapitel efter"), "chapter", after),
     ],
     part: [
-      item("Ny scen i delen", "scene", inside),
-      item("Nytt kapitel i delen", "chapter", inside),
+      item(t("Ny scen i delen"), "scene", inside),
+      item(t("Nytt kapitel i delen"), "chapter", inside),
     ],
-    folder: [item("Ny scen i mappen", "scene", inside), item("Ny mapp i mappen", "folder", inside)],
+    folder: [
+      item(t("Ny scen i mappen"), "scene", inside),
+      item(t("Ny mapp i mappen"), "folder", inside),
+    ],
+    sort: [{ label: t("Ny anteckning"), onSelect: () => actions.newNote(node.id) }],
   };
   return byKind[node.kind];
+}
+
+// A note has no status; it can choose whether its name is linked in the text instead.
+function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null {
+  const isLinked = actions.linkOf(node);
+  if (isLinked === null) return null;
+  return [
+    {
+      label: t("Koppla namnet i texten"),
+      isChecked: isLinked,
+      separatorBefore: true,
+      onSelect: () => actions.setLink(node, !isLinked),
+    },
+  ];
 }
 
 // The status is written to the scene file and drives the status and progress on the shelf.
 function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   if (node.kind !== "scene") return [];
+  const forNote = noteItems(node, actions);
+  if (forNote) return forNote;
   const current = actions.statusOf(node);
   return SCENE_STATUSES.map((status, index) => ({
-    label: `Status: ${STATUS_LABELS[status]}`,
+    label: t("Status: {status}", { status: STATUS_LABELS[status] }),
     isChecked: status === current,
     separatorBefore: index === 0,
     onSelect: () => actions.setStatus(node, status),
@@ -70,12 +99,16 @@ function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return [
     {
-      label: "Byt namn",
+      label: t("Byt namn"),
       shortcut: "F2",
       separatorBefore: true,
       onSelect: () => actions.rename(node),
     },
-    { label: "Flytta till papperskorg", shortcut: "Delete", onSelect: () => actions.trash(node) },
+    {
+      label: t("Flytta till papperskorg"),
+      shortcut: "Delete",
+      onSelect: () => actions.trash(node),
+    },
   ];
 }
 
@@ -83,14 +116,14 @@ function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
 export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuActions): MenuItem[] {
   if (node.id === TRASH_ID) return [];
   if (isInTrash)
-    return [{ label: "Lägg tillbaka i manuset", onSelect: () => actions.restore(node) }];
+    return [{ label: t("Lägg tillbaka i manuset"), onSelect: () => actions.restore(node) }];
   const added = newItemsFor(node, actions);
   if (isSpecialFolder(node.id)) return added;
   const open =
     node.kind === "scene"
       ? [
-          { label: "Öppna", onSelect: () => actions.open(node) },
-          { label: "Ögonblicksbilder…", onSelect: () => actions.showSnapshots(node) },
+          { label: t("Öppna"), onSelect: () => actions.open(node) },
+          { label: t("Versioner…"), onSelect: () => actions.showSnapshots(node) },
         ]
       : [];
   const [firstAdded, ...restAdded] = added;

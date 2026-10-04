@@ -1,13 +1,31 @@
 import type { SceneSummary } from "./sceneSummaries.js";
 import {
+  CHARACTERS_ID,
   findNode,
+  isSpecialFolder,
   manuscriptNodes,
   manuscriptSceneIds,
+  NOTES_ID,
   numberNodes,
+  PLACES_ID,
+  sceneIdsIn,
+  THINGS_ID,
+  TRASH_ID,
   type TreeNode,
 } from "./tree.js";
+import { t, numberLocale } from "../i18n/i18n.js";
 
 type Summaries = Record<string, SceneSummary>;
+
+// The fixed sorts are named in the interface language; project.json keeps its own titles.
+const specialFolderLabel = (id: string) =>
+  ({
+    [CHARACTERS_ID]: t("Personer"),
+    [PLACES_ID]: t("Platser"),
+    [THINGS_ID]: t("Saker"),
+    [NOTES_ID]: t("Övrigt"),
+    [TRASH_ID]: t("Papperskorg"),
+  })[id] ?? "";
 
 const ROMAN: [number, string][] = [
   [40, "XL"],
@@ -28,8 +46,9 @@ export function romanNumeral(value: number): string {
 }
 
 export function nodeLabel(node: TreeNode, tree: TreeNode[], summaries: Summaries): string {
-  if (node.kind === "scene") return summaries[node.id]?.title ?? "Hittas inte";
-  if (node.kind === "folder") return node.title ?? "";
+  if (node.kind === "scene") return summaries[node.id]?.title ?? t("Hittas inte");
+  if (node.kind === "folder" || node.kind === "sort")
+    return isSpecialFolder(node.id) ? specialFolderLabel(node.id) : (node.title ?? "");
   return numberedLabel(node, tree);
 }
 
@@ -37,7 +56,9 @@ function numberedLabel(node: TreeNode, tree: TreeNode[]): string {
   const title = node.title ?? "";
   const number = numberNodes(tree, node.kind === "part" ? "part" : "chapter").get(node.id);
   if (number === undefined) return title;
-  return node.kind === "part" ? `Del ${romanNumeral(number)} · ${title}` : `${number}. ${title}`;
+  return node.kind === "part"
+    ? t("Del {number} · {title}", { number: romanNumeral(number), title })
+    : `${number}. ${title}`;
 }
 
 export function nodeWords(node: TreeNode, summaries: Summaries): number {
@@ -51,13 +72,11 @@ export function shortWordCount(words: number): string {
   return `${Math.round(words / 1000)}k`;
 }
 
-/** The small grey text at the end of a tree row. */
+/** The small grey text at the end of a tree row: words, or how many notes a sort holds. */
 export function nodeMeta(node: TreeNode, summaries: Summaries): string {
-  if (node.kind === "scene") return (summaries[node.id]?.words ?? 0).toLocaleString("sv-SE");
-  if (node.kind === "part") {
-    const chapters = (node.children ?? []).filter((child) => child.kind === "chapter").length;
-    if (chapters > 0) return `${chapters} kap.`;
-  }
+  if (node.kind === "scene") return (summaries[node.id]?.words ?? 0).toLocaleString(numberLocale());
+  if (node.kind === "sort") return String(sceneIdsIn([node], node.id).length);
+  if (node.kind === "part") return "";
   const words = nodeWords(node, summaries);
   return words > 0 ? shortWordCount(words) : "";
 }

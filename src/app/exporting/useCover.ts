@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { findCover, saveCover, type CoverPicture } from "../../project/cover.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
+import { t } from "../../i18n/i18n.js";
 
-const PICTURE = { name: "Bild", extensions: ["jpg", "jpeg", "png"] };
+const PICTURE = { name: t("Bild"), extensions: ["jpg", "jpeg", "png"] };
 
 /** The project's cover picture, with a URL the page can show, and a way to pick a new one. */
 export function useCover(project: Project) {
@@ -24,7 +25,7 @@ export function useCover(project: Project) {
       setProblem(null);
       await reload();
     } catch (error) {
-      setProblem(error instanceof Error ? error.message : "Bilden kunde inte sparas.");
+      setProblem(error instanceof Error ? error.message : t("Bilden kunde inte sparas."));
     }
   };
   return { picture, url, problem, choose: () => void choose() };

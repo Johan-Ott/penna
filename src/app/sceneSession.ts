@@ -5,6 +5,7 @@ import {
   newSceneText,
   sceneTitle,
   splitSceneFile,
+  withField,
   withSceneStatus,
   withSceneTitle,
   type SceneStatus,
@@ -15,6 +16,7 @@ import { createAutosave, type SaveStatus } from "../storage/autosave.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { decideExternalChange } from "../storage/syncFiles.js";
+import { t } from "../i18n/i18n.js";
 
 export interface OpenScene {
   dir: string;
@@ -85,7 +87,7 @@ export async function closeScene(session: SceneSession) {
 
 function showScene(session: SceneSession, dir: string, id: string, text: string) {
   const { frontMatter, body } = splitSceneFile(text);
-  session.scene = { dir, id, frontMatter, title: sceneTitle(frontMatter) ?? "Namnlös scen" };
+  session.scene = { dir, id, frontMatter, title: sceneTitle(frontMatter) ?? t("Namnlös scen") };
   session.hooks.onScene(session.scene);
   session.autosave.loaded(text);
   session.hooks.editor.load(parseMarkdown(body));
@@ -135,7 +137,12 @@ export async function resolveConflict(
   if (!scene) return;
   if (choice === "both") {
     const otherBody = splitSceneFile(conflict.diskText).body;
-    await createScene(session.fileSystem, scene.dir, `${scene.title} (andra versionen)`, otherBody);
+    await createScene(
+      session.fileSystem,
+      scene.dir,
+      t("{title} (andra versionen)", { title: scene.title }),
+      otherBody,
+    );
   }
   session.autosave.release();
   session.hooks.onConflict(null);
@@ -180,3 +187,8 @@ export const setSceneStatus = (
   id: string,
   status: SceneStatus,
 ) => changeFrontMatter(session, { dir, id }, (frontMatter) => withSceneStatus(frontMatter, status));
+
+export const setNoteLink = (session: SceneSession, dir: string, id: string, isLinked: boolean) =>
+  changeFrontMatter(session, { dir, id }, (frontMatter) =>
+    withField(frontMatter, "link", String(isLinked)),
+  );

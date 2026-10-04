@@ -2,18 +2,21 @@ import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { platform } from "../platform.js";
 import { Choice, Row } from "./controls.js";
+import { UiLanguageChoice } from "./UiLanguageChoice.js";
+import { REMINDER_HOURS } from "../reminder.js";
 import type { TabProps } from "./settingsTabs.js";
+import { t } from "../../i18n/i18n.js";
 
 function BookLanguage({ book }: Pick<TabProps, "book">) {
   if (!book) return null;
   return (
     <Row
-      label="Bokens språk"
-      hint="Stavningskontroll och e-bokens språk. Penna startar om vid byte."
+      label={t("Bokens språk")}
+      hint={t("Stavningskontroll och e-bokens språk. Penna startar om vid byte.")}
     >
       <select
         className="settings-select"
-        aria-label="Bokens språk"
+        aria-label={t("Bokens språk")}
         value={book.language}
         onChange={(event) => book.onChangeLanguage(event.target.value)}
       >
@@ -40,7 +43,7 @@ function GoalInput({ preferences, updatePreferences }: TabProps) {
       type="number"
       min={1}
       step={100}
-      aria-label="Dagligt ordmål"
+      aria-label={t("Dagligt ordmål")}
       value={preferences.defaultDailyGoal}
       onChange={(event) => {
         const goal = Math.round(Number(event.target.value));
@@ -54,8 +57,8 @@ function AuthorInput({ preferences, updatePreferences }: TabProps) {
   return (
     <input
       className="settings-text"
-      placeholder="Namn eller pseudonym"
-      aria-label="Författarnamn"
+      placeholder={t("Namn eller pseudonym")}
+      aria-label={t("Författarnamn")}
       value={preferences.authorName}
       onChange={(event) =>
         updatePreferences((current) => ({ ...current, authorName: event.target.value }))
@@ -70,36 +73,65 @@ function LibraryButton({ updatePreferences }: TabProps) {
       className="button secondary small"
       onClick={() => void changeLibrary(updatePreferences)}
     >
-      Ändra…
+      {t("Ändra…")}
     </button>
   );
 }
 
-export function GeneralTab(props: TabProps) {
-  const { preferences, settings, onChangeSettings } = props;
+const hourLabel = (hour: number | null) => (hour === null ? t("Av") : `${hour}:00`);
+
+function ReminderChoice({ preferences, updatePreferences }: TabProps) {
+  return (
+    <Choice
+      label={t("Påminnelse")}
+      value={hourLabel(preferences.reminderHour)}
+      options={REMINDER_HOURS.map((hour) => [hourLabel(hour), hourLabel(hour)])}
+      onSelect={(label) => {
+        const reminderHour = REMINDER_HOURS.find((hour) => hourLabel(hour) === label) ?? null;
+        updatePreferences((current) => ({ ...current, reminderHour }));
+      }}
+    />
+  );
+}
+
+// Where new projects go and the goal they start with.
+function LibraryRows(props: TabProps) {
+  const hint = t("Där nya projekt skapas. Lägg den i din molnmapp för synk.");
   return (
     <>
-      <Row label="Författarnamn" hint="Används i export.">
+      <Row label={t("Projektmapp")} hint={props.preferences.libraryDir ?? hint}>
+        <LibraryButton {...props} />
+      </Row>
+      <Row label={t("Dagligt ordmål")} hint={t("Standard för nya projekt.")}>
+        <GoalInput {...props} />
+      </Row>
+      <Row label={t("Påminnelse")} hint={t("Lokal notis om du inte skrivit idag.")}>
+        <ReminderChoice {...props} />
+      </Row>
+    </>
+  );
+}
+
+export function GeneralTab(props: TabProps) {
+  const { settings, onChangeSettings } = props;
+  return (
+    <>
+      <Row label={t("Författarnamn")} hint={t("Används i export. Kan ändras per projekt.")}>
         <AuthorInput {...props} />
       </Row>
-      <Row label="Språk" hint="Engelska kommer i en senare version.">
-        Svenska
+      <Row label={t("Språk")} hint={t("Appens språk. Manusets typografi väljs vid export.")}>
+        <UiLanguageChoice />
       </Row>
       <BookLanguage book={props.book} />
-      <Row label="Utseende" hint="Följer systemet om inget annat väljs.">
+      <Row label={t("Utseende")} hint={t("Följer systemet om inget annat väljs.")}>
         <Choice
-          label="Utseende"
+          label={t("Utseende")}
           value={settings.theme}
           options={THEMES}
           onSelect={(theme) => onChangeSettings((current) => ({ ...current, theme }))}
         />
       </Row>
-      <Row label="Projektmapp" hint={preferences.libraryDir ?? "Där nya projekt skapas."}>
-        <LibraryButton {...props} />
-      </Row>
-      <Row label="Dagligt ordmål" hint="Standard för nya projekt.">
-        <GoalInput {...props} />
-      </Row>
+      <LibraryRows {...props} />
     </>
   );
 }

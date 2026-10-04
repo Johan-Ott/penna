@@ -12,6 +12,7 @@ import {
 import { importManuscript } from "../../import/importManuscript.js";
 import { ImportError } from "../../import/markdownImport.js";
 import { platform, type PickedFile } from "../platform.js";
+import { t } from "../../i18n/i18n.js";
 
 export type ProjectMode = "new" | "import" | "open";
 
@@ -93,7 +94,7 @@ export async function continueFrom(state: OnboardingState) {
     await state.attempt(async () => {
       await platform.fileSystem.makeDir(libraryDir);
       state.setStep(4);
-    }, "Mappen kunde inte skapas. Välj en annan plats.");
+    }, t("Mappen kunde inte skapas. Välj en annan plats."));
     return;
   }
   if (step === 4 && libraryDir) {
@@ -102,7 +103,7 @@ export async function continueFrom(state: OnboardingState) {
         (await createProject(platform.fileSystem, libraryDir, state.details)).dir,
       );
       state.setStep(5);
-    }, "Projektet kunde inte skapas. Kontrollera att mappen går att skriva till.");
+    }, t("Projektet kunde inte skapas. Kontrollera att mappen går att skriva till."));
     return;
   }
   state.setStep(Math.min(LAST_STEP, step + 1));
@@ -114,7 +115,7 @@ export async function openExample(state: OnboardingState) {
   await state.attempt(async () => {
     state.setProjectDir(await copyExampleProject(platform.fileSystem, libraryDir));
     state.setStep(5);
-  }, "Exempelprojektet kunde inte sparas i mappen.");
+  }, t("Exempelprojektet kunde inte sparas i mappen."));
 }
 
 /** Writes the picked manuscript as a new project, named after the file unless a title is set. */
@@ -126,7 +127,7 @@ export async function importFile(state: OnboardingState, picked: PickedFile) {
     const details = { ...state.details, title: state.details.title.trim() || title };
     state.setProjectDir((await createProject(platform.fileSystem, libraryDir, details, book)).dir);
     state.setStep(5);
-  }, "Filen kunde inte läsas. Spara den som .docx eller text och försök igen.");
+  }, t("Filen kunde inte läsas. Spara den som .docx eller text och försök igen."));
 }
 
 export async function openExisting(state: OnboardingState) {

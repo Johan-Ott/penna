@@ -3,6 +3,7 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
 import { readSceneSummaries, type SceneSummary } from "./sceneSummaries.js";
 import { manuscriptSceneIds, type TreeNode } from "./tree.js";
+import { t } from "../i18n/i18n.js";
 
 export interface ShelfBook {
   dir: string;
@@ -18,17 +19,17 @@ export interface ShelfBook {
 }
 
 const STATUS_LABELS: Record<SceneStatus, string> = {
-  idé: "Idé",
-  utkast: "Utkast",
-  redigering: "Redigering",
-  klar: "Klar",
+  idé: t("Idé"),
+  utkast: t("Första utkast"),
+  redigering: t("Redigering"),
+  klar: t("Klar"),
 };
 /** The project types from onboarding, as a book cover or a subtitle names them. */
 export const KIND_LABELS: Record<string, string> = {
-  roman: "Roman",
-  noveller: "Noveller",
-  fackbok: "Fackbok",
-  annat: "Annat",
+  roman: t("Roman"),
+  noveller: t("Noveller"),
+  fackbok: t("Fackbok"),
+  annat: t("Annat"),
 };
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -55,10 +56,10 @@ const startOfDay = (time: number) => new Date(time).setHours(0, 0, 0, 0);
 /** "Skrivet idag", "Igår", "För 3 dagar sedan", "För 2 veckor sedan" or a date. */
 export function whenUpdated(time: number, now: number): string {
   const days = Math.round((startOfDay(now) - startOfDay(time)) / DAY);
-  if (days <= 0) return "Skrivet idag";
-  if (days === 1) return "Igår";
-  if (days < 7) return `För ${days} dagar sedan`;
-  if (days < 30) return `För ${Math.floor(days / 7)} veckor sedan`;
+  if (days <= 0) return t("Skrivet idag");
+  if (days === 1) return t("Igår");
+  if (days < 7) return t("För {days} dagar sedan", { days });
+  if (days < 30) return t("För {weeks} veckor sedan", { weeks: Math.floor(days / 7) });
   return new Date(time).toLocaleDateString("sv-SE", {
     day: "numeric",
     month: "long",
@@ -119,7 +120,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
   return {
     dir,
     title: typeof fields.title === "string" ? fields.title : title,
-    kind: (typeof fields.type === "string" && KIND_LABELS[fields.type]) || "Projekt",
+    kind: (typeof fields.type === "string" && KIND_LABELS[fields.type]) || t("Projekt"),
     words: scenes.reduce((sum, scene) => sum + scene.words, 0),
     status: bookStatus(scenes),
     progress: bookProgress(scenes),

@@ -1,11 +1,47 @@
-import { trimSize, type BookDesign } from "./bookDesign.js";
+import { trimSize, type BookDesign, type BookTheme } from "./bookDesign.js";
 import { typstString } from "./typstText.js";
 
-// The pieces of the Klassisk theme that do not change with the design: the anfang, the scene
-// break, the five styles and how parts and chapters open. A v() before the text would indent
-// its first line, so the space under a heading belongs to the heading's own block.
-const CLASSIC_PARTS = `#let anfang(letter) = text(size: 2.6em, letter)
-#let scenbrytning(mark) = align(center, block(above: 1.4em, below: 1.4em, mark))
+// How the three themes differ, as the design draws them: the headings and the margins.
+const THEMES: Record<BookTheme, { heading: string; margins: string }> = {
+  klassisk: {
+    heading: `font: "Literata", weight: 600, style: "normal", align: center`,
+    margins: "(inside: 20mm, outside: 15mm, top: 18mm, bottom: 20mm)",
+  },
+  modern: {
+    heading: `font: "Geist", weight: 600, style: "normal", align: left`,
+    margins: "(inside: 20mm, outside: 15mm, top: 18mm, bottom: 20mm)",
+  },
+  luftig: {
+    heading: `font: "Literata", weight: 400, style: "italic", align: center`,
+    margins: "(inside: 24mm, outside: 19mm, top: 24mm, bottom: 24mm)",
+  },
+};
+
+// The anfang sinks two lines into the text: Typst measures how many words fit beside the letter.
+// The first words after it are set in small capitals, as the design shows.
+const ANFANG = `#let leadin(words) = text(size: 0.8em, tracking: 0.06em, upper(words))
+#let anfang(letter, words) = layout(size => {
+  set par(first-line-indent: 0pt)
+  let two-lines = measure(block(width: size.width, [M#linebreak()M])).height
+  let one-cap = measure(text(top-edge: "cap-height", bottom-edge: "baseline", letter)).height
+  let cap = text(size: 1em * (two-lines / one-cap), top-edge: "cap-height", bottom-edge: "baseline", letter)
+  let cap-width = measure(cap).width + 0.15em.to-absolute()
+  let opening(count) = {
+    let small = calc.min(3, count)
+    leadin(words.slice(0, small).join([ ]))
+    if count > small [ #words.slice(small, count).join([ ])]
+  }
+  let fits(count) = measure(block(width: size.width - cap-width, opening(count))).height <= two-lines
+  let count = 0
+  while count < words.len() and fits(count + 1) { count += 1 }
+  let more = words.len() > count
+  grid(columns: (cap-width, 1fr), cap, [#opening(count)#if more { linebreak(justify: true) }])
+  if more { par(words.slice(count).join([ ])) }
+})`;
+
+// The parts that do not change with the theme: the scene break, the styles, how parts and
+// chapters open. The space under a heading is its own block's; a v() would indent the text.
+const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4em, below: 1.4em, mark))
 #let stil(name, body) = {
   set par(first-line-indent: 0pt)
   let sides = (left: 1.6em, right: 1.6em)
@@ -19,41 +55,47 @@ const CLASSIC_PARTS = `#let anfang(letter) = text(size: 2.6em, letter)
   [#metadata(none) <opening>]
   heading(level: 1, if title == none { label } else if label == none { title } else [#label. #title])
   v(drop)
-  align(center, block(below: 2.4em)[
-    #if label != none { text(size: 0.8em, tracking: 0.12em, upper(label)) }
+  align(heading-style.align, block(below: 2.4em)[
+    #set par(first-line-indent: 0pt)
+    #if label != none { text(size: 0.75em, tracking: 0.18em, upper(label)) }
     #if label != none and title != none { linebreak(); v(0.4em) }
-    #if title != none { text(size: 1.7em, weight: 600, title) }
+    #if title != none {
+      text(font: heading-style.font, size: 1.7em, weight: heading-style.weight, style: heading-style.style, title)
+    }
   ])
 }
 #let kapitel(label, title) = opening(label, title, 18%)
 #let del(label, title) = { opening(label, title, 30%); pagebreak() }`;
 
 /**
- * The Klassisk theme in Typst. Page numbers start with the story and are left out on pages
- * where a part or chapter starts; even pages also carry the book's title.
+ * The book's page in Typst. The story's pages carry the title at the head, except where a part
+ * or chapter opens, and the page number centred at the foot.
  */
-export function classicTemplate(design: BookDesign, title: string, language: string) {
+export function bookTemplate(design: BookDesign, title: string, language: string) {
   const { width, height } = trimSize(design.trim);
+  const theme = THEMES[design.theme];
   return `#let book-title = ${typstString(title)}
 #let in-story = state("in-story", false)
+#let heading-style = (${theme.heading})
 #set document(title: book-title)
 #set page(
   width: ${width}mm,
   height: ${height}mm,
-  margin: (inside: 20mm, outside: 15mm, top: 18mm, bottom: 22mm),
-  footer: context {
+  margin: ${theme.margins},
+  header: context {
     if not in-story.get() { return }
     let here-page = here().page()
-    let starts = query(<opening>).map(found => found.location().page())
-    if here-page in starts { return }
-    set text(size: 0.8em)
-    let number = counter(page).display()
-    if calc.even(here-page) [#number #h(1em) #smallcaps(book-title)] else { align(right, number) }
+    if here-page in query(<opening>).map(found => found.location().page()) { return }
+    align(center, text(size: 0.65em, tracking: 0.25em, upper(book-title)))
+  },
+  footer: context {
+    if in-story.get() { align(center, text(size: 0.75em, counter(page).display())) }
   },
 )
 #set text(font: ${typstString(design.bodyFont)}, size: ${design.bodySize}pt, lang: ${typstString(language.slice(0, 2))}, hyphenate: true)
 #set par(justify: true, leading: 0.62em, spacing: 0.62em, first-line-indent: 1.2em)
 #show heading: none
 
+${ANFANG}
 ${CLASSIC_PARTS}`;
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Project } from "../src/app/useProject";
 import { paletteEntries, type PaletteContext } from "../src/app/palette/paletteEntries";
 import { DEFAULT_SETTINGS, type WritingSettings } from "../src/editor/writingSettings";
-import { withSpecialFolders } from "../src/project/tree";
+import { CHARACTERS_ID, withSpecialFolders } from "../src/project/tree";
 
 function context() {
   const opened: string[] = [];
@@ -26,8 +26,9 @@ function context() {
     openSettings: () => undefined,
     showView: () => undefined,
     cards: [],
+    describe: () => "Elins farbror",
     openCard: () => undefined,
-    newCharacter: () => undefined,
+    newNote: () => undefined,
     chooseFolder: () => undefined,
     showShelf: () => undefined,
   };
@@ -65,9 +66,9 @@ describe("paletteEntries", () => {
     expect(focus?.shortcut).toBe("Ctrl+Shift+F");
   });
 
-  it("finds a character by name and opens its card", () => {
+  it("finds a note by name under its sort, with who it is, and opens it", () => {
     const shown: string[] = [];
-    const arvid = { id: "01ARVID", kind: "person" as const, name: "Arvid" };
+    const arvid = { id: "01ARVID", sortId: CHARACTERS_ID, name: "Arvid" };
     const value = {
       ...context().value,
       cards: [arvid],
@@ -77,7 +78,7 @@ describe("paletteEntries", () => {
     const entry = paletteEntries(value).find((candidate) => candidate.label === "Arvid");
     entry?.run();
 
-    expect(entry).toMatchObject({ group: "Karaktärer" });
+    expect(entry).toMatchObject({ group: "Personer", hint: "Elins farbror" });
     expect(shown).toEqual(["01ARVID"]);
   });
 });

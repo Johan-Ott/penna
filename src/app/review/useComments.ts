@@ -15,6 +15,7 @@ import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
 import { useShortcut } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
+import { t } from "../../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
@@ -73,7 +74,7 @@ export function useComments(parts: {
   useCommentMarks(editor, comments, setFocused);
   const start = useCallback(() => setDraft(selectedAnchor(editor)), [editor]);
   useShortcut("m", start, { shift: true });
-  const author = parts.author || "Du";
+  const author = parts.author || t("Du");
   return {
     comments,
     draft,

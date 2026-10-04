@@ -15,7 +15,7 @@ export interface ProjectFile {
 // The project.json format this Penna writes. A newer format needs a migration step per version.
 export const FORMAT_VERSION = 1;
 
-const KINDS: NodeKind[] = ["part", "chapter", "scene", "folder"];
+const KINDS: NodeKind[] = ["part", "chapter", "scene", "folder", "sort"];
 
 const isOptionalString = (value: unknown) => value === undefined || typeof value === "string";
 const isOptionalNodeList = (value: unknown): boolean =>
@@ -25,7 +25,8 @@ function isTreeNode(value: unknown): value is TreeNode {
   if (typeof value !== "object" || value === null) return false;
   const node = value as Record<string, unknown>;
   const hasIdAndKind = typeof node["id"] === "string" && KINDS.includes(node["kind"] as NodeKind);
-  return hasIdAndKind && isOptionalString(node["title"]) && isOptionalNodeList(node["children"]);
+  const texts = ["title", "summary", "when"].every((key) => isOptionalString(node[key]));
+  return hasIdAndKind && texts && isOptionalNodeList(node["children"]);
 }
 
 function parseProject(text: string): { fields: Record<string, unknown>; tree: TreeNode[] } | null {

@@ -58,10 +58,10 @@ describe("tree labels", () => {
     expect(nodeWords(find("del1"), summaries)).toBe(7300);
   });
 
-  it("shows full numbers for scenes, short ones for chapters and chapter counts for parts", () => {
+  it("shows full numbers for scenes, short ones for chapters and nothing for parts", () => {
     expect(nodeMeta({ id: "scene1", kind: "scene" }, summaries)).toBe("1 240");
     expect(nodeMeta(find("kap2"), summaries)).toBe("6,1k");
-    expect(nodeMeta(find("del1"), summaries)).toBe("2 kap.");
+    expect(nodeMeta(find("del1"), summaries)).toBe("");
   });
 
   it("shortens large word counts the way the design does", () => {

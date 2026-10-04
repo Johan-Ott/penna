@@ -4,13 +4,20 @@ import { DEFAULT_DESIGN, designOf, previewOutline, trimSize } from "../src/expor
 describe("designOf", () => {
   it("reads the book design from project.json", () => {
     const fields = {
-      design: { trim: "150x230", bodyFont: "EB Garamond", bodySize: 11, dropCap: false },
+      design: {
+        theme: "luftig",
+        trim: "150x230",
+        bodyFont: "EB Garamond",
+        bodySize: 11,
+        dropCap: false,
+      },
     };
 
     const design = designOf(fields);
 
     expect(design).toEqual({
       ...DEFAULT_DESIGN,
+      theme: "luftig",
       trim: "150x230",
       bodyFont: "EB Garamond",
       bodySize: 11,
@@ -19,7 +26,9 @@ describe("designOf", () => {
   });
 
   it("falls back to Klassisk's defaults for anything missing or unknown", () => {
-    const fields = { design: { trim: "1x1", bodyFont: "Comic Sans", bodySize: "stor" } };
+    const fields = {
+      design: { theme: "barock", trim: "1x1", bodyFont: "Comic Sans", bodySize: "stor" },
+    };
 
     const design = designOf(fields);
 

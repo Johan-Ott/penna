@@ -1,3 +1,4 @@
+import type { UiLanguage } from "../i18n/i18n.js";
 import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
 
 /** What Penna remembers between starts on this computer. */
@@ -13,6 +14,10 @@ export interface AppPreferences {
   /** The daily goal a new project starts with. */
   defaultDailyGoal: number;
   isAutoSnapshotOn: boolean;
+  /** The language of Penna's own interface; each book has its own language too. */
+  uiLanguage: UiLanguage;
+  /** The hour of the daily reminder when nothing is written yet; null is off. */
+  reminderHour: number | null;
 }
 
 export const START_PREFERENCES: AppPreferences = {
@@ -23,10 +28,14 @@ export const START_PREFERENCES: AppPreferences = {
   authorName: "",
   defaultDailyGoal: 1000,
   isAutoSnapshotOn: true,
+  uiLanguage: "sv",
+  reminderHour: null,
 };
 
 const STORAGE_KEY = "penna.app";
 const textOrNull = (value: unknown) => (typeof value === "string" ? value : null);
+const isHour = (value: unknown): value is number =>
+  typeof value === "number" && Number.isInteger(value) && value >= 0 && value < 24;
 const isGoal = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value) && value > 0;
 
@@ -44,6 +53,8 @@ export function loadPreferences(storage: KeyValueStorage): AppPreferences {
       ? stored["defaultDailyGoal"]
       : START_PREFERENCES.defaultDailyGoal,
     isAutoSnapshotOn: stored["isAutoSnapshotOn"] !== false,
+    uiLanguage: stored["uiLanguage"] === "en" ? "en" : "sv",
+    reminderHour: isHour(stored["reminderHour"]) ? stored["reminderHour"] : null,
   };
 }
 

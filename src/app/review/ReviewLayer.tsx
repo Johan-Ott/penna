@@ -33,7 +33,7 @@ type ShownProps = {
 function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
-  const review = useReview({ ...props, cards: app.planning.cards, repeatWindow });
+  const review = useReview({ ...props, cards: app.notes.cards, repeatWindow });
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}
@@ -45,11 +45,15 @@ function ShownReview(props: ShownProps) {
       onReplaceAll={(suspect) => app.search.scope.replaceAll(replaceAllQuery(suspect))}
       onIgnore={(word) => void app.updateFields({ ignoredNames: [...review.ignored, word] })}
       isPinnedOpen={props.comments.draft !== null}
+      commentCount={props.comments.comments.length}
+      isOpen={app.writingMode.isReviewOpen}
+      onOpenChange={app.writingMode.setReviewOpen}
+      onCount={app.writingMode.setReviewCount}
     />
   );
 }
 
-/** The panel beside the text, while writing a scene with Granskning on or comments on it. */
+/** Granska beside the text, while writing a scene with Granskning on or comments on it. */
 export function ReviewLayer({ app, project }: { app: AppState; project: Project }) {
   const { scene, writingMode, comments } = app;
   const doc = app.editor.editorState?.doc;

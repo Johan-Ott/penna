@@ -1,11 +1,8 @@
 import { useCallback, useState } from "react";
 import {
-  CHARACTERS_ID,
+  findNode,
   insertAfter,
   insertNode,
-  NOTES_ID,
-  PLACES_ID,
-  TIMELINE_ID,
   type NodeKind,
   type TreeNode,
 } from "../project/tree.js";
@@ -22,6 +19,7 @@ import {
 } from "./sceneSession.js";
 import type { Placement } from "./tree/treeMenus.js";
 import type { Project } from "./useProject.js";
+import { t } from "../i18n/i18n.js";
 
 interface ProjectActionsInput {
   project: Project | null;
@@ -31,24 +29,17 @@ interface ProjectActionsInput {
 }
 
 const NEW_TITLES: Record<NodeKind, string> = {
-  scene: "Ny scen",
-  chapter: "Nytt kapitel",
-  part: "Ny del",
-  folder: "Ny mapp",
+  scene: t("Ny scen"),
+  chapter: t("Nytt kapitel"),
+  part: t("Ny del"),
+  folder: t("Ny mapp"),
+  sort: t("Ny sort"),
 };
 
-// A scene made in Karaktärer or Platser is a card, and is named like one.
-// A new text in a planning folder is named for what it is.
-const PLAN_TITLES: Record<string, string> = {
-  [CHARACTERS_ID]: "Ny karaktär",
-  [PLACES_ID]: "Ny plats",
-  [TIMELINE_ID]: "Ny händelse",
-  [NOTES_ID]: "Ny anteckning",
-};
-
-function newSceneTitle(placement: Placement) {
-  const folder = placement && "inside" in placement ? placement.inside : "";
-  return PLAN_TITLES[folder] ?? NEW_TITLES.scene;
+// A text made in a sort is a note, and is named like one.
+function newSceneTitle(tree: TreeNode[], placement: Placement) {
+  const folder = placement && "inside" in placement ? findNode(tree, placement.inside) : null;
+  return folder?.node.kind === "sort" ? t("Ny anteckning") : NEW_TITLES.scene;
 }
 
 // Without a placement, a scene goes after the open scene and a chapter after the chapter
@@ -93,9 +84,10 @@ function useSceneFileActions({
 }
 
 // A scene gets its file first; a part, chapter or folder lives only in the tree.
-async function newNode(dir: string, kind: NodeKind, placement: Placement): Promise<TreeNode> {
+async function newNode(project: Project, kind: NodeKind, placement: Placement): Promise<TreeNode> {
   if (kind !== "scene") return { id: newSceneId(), kind, title: NEW_TITLES[kind], children: [] };
-  return { id: await createScene(platform.fileSystem, dir, newSceneTitle(placement)), kind };
+  const title = newSceneTitle(project.tree, placement);
+  return { id: await createScene(platform.fileSystem, project.dir, title), kind };
 }
 
 /** Creating and renaming things in the project: scene files and the tree in project.json. */
@@ -104,7 +96,7 @@ export function useProjectActions({ project, session, updateTree, refresh }: Pro
   const newItem = useCallback(
     async (kind: NodeKind, placement: Placement = null) => {
       if (!project || project.isReadOnly) return null;
-      const node = await newNode(project.dir, kind, placement);
+      const node = await newNode(project, kind, placement);
       await updateTree(place(project.tree, node, placement, session.scene?.id ?? null));
       if (kind === "scene") await refresh().then(() => openScene(session, project.dir, node.id));
       return node.id;

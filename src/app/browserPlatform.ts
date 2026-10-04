@@ -19,6 +19,13 @@ export const browserPlatform: Platform = {
     (await fileSystem.list(parentOf(path))).includes(path.slice(path.lastIndexOf("/") + 1)),
   watchFolder: async () => () => undefined,
   guardClose: () => () => undefined,
+  // The browser always runs the version it was served.
+  checkForUpdate: async () => null,
+  notify: async (title, body) => {
+    if (!("Notification" in window)) return;
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") new Notification(title, { body });
+  },
   // The browser keeps its own dictionaries; the page's lang is the closest hint it takes.
   setSpellLanguage: async (language) => {
     document.documentElement.lang = language;

@@ -9,6 +9,7 @@ export function usePalette(context: PaletteContext | null) {
   return {
     isOpen: isOpen && context !== null,
     entries: context ? paletteEntries(context) : [],
+    open: () => setOpen(true),
     close: () => setOpen(false),
   };
 }

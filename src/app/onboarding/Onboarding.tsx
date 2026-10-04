@@ -1,6 +1,7 @@
 import { DoneStep, FolderStep, PromisesStep, WelcomeStep } from "./OnboardingSteps.js";
 import { ProjectStep } from "./ProjectStep.js";
 import { continueFrom, LAST_STEP, useOnboarding, type OnboardingState } from "./useOnboarding.js";
+import { t } from "../../i18n/i18n.js";
 
 interface OnboardingProps {
   knownLibraryDir: string | null;
@@ -50,14 +51,14 @@ function PrimaryButton({
         autoFocus
         onClick={() => onFinish(projectDir, state.libraryDir)}
       >
-        Börja skriva
+        {t("Börja skriva")}
       </button>
     );
   }
   if (state.step === 4 && state.mode !== "new") return null;
   return (
     <button className="button primary large" onClick={() => void continueFrom(state)}>
-      Fortsätt
+      {t("Fortsätt")}
     </button>
   );
 }
@@ -72,12 +73,12 @@ function Navigation({
     <div className="onboarding-nav">
       {state.step === startStep && startStep > 1 && (
         <button className="link-button quiet" onClick={onCancel}>
-          Avbryt
+          {t("Avbryt")}
         </button>
       )}
       {state.step > startStep && (
         <button className="link-button quiet" onClick={() => state.setStep(state.step - 1)}>
-          Tillbaka
+          {t("Tillbaka")}
         </button>
       )}
       <span className="spacer" />

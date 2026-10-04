@@ -4,6 +4,7 @@ import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { KIND_LABELS } from "../project/shelf.js";
 import { isSpecialFolder, numberNodes, type TreeNode } from "../project/tree.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { t } from "../i18n/i18n.js";
 
 /** What every export format needs to know about the book. */
 export interface BookDetails {
@@ -47,7 +48,7 @@ export function bookOutline(tree: TreeNode[]): OutlineItem[] {
   const numbers = { part: numberNodes(tree, "part"), chapter: numberNodes(tree, "chapter") };
   const walk = (nodes: TreeNode[]): OutlineItem[] =>
     nodes.flatMap((node) => {
-      if (isSpecialFolder(node.id)) return [];
+      if (node.kind === "sort" || isSpecialFolder(node.id)) return [];
       const children = walk(node.children ?? []);
       if (node.kind === "scene") return [{ kind: "scene", id: node.id }];
       if (node.kind === "folder") return children;
@@ -68,7 +69,7 @@ export async function readBookScenes(
   for (const id of sceneIds) {
     const text = await fileSystem.readText(joinPath(dir, `scenes/${id}.md`)).catch(() => null);
     if (text === null) {
-      throw new ExportError(titles[id] ?? id, "Scenen finns inte på den här datorn än.");
+      throw new ExportError(titles[id] ?? id, t("Scenen finns inte på den här datorn än."));
     }
     scenes.set(id, parseMarkdown(splitSceneFile(text).body));
   }

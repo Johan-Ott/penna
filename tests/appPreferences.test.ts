@@ -31,6 +31,8 @@ describe("app preferences", () => {
       authorName: "Elin Berg",
       defaultDailyGoal: 750,
       isAutoSnapshotOn: false,
+      uiLanguage: "en" as const,
+      reminderHour: 20,
     };
 
     savePreferences(storage, preferences);

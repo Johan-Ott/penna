@@ -54,17 +54,16 @@ describe("searchPalette with short queries", () => {
 });
 
 describe("inGroups", () => {
-  it("shows every kind of result in the design's group order, best first within a group", () => {
+  it("shows notes first, then scenes and commands, best first within a group", () => {
     const found = [
-      entry("Ny karaktär", "Kommandon"),
-      entry("Arvid", "Karaktärer"),
-      entry("Udden", "Platser"),
+      entry("Ny anteckning", "Kommandon"),
+      entry("Arvid", "Personer"),
       entry("Köket", "Scener"),
-      entry("Anna", "Karaktärer"),
+      entry("Udden", "Platser"),
     ];
 
     const labels = inGroups(found).map((result) => result.label);
 
-    expect(labels).toEqual(["Köket", "Arvid", "Anna", "Udden", "Ny karaktär"]);
+    expect(labels).toEqual(["Arvid", "Udden", "Köket", "Ny anteckning"]);
   });
 });

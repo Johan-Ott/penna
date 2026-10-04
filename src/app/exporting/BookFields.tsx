@@ -5,23 +5,24 @@ import { COVER_MINIMUM, isCoverTooSmall } from "../../project/cover.js";
 import type { useCover } from "./useCover.js";
 import { EXTRA_FIELDS } from "./bookMaterial.js";
 import type { ExportChoices } from "./useExport.js";
+import { t } from "../../i18n/i18n.js";
 
 type PartKey = Exclude<keyof ExportChoices, "format" | "typography">;
 
 // A standard manuscript has only a title page; a book, printed or e-book, has the rest too.
 const PARTS: [PartKey, string, boolean][] = [
-  ["hasTitlePage", "Titelsida", true],
-  ["hasCopyrightPage", "Upphovsrättssida", false],
-  ["hasDedication", "Dedikation", false],
-  ["hasContents", "Innehållsförteckning", false],
-  ["hasThanks", "Tack", false],
-  ["hasAbout", "Om författaren", false],
+  ["hasTitlePage", t("Titelsida"), true],
+  ["hasCopyrightPage", t("Upphovsrättssida"), false],
+  ["hasDedication", t("Dedikation"), false],
+  ["hasContents", t("Innehållsförteckning"), false],
+  ["hasThanks", t("Tack"), false],
+  ["hasAbout", t("Om författaren"), false],
 ];
 
 const PLACEHOLDERS: Record<keyof typeof EXTRA_FIELDS, string> = {
   hasDedication: "Till …",
-  hasThanks: "Tack till …",
-  hasAbout: "Några rader om dig. En tom rad börjar ett nytt stycke.",
+  hasThanks: t("Tack till …"),
+  hasAbout: t("Några rader om dig. En tom rad börjar ett nytt stycke."),
 };
 
 const isExtra = (key: PartKey): key is keyof typeof EXTRA_FIELDS => key in EXTRA_FIELDS;
@@ -102,7 +103,7 @@ function Parts(props: BookFieldsProps) {
 
 function Details({ project, generalAuthor, choices, onSaveFields }: BookFieldsProps) {
   const details: [string, string, string][] = [
-    ["author", "Författarnamn", generalAuthor || "Namn eller pseudonym"],
+    ["author", t("Författarnamn"), generalAuthor || t("Namn eller pseudonym")],
     ["subtitle", "Undertitel (valfritt)", bookDetails(project.fields, "", 0).subtitle],
     ...(choices.format !== "manus"
       ? [["isbn", "ISBN (valfritt)", "978-91-…"] as [string, string, string]]
@@ -123,9 +124,12 @@ function coverHint({ picture, problem }: BookFieldsProps["cover"]) {
   const minimum = `${COVER_MINIMUM.width} × ${COVER_MINIMUM.height} px`;
   if (problem) return problem;
   if (picture && isCoverTooSmall(picture.size)) {
-    return `Bilden är ${picture.size.width} × ${picture.size.height} px. E-bokhandlare vill ha minst ${minimum}.`;
+    return t("Bilden är {width} × {height} px. E-bokhandlare vill ha minst {minimum}.", {
+      ...picture.size,
+      minimum,
+    });
   }
-  return picture ? "Din bild används som omslag." : `JPG eller PNG, minst ${minimum}.`;
+  return picture ? t("Din bild används som omslag.") : `JPG eller PNG, minst ${minimum}.`;
 }
 
 // Without a picture of their own the book gets the typographic cover shown in the preview.
@@ -133,13 +137,13 @@ function CoverRow({ cover }: Pick<BookFieldsProps, "cover">) {
   return (
     <div className="cover-row">
       <div className="cover-thumb">
-        {cover.url ? <img src={cover.url} alt="" /> : <span>Text</span>}
+        {cover.url ? <img src={cover.url} alt="" /> : <span>{t("Text")}</span>}
       </div>
       <div className="cover-text">
-        <span>Omslag</span>
+        <span>{t("Omslag")}</span>
         <span className="setting-hint">{coverHint(cover)}</span>
         <button className="button secondary small" onClick={cover.choose}>
-          Byt bild…
+          {t("Byt bild…")}
         </button>
       </div>
     </div>
@@ -150,10 +154,10 @@ function CoverRow({ cover }: Pick<BookFieldsProps, "cover">) {
 export function BookFields(props: BookFieldsProps) {
   return (
     <div className="export-column">
-      <span className="export-heading">Bokuppgifter</span>
+      <span className="export-heading">{t("Bokuppgifter")}</span>
       <Details {...props} />
       {props.choices.format === "ebok" && <CoverRow cover={props.cover} />}
-      <span className="export-heading spaced">Bokens delar</span>
+      <span className="export-heading spaced">{t("Bokens delar")}</span>
       <Parts {...props} />
     </div>
   );

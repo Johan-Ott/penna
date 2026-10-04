@@ -1,6 +1,7 @@
 import { useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import type { DropPosition, TreeRow as Row } from "../../project/treeRows.js";
 import { Chevron } from "./Chevron.js";
+import { t } from "../../i18n/i18n.js";
 
 export interface TreeRowProps {
   row: Row;
@@ -40,7 +41,7 @@ function RenameInput({
   return (
     <input
       className="tree-rename"
-      aria-label="Nytt namn"
+      aria-label={t("Nytt namn")}
       autoFocus
       value={value}
       onChange={(event) => setValue(event.target.value)}

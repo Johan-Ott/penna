@@ -35,7 +35,7 @@ function coverFile({ cover, book }: EpubInput) {
 // Items in the package document go on lines of their own, indented under their parent.
 const LIST_SEPARATOR = "\n    ";
 
-const STYLE = `body { font-family: serif; line-height: 1.5; margin: 0 5%; }
+export const EBOOK_STYLE = `body { font-family: serif; line-height: 1.5; margin: 0 5%; }
 p { margin: 0; text-indent: 1.5em; }
 p.first { text-indent: 0; }
 h1 { text-align: center; font-weight: normal; margin: 3em 0 2em; }
@@ -153,7 +153,7 @@ export async function buildEpub(input: EpubInput): Promise<Uint8Array> {
   zip.file("META-INF/container.xml", CONTAINER);
   zip.file("OEBPS/content.opf", packageDocument(input, front, text));
   zip.file("OEBPS/nav.xhtml", navPage(text, input.language));
-  zip.file("OEBPS/style.css", STYLE);
+  zip.file("OEBPS/style.css", EBOOK_STYLE);
   const cover = coverFile(input);
   zip.file(`OEBPS/${cover.name}`, cover.content);
   for (const page of [...front, ...text]) {

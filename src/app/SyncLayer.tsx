@@ -13,13 +13,14 @@ import {
   setAsideCrashText,
 } from "./syncRepairs.js";
 import type { Project } from "./useProject.js";
+import { t } from "../i18n/i18n.js";
 
 interface SyncCopy {
   copy: SceneFileRef;
   versions: DiskConflict;
 }
 
-const titleOf = (project: Project, id: string) => project.summaries[id]?.title ?? "Namnlös scen";
+const titleOf = (project: Project, id: string) => project.summaries[id]?.title ?? t("Namnlös scen");
 
 /** The sync copy the writer is looking at, and what happens when they choose. */
 export function useSyncCopy(
@@ -53,7 +54,7 @@ export function SyncCopyDialog(props: { project: Project } & ReturnType<typeof u
       sceneTitle={titleOf(props.project, syncCopy.copy.sceneId)}
       conflict={syncCopy.versions}
       otherLabel={copyDevice(syncCopy.copy.fileName) ?? undefined}
-      text="Scenen ändrades på två enheter innan molnet hann synka. Inget har raderats."
+      text={t("Scenen ändrades på två enheter innan molnet hann synka. Inget har raderats.")}
       onChoose={(choice) => void props.chooseSyncCopy(choice)}
       onLater={props.closeSyncCopy}
     />
@@ -71,10 +72,10 @@ function CrashActions({ onSettle }: { onSettle: (restore: boolean) => void }) {
   return (
     <div className="dialog-actions">
       <button className="button secondary" onClick={() => onSettle(false)}>
-        Behåll det sparade
+        {t("Behåll det sparade")}
       </button>
       <button className="button primary" autoFocus onClick={() => onSettle(true)}>
-        Återställ texten
+        {t("Återställ texten")}
       </button>
     </div>
   );
@@ -97,11 +98,13 @@ export function CrashDialog({
       <div className="dialog" role="alertdialog" aria-modal="true" aria-labelledby="crash-title">
         <div className="dialog-heading">
           <span id="crash-title" className="dialog-title">
-            Penna stängdes innan allt hann sparas
+            {t("Penna stängdes innan allt hann sparas")}
           </span>
           <span className="dialog-text">
-            Det finns nyare text än den sparade i {titles}. Inget raderas: det du inte behåller
-            läggs i mappen trash i projektet.
+            {t(
+              "Det finns nyare text än den sparade i {titles}. Inget raderas: det du inte behåller läggs i mappen trash i projektet.",
+              { titles },
+            )}
           </span>
         </div>
         <CrashActions onSettle={settle} />
@@ -112,7 +115,11 @@ export function CrashDialog({
 
 function notDownloadedNotice(count: number) {
   if (count === 0) return [];
-  return [count === 1 ? "Hämtar en scen från molnet…" : `Hämtar ${count} scener från molnet…`];
+  return [
+    count === 1
+      ? t("Hämtar en scen från molnet…")
+      : t("Hämtar {count} scener från molnet…", { count }),
+  ];
 }
 
 /** What needs the writer's eye: sync copies to settle, scenes still in the cloud. */
@@ -122,16 +129,20 @@ export function SyncNotices(props: {
 }) {
   const { project } = props;
   const repair = project.repairCopy
-    ? [`project.json gick inte att läsa. En kopia sparades som ${project.repairCopy}.`]
+    ? [
+        t("project.json gick inte att läsa. En kopia sparades som {copy}.", {
+          copy: project.repairCopy,
+        }),
+      ]
     : [];
   const notices = [...repair, ...notDownloadedNotice(project.notDownloaded.length)];
   if (notices.length === 0 && project.conflicts.length === 0) return null;
   return (
-    <ul className="sidebar-notices" aria-label="Att se över">
+    <ul className="sidebar-notices" aria-label={t("Att se över")}>
       {project.conflicts.map((copy) => (
         <li key={copy.fileName}>
           <button className="link-button" onClick={() => props.onShowSyncCopy(copy)}>
-            Två versioner av ”{titleOf(project, copy.sceneId)}”
+            {t("Två versioner av ”{title}”", { title: titleOf(project, copy.sceneId) })}
           </button>
         </li>
       ))}

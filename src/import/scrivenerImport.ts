@@ -1,6 +1,7 @@
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { ImportError, type ImportedNode } from "./markdownImport.js";
 import { rtfToMarkdown } from "./rtf.js";
+import { t } from "../i18n/i18n.js";
 
 interface BinderItem {
   id: string;
@@ -101,7 +102,7 @@ function draftBook(draft: BinderItem[], texts: Map<string, string>): ImportedNod
 /** A Scrivener project folder (.scriv): the texts in its draft, in binder order. */
 export async function readScrivener(fileSystem: FileSystem, dir: string) {
   const scrivx = (await fileSystem.list(dir)).find((name) => name.endsWith(".scrivx"));
-  if (!scrivx) throw new ImportError("Mappen är inget Scrivener-projekt.");
+  if (!scrivx) throw new ImportError(t("Mappen är inget Scrivener-projekt."));
   const binder = readBinder(await fileSystem.readText(joinPath(dir, scrivx)));
   const draft = binder.find((item) => item.type === "DraftFolder")?.children ?? [];
   return draftBook(draft, await readTexts(fileSystem, dir, allItems(draft)));

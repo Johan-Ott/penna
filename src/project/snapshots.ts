@@ -10,6 +10,7 @@ import { changedWords } from "../manuscript/wordDiff.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { t } from "../i18n/i18n.js";
 
 /** Which scene: the project folder and the scene id. */
 export interface SceneRef {
@@ -147,6 +148,6 @@ export function snapshotWhen(time: number, now: number): string {
     (new Date(now).setHours(0, 0, 0, 0) - new Date(time).setHours(0, 0, 0, 0)) / DAY,
   );
   if (days === 0) return `Idag ${clock}`;
-  if (days === 1) return `Igår ${clock}`;
+  if (days === 1) return t("Igår {clock}", { clock });
   return `${date.getDate()} ${MONTHS[date.getMonth()] ?? ""} ${clock}`;
 }

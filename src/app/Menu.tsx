@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { createPortal } from "react-dom";
 
 export interface MenuItem {
@@ -121,4 +128,18 @@ function MenuRow(props: {
       </button>
     </>
   );
+}
+
+/** A menu that opens under the button that was pressed, as the top bar and Innehåll use it. */
+export function useMenuButton(label: string, items: MenuItem[]) {
+  const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
+  const open = (event: ReactMouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    const box = event.currentTarget.getBoundingClientRect();
+    setPlace({ x: box.left, y: box.bottom + 4 });
+  };
+  const menu = place && (
+    <Menu {...place} label={label} items={items} onClose={() => setPlace(null)} />
+  );
+  return { open, menu };
 }

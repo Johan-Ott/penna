@@ -12,7 +12,7 @@ describe("bookStatus and bookProgress", () => {
   ];
 
   it("names the stage that holds the most words", () => {
-    expect(bookStatus(scenes)).toBe("Utkast");
+    expect(bookStatus(scenes)).toBe("Första utkast");
     expect(bookStatus([])).toBe("Idé");
   });
 

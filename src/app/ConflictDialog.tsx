@@ -2,6 +2,7 @@ import { countWords } from "../countWords.js";
 import { differingExcerpts, plainText } from "../manuscript/compare.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import type { ConflictChoice, DiskConflict } from "./sceneSession.js";
+import { t, numberLocale } from "../i18n/i18n.js";
 
 interface ConflictDialogProps {
   sceneTitle: string;
@@ -14,14 +15,17 @@ interface ConflictDialogProps {
   onLater?: (() => void) | undefined;
 }
 
-const EDITED_ELSEWHERE =
-  "Scenen ändrades i en annan app eller på en annan enhet medan du skrev. Inget har raderats.";
+const EDITED_ELSEWHERE = t(
+  t("Scenen ändrades i en annan app eller på en annan enhet medan du skrev. Inget har raderats."),
+);
 
 function VersionCard(props: { label: string; body: string; excerpt: string; isChosen: boolean }) {
   return (
     <div className={props.isChosen ? "version-card chosen" : "version-card"}>
       <span className="version-label">{props.label}</span>
-      <span className="version-meta">{countWords(props.body).toLocaleString("sv-SE")} ord</span>
+      <span className="version-meta">
+        {t("{count} ord", { count: countWords(props.body).toLocaleString(numberLocale()) })}
+      </span>
       <span className="version-excerpt">{props.excerpt}</span>
     </div>
   );
@@ -32,17 +36,17 @@ function ConflictActions({ onChoose, onLater }: Pick<ConflictDialogProps, "onCho
     <div className="dialog-actions">
       {onLater && (
         <button className="link-button quiet push-left" onClick={onLater}>
-          Senare
+          {t("Senare")}
         </button>
       )}
       <button className="button secondary" onClick={() => onChoose("theirs")}>
-        Behåll den andra
+        {t("Behåll den andra")}
       </button>
       <button className="button secondary" onClick={() => onChoose("both")}>
-        Behåll båda
+        {t("Behåll båda")}
       </button>
       <button className="button primary" onClick={() => onChoose("mine")} autoFocus>
-        Behåll den här datorns
+        {t("Behåll den här datorns")}
       </button>
     </div>
   );
@@ -58,14 +62,14 @@ export function ConflictDialog(props: ConflictDialogProps) {
       <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="conflict-title">
         <div className="dialog-heading">
           <span id="conflict-title" className="dialog-title">
-            Två versioner av ”{sceneTitle}”
+            {t("Två versioner av ”{title}”", { title: sceneTitle })}
           </span>
           <span className="dialog-text">{props.text ?? EDITED_ELSEWHERE}</span>
         </div>
         <div className="version-grid">
-          <VersionCard label="Den här datorn" body={mine} excerpt={excerpts.mine} isChosen />
+          <VersionCard label={t("Den här datorn")} body={mine} excerpt={excerpts.mine} isChosen />
           <VersionCard
-            label={props.otherLabel ?? "Den andra versionen"}
+            label={props.otherLabel ?? t("Den andra versionen")}
             body={theirs}
             excerpt={excerpts.theirs}
             isChosen={false}

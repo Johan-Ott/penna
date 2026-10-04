@@ -1,9 +1,20 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
+import { t } from "../../i18n/i18n.js";
+
+// The group is a key in the search; its heading is shown in the interface language.
+// A note's group is its sort's name, already in the interface language.
+const groupLabel = (group: string) =>
+  ({
+    Scener: t("Scener"),
+    Kapitel: t("Kapitel"),
+    Kommandon: t("Kommandon"),
+  })[group] ?? group;
 
 interface CommandPaletteProps {
   entries: PaletteEntry[];
   onClose: () => void;
+  onSearch: (text: string) => void;
 }
 
 const MAX_RESULTS = 40;
@@ -40,7 +51,7 @@ function ResultRow({ index, ...props }: ResultProps & { index: number }) {
   const startsGroup = entry.group !== props.found[index - 1]?.group;
   return (
     <>
-      {startsGroup && <div className="palette-group">{entry.group}</div>}
+      {startsGroup && <div className="palette-group">{groupLabel(entry.group)}</div>}
       <div
         role="option"
         aria-selected={index === props.selected}
@@ -60,7 +71,7 @@ function ResultList(props: ResultProps) {
   useEffect(() => {
     listRef.current?.querySelector("[aria-selected=true]")?.scrollIntoView({ block: "nearest" });
   }, [props.selected]);
-  if (props.found.length === 0) return <p className="palette-empty">Inga träffar</p>;
+  if (props.found.length === 0) return <p className="palette-empty">{t("Inga träffar")}</p>;
   return (
     <div className="palette-results" role="listbox" ref={listRef}>
       {props.found.map((entry, index) => (
@@ -98,8 +109,8 @@ function PaletteInput(props: {
       <SearchIcon />
       <input
         autoFocus
-        placeholder="Sök scen, kapitel, karaktär eller kommando"
-        aria-label="Sök scen, kapitel, karaktär eller kommando"
+        placeholder={t("Sök scen, kapitel, karaktär eller kommando")}
+        aria-label={t("Sök scen, kapitel, karaktär eller kommando")}
         value={props.query}
         onChange={(event) => props.onQuery(event.target.value)}
         onKeyDown={props.onKeyDown}
@@ -109,16 +120,33 @@ function PaletteInput(props: {
 }
 
 /** Ctrl+K: jump to a scene or chapter, or run any command, by typing a few letters. */
-export function CommandPalette({ entries, onClose }: CommandPaletteProps) {
+// Whatever is typed can also be searched for in the whole manuscript, last among the commands.
+function searchEntry(query: string, onSearch: (text: string) => void): PaletteEntry[] {
+  const text = query.trim();
+  if (!text) return [];
+  const label = t("Sök ”{text}” i hela manuset", { text });
+  return [
+    {
+      id: "kommando:sök",
+      label,
+      group: "Kommandon",
+      run: () => onSearch(text),
+      shortcut: "Ctrl+F",
+    },
+  ];
+}
+
+export function CommandPalette({ entries, onClose, onSearch }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
-  const found = inGroups(searchPalette(entries, query).slice(0, MAX_RESULTS));
+  const matches = searchPalette(entries, query).slice(0, MAX_RESULTS);
+  const found = inGroups([...matches, ...searchEntry(query, onSearch)]);
   const selection = usePaletteSelection(found, onClose);
   return (
     <div className="palette-backdrop" onPointerDown={onClose}>
       <div
         className="palette"
         role="dialog"
-        aria-label="Kommandopalett"
+        aria-label={t("Kommandopalett")}
         onPointerDown={(event) => event.stopPropagation()}
       >
         <PaletteInput

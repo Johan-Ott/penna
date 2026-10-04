@@ -1,3 +1,4 @@
+import { t } from "../i18n/i18n.js";
 export interface LibraryCandidate {
   id: string;
   label: string;
@@ -25,9 +26,14 @@ export function libraryCandidates({ home, documents }: KnownFolders): LibraryCan
       hint: appleSync,
       path: `${home}/Library/Mobile Documents/com~apple~CloudDocs/Penna`,
     },
-    { id: "dropbox", label: "Dropbox", hint: "Alla enheter", path: `${home}/Dropbox/Penna` },
-    { id: "onedrive", label: "OneDrive", hint: "Alla enheter", path: `${home}/OneDrive/Penna` },
-    { id: "local", label: "Bara den här datorn", hint: "Ingen synk", path: `${documents}/Penna` },
+    { id: "dropbox", label: "Dropbox", hint: t("Alla enheter"), path: `${home}/Dropbox/Penna` },
+    { id: "onedrive", label: "OneDrive", hint: t("Alla enheter"), path: `${home}/OneDrive/Penna` },
+    {
+      id: "local",
+      label: t("Bara den här datorn"),
+      hint: t("Ingen synk"),
+      path: `${documents}/Penna`,
+    },
   ];
 }
 

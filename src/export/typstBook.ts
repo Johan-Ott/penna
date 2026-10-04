@@ -3,7 +3,7 @@ import type { BookDetails, OutlineItem, Typography } from "./book.js";
 import type { BookExtras } from "./bookParts.js";
 import type { BookDesign } from "./bookDesign.js";
 import { bookWords, headingLabel } from "./bookWords.js";
-import { classicTemplate } from "./typstTemplate.js";
+import { bookTemplate } from "./typstTemplate.js";
 import { escapeTypst, sceneTypst, typstString } from "./typstText.js";
 
 /** Everything the printed book is made from; the same input gives the preview and the PDF. */
@@ -89,7 +89,7 @@ function backMatter({ extras, language }: PrintInput): string[] {
 /** The whole printed book as one Typst document in the Klassisk theme. */
 export function typstSource(input: PrintInput): string {
   return [
-    classicTemplate(input.design, input.book.title, input.language),
+    bookTemplate(input.design, input.book.title, input.language),
     ...frontMatter(input),
     ...story(input),
     ...backMatter(input),
