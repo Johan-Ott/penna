@@ -1,5 +1,5 @@
 import { useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
-import type { DropPosition, TreeRow as Row } from "../../project/tree.js";
+import type { DropPosition, TreeRow as Row } from "../../project/treeRows.js";
 import { Chevron } from "./Chevron.js";
 
 export interface TreeRowProps {

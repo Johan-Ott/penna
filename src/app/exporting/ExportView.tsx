@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Typography } from "../../export/book.js";
+import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { Choice } from "../settings/controls.js";
 import type { Project } from "../useProject.js";
 import { ExportStatus, Preview } from "./ExportPanels.js";
@@ -14,15 +15,14 @@ interface ExportViewProps {
   onOpenScene: (title: string) => void;
 }
 
-// Tryck-PDF is part of v1 and comes after Bokdesign; it is shown so the writer knows.
-const FORMATS: [ExportFormat | null, string, string][] = [
+const FORMATS: [ExportFormat, string, string][] = [
   [
     "manus",
     "Standardmanus",
     "Till förlag och agenter. 12 pt, dubbelt radavstånd, namn och titel i sidhuvudet.",
   ],
   ["ebok", "E-bok", "EPUB 3 med omslag och innehållsförteckning, redo för e-bokhandlare."],
-  [null, "Tryck-PDF", "Satt enligt Bokdesign, för tryck på beställning. Kommer snart."],
+  ["tryck", "Tryck-PDF", "Satt enligt Bokdesign, för tryck på beställning."],
 ];
 
 const TYPOGRAPHY: [Typography, string][] = [
@@ -45,8 +45,7 @@ function Formats({
           key={title}
           className="export-format"
           aria-pressed={format === value}
-          disabled={format === null}
-          onClick={() => format && onChange(format)}
+          onClick={() => onChange(format)}
         >
           <span className="export-format-title">{title}</span>
           <span className="setting-hint">{description}</span>
@@ -90,18 +89,55 @@ function ExportHeader(props: { format: ExportFormat; isRunning: boolean; onExpor
   );
 }
 
-const START_CHOICES: ExportChoices = {
+// The quotes start as the book's language writes them; the writer can still pick the other.
+const startChoices = (project: Project): ExportChoices => ({
   format: "manus",
-  typography: "svensk",
+  typography: quoteStyleFor(bookLanguage(project.fields)),
   hasTitlePage: true,
   hasCopyrightPage: true,
   hasContents: true,
-};
+  hasDedication: false,
+  hasThanks: false,
+  hasAbout: true,
+});
+
+function Backup({ onBackup }: { onBackup: () => void }) {
+  return (
+    <div className="export-backup">
+      <span className="export-heading">Säkerhetskopia</span>
+      <span className="setting-hint">
+        Hela projektmappen som en zip-fil, med ögonblicksbilder och kommentarer.
+      </span>
+      <button className="button secondary small" onClick={onBackup}>
+        Spara som zip…
+      </button>
+    </div>
+  );
+}
+
+function FormatColumn(props: {
+  choices: ExportChoices;
+  setChoices: (next: ExportChoices) => void;
+  onBackup: () => void;
+}) {
+  const { choices, setChoices } = props;
+  return (
+    <div className="export-column">
+      <Formats value={choices.format} onChange={(format) => setChoices({ ...choices, format })} />
+      <TypographyChoice
+        value={choices.typography}
+        onChange={(typography) => setChoices({ ...choices, typography })}
+      />
+      <Backup onBackup={props.onBackup} />
+    </div>
+  );
+}
 
 /** Exportera, as in the design: format and typography, the book's details, a preview. */
 export function ExportView(props: ExportViewProps) {
-  const [choices, setChoices] = useState<ExportChoices>(START_CHOICES);
-  const { state, run, reset } = useExport(props.project, props.generalAuthor, props.onSaveFields);
+  const [choices, setChoices] = useState(() => startChoices(props.project));
+  const exporter = useExport(props.project, props.generalAuthor, props.onSaveFields);
+  const { state, run, reset } = exporter;
   const cover = useCover(props.project);
   return (
     <main className="export-view">
@@ -111,18 +147,14 @@ export function ExportView(props: ExportViewProps) {
         onExport={() => run(choices)}
       />
       <div className="export-columns">
-        <div className="export-column">
-          <Formats
-            value={choices.format}
-            onChange={(format) => setChoices({ ...choices, format })}
-          />
-          <TypographyChoice
-            value={choices.typography}
-            onChange={(typography) => setChoices({ ...choices, typography })}
-          />
-        </div>
+        <FormatColumn choices={choices} setChoices={setChoices} onBackup={exporter.backup} />
         <BookFields {...props} cover={cover} choices={choices} setChoices={setChoices} />
-        <Preview {...props} isEbook={choices.format === "ebok"} coverUrl={cover.url} />
+        <Preview
+          {...props}
+          isEbook={choices.format === "ebok"}
+          isPrint={choices.format === "tryck"}
+          coverUrl={cover.url}
+        />
       </div>
       <ExportStatus state={state} onOpenScene={props.onOpenScene} onClose={reset} />
     </main>

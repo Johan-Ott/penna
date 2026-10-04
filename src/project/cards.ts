@@ -28,6 +28,13 @@ export function cardsOf(tree: TreeNode[], summaries: Record<string, SceneSummary
   );
 }
 
+/** The texts in a planning folder, in tree order: the timeline is read top to bottom. */
+export const entriesIn = (
+  tree: TreeNode[],
+  summaries: Record<string, SceneSummary>,
+  folderId: string,
+) => sceneIdsIn(tree, folderId).map((id) => ({ id, title: summaries[id]?.title ?? "" }));
+
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /** The name as a whole word; a trailing s is the Swedish genitive: "Arvids händer". */

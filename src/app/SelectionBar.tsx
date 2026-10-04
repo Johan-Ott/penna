@@ -1,12 +1,32 @@
-import { TextSelection } from "prosemirror-state";
+import { TextSelection, type Command, type EditorState } from "prosemirror-state";
 import { useEffect, useState } from "react";
+import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
-import { MarkButton } from "./Toolbar.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
 const BAR_HEIGHT = 40;
+
+function MarkButton(props: {
+  editorState: EditorState | null;
+  run: (command: Command) => void;
+  mark: "bold" | "italic";
+  label: string;
+}) {
+  const isPressed = props.editorState !== null && isMarkActive(props.editorState, props.mark);
+  const command = props.mark === "bold" ? toggleBold : toggleItalic;
+  return (
+    <button
+      className={`icon-button ${props.mark}`}
+      aria-label={props.label}
+      aria-pressed={isPressed}
+      onClick={() => props.run(command)}
+    >
+      {props.mark === "bold" ? "B" : "I"}
+    </button>
+  );
+}
 
 // Focus moving in or out of the text makes no transaction, so it is followed here.
 function useEditorFocus(editor: Editor) {

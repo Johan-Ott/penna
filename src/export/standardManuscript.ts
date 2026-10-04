@@ -9,14 +9,16 @@ import {
   type ParagraphChild,
 } from "docx";
 import type { Node } from "prosemirror-model";
-import { romanNumeral } from "../project/treeLabels.js";
 import { quoteConverter, type BookDetails, type OutlineItem, type Typography } from "./book.js";
+import { bookWords, headingLabel, roundedWords } from "./bookWords.js";
 
 interface ManuscriptInput {
   book: BookDetails;
   outline: OutlineItem[];
   scenes: Map<string, Node>;
   typography: Typography;
+  /** A language tag such as "sv-SE", for the fixed words and Word's spellcheck. */
+  language: string;
   hasTitlePage: boolean;
 }
 
@@ -85,20 +87,22 @@ function sceneParagraphs(doc: Node, typography: Typography): Paragraph[] {
   return paragraphs;
 }
 
-function headingParagraphs(item: Extract<OutlineItem, { kind: "part" | "chapter" }>) {
-  const label =
-    item.kind === "part" ? `Del ${romanNumeral(item.number)}` : `Kapitel ${item.number}`;
+function headingParagraphs(
+  item: Extract<OutlineItem, { kind: "part" | "chapter" }>,
+  language: string,
+) {
+  const label = headingLabel(item, language);
   return [
     centered(label, { pageBreakBefore: true, spacing: { before: HEADING_DROP } }),
     ...(item.title ? [centered(item.title)] : []),
   ];
 }
 
-function bodyParagraphs({ outline, scenes, typography }: ManuscriptInput): Paragraph[] {
+function bodyParagraphs({ outline, scenes, typography, language }: ManuscriptInput): Paragraph[] {
   const paragraphs: Paragraph[] = [];
   let previous: OutlineItem["kind"] | null = null;
   for (const item of outline) {
-    if (item.kind !== "scene") paragraphs.push(...headingParagraphs(item));
+    if (item.kind !== "scene") paragraphs.push(...headingParagraphs(item, language));
     else {
       const doc = scenes.get(item.id);
       if (previous === "scene") paragraphs.push(centered(SCENE_BREAK));
@@ -109,20 +113,16 @@ function bodyParagraphs({ outline, scenes, typography }: ManuscriptInput): Parag
   return paragraphs;
 }
 
-// "ca 48 200 ord": a manuscript's length is given rounded, as publishers expect.
-const roundedWords = (words: number) =>
-  `ca ${(Math.round(words / 100) * 100).toLocaleString("sv-SE")} ord`;
-
-function titlePage(book: BookDetails): Paragraph[] {
+function titlePage(book: BookDetails, language: string): Paragraph[] {
   return [
     new Paragraph(book.author),
     new Paragraph({
       alignment: AlignmentType.RIGHT,
-      children: [new TextRun(roundedWords(book.words))],
+      children: [new TextRun(roundedWords(book.words, language))],
     }),
-    centered(book.title.toLocaleUpperCase("sv-SE"), { spacing: { before: HEADING_DROP } }),
+    centered(book.title.toLocaleUpperCase(language), { spacing: { before: HEADING_DROP } }),
     ...(book.subtitle ? [centered(book.subtitle)] : []),
-    ...(book.author ? [centered(`av ${book.author}`)] : []),
+    ...(book.author ? [centered(bookWords(language).byAuthor(book.author))] : []),
   ];
 }
 
@@ -149,13 +149,16 @@ export async function standardManuscript(input: ManuscriptInput): Promise<Uint8A
     styles: {
       default: {
         document: {
-          run: { font: FONT, size: HALF_POINTS },
+          // Word spellchecks the manuscript in the book's language.
+          run: { font: FONT, size: HALF_POINTS, language: { value: input.language } },
           paragraph: { spacing: { line: DOUBLE_SPACING } },
         },
       },
     },
     sections: [
-      ...(input.hasTitlePage ? [{ properties: { page }, children: titlePage(input.book) }] : []),
+      ...(input.hasTitlePage
+        ? [{ properties: { page }, children: titlePage(input.book, input.language) }]
+        : []),
       {
         properties: { page: { ...page, pageNumbers: { start: 1 } } },
         headers: { default: pageHeader(input.book) },

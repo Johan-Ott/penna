@@ -18,6 +18,8 @@ import type { CardActions } from "./planning/cardActions.js";
 import type { View } from "./Sidebar.js";
 import type { WritingSettings } from "../editor/writingSettings.js";
 import { SettingsLayer, type useSettingsDialog } from "./settings/SettingsDialog.js";
+import { bookLanguage } from "../project/bookLanguage.js";
+import { applySpellLanguage } from "./useSpellLanguage.js";
 import type { useStartup } from "./useStartup.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 
@@ -28,6 +30,7 @@ interface OverlayParts {
   conflict: DiskConflict | null;
   editor: ReturnType<typeof useEditorView>;
   refresh: () => Promise<void>;
+  updateFields: (fields: Record<string, unknown>) => Promise<void>;
   syncCopy: ReturnType<typeof useSyncCopy>;
   snapshots: ReturnType<typeof useSnapshots>;
   palette: ReturnType<typeof usePalette>;
@@ -71,6 +74,18 @@ function MentionLayer({ app }: { app: OverlayParts }) {
 }
 
 /** What opens over the writing: dialogs and the command palette. */
+// The language is saved before the window may restart for its spelling dictionary.
+function bookSettings(app: OverlayParts) {
+  if (!app.project) return null;
+  return {
+    language: bookLanguage(app.project.fields),
+    onChangeLanguage: async (language: string) => {
+      await app.updateFields({ language });
+      await applySpellLanguage(app.session, language);
+    },
+  };
+}
+
 export function Overlays({ app }: { app: OverlayParts }) {
   return (
     <>
@@ -86,6 +101,7 @@ export function Overlays({ app }: { app: OverlayParts }) {
         {...app.startup}
         {...app.writingMode}
         dialog={app.writingMode.settingsDialog}
+        book={bookSettings(app)}
       />
       <MentionLayer app={app} />
       {app.palette.isOpen && (

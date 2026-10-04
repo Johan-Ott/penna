@@ -10,14 +10,18 @@ export interface TreeNode {
 
 export const CHARACTERS_ID = "karaktarer";
 export const PLACES_ID = "platser";
+export const TIMELINE_ID = "tidslinje";
+export const NOTES_ID = "anteckningar";
 export const RESEARCH_ID = "research";
 export const TRASH_ID = "trash";
 
-// Characters and places are ordinary scene files kept in folders of their own, beside the
-// manuscript, so they are written, moved and thrown away like any scene.
+// Characters, places, the timeline's events and notes are ordinary scene files kept in folders of
+// their own, beside the manuscript, so they are written, moved and thrown away like any scene.
 const SPECIAL_FOLDERS: TreeNode[] = [
   { id: CHARACTERS_ID, kind: "folder", title: "Karaktärer" },
   { id: PLACES_ID, kind: "folder", title: "Platser" },
+  { id: TIMELINE_ID, kind: "folder", title: "Tidslinje" },
+  { id: NOTES_ID, kind: "folder", title: "Anteckningar" },
   { id: RESEARCH_ID, kind: "folder", title: "Research" },
   { id: TRASH_ID, kind: "folder", title: "Papperskorg" },
 ];
@@ -41,7 +45,7 @@ export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
   return [...ordinary, ...special];
 }
 
-interface FoundNode {
+export interface FoundNode {
   node: TreeNode;
   parent: TreeNode | null;
   index: number;
@@ -186,51 +190,6 @@ export function numberNodes(tree: TreeNode[], kind: "part" | "chapter"): Map<str
   return new Map(collect(manuscript(tree), kind).map((node, index) => [node.id, index + 1]));
 }
 
-export interface TreeRow {
-  node: TreeNode;
-  depth: number;
-  parentId: string | null;
-  index: number;
-}
-
-/** The rows a reader sees, top to bottom; the inside of a collapsed node is left out. */
-export function visibleRows(
-  tree: TreeNode[],
-  collapsed: ReadonlySet<string>,
-  depth = 0,
-  parentId: string | null = null,
-): TreeRow[] {
-  return tree.flatMap((node, index) => [
-    { node, depth, parentId, index },
-    ...(collapsed.has(node.id)
-      ? []
-      : visibleRows(node.children ?? [], collapsed, depth + 1, node.id)),
-  ]);
-}
-
-export type DropPosition = "before" | "after" | "inside";
-
-/** Turns a drop on a row into a move. Indexes count after the dragged node is taken out. */
-export function dropMove(
-  tree: TreeNode[],
-  draggedId: string,
-  row: TreeRow,
-  position: DropPosition,
-) {
-  const dragged = findNode(tree, draggedId);
-  if (!dragged) return tree;
-  if (position === "inside") return dropInside(tree, dragged, row);
-  const isSameParent = (dragged.parent?.id ?? null) === row.parentId;
-  const shift = isSameParent && dragged.index < row.index ? 1 : 0;
-  const index = row.index + (position === "after" ? 1 : 0) - shift;
-  return moveNode(tree, draggedId, row.parentId, index);
-}
-
-function dropInside(tree: TreeNode[], dragged: FoundNode, row: TreeRow) {
-  const childCount = row.node.children?.length ?? 0;
-  const isAlreadyInside = dragged.parent?.id === row.node.id;
-  return moveNode(tree, dragged.node.id, row.node.id, childCount - (isAlreadyInside ? 1 : 0));
-}
 export function isInTrash(tree: TreeNode[], id: string): boolean {
   const trash = tree.find((node) => node.id === TRASH_ID);
   return Boolean(trash?.children && findNode(trash.children, id));

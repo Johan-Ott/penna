@@ -2,6 +2,7 @@ import { bookDetails, bookOutline, estimatedPages, type BookDetails } from "../.
 import { epubCover } from "../../export/epubCover.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
+import { PrintPreview } from "../bookdesign/PrintPreview.js";
 import type { ExportState } from "./useExport.js";
 
 // The writer's picture, or the typographic cover the e-book gets without one.
@@ -21,6 +22,7 @@ export function Preview(props: {
   project: Project;
   generalAuthor: string;
   isEbook: boolean;
+  isPrint: boolean;
   coverUrl: string | null;
 }) {
   const { project, generalAuthor } = props;
@@ -29,6 +31,7 @@ export function Preview(props: {
   const book = { ...details, title: details.title || project.name };
   const pages = estimatedPages(words, bookOutline(project.tree));
   if (props.isEbook) return <EbookPreview book={book} coverUrl={props.coverUrl} />;
+  if (props.isPrint) return <PrintPreview project={project} generalAuthor={generalAuthor} />;
   return (
     <div className="export-preview">
       <span className="setting-hint">Förhandsvisning · Standardmanus</span>

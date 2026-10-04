@@ -6,8 +6,8 @@ import {
   moveToTrash,
   renameNode,
   type TreeNode,
-  type TreeRow,
 } from "../../project/tree.js";
+import type { TreeRow } from "../../project/treeRows.js";
 
 export interface TreeActionHandlers {
   tree: TreeNode[];

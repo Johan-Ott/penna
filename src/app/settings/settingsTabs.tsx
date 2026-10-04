@@ -1,13 +1,10 @@
 import {
   changeSize,
   REPEAT_WINDOWS,
-  THEME_LABELS,
   type ProseFont,
-  type Theme,
   type WritingSettings,
 } from "../../editor/writingSettings.js";
 import type { AppPreferences } from "../appPreferences.js";
-import { platform } from "../platform.js";
 import type { PreferenceChange } from "../useStartup.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import { Choice, Row, Switch } from "./controls.js";
@@ -17,89 +14,15 @@ export interface TabProps {
   updatePreferences: (change: PreferenceChange) => void;
   settings: WritingSettings;
   onChangeSettings: (change: SettingsChange) => void;
+  /** The open book's language, or null on the bookshelf. */
+  book: { language: string; onChangeLanguage: (language: string) => void } | null;
 }
 
-const THEMES = Object.entries(THEME_LABELS) as [Theme, string][];
 const FONTS: [ProseFont, string][] = [
   ["serif", "Serif"],
   ["sans", "Sans"],
   ["mono", "Mono"],
 ];
-
-async function changeLibrary(update: TabProps["updatePreferences"]) {
-  const folder = await platform.pickFolder();
-  if (folder) update((current) => ({ ...current, libraryDir: folder }));
-}
-
-function GoalInput({ preferences, updatePreferences }: TabProps) {
-  return (
-    <input
-      className="settings-number"
-      type="number"
-      min={1}
-      step={100}
-      aria-label="Dagligt ordmål"
-      value={preferences.defaultDailyGoal}
-      onChange={(event) => {
-        const goal = Math.round(Number(event.target.value));
-        if (goal > 0) updatePreferences((current) => ({ ...current, defaultDailyGoal: goal }));
-      }}
-    />
-  );
-}
-
-function AuthorInput({ preferences, updatePreferences }: TabProps) {
-  return (
-    <input
-      className="settings-text"
-      placeholder="Namn eller pseudonym"
-      aria-label="Författarnamn"
-      value={preferences.authorName}
-      onChange={(event) =>
-        updatePreferences((current) => ({ ...current, authorName: event.target.value }))
-      }
-    />
-  );
-}
-
-function LibraryButton({ updatePreferences }: TabProps) {
-  return (
-    <button
-      className="button secondary small"
-      onClick={() => void changeLibrary(updatePreferences)}
-    >
-      Ändra…
-    </button>
-  );
-}
-
-export function GeneralTab(props: TabProps) {
-  const { preferences, settings, onChangeSettings } = props;
-  return (
-    <>
-      <Row label="Författarnamn" hint="Används i export.">
-        <AuthorInput {...props} />
-      </Row>
-      <Row label="Språk" hint="Engelska kommer i en senare version.">
-        Svenska
-      </Row>
-      <Row label="Utseende" hint="Följer systemet om inget annat väljs.">
-        <Choice
-          label="Utseende"
-          value={settings.theme}
-          options={THEMES}
-          onSelect={(theme) => onChangeSettings((current) => ({ ...current, theme }))}
-        />
-      </Row>
-      <Row label="Projektmapp" hint={preferences.libraryDir ?? "Där nya projekt skapas."}>
-        <LibraryButton {...props} />
-      </Row>
-      <Row label="Dagligt ordmål" hint="Standard för nya projekt.">
-        <GoalInput {...props} />
-      </Row>
-    </>
-  );
-}
 
 function SizeStepper({ settings, onChangeSettings }: TabProps) {
   const step = (direction: 1 | -1) => () =>

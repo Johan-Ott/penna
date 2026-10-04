@@ -1,18 +1,44 @@
 import { useState } from "react";
 import { chapterLabel, type Card, type CardKind } from "../../project/cards.js";
+import { CHARACTERS_ID, NOTES_ID, PLACES_ID, TIMELINE_ID } from "../../project/tree.js";
 import type { Project } from "../useProject.js";
 import type { CardActions } from "./cardActions.js";
 import { initials, mentionCount, mentionedChapters } from "./cardFormat.js";
+import { PlanList, type ListWords } from "./PlanList.js";
 import type { usePlanning } from "./usePlanning.js";
 
 type Planning = ReturnType<typeof usePlanning>;
 type PlanProps = { planning: Planning; project: Project; cards: CardActions };
 
-// Tidslinje and Anteckningar in the design come later; for now notes go in Research.
-const TABS: [CardKind, string][] = [
-  ["person", "Karaktärer"],
-  ["plats", "Platser"],
+type PlanTab = CardKind | "tidslinje" | "anteckningar";
+
+// Each tab is a fixed folder in the tree; its texts are written like scenes.
+const TABS: { id: PlanTab; label: string; folder: string; add: string }[] = [
+  { id: "person", label: "Karaktärer", folder: CHARACTERS_ID, add: "Ny karaktär" },
+  { id: "plats", label: "Platser", folder: PLACES_ID, add: "Ny plats" },
+  { id: "tidslinje", label: "Tidslinje", folder: TIMELINE_ID, add: "Ny händelse" },
+  { id: "anteckningar", label: "Anteckningar", folder: NOTES_ID, add: "Ny anteckning" },
 ];
+
+const folderOf = (tab: PlanTab) => TABS.find((each) => each.id === tab)?.folder ?? NOTES_ID;
+
+const TIMELINE_WORDS: ListWords = {
+  heading: "Tidslinje",
+  one: "händelse",
+  many: "händelser",
+  add: "Ny händelse",
+  empty: "En händelse per text. Dra dem i strukturen för att ändra ordningen.",
+  order: "i den ordning de står i strukturen",
+};
+
+const NOTES_WORDS: ListWords = {
+  heading: "Anteckningar",
+  one: "anteckning",
+  many: "anteckningar",
+  add: "Ny anteckning",
+  empty: "Idéer, frågor och sånt som inte hör till en scen.",
+  order: "i strukturens ordning",
+};
 
 const WORDS: Record<CardKind, { one: string; many: string; add: string; heading: string }> = {
   person: { one: "karaktär", many: "karaktärer", add: "Ny karaktär", heading: "Karaktärer" },
@@ -64,7 +90,8 @@ function byMentions(planning: Planning, kind: CardKind) {
 function CardGrid(props: PlanProps & { kind: CardKind }) {
   const { kind } = props;
   const shown = byMentions(props.planning, kind);
-  if (shown.length === 0) return <EmptyKind kind={kind} onAdd={() => props.cards.create(kind)} />;
+  if (shown.length === 0)
+    return <EmptyKind kind={kind} onAdd={() => props.cards.create(folderOf(kind))} />;
   const noun = shown.length === 1 ? WORDS[kind].one : WORDS[kind].many;
   return (
     <>
@@ -81,12 +108,12 @@ function CardGrid(props: PlanProps & { kind: CardKind }) {
   );
 }
 
-function PlanHeader(props: { tab: CardKind; onTab: (tab: CardKind) => void; onAdd: () => void }) {
+function PlanHeader(props: { tab: PlanTab; onTab: (tab: PlanTab) => void; onAdd: () => void }) {
   return (
     <header className="toolbar">
       <div className="plan-tabs">
         <span className="toolbar-title">Planera</span>
-        {TABS.map(([id, label]) => (
+        {TABS.map(({ id, label }) => (
           <button
             key={id}
             className={id === props.tab ? "plan-tab chosen" : "plan-tab"}
@@ -98,20 +125,36 @@ function PlanHeader(props: { tab: CardKind; onTab: (tab: CardKind) => void; onAd
         ))}
       </div>
       <button className="button primary small" onClick={props.onAdd}>
-        {WORDS[props.tab].add}
+        {TABS.find((each) => each.id === props.tab)?.add}
       </button>
     </header>
   );
 }
 
-/** Planera: an overview of the characters and places, which are written like scenes. */
+function PlanContent(props: PlanProps & { tab: PlanTab }) {
+  const { tab, planning } = props;
+  const onAdd = () => props.cards.create(folderOf(tab));
+  if (tab === "person" || tab === "plats") return <CardGrid {...props} kind={tab} />;
+  const isTimeline = tab === "tidslinje";
+  return (
+    <PlanList
+      {...props}
+      entries={isTimeline ? planning.timeline : planning.notes}
+      words={isTimeline ? TIMELINE_WORDS : NOTES_WORDS}
+      isNumbered={isTimeline}
+      onAdd={onAdd}
+    />
+  );
+}
+
+/** Planera: characters, places, the timeline and notes, all written like scenes. */
 export function PlanView(props: PlanProps) {
-  const [tab, setTab] = useState<CardKind>("person");
+  const [tab, setTab] = useState<PlanTab>("person");
   return (
     <main className="plan-view">
-      <PlanHeader tab={tab} onTab={setTab} onAdd={() => props.cards.create(tab)} />
+      <PlanHeader tab={tab} onTab={setTab} onAdd={() => props.cards.create(folderOf(tab))} />
       <div className="plan-content">
-        <CardGrid {...props} kind={tab} />
+        <PlanContent {...props} tab={tab} />
       </div>
     </main>
   );

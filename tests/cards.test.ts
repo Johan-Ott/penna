@@ -1,6 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { cardsOf, chapterLabel, countMentions, mentionPattern } from "../src/project/cards";
-import { CHARACTERS_ID, PLACES_ID, withSpecialFolders, type TreeNode } from "../src/project/tree";
+import {
+  cardsOf,
+  chapterLabel,
+  countMentions,
+  entriesIn,
+  mentionPattern,
+} from "../src/project/cards";
+import {
+  CHARACTERS_ID,
+  PLACES_ID,
+  TIMELINE_ID,
+  withSpecialFolders,
+  type TreeNode,
+} from "../src/project/tree";
 
 const tree: TreeNode[] = withSpecialFolders([
   { id: "kap1", kind: "chapter", title: "Brevet", children: [{ id: "koket", kind: "scene" }] },
@@ -77,5 +89,31 @@ describe("chapterLabel", () => {
     ];
 
     expect(labels).toEqual(["Kap. 1–8", "Kap. 1, 2, 5, 8", "Inte i manuset än"]);
+  });
+});
+
+describe("entriesIn", () => {
+  it("lists a planning folder's texts in tree order, which is the timeline's order", () => {
+    const timeline = withSpecialFolders([
+      {
+        id: TIMELINE_ID,
+        kind: "folder",
+        children: [
+          { id: "isen", kind: "scene" },
+          { id: "brevet", kind: "scene" },
+        ],
+      },
+    ]);
+    const titles = {
+      isen: summary("1987: Henrik går ut på isen"),
+      brevet: summary("2007: Brevet"),
+    };
+
+    const entries = entriesIn(timeline, titles, TIMELINE_ID);
+
+    expect(entries.map((entry) => entry.title)).toEqual([
+      "1987: Henrik går ut på isen",
+      "2007: Brevet",
+    ]);
   });
 });

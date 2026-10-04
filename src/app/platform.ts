@@ -16,6 +16,8 @@ export interface Platform {
   saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind): Promise<string | null>;
   /** Lets the writer pick a file of the given kinds; its path and bytes, or null if cancelled. */
   pickFile(kind: PickKind): Promise<PickedFile | null>;
+  /** Spellcheck in the book's language; in the app the window restarts when it changes. */
+  setSpellLanguage(language: string): Promise<void>;
 }
 
 /** What the open dialog offers, for example { name: "Bild", extensions: ["jpg", "png"] }. */

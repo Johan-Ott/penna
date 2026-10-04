@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { Card } from "../../project/cards.js";
 import type { useReview } from "./useReview.js";
@@ -11,6 +11,8 @@ interface ReviewPanelProps {
   onOpenCard: (id: string) => void;
   onReplaceAll: (suspect: NameSuspect) => void;
   onIgnore: (word: string) => void;
+  /** Kept open in a narrow window, as while a comment is being written. */
+  isPinnedOpen: boolean;
 }
 
 const NUMBER_WORDS = ["noll", "en", "två", "tre", "fyra", "fem", "sex"];
@@ -79,18 +81,38 @@ function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useRevie
 }
 
 /** Granskning, as in the design: who is in the chapter, and what in the scene to look at again. */
-export function ReviewPanel(props: ReviewPanelProps) {
+function ReviewHeader(props: { review: ReviewPanelProps["review"]; onClose: () => void }) {
   const { review } = props;
   const count = review ? review.suspects.length + review.repeats.length : 0;
   return (
-    <aside className="review-panel" aria-label="Granskning">
-      <div className="review-header">
-        <span className="progress-title">Granskning</span>
-        {review && <span className="kpi-sub">{count === 1 ? "1 sak" : `${count} saker`}</span>}
-      </div>
-      {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
-      {review && <ToLookAt {...props} review={review} />}
-      {props.commentsSection}
-    </aside>
+    <div className="review-header">
+      <span className="progress-title">Granskning</span>
+      {review && <span className="kpi-sub">{count === 1 ? "1 sak" : `${count} saker`}</span>}
+      <button className="link-button quiet review-close" onClick={props.onClose}>
+        Stäng
+      </button>
+    </div>
+  );
+}
+
+// In a narrow window the panel covers the text, so it waits behind a tab until asked for.
+export function ReviewPanel(props: ReviewPanelProps) {
+  const { review } = props;
+  const [isOpen, setOpen] = useState(false);
+  const isShown = isOpen || props.isPinnedOpen;
+  return (
+    <>
+      {!isShown && (
+        <button className="button secondary small review-tab" onClick={() => setOpen(true)}>
+          Granskning
+        </button>
+      )}
+      <aside className={isShown ? "review-panel open" : "review-panel"} aria-label="Granskning">
+        <ReviewHeader review={review} onClose={() => setOpen(false)} />
+        {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
+        {review && <ToLookAt {...props} review={review} />}
+        {props.commentsSection}
+      </aside>
+    </>
   );
 }

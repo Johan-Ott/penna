@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { readProjectFile, writeProjectFile } from "../src/project/projectFile";
-import { CHARACTERS_ID, PLACES_ID, RESEARCH_ID, TRASH_ID } from "../src/project/tree";
+import {
+  CHARACTERS_ID,
+  NOTES_ID,
+  PLACES_ID,
+  RESEARCH_ID,
+  TIMELINE_ID,
+  TRASH_ID,
+} from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const PROJECT_PATH = "/bok/project.json";
@@ -15,6 +22,16 @@ describe("readProjectFile", () => {
     expect(project.tree.map((node) => node.id)).toEqual(["s1"]);
     expect(project.fields).toEqual({ title: "Vintervägen", goal: 90000 });
     expect(project.repairCopy).toBeNull();
+    expect(project.isNewerFormat).toBe(false);
+  });
+
+  it("knows a project saved by a newer Penna, so it can be opened read-only", async () => {
+    const stored = { formatVersion: 2, tree: [{ id: "s1", kind: "scene" }] };
+    const files = createMemoryFileSystem({ [PROJECT_PATH]: JSON.stringify(stored) });
+
+    const project = await readProjectFile(files, "/bok", ["s1"]);
+
+    expect(project.isNewerFormat).toBe(true);
   });
 
   it("starts a tree from the scene files when the folder has no project.json", async () => {
@@ -27,6 +44,8 @@ describe("readProjectFile", () => {
       "s2",
       CHARACTERS_ID,
       PLACES_ID,
+      TIMELINE_ID,
+      NOTES_ID,
       RESEARCH_ID,
       TRASH_ID,
     ]);
@@ -41,12 +60,14 @@ describe("readProjectFile", () => {
       "s1",
       CHARACTERS_ID,
       PLACES_ID,
+      TIMELINE_ID,
+      NOTES_ID,
       RESEARCH_ID,
       TRASH_ID,
     ]);
     expect(project.repairCopy).toMatch(/^project\.json\.trasig-/);
     expect(await files.readText(`/bok/${project.repairCopy ?? ""}`)).toBe('{ "tree": [ trasig');
-    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(5);
+    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(7);
   });
 
   it("treats a tree with invalid nodes as broken", async () => {
@@ -65,7 +86,11 @@ describe("writeProjectFile", () => {
     await writeProjectFile(files, "/bok", { title: "Vintervägen" }, [{ id: "s1", kind: "scene" }]);
 
     const text = await files.readText(PROJECT_PATH);
-    expect(JSON.parse(text)).toEqual({ title: "Vintervägen", tree: [{ id: "s1", kind: "scene" }] });
+    expect(JSON.parse(text)).toEqual({
+      title: "Vintervägen",
+      formatVersion: 1,
+      tree: [{ id: "s1", kind: "scene" }],
+    });
     expect(text).toContain('\n  "tree"');
   });
 });

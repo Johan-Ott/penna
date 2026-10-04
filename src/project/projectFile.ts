@@ -8,7 +8,12 @@ export interface ProjectFile {
   tree: TreeNode[];
   /** File name of the copy kept when project.json could not be read, otherwise null. */
   repairCopy: string | null;
+  /** Saved by a newer Penna: opened read-only, so this version never writes over it. */
+  isNewerFormat: boolean;
 }
+
+// The project.json format this Penna writes. A newer format needs a migration step per version.
+export const FORMAT_VERSION = 1;
 
 const KINDS: NodeKind[] = ["part", "chapter", "scene", "folder"];
 
@@ -45,7 +50,7 @@ export async function writeProjectFile(
   await writeAtomic(
     fileSystem,
     projectPath(dir),
-    `${JSON.stringify({ ...fields, tree }, null, 2)}\n`,
+    `${JSON.stringify({ ...fields, formatVersion: FORMAT_VERSION, tree }, null, 2)}\n`,
   );
 }
 
@@ -60,7 +65,7 @@ async function repair(
   await writeAtomic(fileSystem, joinPath(dir, repairCopy), brokenText);
   const tree = rebuildTree(sceneIds);
   await writeProjectFile(fileSystem, dir, {}, tree);
-  return { fields: {}, tree, repairCopy };
+  return { fields: {}, tree, repairCopy, isNewerFormat: false };
 }
 
 /** Reads project.json. A broken file is kept as a copy and the tree is rebuilt from the scenes. */
@@ -70,8 +75,12 @@ export async function readProjectFile(
   sceneIds: string[],
 ): Promise<ProjectFile> {
   const text = await fileSystem.readText(projectPath(dir)).catch(() => null);
-  if (text === null) return { fields: {}, tree: rebuildTree(sceneIds), repairCopy: null };
+  if (text === null) {
+    return { fields: {}, tree: rebuildTree(sceneIds), repairCopy: null, isNewerFormat: false };
+  }
   const parsed = parseProject(text);
   if (!parsed) return repair(fileSystem, dir, text, sceneIds);
-  return { ...parsed, repairCopy: null };
+  const { formatVersion, ...fields } = parsed.fields;
+  const isNewerFormat = typeof formatVersion === "number" && formatVersion > FORMAT_VERSION;
+  return { fields, tree: parsed.tree, repairCopy: null, isNewerFormat };
 }

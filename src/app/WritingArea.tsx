@@ -15,7 +15,7 @@ import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 import { FocusHeader } from "./FocusHeader.js";
 import type { Today } from "./useWritingStats.js";
-import { SaveToast, TreeFailureToast } from "./SaveToast.js";
+import { ReadOnlyNotice, SaveToast, TreeFailureToast } from "./SaveToast.js";
 import { Toolbar } from "./Toolbar.js";
 import { useEscape, useShortcut } from "./useShortcut.js";
 import type { SettingsChange } from "./useWritingSettings.js";
@@ -25,6 +25,8 @@ interface WritingAreaProps {
   /** The review panel beside the text, or nothing. */
   aside: ReactNode;
   selectionBar: ReactNode;
+  /** Saved by a newer Penna: shown, never written to. */
+  isReadOnly: boolean;
   /** Hidden, not removed, while another view shows: the editor keeps its scene and undo. */
   isHidden: boolean;
   manuscriptSearch: ManuscriptScope;
@@ -73,15 +75,7 @@ function WritingHeader(
       />
     );
   }
-  return (
-    <Toolbar
-      {...props}
-      editorState={props.editor.editorState}
-      run={props.editor.run}
-      wordCount={wordCount}
-      onEnterFocus={props.onToggleFocus}
-    />
-  );
+  return <Toolbar {...props} wordCount={wordCount} onEnterFocus={props.onToggleFocus} />;
 }
 
 // Focus and typewriter only act in the focus mode; CSS dims the text around the cursor.
@@ -172,24 +166,36 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
       {props.selectionBar}
       <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
       <TreeFailureToast failure={props.treeFailure} />
+      <ReadOnlyNotice isReadOnly={props.isReadOnly} />
       {props.replaceToast}
     </>
   );
 }
 
-export function WritingArea(props: WritingAreaProps) {
+// The writing settings switch the editor's modes, which ProseMirror reads on every update.
+function useEditorModes(props: WritingAreaProps) {
   const { editor, settings } = props;
-  const panels = usePanels();
-  useWritingKeys(props, panels);
   const modes = editor.modes.current;
   modes.isTypewriterOn = props.isFocusMode && settings.typewriter;
   modes.isTypographyOn = settings.typography;
   modes.isSpellcheckOn = settings.spellcheck;
+  // The session makes the editor writable when a scene opens; a read-only project takes it back.
+  if (props.isReadOnly) modes.isEditable = false;
   modes.repeatWindow = settings.review ? settings.repeatWindow : null;
   const { run } = editor;
   useEffect(() => run(refreshRepetitions, false), [settings.review, settings.repeatWindow, run]);
   // The spellcheck attribute is read when the view updates, so a change updates it at once.
-  useEffect(() => editor.viewRef.current?.setProps({}), [settings.spellcheck, editor.viewRef]);
+  useEffect(
+    () => editor.viewRef.current?.setProps({}),
+    [settings.spellcheck, props.isReadOnly, props.hasScene, editor.viewRef],
+  );
+}
+
+export function WritingArea(props: WritingAreaProps) {
+  const { editor } = props;
+  const panels = usePanels();
+  useWritingKeys(props, panels);
+  useEditorModes(props);
   const { focusIfRequested } = editor;
   useEffect(() => focusIfRequested(), [props.hasScene, focusIfRequested]);
   return (

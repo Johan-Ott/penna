@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
 import { AboutTab, ShortcutsTab } from "./infoTabs.js";
-import { EditorTab, GeneralTab, SnapshotsTab, type TabProps } from "./settingsTabs.js";
+import { GeneralTab } from "./generalTab.js";
+import { EditorTab, SnapshotsTab, type TabProps } from "./settingsTabs.js";
 
 const TABS: [string, (props: TabProps) => ReactNode][] = [
   ["Allmänt", GeneralTab],

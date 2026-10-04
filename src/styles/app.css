@@ -196,7 +196,6 @@ button {
 }
 
 .toolbar-actions,
-.toolbar-group,
 .save-indicator {
   display: flex;
   align-items: center;
@@ -204,12 +203,6 @@ button {
 
 .toolbar-actions {
   gap: 16px;
-}
-
-.toolbar-group {
-  gap: 2px;
-  padding-right: 12px;
-  border-right: 1px solid var(--border-soft);
 }
 
 .icon-button {
@@ -828,10 +821,6 @@ button {
 .style-picker:hover,
 .style-picker[aria-expanded="true"] {
   background: var(--surface-hover);
-}
-
-.icon-button.quote {
-  font: 16px var(--font-prose);
 }
 
 .toolbar .button.secondary {
@@ -2313,9 +2302,41 @@ button.book-cover:hover {
 }
 
 /* On a narrow window the text needs the room more than the panel does. */
-@media (max-width: 1100px) {
-  .review-panel {
+.review-tab,
+.review-close {
+  display: none;
+}
+
+/* Under 1200 px the review panel lies over the text instead of beside it. */
+@media (max-width: 1199px) {
+  .writing-body {
+    position: relative;
+  }
+
+  .review-panel:not(.open) {
     display: none;
+  }
+
+  .review-tab {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    display: block;
+  }
+
+  .review-close {
+    display: inline;
+  }
+
+  .review-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background: var(--bg);
+    box-shadow: var(--shadow-dialog);
   }
 }
 
@@ -2398,4 +2419,182 @@ button.book-cover:hover {
   border-radius: var(--radius-card);
   background: var(--bg);
   box-shadow: var(--shadow-dialog);
+}
+
+.settings-select {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+}
+
+/* Planera's Tidslinje and Anteckningar: one row per text, numbered on the timeline. */
+.plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  text-align: left;
+}
+
+.plan-row:hover {
+  background: var(--bg-subtle);
+}
+
+.plan-number {
+  min-width: 20px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.export-part {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.part-text {
+  width: 100%;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+/* Under 960 px the sidebar folds away; Ctrl+. shows it over the text. */
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 959px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .app > .sidebar {
+    display: none;
+  }
+
+  .app.sidebar-open > .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    display: flex;
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-dialog);
+  }
+
+  .app.sidebar-open > .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    display: block;
+  }
+}
+
+/* Bokdesign: the book's look on the left, its first pages as Typst sets them on the right. */
+.design-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.design-columns {
+  display: grid;
+  flex-grow: 1;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  min-height: 0;
+}
+
+.design-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-soft);
+}
+
+.design-settings .settings-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.theme-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-card);
+}
+
+.theme-sample {
+  font: 600 16px var(--font-prose);
+}
+
+.design-styles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.design-style {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.print-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  overflow-y: auto;
+  background: var(--bg-subtle);
+}
+
+.print-pages svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
+/* The printed page is white in both themes, as paper is. */
+.print-sheet {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+
+.export-backup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 24px;
 }

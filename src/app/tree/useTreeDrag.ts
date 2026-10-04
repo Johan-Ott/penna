@@ -1,5 +1,6 @@
 import { useState, type DragEvent } from "react";
-import { dropMove, type DropPosition, type TreeNode, type TreeRow } from "../../project/tree.js";
+import type { TreeNode } from "../../project/tree.js";
+import { dropMove, type DropPosition, type TreeRow } from "../../project/treeRows.js";
 
 interface DropTarget {
   id: string;

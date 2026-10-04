@@ -11,6 +11,8 @@ import {
   renameNode,
   withSpecialFolders,
   CHARACTERS_ID,
+  NOTES_ID,
+  TIMELINE_ID,
   PLACES_ID,
   RESEARCH_ID,
   TRASH_ID,
@@ -37,13 +39,15 @@ const childIds = (tree: TreeNode[], id: string) =>
   findNode(tree, id)?.node.children?.map((child) => child.id);
 
 describe("special folders", () => {
-  it("always ends the tree with Karaktärer, Platser, Research and Papperskorg", () => {
+  it("always ends the tree with the planning folders, Research and Papperskorg", () => {
     const tree = withSpecialFolders([scene("s1")]);
 
     expect(tree.map((node) => node.id)).toEqual([
       "s1",
       CHARACTERS_ID,
       PLACES_ID,
+      TIMELINE_ID,
+      NOTES_ID,
       RESEARCH_ID,
       TRASH_ID,
     ]);
@@ -56,7 +60,7 @@ describe("special folders", () => {
 
     const twice = withSpecialFolders(withNote);
 
-    expect(twice.length).toBe(5);
+    expect(twice.length).toBe(7);
     expect(childIds(twice, RESEARCH_ID)).toEqual(["s9"]);
   });
 });
@@ -146,6 +150,8 @@ describe("scenes on disk", () => {
       "s4",
       CHARACTERS_ID,
       PLACES_ID,
+      TIMELINE_ID,
+      NOTES_ID,
       RESEARCH_ID,
       TRASH_ID,
     ]);
@@ -166,6 +172,8 @@ describe("scenes on disk", () => {
       "01B",
       CHARACTERS_ID,
       PLACES_ID,
+      TIMELINE_ID,
+      NOTES_ID,
       RESEARCH_ID,
       TRASH_ID,
     ]);

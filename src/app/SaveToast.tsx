@@ -33,6 +33,16 @@ export function TreeFailureToast({ failure }: { failure: SaveFailure | null }) {
   );
 }
 
+export function ReadOnlyNotice({ isReadOnly }: { isReadOnly: boolean }) {
+  if (!isReadOnly) return null;
+  return (
+    <div className="toast" role="status">
+      <span>Projektet är sparat av en nyare version av Penna och går bara att läsa.</span>
+      <span className="toast-meta">Uppdatera Penna för att skriva i det</span>
+    </div>
+  );
+}
+
 const TOAST_MS = 8000;
 
 /** "Ändrade 3 förekomster av ”Sjöbergh”" after replacing in the whole manuscript, with Ångra. */

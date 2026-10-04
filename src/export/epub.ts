@@ -1,19 +1,26 @@
 import JSZip from "jszip";
 import type { Node } from "prosemirror-model";
-import { romanNumeral } from "../project/treeLabels.js";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
+import { backPages, frontPages, type BookExtras, type Page } from "./bookParts.js";
+import { bookWords, headingLabel } from "./bookWords.js";
 import { epubCover } from "./epubCover.js";
 import { escapeXml, sceneXhtml, xhtmlPage } from "./xhtml.js";
+
+export type { BookExtras };
 
 export interface EpubInput {
   book: BookDetails;
   outline: OutlineItem[];
   scenes: Map<string, Node>;
   typography: Typography;
+  /** A language tag such as "sv-SE". */
+  language: string;
   /** Stays the same between exports of a book, so readers know it is the same book. */
   identifier: string;
   modified: Date;
   parts: { hasTitlePage: boolean; hasCopyrightPage: boolean; hasContents: boolean };
+  /** Dedication, thanks and about the author: only the parts the writer chose, with text. */
+  extras: BookExtras;
   /** The writer's own picture; without one the book gets a typographic cover. */
   cover?: { type: "jpeg" | "png"; bytes: Uint8Array };
 }
@@ -25,15 +32,6 @@ function coverFile({ cover, book }: EpubInput) {
   return { name, mediaType: `image/${cover.type}`, content: cover.bytes };
 }
 
-/** One XHTML file in the book; `tocLabel` puts it in the table of contents. */
-interface Page {
-  id: string;
-  title: string;
-  body: string;
-  tocLabel?: string;
-}
-
-const LANGUAGE = "sv";
 // Items in the package document go on lines of their own, indented under their parent.
 const LIST_SEPARATOR = "\n    ";
 
@@ -48,25 +46,25 @@ div.brev, div.citat, div.dikt, div.meddelande { margin: 1em 2em; }
 div.brev p, div.citat p, div.dikt p, div.meddelande p { text-indent: 0; }
 .title-page, .copyright { text-align: center; text-indent: 0; }
 .title-page h1 { font-size: 2em; margin-top: 30%; }
+.dedication { text-align: center; text-indent: 0; font-style: italic; margin-top: 30%; }
 .cover { margin: 0; padding: 0; text-align: center; }
 .cover img { height: 100%; max-width: 100%; }`;
 
-function heading(item: Extract<OutlineItem, { kind: "part" | "chapter" }>) {
-  const label =
-    item.kind === "part" ? `Del ${romanNumeral(item.number)}` : `Kapitel ${item.number}`;
+function heading(item: Extract<OutlineItem, { kind: "part" | "chapter" }>, language: string) {
+  const label = headingLabel(item, language);
   const tocLabel = item.title ? `${label}. ${item.title}` : label;
   const title = item.title ? `<br />${escapeXml(item.title)}` : "";
   return { label, tocLabel, html: `<h1><span class="label">${label}</span>${title}</h1>` };
 }
 
 // A part or chapter starts a new file; scenes before the first chapter open the book.
-function textPages({ outline, scenes, typography, book }: EpubInput): Page[] {
+function textPages({ outline, scenes, typography, book, language }: EpubInput): Page[] {
   const pages: Page[] = [];
   let current: Page | null = null;
   let previous: OutlineItem["kind"] | null = null;
   for (const item of outline) {
     if (item.kind !== "scene") {
-      const { label, tocLabel, html } = heading(item);
+      const { label, tocLabel, html } = heading(item, language);
       current = { id: `${item.kind}-${item.number}`, title: label, body: html, tocLabel };
       pages.push(current);
     } else {
@@ -80,45 +78,17 @@ function textPages({ outline, scenes, typography, book }: EpubInput): Page[] {
   return pages;
 }
 
-function frontPages(input: EpubInput): Page[] {
-  const { book, parts, modified } = input;
-  const pages: Page[] = [
-    {
-      id: "cover",
-      title: book.title,
-      body: `<div class="cover"><img src="../${coverFile(input).name}" alt="Omslag" /></div>`,
-    },
-  ];
-  if (parts.hasTitlePage) {
-    const subtitle = book.subtitle ? `<p class="title-page">${escapeXml(book.subtitle)}</p>` : "";
-    const author = book.author ? `<p class="title-page">${escapeXml(book.author)}</p>` : "";
-    pages.push({
-      id: "title",
-      title: book.title,
-      body: `<h1 class="title-page">${escapeXml(book.title)}</h1>${subtitle}${author}`,
-    });
-  }
-  if (parts.hasCopyrightPage) {
-    const owner = escapeXml(book.author || book.title);
-    pages.push({
-      id: "copyright",
-      title: "Upphovsrätt",
-      body: `<p class="copyright">© ${modified.getUTCFullYear()} ${owner}</p>\n<p class="copyright">Alla rättigheter förbehållna.</p>`,
-    });
-  }
-  return pages;
-}
-
-function navPage(pages: Page[]) {
+function navPage(pages: Page[], language: string) {
   const items = pages
     .filter((page) => page.tocLabel)
     .map((page) => `<li><a href="text/${page.id}.xhtml">${escapeXml(page.tocLabel ?? "")}</a></li>`)
     .join("\n");
-  const body = `<nav epub:type="toc" id="toc">\n<h1>Innehåll</h1>\n<ol>\n${items}\n</ol>\n</nav>`;
-  return xhtmlPage("Innehåll", body, LANGUAGE).replace('href="../style.css"', 'href="style.css"');
+  const { contents } = bookWords(language);
+  const body = `<nav epub:type="toc" id="toc">\n<h1>${contents}</h1>\n<ol>\n${items}\n</ol>\n</nav>`;
+  return xhtmlPage(contents, body, language).replace('href="../style.css"', 'href="style.css"');
 }
 
-function metadata({ book, identifier, modified }: EpubInput) {
+function metadata({ book, identifier, modified, language }: EpubInput) {
   const stamp = `${modified.toISOString().slice(0, 19)}Z`;
   const creator = book.author
     ? `
@@ -127,7 +97,7 @@ function metadata({ book, identifier, modified }: EpubInput) {
   return `  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="book-id">${escapeXml(identifier)}</dc:identifier>
     <dc:title>${escapeXml(book.title)}</dc:title>${creator}
-    <dc:language>${LANGUAGE}</dc:language>
+    <dc:language>${language}</dc:language>
     <meta property="dcterms:modified">${stamp}</meta>
   </metadata>`;
 }
@@ -151,7 +121,7 @@ function packageDocument(input: EpubInput, front: Page[], text: Page[]) {
     )
     .join(LIST_SEPARATOR);
   return `<?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="${LANGUAGE}">
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="${input.language}">
 ${metadata(input)}
   <manifest>
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
@@ -176,18 +146,18 @@ const CONTAINER = `<?xml version="1.0" encoding="UTF-8"?>
 
 /** The book as EPUB 3, built whole in memory. The mimetype goes first and uncompressed. */
 export async function buildEpub(input: EpubInput): Promise<Uint8Array> {
-  const front = frontPages(input);
-  const text = textPages(input);
+  const front = frontPages({ ...input, coverName: coverFile(input).name });
+  const text = [...textPages(input), ...backPages(input.extras, input.language)];
   const zip = new JSZip();
   zip.file("mimetype", "application/epub+zip", { compression: "STORE" });
   zip.file("META-INF/container.xml", CONTAINER);
   zip.file("OEBPS/content.opf", packageDocument(input, front, text));
-  zip.file("OEBPS/nav.xhtml", navPage(text));
+  zip.file("OEBPS/nav.xhtml", navPage(text, input.language));
   zip.file("OEBPS/style.css", STYLE);
   const cover = coverFile(input);
   zip.file(`OEBPS/${cover.name}`, cover.content);
   for (const page of [...front, ...text]) {
-    zip.file(`OEBPS/text/${page.id}.xhtml`, xhtmlPage(page.title, page.body, LANGUAGE));
+    zip.file(`OEBPS/text/${page.id}.xhtml`, xhtmlPage(page.title, page.body, input.language));
   }
   return zip.generateAsync({ type: "uint8array", compression: "DEFLATE" });
 }

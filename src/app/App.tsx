@@ -4,8 +4,10 @@ import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
 import { Sidebar } from "./Sidebar.js";
 import { OtherViews } from "./OtherViews.js";
+import { CHARACTERS_ID } from "../project/tree.js";
 import { usePlanning } from "./planning/usePlanning.js";
 import { useComments } from "./review/useComments.js";
+import { useSpellLanguage } from "./useSpellLanguage.js";
 import { useMentionLinks } from "./planning/useMentionLinks.js";
 import { cardActions, type CardActions } from "./planning/cardActions.js";
 import { useProject, type Project } from "./useProject.js";
@@ -39,7 +41,7 @@ function planningCommands({ planning, cards }: AppParts) {
   return {
     cards: planning.cards,
     openCard: cards.open,
-    newCharacter: () => cards.create("person"),
+    newCharacter: () => cards.create(CHARACTERS_ID),
   };
 }
 
@@ -105,6 +107,7 @@ function useCoreState() {
   const { project, open, refresh, updateTree } = projectState;
   const startup = useStartup(open, project?.dir ?? null);
   useOpenFirstScene(project, session, sceneState.editor.requestFocus);
+  useSpellLanguage(project, session);
   const actions = useProjectActions({ project, session, updateTree, refresh });
   const author = startup.preferences.authorName;
   const comments = useComments({
@@ -171,9 +174,12 @@ export function App() {
   const { project } = app;
   if (app.startup.isStarting) return <div className="app-starting" />;
   if (!project) return <StartScreen app={app} />;
+  const { isFocusMode, isSidebarOpen, setSidebarOpen } = app.writingMode;
+  const classes = ["app", isFocusMode && "focus-mode", isSidebarOpen && "sidebar-open"];
   return (
-    <div className={app.writingMode.isFocusMode ? "app focus-mode" : "app"}>
+    <div className={classes.filter(Boolean).join(" ")}>
       <Sidebar {...sidebarProps(app, project)} />
+      <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
       <WritingArea {...writingAreaProps(app, project)} />
       <OtherViews app={app} project={project} />
       <Overlays app={app} />

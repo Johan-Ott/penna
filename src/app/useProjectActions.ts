@@ -3,7 +3,9 @@ import {
   CHARACTERS_ID,
   insertAfter,
   insertNode,
+  NOTES_ID,
   PLACES_ID,
+  TIMELINE_ID,
   type NodeKind,
   type TreeNode,
 } from "../project/tree.js";
@@ -36,11 +38,17 @@ const NEW_TITLES: Record<NodeKind, string> = {
 };
 
 // A scene made in Karaktärer or Platser is a card, and is named like one.
+// A new text in a planning folder is named for what it is.
+const PLAN_TITLES: Record<string, string> = {
+  [CHARACTERS_ID]: "Ny karaktär",
+  [PLACES_ID]: "Ny plats",
+  [TIMELINE_ID]: "Ny händelse",
+  [NOTES_ID]: "Ny anteckning",
+};
+
 function newSceneTitle(placement: Placement) {
-  if (placement && "inside" in placement && placement.inside === CHARACTERS_ID)
-    return "Ny karaktär";
-  if (placement && "inside" in placement && placement.inside === PLACES_ID) return "Ny plats";
-  return NEW_TITLES.scene;
+  const folder = placement && "inside" in placement ? placement.inside : "";
+  return PLAN_TITLES[folder] ?? NEW_TITLES.scene;
 }
 
 // Without a placement, a scene goes after the open scene and a chapter after the chapter
@@ -84,22 +92,22 @@ function useSceneFileActions({
   return { renameSceneTitle, setStatus };
 }
 
+// A scene gets its file first; a part, chapter or folder lives only in the tree.
+async function newNode(dir: string, kind: NodeKind, placement: Placement): Promise<TreeNode> {
+  if (kind !== "scene") return { id: newSceneId(), kind, title: NEW_TITLES[kind], children: [] };
+  return { id: await createScene(platform.fileSystem, dir, newSceneTitle(placement)), kind };
+}
+
 /** Creating and renaming things in the project: scene files and the tree in project.json. */
 export function useProjectActions({ project, session, updateTree, refresh }: ProjectActionsInput) {
   // Returns the new node's id, so the tree can start renaming it.
   const newItem = useCallback(
     async (kind: NodeKind, placement: Placement = null) => {
-      if (!project) return null;
-      const isScene = kind === "scene";
-      const id = isScene
-        ? await createScene(platform.fileSystem, project.dir, newSceneTitle(placement))
-        : newSceneId();
-      const node: TreeNode = isScene
-        ? { id, kind }
-        : { id, kind, title: NEW_TITLES[kind], children: [] };
+      if (!project || project.isReadOnly) return null;
+      const node = await newNode(project.dir, kind, placement);
       await updateTree(place(project.tree, node, placement, session.scene?.id ?? null));
-      if (isScene) await refresh().then(() => openScene(session, project.dir, id));
-      return id;
+      if (kind === "scene") await refresh().then(() => openScene(session, project.dir, node.id));
+      return node.id;
     },
     [project, session, updateTree, refresh],
   );

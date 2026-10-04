@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import { bookOutline, readBookScenes } from "../src/export/book";
-import { buildEpub } from "../src/export/epub";
+import { buildEpub, type BookExtras } from "../src/export/epub";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
@@ -26,7 +26,7 @@ const FILES = {
 };
 const BOOK = { title: "Vintervägen", subtitle: "Roman", author: "Elin Berg", words: 1200 };
 
-async function build() {
+async function build(language = "sv-SE", extras: BookExtras = {}) {
   const files = createMemoryFileSystem(FILES);
   const outline = bookOutline(tree);
   const ids = outline.flatMap((item) => (item.kind === "scene" ? [item.id] : []));
@@ -36,6 +36,8 @@ async function build() {
     outline,
     scenes,
     typography: "svensk",
+    language,
+    extras,
     identifier: "urn:uuid:3f1c2a64-0d5e-4b7a-9a1e-6c2b8d4e5f70",
     modified: new Date("2026-10-03T12:00:00Z"),
     parts: { hasTitlePage: true, hasCopyrightPage: true, hasContents: true },
@@ -46,6 +48,37 @@ async function build() {
 const read = (zip: JSZip, path: string) => zip.file(path)?.async("string") ?? Promise.resolve("");
 
 describe("buildEpub", () => {
+  it("adds the dedication after the copyright page, and thanks and the author at the end", async () => {
+    const extras = {
+      dedication: "Till Henrik",
+      thanks: "Tack till Maja.",
+      about: "Elin Berg bor på Gotland.\n\nVintervägen är hennes första roman.",
+    };
+
+    const { zip } = await build("sv-SE", extras);
+
+    const opf = await read(zip, "OEBPS/content.opf");
+    const order = ["copyright", "dedication", "nav", "chapter-2", "thanks", "about"];
+    const positions = order.map((id) => opf.indexOf(`<itemref idref="${id}"`));
+    expect(positions).toEqual([...positions].sort((first, second) => first - second));
+    expect(await read(zip, "OEBPS/text/dedication.xhtml")).toContain("Till Henrik");
+    const about = await read(zip, "OEBPS/text/about.xhtml");
+    expect(about).toContain("<h1>Om författaren</h1>");
+    expect(about).toContain("<p>Vintervägen är hennes första roman.</p>");
+  });
+
+  it("gives the book the project's language", async () => {
+    const { zip } = await build("en-GB");
+
+    const opf = await read(zip, "OEBPS/content.opf");
+
+    expect(opf).toContain("<dc:language>en-GB</dc:language>");
+    expect(opf).toContain('xml:lang="en-GB"');
+    expect(await read(zip, "OEBPS/nav.xhtml")).toContain("<h1>Contents</h1>");
+    expect(await read(zip, "OEBPS/text/chapter-1.xhtml")).toContain("Chapter 1");
+    expect(await read(zip, "OEBPS/text/copyright.xhtml")).toContain("All rights reserved.");
+  });
+
   it("starts with an uncompressed mimetype, as EPUB readers require", async () => {
     const { bytes } = await build();
 
@@ -62,7 +95,7 @@ describe("buildEpub", () => {
     expect(container).toContain('full-path="OEBPS/content.opf"');
     expect(opf).toContain("<dc:title>Vintervägen</dc:title>");
     expect(opf).toContain("<dc:creator>Elin Berg</dc:creator>");
-    expect(opf).toContain("<dc:language>sv</dc:language>");
+    expect(opf).toContain("<dc:language>sv-SE</dc:language>");
     expect(opf).toContain("2026-10-03T12:00:00Z");
     expect(opf).toContain('properties="cover-image"');
     const spine = [...opf.matchAll(/<itemref idref="([^"]+)"/g)].map((match) => match[1]);
@@ -125,6 +158,8 @@ describe("buildEpub with a cover picture", () => {
       outline,
       scenes,
       typography: "svensk",
+      language: "sv-SE",
+      extras: {},
       identifier: "urn:uuid:3f1c2a64-0d5e-4b7a-9a1e-6c2b8d4e5f70",
       modified: new Date("2026-10-03T12:00:00Z"),
       parts: { hasTitlePage: false, hasCopyrightPage: false, hasContents: false },

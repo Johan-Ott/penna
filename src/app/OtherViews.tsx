@@ -1,4 +1,5 @@
 import type { AppState } from "./App.js";
+import { BookDesignView } from "./bookdesign/BookDesignView.js";
 import { ExportView } from "./exporting/ExportView.js";
 import { PlanView } from "./planning/PlanView.js";
 import { ProgressView } from "./progress/ProgressView.js";
@@ -22,6 +23,12 @@ export function OtherViews({ app, project }: { app: AppState; project: Project }
   }
   if (view === "framsteg") {
     return <ProgressView project={project} stats={app.stats} onSaveGoals={saveFields} />;
+  }
+  if (view === "bokdesign") {
+    const generalAuthor = app.startup.preferences.authorName;
+    return (
+      <BookDesignView project={project} generalAuthor={generalAuthor} onSaveFields={saveFields} />
+    );
   }
   if (view !== "exportera") return null;
   return (

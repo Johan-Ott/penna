@@ -72,7 +72,7 @@ describe("readBookScenes", () => {
 });
 
 describe("standardManuscript", () => {
-  async function build(typography: "svensk" | "engelsk" = "svensk") {
+  async function build(typography: "svensk" | "engelsk" = "svensk", language = "sv-SE") {
     const files = createMemoryFileSystem(FILES);
     const scenes = await readBookScenes(files, "/bok", ["01KOKET", "01ISEN"], {});
     const book = { title: "Vintervägen", subtitle: "Roman", author: "Elin Berg", words: 48_210 };
@@ -81,6 +81,7 @@ describe("standardManuscript", () => {
       outline: bookOutline(tree),
       scenes,
       typography,
+      language,
       hasTitlePage: true,
     });
   }
@@ -95,6 +96,18 @@ describe("standardManuscript", () => {
     expect(xml).toContain("<w:i/>");
     expect(xml).toContain("* * *");
     expect(xml).toContain("Sedan tystnad.");
+  });
+
+  it("prints its fixed words in the book's language", async () => {
+    const bytes = await build("engelsk", "en-GB");
+    const xml = await documentXml(bytes);
+    const styles = await documentXml(bytes, "word/styles.xml");
+
+    expect(xml).toContain("Part I");
+    expect(xml).toContain("Chapter 1");
+    expect(xml).toContain("approx. 48,200 words");
+    expect(xml).toContain("by Elin Berg");
+    expect(styles).toContain('w:lang w:val="en-GB"');
   });
 
   it("has a title page with author, word count and title, and the standard page set-up", async () => {

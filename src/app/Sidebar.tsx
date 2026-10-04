@@ -15,11 +15,12 @@ interface SidebarProps extends TreeViewProps {
 }
 
 /** The views of an open project. Bokdesign joins when it is built. */
-export type View = "skriv" | "planera" | "framsteg" | "exportera";
+export type View = "skriv" | "planera" | "framsteg" | "bokdesign" | "exportera";
 export const VIEWS: [View, string, string][] = [
   ["skriv", "Skriv", "G S"],
   ["planera", "Planera", "G P"],
   ["framsteg", "Framsteg", "G F"],
+  ["bokdesign", "Bokdesign", "G B"],
   ["exportera", "Exportera", "G E"],
 ];
 

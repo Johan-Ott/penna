@@ -4,7 +4,7 @@ import { InputRule, inputRules, undoInputRule } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { Fragment, type Node } from "prosemirror-model";
 import { search } from "prosemirror-search";
-import { EditorState } from "prosemirror-state";
+import { EditorState, TextSelection } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
@@ -22,6 +22,16 @@ export function typographyRules(isOn: () => boolean): InputRule[] {
     );
   return [rule(/--$/, "–"), rule(/\.\.\.$/, "…"), rule(/"$/, "”"), rule(/'$/, "’")];
 }
+
+// *** alone on a line becomes a scene break, with an empty paragraph after it to write on.
+const sceneBreakRule = new InputRule(/^\*\*\*$/, (state, _match, start, end) => {
+  const $start = state.doc.resolve(start);
+  if (end !== $start.end() || $start.parent.type !== schema.nodes.paragraph) return null;
+  const before = $start.before();
+  const replacement = [schema.nodes.sceneBreak.create(), schema.nodes.paragraph.create()];
+  const transaction = state.tr.replaceWith(before, $start.after(), replacement);
+  return transaction.setSelection(TextSelection.create(transaction.doc, before + 2));
+});
 
 /** What the app can switch while the writer types; ProseMirror asks on every update. */
 export interface EditorSwitches {
@@ -66,7 +76,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
     plugins: [
       history(),
       search(),
-      inputRules({ rules: typographyRules(switches.isTypographyOn) }),
+      inputRules({ rules: [sceneBreakRule, ...typographyRules(switches.isTypographyOn)] }),
       writingKeys,
       keymap(baseKeymap),
       focusPlugin(),

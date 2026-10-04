@@ -56,5 +56,10 @@ Vintervägen.penna/
   strukturen, Karaktärer och Platser, i stället för poster i `entities.json`. De skrivs, flyttas
   och slängs som scener. Titeln är namnet som Penna letar efter i texten. Alias, relationer och
   andra fält läggs till senare, när de behövs. Skäl: allt är prosa, grunden först.
+- Tidslinje och Anteckningar följer samma regel: två fasta mappar i strukturen med vanliga
+  scenfiler, i stället för `notes/`. Tidslinjens ordning är trädets ordning.
+- Typst körs som WebAssembly i webbvyn, inte inbäddat via Rust. Förhandsvisningen och PDF:en
+  kommer då från samma kompilering, och allt kan provas utan Tauri-fönstret. Kostnad: cirka
+  28 MB WASM i appen, som bara laddas när en bok sätts.
 - Ett svar på en kommentar är en egen kommentar med fältet `replyTo` (kommentarens id) och
   inget citat. Specens kommentarsmodell har inget fält för svar.

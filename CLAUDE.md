@@ -71,6 +71,16 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   writer picks a picture (`cover.jpg`/`cover.png` in the project folder, `project/cover.ts`; an
   older picture goes to trash/). The book id (ISBN, else `bookId` in project.json) stays between exports.
   Check an exported book with W3C epubcheck (needs Java): `java -jar epubcheck.jar bok.epub`.
+- Print PDF and Bokdesign use Typst as WebAssembly in the web view (a decided change from the
+  spec's Rust, see docs/spec.md), so the preview and the PDF come from one compilation path.
+  `export/typstText.ts` turns scenes into Typst markup (every code character escaped),
+  `typstTemplate.ts` is the Klassisk theme, `typstBook.ts` puts the book together and
+  `typstCompile.ts` runs Typst with assets passed in: fetched in the app (`app/typstAssets.ts`),
+  read from disk in tests. Fonts are static TTFs in `public/fonts` with their OFL licences; Typst
+  never loads fonts from the internet. The design lives in project.json `design` (`bookDesign.ts`).
+  The pages around the story are in `export/bookParts.ts`: cover, title, copyright and dedication
+  before, thanks and about the author after. Their texts are `dedication`, `thanks` and
+  `aboutAuthor` in project.json, written in Exportera when the part is ticked.
 - Import lives in `src/import/`, used by onboarding's Importera. Every format becomes Markdown and
   then a book (`ImportedNode[]`, `markdownImport.ts`): with two heading levels the top is parts and
   the next chapters, deeper headings name scenes, and `***` splits scenes. DOCX goes through
@@ -81,6 +91,8 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   (`project/cards.ts`; a decided change from the spec's entities.json, see docs/spec.md). The
   title is the name. Planera (G P) is only an overview of those folders; mentions are counted
   from the titles in the manuscript text, never stored. The palette finds them too.
+  Tidslinje and Anteckningar are two more fixed folders of scene files (`entriesIn`), listed in
+  Planera in tree order (`planning/PlanList.tsx`); the timeline is reordered by dragging in the tree.
 - Names of cards are underlined in the open scene by a decoration plugin (`editor/mentions.ts`);
   nothing is written into the scene file. The editor only gets `{ id, pattern }` pairs from
   `useMentionLinks`; a click shows `MentionCard` with how the card's text begins.
@@ -95,8 +107,21 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   review panel (`app/review/`), which appears when Granskning is on or the scene has comments.
   `useComments` lives in the app state, so the selection bar (`SelectionBar.tsx`: bold, italic,
   style, comment) reaches it too. Right-click keeps the system menu for its spelling suggestions.
-- Spellcheck uses WebView2's language, set by `--lang` in tauri.conf.json's additionalBrowserArgs
-  (WebView2 otherwise follows the Windows display language, not the page's `lang`).
+- The book's language is `language` in project.json (`project/bookLanguage.ts`, Swedish by
+  default): spellcheck, the EPUB's and the DOCX's language, the export's starting quote style and
+  the fixed words both formats print (`export/bookWords.ts`: Kapitel, Innehåll, "ca … ord").
+  A new language is one entry in `BOOK_LANGUAGES` and one in `bookWords.ts`. WebView2 takes its dictionary from `--lang` when
+  the window starts, not from the page's `lang`, so Rust creates the window (`main.rs`, the config
+  window has `create: false`) with the language in `spell-language.txt` in the app config folder.
+  `set_spell_language` saves a new one and restarts; `useSpellLanguage` calls it as a book opens.
+- project.json carries `formatVersion` (`FORMAT_VERSION` in `projectFile.ts`, now 1), stamped on
+  every write. A newer one opens read-only (`project.isReadOnly`): no project.json writes, no new
+  scenes, the editor not editable. When format 2 comes, add its migration step in `readProjectFile`.
+- Narrow windows are CSS only (end of `app.css`): under 1200 px the review panel waits behind a
+  tab and covers the text when opened; under 960 px the sidebar folds away and Ctrl+. shows it
+  (`isSidebarOpen` in `useWritingMode`). The smallest window is 720 × 500.
+- The top bar has no formatting buttons: bold, italic and style are on the selection bar, a scene
+  break is typed as `***` on an empty line (an input rule in `editorState.ts`) or Ctrl+Enter.
 - Editor switches (typewriter, typography, spellcheck, mentions, repetitions, comments) are one
   object, `editor.modes.current`, read by ProseMirror on every update.
 - Tauri may read and write under $HOME and $DOCUMENT without a dialog (capabilities), and

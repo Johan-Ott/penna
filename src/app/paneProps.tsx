@@ -56,6 +56,7 @@ export function sidebarProps(app: AppState, project: Project) {
 export function writingAreaProps(app: AppState, project: Project) {
   return {
     editor: app.editor,
+    isReadOnly: project.isReadOnly,
     isHidden: app.writingMode.view !== "skriv",
     ...sceneHeadings(project, app.scene),
     ...app.writingMode,

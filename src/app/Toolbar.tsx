@@ -1,69 +1,12 @@
-import type { Command, EditorState } from "prosemirror-state";
-import type { ReactNode } from "react";
-import {
-  currentStyle,
-  insertSceneBreak,
-  isMarkActive,
-  toggleBold,
-  toggleItalic,
-  toggleQuote,
-} from "../editor/commands.js";
 import type { SaveStatus } from "../storage/autosave.js";
-import { StylePicker } from "./StylePicker.js";
 
 interface ToolbarProps {
-  editorState: EditorState | null;
-  run: (command: Command) => void;
   saveStatus: SaveStatus | null;
   wordCount: number;
   breadcrumb: string[];
   isSettingsOpen: boolean;
   onToggleSettings: () => void;
   onEnterFocus: () => void;
-}
-
-type FormatProps = Pick<ToolbarProps, "editorState" | "run">;
-
-export function MarkButton(props: FormatProps & { mark: "bold" | "italic"; label: string }) {
-  const isPressed = props.editorState !== null && isMarkActive(props.editorState, props.mark);
-  const command = props.mark === "bold" ? toggleBold : toggleItalic;
-  return (
-    <button
-      className={`icon-button ${props.mark}`}
-      aria-label={props.label}
-      aria-pressed={isPressed}
-      onClick={() => props.run(command)}
-    >
-      {props.mark === "bold" ? "B" : "I"}
-    </button>
-  );
-}
-
-// The settings button sits last in the group, as in the design.
-function FormatButtons(props: FormatProps & { settingsButton: ReactNode }) {
-  return (
-    <div className="toolbar-group" role="toolbar" aria-label="Formatering">
-      <MarkButton {...props} mark="bold" label="Fetstil (Ctrl+B)" />
-      <MarkButton {...props} mark="italic" label="Kursiv (Ctrl+I)" />
-      <StylePicker {...props} />
-      <button
-        className="icon-button quote"
-        aria-label="Citat"
-        aria-pressed={props.editorState !== null && currentStyle(props.editorState) === "citat"}
-        onClick={() => props.run(toggleQuote)}
-      >
-        ”
-      </button>
-      <button
-        className="icon-button"
-        aria-label="Scenbrytning (Ctrl+Enter)"
-        onClick={() => props.run(insertSceneBreak)}
-      >
-        * * *
-      </button>
-      {props.settingsButton}
-    </div>
-  );
 }
 
 function SaveIndicator({ saveStatus }: { saveStatus: SaveStatus | null }) {
@@ -106,13 +49,7 @@ export function Toolbar(props: ToolbarProps) {
         ))}
       </nav>
       <div className="toolbar-actions">
-        <FormatButtons
-          editorState={props.editorState}
-          run={props.run}
-          settingsButton={
-            <SettingsButton isOpen={props.isSettingsOpen} onToggle={props.onToggleSettings} />
-          }
-        />
+        <SettingsButton isOpen={props.isSettingsOpen} onToggle={props.onToggleSettings} />
         <ToolbarEnd {...props} />
       </div>
     </header>

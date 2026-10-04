@@ -13,6 +13,8 @@ export interface Project extends OpenedProject {
   tree: TreeNode[];
   summaries: Record<string, SceneSummary>;
   repairCopy: string | null;
+  /** Saved by a newer Penna: nothing is written, so its project.json is never downgraded. */
+  isReadOnly: boolean;
 }
 
 const folderName = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
@@ -33,6 +35,7 @@ async function readProject(dir: string): Promise<Project> {
     tree,
     summaries,
     repairCopy: file.repairCopy,
+    isReadOnly: file.isNewerFormat,
   };
 }
 
@@ -64,7 +67,7 @@ function useProjectUpdates(
   const update = useCallback(
     (change: { tree?: TreeNode[]; fields?: Record<string, unknown> }) => {
       const project = projectRef.current;
-      if (!project) return Promise.resolve();
+      if (!project || project.isReadOnly) return Promise.resolve();
       const tree = change.tree ?? project.tree;
       const fields = { ...project.fields, ...change.fields };
       setProject((current) => current && { ...current, tree, fields });

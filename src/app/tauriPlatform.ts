@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile } from "@tauri-apps/plugin-fs";
@@ -45,6 +46,7 @@ export const tauriPlatform: Platform = {
   saveFile,
   pickFile,
   fileSystem: tauriFileSystem,
+  setSpellLanguage: (language) => invoke("set_spell_language", { language }),
   knownFolders: async () => ({
     home: withForwardSlashes(await homeDir()),
     documents: withForwardSlashes(await documentDir()),

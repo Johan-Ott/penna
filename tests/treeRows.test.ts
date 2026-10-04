@@ -1,20 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
   ancestorIds,
-  dropMove,
   findNode,
   insertAfter,
   insertNode,
   isInTrash,
   moveToTrash,
-  visibleRows,
   withSpecialFolders,
   CHARACTERS_ID,
+  NOTES_ID,
   PLACES_ID,
+  TIMELINE_ID,
   RESEARCH_ID,
   TRASH_ID,
   type TreeNode,
 } from "../src/project/tree";
+import { dropMove, visibleRows } from "../src/project/treeRows";
 
 const scene = (id: string): TreeNode => ({ id, kind: "scene" });
 
@@ -46,6 +47,8 @@ describe("visibleRows", () => {
       "2:s3",
       `0:${CHARACTERS_ID}`,
       `0:${PLACES_ID}`,
+      `0:${TIMELINE_ID}`,
+      `0:${NOTES_ID}`,
       `0:${RESEARCH_ID}`,
       `0:${TRASH_ID}`,
     ]);

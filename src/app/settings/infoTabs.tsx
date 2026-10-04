@@ -13,6 +13,7 @@ const SHORTCUTS: [string, string][] = [
   ["Större och mindre text", "Ctrl + och Ctrl −"],
   ["Byt namn i strukturen", "F2"],
   ["Inställningar", "Ctrl ,"],
+  ["Visa sidomenyn i ett smalt fönster", "Ctrl ."],
 ];
 
 export function ShortcutsTab() {

@@ -7,11 +7,10 @@ import {
   moveNode,
   RESEARCH_ID,
   TRASH_ID,
-  visibleRows,
   type NodeKind,
   type TreeNode,
-  type TreeRow as Row,
 } from "../../project/tree.js";
+import { visibleRows, type TreeRow as Row } from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta, shortWordCount } from "../../project/treeLabels.js";
 import { Menu, type MenuItem } from "../Menu.js";

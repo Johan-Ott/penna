@@ -44,6 +44,7 @@ function ShownReview(props: ShownProps) {
       onOpenCard={app.cards.open}
       onReplaceAll={(suspect) => app.search.scope.replaceAll(replaceAllQuery(suspect))}
       onIgnore={(word) => void app.updateFields({ ignoredNames: [...review.ignored, word] })}
+      isPinnedOpen={props.comments.draft !== null}
     />
   );
 }
