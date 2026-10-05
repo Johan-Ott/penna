@@ -20,7 +20,7 @@ export const LAST_STEP = 5;
 
 const START_DETAILS: ProjectDetails = { title: "", type: "roman", dailyGoal: 1000, deadline: "" };
 
-// The cloud folders that exist on this computer, and always "Bara den här datorn".
+// The cloud folders that exist on this computer, and always "Bara den här enheten".
 async function availableLibraries(): Promise<LibraryCandidate[]> {
   const candidates = libraryCandidates(await platform.knownFolders());
   const checks = await Promise.all(

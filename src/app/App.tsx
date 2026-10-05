@@ -29,6 +29,8 @@ import { chapterOf } from "../project/treeLabels.js";
 import { platform } from "./platform.js";
 import { useExport } from "./exporting/useExport.js";
 import { ProjectScreen } from "./shell/ProjectScreen.js";
+import { PhoneProject } from "./phone/PhoneProject.js";
+import { usePhone } from "./phone/usePhone.js";
 import { sceneSplitActions } from "./sceneSplitActions.js";
 
 // Back to the shelf: the scene is saved first, and a failed save keeps the project open.
@@ -201,11 +203,14 @@ export type AppState = ReturnType<typeof useAppState>;
 // The update notice sits outside both screens, so it asks once and stays dismissed.
 export function App() {
   const app = useAppState();
+  const isPhone = usePhone();
   const { project } = app;
   if (app.startup.isStarting) return <div className="app-starting" />;
   return (
     <>
-      {project ? <ProjectScreen app={app} project={project} /> : <StartScreen app={app} />}
+      {project && !isPhone && <ProjectScreen app={app} project={project} />}
+      {project && isPhone && <PhoneProject app={app} project={project} />}
+      {!project && <StartScreen app={app} />}
       <UpdateNotice session={app.session} />
     </>
   );

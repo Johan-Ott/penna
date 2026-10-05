@@ -70,8 +70,24 @@ function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: T
 }
 
 interface BookExtras {
+  /** Only Boken, as the phone shows it; its notes are tiles of their own there. */
+  isBookOnly?: boolean;
   /** The series' notes, shown in place of the book's own when the book is in a series. */
   seriesNotes?: ReactNode;
+}
+
+function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tree: Tree }) {
+  return (
+    <>
+      <BookNotes props={props} tree={tree} />
+      <button className="tree-add" onClick={() => props.onNewNote(null)}>
+        {t("+ Ny anteckning")}
+      </button>
+      <div className="tree-bottom">
+        <Rows rows={tree.sections.trash} props={props} tree={tree} />
+      </div>
+    </>
+  );
 }
 
 /** Boken, Anteckningar and Papperskorg: one tree, so the arrow keys walk through all of it. */
@@ -88,13 +104,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
     >
       <SectionHeading label={t("Boken")} onDrop={tree.dropAtBookEnd} />
       <Rows rows={sections.book} props={props} tree={tree} />
-      <BookNotes props={props} tree={tree} />
-      <button className="tree-add" onClick={() => props.onNewNote(null)}>
-        {t("+ Ny anteckning")}
-      </button>
-      <div className="tree-bottom">
-        <Rows rows={sections.trash} props={props} tree={tree} />
-      </div>
+      {!props.isBookOnly && <NotesAndTrash props={props} tree={tree} />}
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
     </div>
   );

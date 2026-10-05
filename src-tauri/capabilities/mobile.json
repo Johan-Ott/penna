@@ -1,0 +1,20 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "On a phone the Penna library lives in the app's own folder.",
+  "platforms": ["android", "iOS"],
+  "windows": ["main"],
+  "permissions": [
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$APPDATA"
+        },
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    }
+  ]
+}

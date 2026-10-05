@@ -10,10 +10,21 @@ import { check } from "@tauri-apps/plugin-updater";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile } from "@tauri-apps/plugin-fs";
-import { documentDir, homeDir } from "@tauri-apps/api/path";
+import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
 import type { FileKind, PickKind, Platform } from "./platform.js";
+import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { t } from "../i18n/i18n.js";
+
+// On a phone Penna keeps its books in its own folder: there is no other folder to pick, and
+// updates come as a new app file instead of from GitHub.
+const isPhone = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+// Android signs in through Google Play and a computer through the browser; iPad has no way yet.
+function googleSignInHere() {
+  if (/Android/i.test(navigator.userAgent)) return { googleSignIn: androidSignIn };
+  return isPhone ? {} : { googleSignIn: computerSignIn };
+}
 
 // Windows paths come with backslashes and sometimes a trailing one; Penna uses forward slashes.
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
@@ -71,26 +82,37 @@ async function pickFile(kind: PickKind) {
   return { path: withForwardSlashes(picked), bytes: await readFile(picked) };
 }
 
+const computerFolders = async () => ({
+  home: withForwardSlashes(await homeDir()),
+  documents: withForwardSlashes(await documentDir()),
+});
+
+const phoneFolders = async () => {
+  const own = withForwardSlashes(await appDataDir());
+  return { home: own, documents: own };
+};
+
 export const tauriPlatform: Platform = {
   saveFile,
   pickFile,
   fileSystem: tauriFileSystem,
   setSpellLanguage: (language) => invoke("set_spell_language", { language }),
-  checkForUpdate,
+  checkForUpdate: isPhone ? async () => null : checkForUpdate,
   notify,
-  showInFolder: (path) => revealItemInDir(path),
-  knownFolders: async () => ({
-    home: withForwardSlashes(await homeDir()),
-    documents: withForwardSlashes(await documentDir()),
-  }),
+  ...(isPhone ? {} : { showInFolder: (path: string) => revealItemInDir(path) }),
+  knownFolders: isPhone ? phoneFolders : computerFolders,
+  ...googleSignInHere(),
   folderExists: (path) => exists(path),
 
   async pickFolder() {
+    if (isPhone) return null;
     const picked = await open({ directory: true });
     return typeof picked === "string" ? withForwardSlashes(picked) : null;
   },
 
-  watchFolder: (dir, onChange) => watch(dir, onChange, { recursive: true, delayMs: 300 }),
+  // Where folders cannot be watched, as on some phones, Penna reads them again on its own saves.
+  watchFolder: (dir, onChange) =>
+    watch(dir, onChange, { recursive: true, delayMs: 300 }).catch(() => () => undefined),
 
   guardClose(isSafeToClose) {
     const appWindow = getCurrentWindow();

@@ -54,7 +54,7 @@ export interface PaletteContext {
   splitScene: (() => void) | null;
   mergeScene: (() => void) | null;
   /** Läs: a chapter, or the whole book when null. */
-  read: (chapterId: string | null) => void;
+  read: ((chapterId: string | null) => void) | null;
   /** The chapter of the open scene, or null. */
   openChapterId: string | null;
 }

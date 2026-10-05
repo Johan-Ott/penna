@@ -93,8 +93,12 @@ export function useProject(onFolderChange: () => void) {
   const dir = project?.dir ?? null;
 
   const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
+  // A read that finishes after the project was closed, or another opened, is dropped: a save as
+  // the book closes must not open it again.
   const refresh = useCallback(async () => {
-    if (dir) setProject(await readProject(dir));
+    if (!dir) return;
+    const fresh = await readProject(dir);
+    setProject((current) => (current?.dir === dir ? fresh : current));
   }, [dir]);
   const choose = useCallback(async () => {
     const folder = await platform.pickFolder();

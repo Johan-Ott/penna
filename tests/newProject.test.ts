@@ -76,7 +76,7 @@ describe("libraryCandidates", () => {
       ["iCloud Drive", "C:/Users/Elin/Library/Mobile Documents/com~apple~CloudDocs/Penna"],
       ["Dropbox", "C:/Users/Elin/Dropbox/Penna"],
       ["OneDrive", "C:/Users/Elin/OneDrive/Penna"],
-      ["Bara den här datorn", "C:/Users/Elin/Documents/Penna"],
+      ["Bara den här enheten", "C:/Users/Elin/Documents/Penna"],
     ]);
   });
 });

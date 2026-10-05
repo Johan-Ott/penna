@@ -118,23 +118,25 @@ function TopbarStart(props: TopbarProps) {
       <IconButton label={t("Visa eller dölj sidomenyn")} onClick={props.onToggleSidebar}>
         <SidebarIcon />
       </IconButton>
-      <IconButton label={t("Bakåt")} onClick={navigation.back} isDisabled={!navigation.canGoBack}>
-        <BackIcon />
-      </IconButton>
-      <IconButton
-        label={t("Framåt")}
-        onClick={navigation.forward}
-        isDisabled={!navigation.canGoForward}
-      >
-        <ForwardIcon />
-      </IconButton>
+      <span className="topbar-history">
+        <IconButton label={t("Bakåt")} onClick={navigation.back} isDisabled={!navigation.canGoBack}>
+          <BackIcon />
+        </IconButton>
+        <IconButton
+          label={t("Framåt")}
+          onClick={navigation.forward}
+          isDisabled={!navigation.canGoForward}
+        >
+          <ForwardIcon />
+        </IconButton>
+      </span>
       <ModeSwitch view={props.view} onView={props.onView} />
     </div>
   );
 }
 
 // A list with ticks, and the number of things to look at in a small badge.
-function ReviewButton({ review, onReview }: Pick<TopbarProps, "review" | "onReview">) {
+export function ReviewButton({ review, onReview }: Pick<TopbarProps, "review" | "onReview">) {
   if (review.count === null) return null;
   return (
     <button

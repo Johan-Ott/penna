@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
 import { AboutTab, ShortcutsTab } from "./infoTabs.js";
 import { GeneralTab } from "./generalTab.js";
+import { SyncTab } from "./syncTab.js";
 import { EditorTab, VersionsTab, type TabProps } from "./settingsTabs.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -9,12 +10,13 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Allmänt"), GeneralTab],
   [t("Editor"), EditorTab],
   [t("Versioner"), VersionsTab],
+  [t("Synk"), SyncTab],
   [t("Kortkommandon"), ShortcutsTab],
   ["Om Penna", AboutTab],
 ];
 
 /** Kortkommandon, opened straight from Hjälp och kortkommandon in the menu. */
-export const SHORTCUTS_TAB = 3;
+export const SHORTCUTS_TAB = 4;
 
 function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }) {
   return (

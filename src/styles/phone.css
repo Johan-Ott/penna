@@ -1,0 +1,388 @@
+/* The phone's screens, as the mobile design draws them: a bar on grey, a white card under it. */
+.phone-app,
+.phone-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-subtle);
+  font-size: 15px;
+}
+
+.phone-app > .phone-screen {
+  flex-grow: 1;
+}
+
+.phone-bar {
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  padding: max(28px, env(safe-area-inset-top)) 6px 4px;
+}
+
+.phone-bar .topbar-button {
+  width: 44px;
+  height: 44px;
+}
+
+.phone-bar-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phone-bar-title.prose {
+  font: 600 17px var(--font-prose);
+}
+
+.phone-bar-sub {
+  color: var(--text-label);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.phone-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+  padding: 0 10px;
+  color: var(--text);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.phone-card {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 8px 8px;
+  padding: 18px 16px;
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  background: var(--bg);
+}
+
+/* Boken: the day, Fortsätt skriva, the book and the notes as tiles */
+.phone-today {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.phone-today-words {
+  font-weight: 500;
+}
+
+.phone-today-facts {
+  color: var(--text-label);
+  font-size: 13px;
+}
+
+.day-progress-bar.wide {
+  width: 100%;
+  height: 4px;
+}
+
+.day-progress-bar.wide > span {
+  height: 4px;
+}
+
+.phone-continue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 500;
+  text-align: left;
+}
+
+.phone-continue-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.phone-continue-where {
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.phone-card .tree .tree-row,
+.phone-row {
+  min-height: 44px;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+  font-size: 15px;
+}
+
+.phone-card .tree .tree-row.active {
+  background: transparent;
+}
+
+.phone-row {
+  width: 100%;
+  padding: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.phone-card .sidebar-heading {
+  padding: 6px 0;
+}
+
+.phone-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.phone-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  font-size: 15px;
+}
+
+.phone-tile-count {
+  color: var(--text-label);
+  font-size: 12px;
+}
+
+/* Skriv: the bar over the text, and the text the whole width */
+.phone-text {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.phone-text.hidden {
+  display: none;
+}
+
+.phone-text .phone-bar {
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.phone-text .writing {
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.phone-text .page {
+  padding: 20px 20px 0;
+}
+
+.phone-text .manuscript {
+  font-size: 18px;
+}
+
+.phone-text .read-link,
+.phone-text .chapter-title {
+  display: none;
+}
+
+/* The shelf on a phone: two books a row, with status and words under each */
+.phone-screen .shelf {
+  gap: 20px;
+  padding: max(40px, env(safe-area-inset-top)) 20px 24px;
+}
+
+.phone-screen .shelf-heading {
+  align-items: center;
+}
+
+.phone-screen .shelf-heading h1 {
+  font-size: 26px;
+}
+
+.round-add {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 22px;
+}
+
+.phone-screen .books {
+  display: grid;
+  padding: 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.phone-screen .book {
+  width: auto;
+  min-width: 0;
+  gap: 8px;
+}
+
+.phone-screen .book-cover {
+  width: 100%;
+  height: 210px;
+  padding: 16px 14px;
+}
+
+.phone-screen .book-title {
+  font-size: 20px;
+}
+
+.phone-screen .book-meta {
+  padding: 0;
+  font-size: 13px;
+}
+
+.phone-screen .book-words,
+.phone-screen .shelf-board,
+.phone-screen .book-percent,
+.phone-screen .book-meta .progress-bar,
+.phone-screen .book-updated {
+  display: none;
+}
+
+.book-meta-words {
+  display: none;
+}
+
+.phone-screen .book-meta-words {
+  display: inline;
+  margin-left: auto;
+  color: var(--text-label);
+}
+
+/* The first start on a phone */
+.phone-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100vh;
+  padding: 96px 24px 32px;
+  background: var(--bg);
+}
+
+.phone-welcome h1 {
+  margin: 12px 0 0;
+  font: 600 30px/1.2 var(--font-prose);
+}
+
+.phone-welcome-text,
+.phone-welcome-promise {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.phone-welcome-promise {
+  font-size: 12px;
+  text-align: center;
+}
+
+.phone-welcome .spacer {
+  flex-grow: 1;
+}
+
+.phone-welcome .button.large {
+  width: 100%;
+  height: 52px;
+}
+
+/* The selection bar on a phone: dark, under the selected words, in the middle of the screen */
+.selection-bar.phone {
+  left: 50%;
+  gap: 0;
+  padding: 4px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--primary);
+  color: var(--on-primary);
+  transform: translateX(-50%);
+}
+
+.selection-bar.phone .icon-button {
+  height: 40px;
+  padding: 0 12px;
+  color: var(--on-primary);
+}
+
+.selection-bar.phone .icon-button:hover,
+.selection-bar.phone .icon-button[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.selection-bar.phone .selection-words {
+  border-left-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-dim);
+}
+
+/* Granska covers the whole text on a phone, under the bar, instead of a narrow strip beside it */
+.phone-text .review-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  width: auto;
+  padding-top: max(28px, env(safe-area-inset-top));
+  border-left: 0;
+  box-shadow: none;
+}
+
+/* A long press on a button or a heading does nothing; only the writer's own text can be marked */
+.phone-app,
+.phone-screen {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.phone-app [contenteditable="true"],
+.phone-app input,
+.phone-app textarea,
+.phone-screen input,
+.phone-screen textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Over the text the right side holds both Granska and search */
+.phone-text .phone-bar {
+  grid-template-columns: 100px 1fr 100px;
+}
+
+.phone-bar-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.phone-text .review-close {
+  width: 44px;
+  height: 44px;
+}

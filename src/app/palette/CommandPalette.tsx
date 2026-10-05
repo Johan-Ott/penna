@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
+import { usePhone } from "../phone/usePhone.js";
 import { t } from "../../i18n/i18n.js";
 
 // The group is a key in the search; its heading is shown in the interface language.
@@ -42,6 +43,8 @@ interface ResultProps {
   found: PaletteEntry[];
   selected: number;
   onHover: (index: number) => void;
+  /** A phone has no keyboard shortcuts to show. */
+  isPhone: boolean;
   onChoose: (entry: PaletteEntry) => void;
 }
 
@@ -60,7 +63,9 @@ function ResultRow({ index, ...props }: ResultProps & { index: number }) {
         onClick={() => props.onChoose(entry)}
       >
         <span>{entry.label}</span>
-        <span className="palette-hint">{entry.shortcut ?? entry.hint}</span>
+        <span className="palette-hint">
+          {props.isPhone ? entry.hint : (entry.shortcut ?? entry.hint)}
+        </span>
       </div>
     </>
   );
@@ -138,6 +143,7 @@ function searchEntry(query: string, onSearch: (text: string) => void): PaletteEn
 
 export function CommandPalette({ entries, onClose, onSearch }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
+  const isPhone = usePhone();
   const matches = searchPalette(entries, query).slice(0, MAX_RESULTS);
   const found = inGroups([...matches, ...searchEntry(query, onSearch)]);
   const selection = usePaletteSelection(found, onClose);
@@ -155,6 +161,7 @@ export function CommandPalette({ entries, onClose, onSearch }: CommandPalettePro
           onKeyDown={selection.onKeyDown}
         />
         <ResultList
+          isPhone={isPhone}
           found={found}
           selected={selection.selected}
           onHover={selection.setSelected}

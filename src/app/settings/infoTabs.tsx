@@ -32,7 +32,9 @@ export function AboutTab() {
       <Row label={t("Version")}>{__APP_VERSION__}</Row>
       <Row
         label={t("Integritet")}
-        hint={t("Penna samlar inte in någon data, och ingen text lämnar datorn.")}
+        hint={t(
+          "Penna samlar inte in någon data. Text lämnar enheten bara om du kopplar din egen Google Drive.",
+        )}
       />
       <Row
         label={t("Typsnitt")}

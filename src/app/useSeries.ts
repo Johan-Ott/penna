@@ -20,7 +20,13 @@ export function useSeries(book: Project | null, onFolderChange: () => void) {
   const seriesRef = useRef<Project | null>(null);
   seriesRef.current = series;
   const updates = useProjectUpdates(seriesRef, setSeries);
-  const refresh = useCallback(async () => setSeries(await readSeries(dir)), [dir]);
+  // Only the read for the book still open may land, as for the book itself.
+  const dirRef = useRef(dir);
+  dirRef.current = dir;
+  const refresh = useCallback(async () => {
+    const fresh = await readSeries(dir);
+    if (dirRef.current === dir) setSeries(fresh);
+  }, [dir]);
   useEffect(() => void refresh(), [refresh]);
   useFolderWatch(dir, refresh, onFolderChange);
   return {

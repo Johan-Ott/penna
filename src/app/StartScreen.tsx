@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useMenuButton } from "./Menu.js";
 import { appMenu } from "./shell/appMenu.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
+import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, SHORTCUTS_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
@@ -64,7 +65,9 @@ function shelfHandlers(app: StartScreenProps["app"]) {
 }
 
 // The shelf's top bar has only the menu: new project, open a folder, settings and help.
-function ShelfFrame(props: StartScreenProps & { onNewProject: () => void; children: ReactNode }) {
+function ShelfFrame(
+  props: StartScreenProps & { onNewProject: () => void; isPhone: boolean; children: ReactNode },
+) {
   const { app } = props;
   const settings = app.writingMode.settingsDialog;
   const menu = useMenuButton(
@@ -79,6 +82,8 @@ function ShelfFrame(props: StartScreenProps & { onNewProject: () => void; childr
       openShortcuts: () => settings.open(SHORTCUTS_TAB),
     }),
   );
+  // The phone's shelf is a screen of its own, without the top bar.
+  if (props.isPhone) return <div className="phone-screen">{props.children}</div>;
   return (
     <div className="shelf-app">
       <ShelfTopbar title={t("Bokhylla")} onMenu={menu.open} />
@@ -99,6 +104,25 @@ function useOnboardingStep(app: StartScreenProps["app"], projectStep: number) {
   });
 }
 
+function Shelf(props: StartScreenProps & { onNewProject: () => void }) {
+  const { app } = props;
+  const { preferences } = app.startup;
+  const isPhone = usePhone();
+  return (
+    <ShelfFrame app={app} onNewProject={props.onNewProject} isPhone={isPhone}>
+      <Bookshelf
+        isPhone={isPhone}
+        libraryDir={preferences.libraryDir}
+        knownProjects={preferences.knownProjects}
+        onOpen={(dir) => void app.open(dir)}
+        onNewProject={props.onNewProject}
+        onOpenFolder={() => void app.choose()}
+        {...shelfHandlers(app)}
+      />
+    </ShelfFrame>
+  );
+}
+
 /** Before a project is open: the onboarding the first time, then the bookshelf. */
 export function StartScreen({ app }: StartScreenProps) {
   const { preferences } = app.startup;
@@ -115,17 +139,5 @@ export function StartScreen({ app }: StartScreenProps) {
       />
     );
   }
-  const newProject = () => setOnboardingStep(projectStep);
-  return (
-    <ShelfFrame app={app} onNewProject={newProject}>
-      <Bookshelf
-        libraryDir={preferences.libraryDir}
-        knownProjects={preferences.knownProjects}
-        onOpen={(dir) => void app.open(dir)}
-        onNewProject={newProject}
-        onOpenFolder={() => void app.choose()}
-        {...shelfHandlers(app)}
-      />
-    </ShelfFrame>
-  );
+  return <Shelf app={app} onNewProject={() => setOnboardingStep(projectStep)} />;
 }

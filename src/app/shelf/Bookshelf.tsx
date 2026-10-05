@@ -12,6 +12,8 @@ interface BookshelfProps {
   onOpenExample: () => void;
   onLocate: (book: ShelfBook) => void;
   onForget: (book: ShelfBook) => void;
+  /** The phone's shelf: a round plus instead of the new-project book, as the mobile design. */
+  isPhone?: boolean;
 }
 
 function EmptyShelf(
@@ -69,7 +71,7 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
         {group.books.map((book) => (
           <Book key={book.dir} book={book} index={props.books.indexOf(book)} {...props} />
         ))}
-        {groupIndex === groups.length - 1 && <NewBook {...props} />}
+        {groupIndex === groups.length - 1 && !props.isPhone && <NewBook {...props} />}
       </div>
     </section>
   ));
@@ -82,8 +84,18 @@ export function Bookshelf(props: BookshelfProps) {
     <div className="shelf-screen">
       <main className="shelf">
         <div className="shelf-heading">
-          <h1>{t("Din bokhylla")}</h1>
-          {books && <span className="shelf-summary">{summary(books)}</span>}
+          <h1>{props.isPhone ? t("Bokhylla") : t("Din bokhylla")}</h1>
+          {props.isPhone ? (
+            <button
+              className="round-add"
+              aria-label={t("Nytt projekt")}
+              onClick={props.onNewProject}
+            >
+              +
+            </button>
+          ) : (
+            books && <span className="shelf-summary">{summary(books)}</span>
+          )}
         </div>
         {books?.length === 0 && <EmptyShelf {...props} />}
         {books && books.length > 0 && <ShelfRows books={books} {...props} />}

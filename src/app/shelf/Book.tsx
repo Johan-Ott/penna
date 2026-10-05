@@ -33,6 +33,9 @@ function BookMeta({ book }: { book: ShelfBook }) {
       <div className="book-status">
         <span>{book.status}</span>
         <span className="book-percent">{book.progress}%</span>
+        <span className="book-meta-words">
+          {t("{count} ord", { count: book.words.toLocaleString(numberLocale()) })}
+        </span>
       </div>
       <div
         className="progress-bar"

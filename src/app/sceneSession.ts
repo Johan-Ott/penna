@@ -103,14 +103,16 @@ export async function openScene(session: SceneSession, dir: string, id: string) 
   return true;
 }
 
+// A check still reading when another scene opens is dropped: it would weigh one scene's file
+// against the other's text, and keeping "mine" would write the wrong text into the file.
 export async function checkDisk(session: SceneSession) {
   const scene = session.scene;
-  const doc = session.hooks.editor.currentDoc();
-  if (!scene || !doc) return;
+  if (!scene) return;
   const diskText = await session.fileSystem
     .readText(scenePath(scene.dir, scene.id))
     .catch(() => null);
-  if (diskText === null) return;
+  const doc = session.hooks.editor.currentDoc();
+  if (diskText === null || !doc || session.scene !== scene) return;
   const editorText = textOf(session, doc);
   const lastSavedText = session.autosave.lastSavedText();
   const decision = decideExternalChange({ diskText, editorText, lastSavedText });

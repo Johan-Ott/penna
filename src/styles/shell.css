@@ -1007,3 +1007,16 @@
   display: block;
   margin-top: 8px;
 }
+
+.topbar-history {
+  display: flex;
+  gap: 2px;
+}
+
+/* A phone: Inställningar stacks its tabs over the settings. */
+@media (max-width: 600px) {
+  .settings-dialog {
+    flex-direction: column;
+    height: calc(100vh - 32px);
+  }
+}

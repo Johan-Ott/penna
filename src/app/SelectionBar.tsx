@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
+import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
 import { numberLocale, t } from "../i18n/i18n.js";
 
@@ -60,11 +61,13 @@ function useEditorFocus(editor: Editor) {
   return hasFocus;
 }
 
-// Above the selection's start, or below its end when there is no room above.
-function barPosition(editor: Editor) {
+// Above the selection's start, or below its end when there is no room above. On a phone it is
+// always below and in the middle: the phone's own menu (Kopiera, Klistra in) takes the place above.
+function barPosition(editor: Editor, isPhone: boolean) {
   const view = editor.viewRef.current;
   const selection = editor.editorState?.selection;
   if (!view || !(selection instanceof TextSelection) || selection.empty) return null;
+  if (isPhone) return { top: view.coordsAtPos(selection.to).bottom + 40 };
   const start = view.coordsAtPos(selection.from);
   if (start.top > BAR_HEIGHT * 2) return { left: start.left, top: start.top - BAR_HEIGHT - 6 };
   return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };
@@ -76,12 +79,13 @@ function barPosition(editor: Editor) {
  */
 export function SelectionBar({ editor, onComment }: { editor: Editor; onComment: () => void }) {
   const hasFocus = useEditorFocus(editor);
-  const position = hasFocus ? barPosition(editor) : null;
+  const isPhone = usePhone();
+  const position = hasFocus ? barPosition(editor, isPhone) : null;
   if (!position) return null;
   const marks = { editorState: editor.editorState, run: editor.run };
   return (
     <div
-      className="selection-bar"
+      className={isPhone ? "selection-bar phone" : "selection-bar"}
       role="toolbar"
       aria-label={t("Markering")}
       style={position}
@@ -89,7 +93,7 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
     >
       <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
-      <StylePicker editorState={editor.editorState} run={editor.run} />
+      {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
       <button className="icon-button" onClick={onComment}>
         {t("Kommentera")}
       </button>

@@ -14,7 +14,7 @@ interface KnownFolders {
 
 /**
  * Where a Penna folder could live, as in the onboarding design. The platform shows only the
- * cloud folders that exist on this computer; "Bara den här datorn" is always offered.
+ * cloud folders that exist on this computer; "Bara den här enheten" is always offered.
  */
 export function libraryCandidates({ home, documents }: KnownFolders): LibraryCandidate[] {
   const appleSync = "Mac, iPhone, iPad";
@@ -30,7 +30,7 @@ export function libraryCandidates({ home, documents }: KnownFolders): LibraryCan
     { id: "onedrive", label: "OneDrive", hint: t("Alla enheter"), path: `${home}/OneDrive/Penna` },
     {
       id: "local",
-      label: t("Bara den här datorn"),
+      label: t("Bara den här enheten"),
       hint: t("Ingen synk"),
       path: `${documents}/Penna`,
     },

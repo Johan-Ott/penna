@@ -24,6 +24,19 @@ export interface Platform {
   showInFolder?: (path: string) => Promise<void>;
   /** A system notice, as for the daily reminder; asks for permission the first time. */
   notify(title: string, body: string): Promise<void>;
+  /** Signing in to Google Drive; missing where Penna cannot (the browser, and iPad for now). */
+  googleSignIn?: GoogleSignIn;
+}
+
+export interface GoogleSignIn {
+  /** Asks the writer: Google's choice of account and consent. */
+  connect(): Promise<void>;
+  /** An access key without asking; fails when the writer must connect again. */
+  accessToken(): Promise<string>;
+  /** Forgets the sign-in on this device. */
+  disconnect(): Promise<void>;
+  /** A fetch the browser's cross-site rules do not stop, for Google's servers. */
+  fetch: typeof fetch;
 }
 
 export interface AppUpdate {

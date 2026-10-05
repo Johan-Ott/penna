@@ -44,6 +44,13 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   (`storage/syncFiles.ts`, `atomicWrite.ts`) and settled in `app/syncRepairs.ts`. What the
   writer chooses away goes to the project's `trash/` folder, never deleted. Crash text is settled
   in a dialog before any scene opens, because the next save would write over the temp file.
+- Google Drive sync (Inställningar, Synk): the open book syncs with `Penna/<book>` in the writer's
+  Drive when it opens and every five minutes (`app/useDriveSync.ts`, engine in `sync/driveSync.ts`,
+  Drive's web API in `sync/googleDrive.ts`). Scope `drive.file`: Penna sees only files it made.
+  Sign-in is `platform.googleSignIn`: on Android Google Play hands out access keys
+  (`src-tauri/android/GoogleSignInPlugin.kt` via `google_access_token` in `src-tauri/src/google.rs`);
+  on a computer Google's page opens in the browser and answers to `127.0.0.1`, and the lasting key
+  is kept in the system's password store (`app/tauriGoogleSignIn.ts`, `sync/googleAuth.ts`).
 - Words per day live in the project's `stats.json` as `{ "2026-10-02": 812 }` (`project/stats.ts`).
   Each scene save adds what it changed (`onSaved` in `sceneSession.ts`), so moving or trashing
   scenes never counts as writing. The daily goal is `dailyGoal` in project.json.
@@ -135,6 +142,11 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   sends a local notice after the chosen hour when nothing is written; it needs Penna open.
 - Publicera's export reports progress per chapter while scenes are read (`bookMaterial` onProgress);
   Avbryt bumps the run number so an old run's file is never saved.
+- The phone (`app/phone/`, `styles/phone.css`) follows the mobile design with screens of its own:
+  Bokhylla, Boken, a sort's notes and Skriv, stacked in the browser history so Android's back
+  button works. `usePhone` (width at most 600 px) picks it; the desktop window is never that
+  narrow. On a phone the books live in Penna's own folder (`appDataDir`), and the Rust side
+  (`src-tauri/src/lib.rs`) leaves out updates, the spelling language and picked folders.
 - Layout lives in `styles/shell.css`. Granska opens from the chip at the card's corner; under
   1200 px it covers the text. Under 960 px the sidebar starts hidden and floats over the card when
   shown (Ctrl+. or the sidebar button; `isSidebarOpen` in `useWritingMode`). The smallest window
@@ -162,6 +174,21 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   rules (typography) only fire with `document.execCommand("insertText")` one character at a time.
 - Stopping a background `npx vite` leaves its node process on port 1420; stop that process too,
   or the next server serves stale modules.
+
+## Building
+
+- `npm run build:windows`: the Windows installer in `out/` (no update files, no signing key).
+- `npm run build:android`: `out/Penna.apk` for arm64 phones, signed with Android's test key so it
+  installs from a file. It finds the Android SDK and NDK under `%LOCALAPPDATA%\Android\Sdk` and
+  makes `src-tauri/gen/android` the first time (gen is not committed). Our own Kotlin files in
+  `src-tauri/android/` are copied in on every build, and the Google Play sign-in library is added
+  to its Gradle file. `MainActivity.kt` puts Penna in the background on back from the shelf,
+  since Tauri hangs on its splash if Android closes the window and reopens it.
+- The computer's Google sign-in needs the Desktop client's secret as `VITE_GOOGLE_COMPUTER_SECRET`
+  in `.env.local` (ignored by git; the release build takes it from a GitHub secret of that name).
+  Without it, Koppla Drive says the key is missing. Android needs no secret: Google knows the app by
+  `se.penna.app` and the SHA-1 of the signing key, which today is Android's test key.
+- `npm run build:check`: the full check, then the desktop app without installers.
 
 ## Releasing
 

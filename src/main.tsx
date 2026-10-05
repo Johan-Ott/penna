@@ -9,6 +9,7 @@ import "@fontsource/literata/600.css";
 import "./styles/tokens.css";
 import "./styles/app.css";
 import "./styles/shell.css";
+import "./styles/phone.css";
 import "./editor/editor.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

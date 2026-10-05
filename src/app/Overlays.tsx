@@ -24,6 +24,7 @@ import { bookLanguage } from "../project/bookLanguage.js";
 import { applySpellLanguage } from "./useSpellLanguage.js";
 import type { useStartup } from "./useStartup.js";
 import type { SettingsChange } from "./useWritingSettings.js";
+import { useDriveSync, type DriveSync } from "./useDriveSync.js";
 
 interface OverlayParts {
   project: Project | null;
@@ -80,7 +81,7 @@ function MentionLayer({ app }: { app: OverlayParts }) {
 
 /** What opens over the writing: dialogs and the command palette. */
 // The language is saved before the window may restart for its spelling dictionary.
-function bookSettings(app: OverlayParts) {
+function bookSettings(app: OverlayParts, drive: DriveSync) {
   if (!app.project) return null;
   return {
     language: bookLanguage(app.project.fields),
@@ -89,6 +90,7 @@ function bookSettings(app: OverlayParts) {
       await applySpellLanguage(app.session, language);
     },
     onExportZip: app.zip.backup,
+    drive,
   };
 }
 
@@ -103,6 +105,20 @@ function PaletteLayer({ app }: { app: OverlayParts }) {
   );
 }
 
+// Inställningar, and the Drive sync whose row is there; the sync runs while the dialog is closed.
+function SettingsAndSync({ app }: { app: OverlayParts }) {
+  const { preferences, updatePreferences } = app.startup;
+  const drive = useDriveSync(app.project?.dir ?? null, preferences, updatePreferences, app.refresh);
+  return (
+    <SettingsLayer
+      {...app.startup}
+      {...app.writingMode}
+      dialog={app.writingMode.settingsDialog}
+      book={bookSettings(app, drive)}
+    />
+  );
+}
+
 export function Overlays({ app }: { app: OverlayParts }) {
   return (
     <>
@@ -114,12 +130,7 @@ export function Overlays({ app }: { app: OverlayParts }) {
         sceneTitle={app.scene?.title ?? ""}
         doc={app.editor.editorState?.doc ?? null}
       />
-      <SettingsLayer
-        {...app.startup}
-        {...app.writingMode}
-        dialog={app.writingMode.settingsDialog}
-        book={bookSettings(app)}
-      />
+      <SettingsAndSync app={app} />
       <MentionLayer app={app} />
       <PaletteLayer app={app} />
       <ExportStatus exporter={app.zip} onOpenScene={() => undefined} />

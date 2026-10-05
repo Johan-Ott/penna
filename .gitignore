@@ -3,3 +3,6 @@ dist
 src-tauri/target
 *.log
 src-tauri/gen
+out
+# Secrets that stay on this computer, such as the Google client secret
+.env.local

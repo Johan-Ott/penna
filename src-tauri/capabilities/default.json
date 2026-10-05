@@ -1,17 +1,15 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Penna reads and writes in the home and Documents folders, where the Penna library lives, and in any folder picked in the dialog. Exports are saved where the save dialog says. persisted-scope keeps picked folders across restarts.",
+  "description": "What Penna may do everywhere: read and write texts, dialogs, notices, restart, and talk to Google Drive.",
   "windows": ["main"],
   "permissions": [
     "core:default",
     "dialog:allow-open",
     "dialog:allow-ask",
     "dialog:allow-save",
-    "core:window:allow-destroy",
     "fs:allow-read-text-file",
     "process:allow-restart",
-    "updater:default",
     "opener:allow-reveal-item-in-dir",
     "notification:default",
     "fs:allow-read-file",
@@ -25,19 +23,13 @@
     "fs:allow-watch",
     "fs:allow-unwatch",
     {
-      "identifier": "fs:scope",
+      "identifier": "http:default",
       "allow": [
         {
-          "path": "$HOME"
+          "url": "https://www.googleapis.com/*"
         },
         {
-          "path": "$HOME/**"
-        },
-        {
-          "path": "$DOCUMENT"
-        },
-        {
-          "path": "$DOCUMENT/**"
+          "url": "https://oauth2.googleapis.com/*"
         }
       ]
     }

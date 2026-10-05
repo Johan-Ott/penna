@@ -33,6 +33,7 @@ describe("app preferences", () => {
       isAutoSnapshotOn: false,
       uiLanguage: "en" as const,
       reminderHour: 20,
+      isDriveSyncOn: true,
     };
 
     savePreferences(storage, preferences);

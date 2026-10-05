@@ -18,6 +18,8 @@ export interface AppPreferences {
   uiLanguage: UiLanguage;
   /** The hour of the daily reminder when nothing is written yet; null is off. */
   reminderHour: number | null;
+  /** Each open book syncs with its folder Penna/<book> in the writer's Google Drive. */
+  isDriveSyncOn: boolean;
 }
 
 export const START_PREFERENCES: AppPreferences = {
@@ -30,6 +32,7 @@ export const START_PREFERENCES: AppPreferences = {
   isAutoSnapshotOn: true,
   uiLanguage: "sv",
   reminderHour: null,
+  isDriveSyncOn: false,
 };
 
 const STORAGE_KEY = "penna.app";
@@ -55,6 +58,7 @@ export function loadPreferences(storage: KeyValueStorage): AppPreferences {
     isAutoSnapshotOn: stored["isAutoSnapshotOn"] !== false,
     uiLanguage: stored["uiLanguage"] === "en" ? "en" : "sv",
     reminderHour: isHour(stored["reminderHour"]) ? stored["reminderHour"] : null,
+    isDriveSyncOn: stored["isDriveSyncOn"] === true,
   };
 }
 

@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import { DoneStep, FolderStep, PromisesStep, WelcomeStep } from "./OnboardingSteps.js";
 import { ProjectStep } from "./ProjectStep.js";
+import { PhoneWelcome } from "./PhoneWelcome.js";
+import { usePhone } from "../phone/usePhone.js";
 import { continueFrom, LAST_STEP, useOnboarding, type OnboardingState } from "./useOnboarding.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -87,10 +90,25 @@ function Navigation({
   );
 }
 
+// A phone has no shortcuts to show on the last step, so it goes straight into the book.
+function usePhoneFinish(
+  isPhone: boolean,
+  state: OnboardingState,
+  onFinish: OnboardingProps["onFinish"],
+) {
+  const { step, projectDir, libraryDir } = state;
+  useEffect(() => {
+    if (isPhone && step === LAST_STEP && projectDir) onFinish(projectDir, libraryDir);
+  }, [isPhone, step, projectDir, libraryDir, onFinish]);
+}
+
 /** The first start, as in the design: five short steps and then straight into a scene. */
 export function Onboarding(props: OnboardingProps) {
   const { startStep, onFinish, onCancel } = props;
   const state = useOnboarding(props);
+  const isPhone = usePhone();
+  usePhoneFinish(isPhone, state, onFinish);
+  if (isPhone && state.step < 4) return <PhoneWelcome state={state} />;
   return (
     <main className="onboarding">
       <div className="onboarding-card">

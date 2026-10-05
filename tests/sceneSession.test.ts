@@ -87,6 +87,27 @@ describe("scene session", () => {
     expect(await files.readText(SCENE_PATH)).toContain("på bordet");
   });
 
+  it("drops a disk check that finishes after another scene opened", async () => {
+    const { files, session, conflicts } = setup();
+    const otherPath = "/bok/scenes/01J9Z4K2QY.md";
+    await files.writeText(otherPath, "---\nid: 01J9Z4K2QY\ntitle: Elin\n---\nTrettioåtta.\n");
+    await openScene(session, "/bok", "01J9Z4K2QX");
+    const readText = files.readText;
+    let finishRead = () => {};
+    files.readText = (path) =>
+      new Promise<string>((done) => {
+        finishRead = () => done(readText(path));
+      });
+
+    const check = checkDisk(session);
+    files.readText = readText;
+    await openScene(session, "/bok", "01J9Z4K2QY");
+    finishRead();
+    await check;
+
+    expect(conflicts.filter(Boolean)).toEqual([]);
+  });
+
   it("keeps both versions as two scenes", async () => {
     const { files, session, conflicts, type } = setup();
     await openScene(session, "/bok", "01J9Z4K2QX");
