@@ -48,8 +48,7 @@ export function SectionHeading(props: { label: string; onDrop?: () => void }) {
   );
 }
 
-// In a book of a series the series' notes come first; the book's own sorts only show when
-// they hold something.
+// The book's own sorts only show when they hold something.
 function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: Tree }) {
   if (!props.seriesNotes) {
     return (
@@ -70,9 +69,8 @@ function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: T
 }
 
 interface BookExtras {
-  /** Only Boken, as the phone shows it; its notes are tiles of their own there. */
+  /** On a phone the notes are tiles of their own. */
   isBookOnly?: boolean;
-  /** The series' notes, shown in place of the book's own when the book is in a series. */
   seriesNotes?: ReactNode;
 }
 
@@ -90,7 +88,7 @@ function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tre
   );
 }
 
-/** Boken, Anteckningar and Papperskorg: one tree, so the arrow keys walk through all of it. */
+/** One tree, so the arrow keys walk through all of it. */
 export function TreeView(props: TreeViewProps & BookExtras) {
   const tree = useTreeView(props);
   const { sections, view } = tree;
@@ -110,7 +108,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
   );
 }
 
-/** The series' sorts inside the book's sidebar; its Papperskorg only once something is in it. */
+/** The series' Papperskorg shows only once something is in it. */
 export function SeriesNotes(props: TreeViewProps & { name: string }) {
   const tree = useTreeView(props);
   const { sections, view } = tree;

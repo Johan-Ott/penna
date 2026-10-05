@@ -23,7 +23,7 @@ import { t } from "../../i18n/i18n.js";
 
 type ScreenProps = { app: AppState; project: Project };
 
-// "Gå till scenen" after a failed export: the scene is found by the title the error named.
+// A failed export names the scene by title, so it is found by its title.
 function openSceneTitled(app: AppState, project: Project, title: string) {
   const id = Object.keys(project.summaries).find((key) => project.summaries[key]?.title === title);
   if (!id) return;
@@ -82,7 +82,6 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
   );
 }
 
-// A click in Läs: back to Skriv in that scene, with the cursor at the paragraph clicked.
 function openAt(app: AppState, project: Project, sceneId: string, blockIndex: number) {
   app.writingMode.setView("skriv");
   void openScene(app.session, project.dir, sceneId).then(
@@ -105,7 +104,6 @@ function Contents({ app, project }: ScreenProps) {
   );
 }
 
-// The card in the middle: the text being written, with Innehåll or Läs laid over it.
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
   return (
@@ -155,7 +153,6 @@ function Floating({ app, project }: ScreenProps) {
   );
 }
 
-/** An open book: the top bar, the sidebar and the card, or Publicera in their place. */
 export function ProjectScreen({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const menu = useAppMenu({ app, project });

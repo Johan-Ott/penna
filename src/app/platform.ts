@@ -4,48 +4,47 @@ import { browserPlatform } from "./browserPlatform.js";
 import { tauriPlatform } from "./tauriPlatform.js";
 
 export interface Platform {
+  /** A phone: books in the app's own folder, no keyboard shortcuts, no folder to pick. */
+  isPhone: boolean;
   fileSystem: FileSystem;
   pickFolder(): Promise<string | null>;
-  /** The home and Documents folders, with forward slashes. */
+  /** With forward slashes. */
   knownFolders(): Promise<{ home: string; documents: string }>;
   folderExists(path: string): Promise<boolean>;
   watchFolder(dir: string, onChange: () => void): Promise<() => void>;
   /** `isSafeToClose` saves first; when it fails, the writer is asked before the window closes. */
   guardClose(isSafeToClose: () => Promise<boolean>): () => void;
-  /** Asks where to save an export and writes it whole; the saved path, or null if cancelled. */
+  /** The saved path, or null if cancelled. */
   saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind): Promise<string | null>;
-  /** Lets the writer pick a file of the given kinds; its path and bytes, or null if cancelled. */
+  /** Its path and bytes, or null if cancelled. */
   pickFile(kind: PickKind): Promise<PickedFile | null>;
-  /** Spellcheck in the book's language; in the app the window restarts when it changes. */
+  /** In the app the window restarts when the language changes. */
   setSpellLanguage(language: string): Promise<void>;
-  /** A newer signed release of Penna, or null when this is the newest or nothing could be asked. */
+  /** Null when this is the newest, or when nothing could be asked. */
   checkForUpdate(): Promise<AppUpdate | null>;
-  /** Shows a saved file in Explorer or Finder; missing where there is no file manager. */
+  /** Missing where there is no file manager. */
   showInFolder?: (path: string) => Promise<void>;
-  /** A system notice, as for the daily reminder; asks for permission the first time. */
+  /** Asks for permission the first time. */
   notify(title: string, body: string): Promise<void>;
-  /** Signing in to Google Drive; missing where Penna cannot (the browser, and iPad for now). */
+  /** Missing where Penna cannot sign in: the browser, and iPad for now. */
   googleSignIn?: GoogleSignIn;
 }
 
 export interface GoogleSignIn {
-  /** Asks the writer: Google's choice of account and consent. */
+  /** Shows Google's account choice and consent. */
   connect(): Promise<void>;
-  /** An access key without asking; fails when the writer must connect again. */
+  /** Never asks; fails when the writer must connect again. */
   accessToken(): Promise<string>;
-  /** Forgets the sign-in on this device. */
   disconnect(): Promise<void>;
-  /** A fetch the browser's cross-site rules do not stop, for Google's servers. */
+  /** Not stopped by the browser's cross-site rules. */
   fetch: typeof fetch;
 }
 
 export interface AppUpdate {
   version: string;
-  /** Downloads, installs and restarts into the new version. */
   install(): Promise<void>;
 }
 
-/** What the open dialog offers, for example { name: "Bild", extensions: ["jpg", "png"] }. */
 export interface PickKind {
   name: string;
   extensions: string[];
@@ -57,7 +56,6 @@ export interface PickedFile {
   bytes: Uint8Array;
 }
 
-/** What the save dialog offers, for example { name: "Word", extension: "docx" }. */
 export interface FileKind {
   name: string;
   extension: string;

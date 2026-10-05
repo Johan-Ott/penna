@@ -52,7 +52,6 @@ export function ReadOnlyNotice({ isReadOnly }: { isReadOnly: boolean }) {
 
 const TOAST_MS = 8000;
 
-/** "Ändrade 3 förekomster av ”Sjöbergh”" after replacing in the whole manuscript, with Ångra. */
 export function ReplaceToast(props: {
   done: { count: number; search: string } | null;
   onUndo: () => void;

@@ -13,7 +13,7 @@ type SnapshotState = ReturnType<typeof useSnapshots>;
 interface SnapshotsDialogProps {
   state: SnapshotState;
   sceneTitle: string;
-  /** The open scene as the editor has it, blocks separated by blank lines. */
+  /** Blocks separated by blank lines. */
   nowText: string;
   nowWords: number;
 }
@@ -83,10 +83,9 @@ function SnapshotList({ state, nowWords }: Pick<SnapshotsDialogProps, "state" | 
   );
 }
 
-// The chosen snapshot against the scene now: what it had is struck through, what came is marked.
 function Comparison({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "nowText">) {
   const textRef = useRef<HTMLDivElement>(null);
-  // In a long scene the change could be out of sight, so the first one is brought into view.
+  // In a long scene the first change could be out of sight.
   useEffect(() => {
     textRef.current?.querySelector("del, ins")?.scrollIntoView({ block: "center" });
   }, [state.chosen]);
@@ -140,7 +139,6 @@ export function SnapshotsDialog(props: SnapshotsDialogProps) {
   );
 }
 
-/** The dialog for the open scene, when the writer has asked for it. */
 export function SnapshotsLayer(props: {
   state: SnapshotState;
   sceneTitle: string;

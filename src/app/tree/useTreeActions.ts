@@ -18,7 +18,7 @@ export interface TreeActionHandlers {
   startRename: (id: string) => void;
 }
 
-/** What a tree row can do. Everything here changes project.json only, except a scene's title. */
+/** Everything here changes project.json only, except a scene's title. */
 export function useTreeActions(handlers: TreeActionHandlers) {
   const { tree, onChangeTree } = handlers;
   const canEdit = (node: TreeNode) => !isSpecialFolder(node.id);

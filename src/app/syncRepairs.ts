@@ -16,14 +16,12 @@ import {
 const DROPBOX_DEVICE = /\((.+?)(?:'s conflicted copy|:s motstridiga kopia)/;
 const ONEDRIVE_DEVICE = /^[0-9A-HJKMNP-TV-Z]+-(.+)\.md$/;
 
-/** The device a sync service named in a conflict copy, or null when it named none. */
 export function copyDevice(fileName: string): string | null {
   return DROPBOX_DEVICE.exec(fileName)?.[1] ?? ONEDRIVE_DEVICE.exec(fileName)?.[1] ?? null;
 }
 
 const scenesDir = (dir: string) => joinPath(dir, "scenes");
 
-/** The scene as it is on this computer, and the copy the sync service made next to it. */
 export async function readSyncCopy(
   fileSystem: FileSystem,
   dir: string,
@@ -38,7 +36,6 @@ export async function readSyncCopy(
 const isOpen = (session: SceneSession, dir: string, id: string) =>
   session.scene?.dir === dir && session.scene.id === id;
 
-// "Behåll båda": the copy becomes a scene of its own, named after the device it came from.
 async function copyAsNewScene(fileSystem: FileSystem, dir: string, copy: SceneFileRef) {
   const text = await fileSystem.readText(joinPath(scenesDir(dir), copy.fileName));
   const { frontMatter, body } = splitSceneFile(text);
@@ -47,7 +44,7 @@ async function copyAsNewScene(fileSystem: FileSystem, dir: string, copy: SceneFi
   return createScene(fileSystem, dir, `${sceneTitle(frontMatter) ?? "Scen"} ${suffix}`, body);
 }
 
-/** Settles a sync conflict copy. "both" returns the id of the new scene made from the copy. */
+/** "both" returns the id of the new scene made from the copy. */
 export async function keepVersion(
   session: SceneSession,
   dir: string,
@@ -72,7 +69,7 @@ export async function keepVersion(
 export const crashSceneId = (temp: RecoverableTemp) =>
   temp.targetPath.slice(temp.targetPath.lastIndexOf("/") + 1, -".md".length);
 
-// Crash text is settled before any scene opens: the next save would write over the temp file.
+// Settled before any scene opens: the next save would overwrite the temp file.
 export const restoreCrashText = (fileSystem: FileSystem, temp: RecoverableTemp) =>
   fileSystem.rename(temp.tempPath, temp.targetPath);
 

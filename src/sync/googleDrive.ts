@@ -13,7 +13,7 @@ interface DriveFile {
   version?: string;
 }
 
-/** Thrown when Drive answers with an error; `status` 401 means the sign-in has run out. */
+/** `status` 401 means the sign-in has run out. */
 export class DriveError extends Error {
   constructor(
     readonly status: number,
@@ -53,7 +53,7 @@ async function search(call: Call, query: string) {
   return files;
 }
 
-// A request that writes a file and answers with it: its new version, for the next sync.
+// Drive answers with the file's new version, kept for the next sync.
 async function sendFile(
   call: Call,
   url: string,
@@ -64,7 +64,7 @@ async function sendFile(
   return toRemote((await response.json()) as DriveFile);
 }
 
-// One request holding both the file's name and folder and its content.
+// One multipart request with both the metadata and the content.
 function upload(call: Call, name: string, parentId: string, bytes: Uint8Array) {
   const boundary = "penna-upload";
   const metadata = JSON.stringify({ name, parents: [parentId] });
@@ -94,10 +94,7 @@ async function createFolder(call: Call, name: string, parentId: string | null) {
   return (await sendFile(call, `${API}?fields=${FIELDS}`, send)).id;
 }
 
-/**
- * Google Drive over its web API. `token` gives a valid access token for the drive.file scope,
- * so Penna only ever sees the files it made itself.
- */
+/** The drive.file scope: Penna only ever sees the files it made itself. */
 export function googleDrive(token: () => Promise<string>, fetcher: typeof fetch = fetch): Drive {
   const call: Call = async (url, init = {}) => {
     const headers = { ...init.headers, Authorization: `Bearer ${await token()}` };
@@ -118,5 +115,10 @@ export function googleDrive(token: () => Promise<string>, fetcher: typeof fetch 
     },
     download: async (fileId) =>
       new Uint8Array(await (await call(`${API}/${fileId}?alt=media`)).arrayBuffer()),
+    trash: async (fileId) => {
+      const body = JSON.stringify({ trashed: true });
+      const headers = { "Content-Type": "application/json" };
+      await call(`${API}/${fileId}`, { method: "PATCH", body, headers });
+    },
   };
 }

@@ -12,7 +12,7 @@ interface BookshelfProps {
   onOpenExample: () => void;
   onLocate: (book: ShelfBook) => void;
   onForget: (book: ShelfBook) => void;
-  /** The phone's shelf: a round plus instead of the new-project book, as the mobile design. */
+  /** A round plus instead of the new-project book. */
   isPhone?: boolean;
 }
 
@@ -61,7 +61,6 @@ function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
   );
 }
 
-// Books on their own in the first row, then a row per series under its name.
 function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
   const groups = shelfGroups(props.books);
   return groups.map((group, groupIndex) => (
@@ -77,7 +76,6 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
   ));
 }
 
-/** "Din bokhylla": every project as a book, with its status and when it was last written in. */
 export function Bookshelf(props: BookshelfProps) {
   const books = useShelf(props.libraryDir, props.knownProjects);
   return (

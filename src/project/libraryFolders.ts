@@ -3,7 +3,7 @@ export interface LibraryCandidate {
   id: string;
   label: string;
   hint: string;
-  /** The Penna folder to create. Its parent is the cloud folder, which must already exist. */
+  /** Its parent is the cloud folder, which must already exist. */
   path: string;
 }
 
@@ -12,10 +12,7 @@ interface KnownFolders {
   documents: string;
 }
 
-/**
- * Where a Penna folder could live, as in the onboarding design. The platform shows only the
- * cloud folders that exist on this computer; "Bara den här enheten" is always offered.
- */
+/** The platform shows only the cloud folders that exist on this computer. */
 export function libraryCandidates({ home, documents }: KnownFolders): LibraryCandidate[] {
   const appleSync = "Mac, iPhone, iPad";
   return [

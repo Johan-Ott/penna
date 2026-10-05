@@ -4,6 +4,7 @@ import { readSceneSummaries, type SceneSummary } from "../project/sceneSummaries
 import { reconcileScenes, type TreeNode } from "../project/tree.js";
 import { openProjectFolder, type OpenedProject } from "../storage/projectFolder.js";
 import { describeSaveError, type SaveFailure } from "../storage/saveError.js";
+import { errorLog } from "./errorLog.js";
 import { platform } from "./platform.js";
 
 export interface Project extends OpenedProject {
@@ -13,7 +14,7 @@ export interface Project extends OpenedProject {
   tree: TreeNode[];
   summaries: Record<string, SceneSummary>;
   repairCopy: string | null;
-  /** Saved by a newer Penna: nothing is written, so its project.json is never downgraded. */
+  /** Saved by a newer Penna: nothing is written, so project.json is never downgraded. */
   isReadOnly: boolean;
 }
 
@@ -40,7 +41,7 @@ export async function readProject(dir: string): Promise<Project> {
   };
 }
 
-// project.json is written one change at a time, so an older version never lands after a newer.
+// One write at a time, so an older version never lands after a newer.
 function useProjectWriter(projectRef: React.RefObject<Project | null>) {
   const [treeFailure, setTreeFailure] = useState<SaveFailure | null>(null);
   const queue = useRef(Promise.resolve());
@@ -51,7 +52,10 @@ function useProjectWriter(projectRef: React.RefObject<Project | null>) {
       queue.current = queue.current
         .then(() => writeProjectFile(platform.fileSystem, project.dir, fields, tree))
         .then(() => setTreeFailure(null))
-        .catch((error: unknown) => setTreeFailure(describeSaveError(error)));
+        .catch((error: unknown) => {
+          errorLog.record(`project.json kunde inte sparas: ${String(error)}`);
+          setTreeFailure(describeSaveError(error));
+        });
       return queue.current;
     },
     [projectRef],
@@ -59,7 +63,6 @@ function useProjectWriter(projectRef: React.RefObject<Project | null>) {
   return { write, treeFailure };
 }
 
-// The tree and the other fields of project.json change on screen at once and are then written.
 export function useProjectUpdates(
   projectRef: React.RefObject<Project | null>,
   setProject: React.Dispatch<React.SetStateAction<Project | null>>,
@@ -84,7 +87,6 @@ export function useProjectUpdates(
   return { updateTree, updateFields, updateProject: update, treeFailure };
 }
 
-/** The project folder the writer picked, read again whenever something in it changes. */
 export function useProject(onFolderChange: () => void) {
   const [project, setProject] = useState<Project | null>(null);
   const projectRef = useRef<Project | null>(null);
@@ -93,8 +95,7 @@ export function useProject(onFolderChange: () => void) {
   const dir = project?.dir ?? null;
 
   const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
-  // A read that finishes after the project was closed, or another opened, is dropped: a save as
-  // the book closes must not open it again.
+  // A read that finishes after the project closed is dropped, so a save on close cannot reopen it.
   const refresh = useCallback(async () => {
     if (!dir) return;
     const fresh = await readProject(dir);

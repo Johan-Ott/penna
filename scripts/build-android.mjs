@@ -3,6 +3,7 @@
 import { execFileSync } from "node:child_process";
 import {
   copyFileSync,
+  cpSync,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -20,8 +21,8 @@ const ndk = process.env.NDK_HOME ?? join(sdk, "ndk", newest(join(sdk, "ndk")));
 const buildTools = join(sdk, "build-tools", newest(join(sdk, "build-tools")));
 const environment = { ...process.env, ANDROID_HOME: sdk, NDK_HOME: ndk };
 const testKey = join(homedir(), ".android", "debug.keystore");
-// Our own Kotlin files, kept in src-tauri/android since Tauri's generated project is not in git,
-// and the Google Play library the sign-in needs.
+// src-tauri/gen is not in git, so our Kotlin files, icons and the sign-in library are added on
+// every build.
 const android = "src-tauri/gen/android/app";
 const signInLibrary = 'implementation("com.google.android.gms:play-services-auth:21.3.0")';
 
@@ -32,6 +33,7 @@ function addOwnSources() {
       join(android, "src/main/java/se/penna/app", file),
     );
   }
+  cpSync("src-tauri/icons/android", join(android, "src/main/res"), { recursive: true });
   const gradle = join(android, "build.gradle.kts");
   const text = readFileSync(gradle, "utf8");
   if (!text.includes(signInLibrary)) {

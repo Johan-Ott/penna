@@ -8,7 +8,6 @@ import type { Project } from "../useProject.js";
 /** "now" is the scene as it is in the editor; otherwise the file name of a snapshot. */
 export type SnapshotChoice = "now" | string;
 
-/** The snapshot dialog's state: which scene, its snapshots, and which one is being compared. */
 export function useSnapshots(project: Project | null, session: SceneSession) {
   const [scene, setScene] = useState<SceneRef | null>(null);
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
@@ -18,7 +17,6 @@ export function useSnapshots(project: Project | null, session: SceneSession) {
     setSnapshots(await listSnapshots(platform.fileSystem, ref));
   };
   // The dialog compares with the open scene, so a scene picked in the tree is opened first.
-  // A note from the series lies in the series' folder, which the caller then names.
   const show = async (id: string, dir?: string) => {
     if (!project) return;
     const where = dir ?? (session.scene?.id === id ? session.scene.dir : project.dir);

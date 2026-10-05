@@ -6,7 +6,7 @@ export interface RemoteFile {
   version: string;
 }
 
-/** The little of Google Drive that syncing needs. `null` as a parent is the top of My Drive. */
+/** `null` as a parent is the top of My Drive. */
 export interface Drive {
   list(folderId: string): Promise<RemoteFile[]>;
   findFolder(name: string, parentId: string | null): Promise<string | null>;
@@ -14,4 +14,6 @@ export interface Drive {
   upload(name: string, parentId: string, bytes: Uint8Array): Promise<RemoteFile>;
   update(fileId: string, bytes: Uint8Array): Promise<RemoteFile>;
   download(fileId: string): Promise<Uint8Array>;
+  /** Moves a file to Drive's trash, where it can be restored for 30 days. */
+  trash(fileId: string): Promise<void>;
 }

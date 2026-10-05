@@ -1,3 +1,4 @@
+import logo from "../../assets/penna-logo.png";
 import { useEffect } from "react";
 import { DoneStep, FolderStep, PromisesStep, WelcomeStep } from "./OnboardingSteps.js";
 import { ProjectStep } from "./ProjectStep.js";
@@ -8,12 +9,10 @@ import { t } from "../../i18n/i18n.js";
 
 interface OnboardingProps {
   knownLibraryDir: string | null;
-  /** The goal a new project starts with, from Inställningar. */
   defaultDailyGoal: number;
   /** 1 for a first start; 4 when a returning writer makes a new project. */
   startStep: number;
   onFinish: (projectDir: string, libraryDir: string | null) => void;
-  /** Back to the welcome screen; only offered to a writer who has been through this before. */
   onCancel: () => void;
 }
 
@@ -41,7 +40,6 @@ function CurrentStep({ state, isFirst }: { state: OnboardingState; isFirst: bool
   return <DoneStep />;
 }
 
-// "Fortsätt" on every step, "Börja skriva" on the last; importing and opening have their own.
 function PrimaryButton({
   state,
   onFinish,
@@ -90,7 +88,7 @@ function Navigation({
   );
 }
 
-// A phone has no shortcuts to show on the last step, so it goes straight into the book.
+// A phone has no shortcuts to show on the last step.
 function usePhoneFinish(
   isPhone: boolean,
   state: OnboardingState,
@@ -102,7 +100,6 @@ function usePhoneFinish(
   }, [isPhone, step, projectDir, libraryDir, onFinish]);
 }
 
-/** The first start, as in the design: five short steps and then straight into a scene. */
 export function Onboarding(props: OnboardingProps) {
   const { startStep, onFinish, onCancel } = props;
   const state = useOnboarding(props);
@@ -113,9 +110,7 @@ export function Onboarding(props: OnboardingProps) {
     <main className="onboarding">
       <div className="onboarding-card">
         <div className="onboarding-top">
-          <span className="brand-mark medium" aria-hidden="true">
-            P
-          </span>
+          <img className="brand-mark medium" src={logo} alt="" />
           <Progress step={state.step} />
         </div>
         <div className="onboarding-body">

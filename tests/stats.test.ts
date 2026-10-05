@@ -3,10 +3,11 @@ import {
   addWritten,
   dailyGoalOf,
   dayKey,
+  readDeviceStats,
   readStats,
   streak,
   wordsAdded,
-  writeStats,
+  writeDeviceStats,
 } from "../src/project/stats";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
@@ -73,19 +74,35 @@ describe("streak", () => {
   });
 });
 
-describe("stats.json", () => {
-  it("round trips in the spec's format, one number per day", async () => {
+describe("stats per device", () => {
+  it("keeps each device's words in its own file, so two devices never write the same one", async () => {
     const files = createMemoryFileSystem({});
 
-    await writeStats(files, "/bok", { "2026-10-02": 812 });
+    await writeDeviceStats(files, "/bok", "dator", { "2026-10-02": 812 });
+    await writeDeviceStats(files, "/bok", "telefon", { "2026-10-02": 100, "2026-10-03": 50 });
+
+    expect(await readDeviceStats(files, "/bok", "dator")).toEqual({ "2026-10-02": 812 });
+    expect(JSON.parse(await files.readText("/bok/stats/telefon.json"))).toEqual({
+      "2026-10-02": 100,
+      "2026-10-03": 50,
+    });
+  });
+
+  it("adds up every device and the older shared stats.json", async () => {
+    const files = createMemoryFileSystem({ "/bok/stats.json": '{ "2026-10-01": 300 }' });
+    await writeDeviceStats(files, "/bok", "dator", { "2026-10-02": 812 });
+    await writeDeviceStats(files, "/bok", "telefon", { "2026-10-02": 100 });
+
     const stats = await readStats(files, "/bok");
 
-    expect(stats).toEqual({ "2026-10-02": 812 });
-    expect(JSON.parse(await files.readText("/bok/stats.json"))).toEqual({ "2026-10-02": 812 });
+    expect(stats).toEqual({ "2026-10-01": 300, "2026-10-02": 912 });
   });
 
   it("reads a missing or broken file as no statistics yet", async () => {
-    const files = createMemoryFileSystem({ "/trasig/stats.json": "{inte json" });
+    const files = createMemoryFileSystem({
+      "/trasig/stats.json": "{inte json",
+      "/trasig/stats/dator.json": "[1, 2]",
+    });
 
     const stats = [await readStats(files, "/saknas"), await readStats(files, "/trasig")];
 

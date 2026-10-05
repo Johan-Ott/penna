@@ -3,6 +3,7 @@ import { manuscriptSceneIds } from "../project/tree.js";
 import type { Project } from "./useProject.js";
 import { useEditorView } from "../editor/useEditorView.js";
 import type { SaveStatus } from "../storage/autosave.js";
+import { errorLog } from "./errorLog.js";
 import { platform } from "./platform.js";
 import {
   closeScene,
@@ -15,7 +16,12 @@ import {
   type SceneSessionHooks,
 } from "./sceneSession.js";
 
-/** React state for the scene session. The logic lives in sceneSession.ts. */
+const logged = (status: SaveStatus) => {
+  if (status.kind === "failed") errorLog.record(`Scenen kunde inte sparas: ${status.reason}`);
+  return status;
+};
+
+/** The logic lives in sceneSession.ts; this holds the React state. */
 export function useSceneSession() {
   const [scene, setScene] = useState<OpenScene | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus | null>(null);
@@ -31,13 +37,13 @@ export function useSceneSession() {
     () =>
       createSceneSession(platform.fileSystem, {
         editor: { load, currentDoc: () => viewRef.current?.state.doc ?? null },
-        // Set before the scene's text loads, so the editor is writable exactly when a scene is open.
+        // Set before the text loads, so the editor is writable exactly when a scene is open.
         onScene: (opened) => {
           modes.current.isEditable = opened !== null;
           setScene(opened && { ...opened });
         },
         onConflict: setConflict,
-        onSaveStatus: setSaveStatus,
+        onSaveStatus: (status) => setSaveStatus(logged(status)),
         onSaved: (scene, before, after) => savedRef.current?.(scene, before, after),
       }),
     [load, viewRef, modes],
@@ -48,20 +54,19 @@ export function useSceneSession() {
   return { session, scene, saveStatus, conflict, editor, savedRef };
 }
 
-// A scene still in the cloud has no text here yet, so it cannot open.
+// A scene still in the cloud has no text here, so it cannot open.
 export function openIfOnDisk(session: SceneSession, project: Project, id: string) {
   if (project.scenes.includes(id)) void openScene(session, project.dir, id);
 }
 
-// A note open from the book's series belongs to this book too, so it is kept open.
+// A note from the book's series belongs to this book too, so it stays open.
 const isTextOf = (
   openDir: string | undefined,
   bookDir: string | undefined,
   seriesDir: string | null,
 ) => openDir !== undefined && (openDir === bookDir || openDir === seriesDir);
 
-// A project opens on its first scene with the cursor ready. A new project never keeps the
-// previous project's scene open; with no scenes, none is open. Crash text is settled first.
+// A new project never keeps the previous project's scene; crash text is settled first.
 export function useOpenFirstScene(
   project: Project | null,
   session: SceneSession,

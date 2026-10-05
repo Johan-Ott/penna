@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { errorLog } from "../errorLog.js";
 import { Row } from "./controls.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -8,6 +10,7 @@ const SHORTCUTS: [string, string][] = [
   [t("Lämna fokusläget"), "Esc"],
   [t("Ny scen"), "Ctrl Alt N"],
   [t("Scenbrytning"), "Ctrl Enter"],
+  [t("Infoga fotnot"), "Ctrl Alt F"],
   [t("Dela scenen vid markören"), "Ctrl Shift Enter"],
   [t("Kommentera markeringen"), "Ctrl Shift M"],
   [t("Fetstil"), "Ctrl B"],
@@ -26,10 +29,31 @@ export function ShortcutsTab() {
   ));
 }
 
+// The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
+function ErrorReportButton() {
+  const [isCopied, setCopied] = useState(false);
+  const copy = async () => {
+    const report = errorLog.report({ version: __APP_VERSION__, device: navigator.userAgent });
+    await navigator.clipboard.writeText(report);
+    setCopied(true);
+  };
+  return (
+    <button className="button secondary small" onClick={() => void copy()}>
+      {isCopied ? t("Kopierad") : t("Kopiera felrapport")}
+    </button>
+  );
+}
+
 export function AboutTab() {
   return (
     <>
       <Row label={t("Version")}>{__APP_VERSION__}</Row>
+      <Row
+        label={t("Felrapport")}
+        hint={t("Version, enhet och de senaste felen, att klistra in i ett mejl till oss.")}
+      >
+        <ErrorReportButton />
+      </Row>
       <Row
         label={t("Integritet")}
         hint={t(

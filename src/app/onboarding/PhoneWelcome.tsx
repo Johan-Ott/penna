@@ -1,17 +1,12 @@
+import logo from "../../assets/penna-logo.png";
 import { continueFrom, openExample, type OnboardingState } from "./useOnboarding.js";
 import { t } from "../../i18n/i18n.js";
 
-/**
- * The first start on a phone, as the mobile design draws it. The books live in Penna's own
- * folder on the phone; "Skapa ny mapp" makes it and goes on to the first project.
- */
 export function PhoneWelcome({ state }: { state: OnboardingState }) {
   const start = () => void continueFrom({ ...state, step: 3 });
   return (
     <main className="phone-welcome">
-      <span className="brand-mark large" aria-hidden="true">
-        P
-      </span>
+      <img className="brand-mark large" src={logo} alt="" />
       <h1>{t("Skriv var du än är.")}</h1>
       <p className="phone-welcome-text">
         {t("Böckerna sparas i Pennas egen mapp på telefonen. Inget konto behövs.")}

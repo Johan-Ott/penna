@@ -8,13 +8,11 @@ import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
-/** A name clicked in the text: which note, and where the name is on screen. */
 export interface ShownMention {
   id: string;
   box: DOMRect;
 }
 
-/** Which text to read: a scene or note, and the folder it lies in. */
 interface TextRef {
   dir: string;
   id: string;
@@ -31,8 +29,7 @@ async function readTexts(refs: TextRef[]) {
   return texts;
 }
 
-// Read only while a note or a name card is shown, so an ordinary save does not read the book.
-// The texts are read again when the folders change, which a save does.
+// Read only while a note or name card shows, so an ordinary save does not read the whole book.
 function useTexts(refs: TextRef[], version: unknown, isWanted: boolean) {
   const [texts, setTexts] = useState<Record<string, string>>({});
   const key = refs.map((ref) => `${ref.dir}|${ref.id}`).join(",");
@@ -48,7 +45,6 @@ function useTexts(refs: TextRef[], version: unknown, isWanted: boolean) {
   return texts;
 }
 
-/** A linked note, with the folder it lives in and its sort's name for the palette. */
 export interface NoteCard extends Card {
   dir: string;
   sortLabel: string;
@@ -64,13 +60,9 @@ function noteCards(homes: Project[]): NoteCard[] {
   );
 }
 
-// "Fiskare, fyrens siste vakt": the first sentence of a note says who or what it is.
 const firstSentence = (text: string) => (text.trim().match(/^[^.!?\n]*/)?.[0] ?? "").trim();
 
-/**
- * The notes linked in the text, where each is named in the book, and the name card.
- * `homes` must keep its identity between renders (useMemo), or the texts are read every time.
- */
+/** `homes` must keep its identity between renders (useMemo), or the texts are read every time. */
 export function useNotes(homes: Project[], book: Project | null, isNoteOpen: boolean) {
   const cards = useMemo(() => noteCards(homes), [homes]);
   const [mention, setMention] = useState<ShownMention | null>(null);

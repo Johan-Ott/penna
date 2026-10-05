@@ -6,7 +6,7 @@ import { t } from "../../i18n/i18n.js";
 export interface TreeRowProps {
   row: Row;
   label: string;
-  /** The raw title the rename field starts from, without numbering. */
+  /** Without numbering. */
   title: string;
   meta: string;
   isActive: boolean;

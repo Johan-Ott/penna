@@ -36,14 +36,12 @@ const NEW_TITLES: Record<NodeKind, string> = {
   sort: t("Ny sort"),
 };
 
-// A text made in a sort is a note, and is named like one.
 function newSceneTitle(tree: TreeNode[], placement: Placement) {
   const folder = placement && "inside" in placement ? findNode(tree, placement.inside) : null;
   return folder?.node.kind === "sort" ? t("Ny anteckning") : NEW_TITLES.scene;
 }
 
-// Without a placement, a scene goes after the open scene and a chapter after the chapter
-// being written in; parts and folders go last in the manuscript.
+// A scene goes after the open scene, a chapter after the current chapter, others last.
 function defaultPlacement(tree: TreeNode[], kind: NodeKind, openSceneId: string | null) {
   if (!openSceneId || kind === "part" || kind === "folder") return null;
   if (kind === "scene") return openSceneId;
@@ -58,7 +56,7 @@ function place(tree: TreeNode[], node: TreeNode, placement: Placement, openScene
   return insertAfter(tree, node, afterId);
 }
 
-// Title and status live in each scene file; after a change the tree reads them again.
+// After a title or status change the tree reads the scene files again.
 function useSceneFileActions({
   project,
   session,
@@ -83,16 +81,13 @@ function useSceneFileActions({
   return { renameSceneTitle, setStatus };
 }
 
-// A scene gets its file first; a part, chapter or folder lives only in the tree.
 async function newNode(project: Project, kind: NodeKind, placement: Placement): Promise<TreeNode> {
   if (kind !== "scene") return { id: newSceneId(), kind, title: NEW_TITLES[kind], children: [] };
   const title = newSceneTitle(project.tree, placement);
   return { id: await createScene(platform.fileSystem, project.dir, title), kind };
 }
 
-/** Creating and renaming things in the project: scene files and the tree in project.json. */
 export function useProjectActions({ project, session, updateTree, refresh }: ProjectActionsInput) {
-  // Returns the new node's id, so the tree can start renaming it.
   const newItem = useCallback(
     async (kind: NodeKind, placement: Placement = null) => {
       if (!project || project.isReadOnly) return null;
@@ -106,7 +101,6 @@ export function useProjectActions({ project, session, updateTree, refresh }: Pro
   return { newItem, ...useSceneFileActions({ project, session, refresh }) };
 }
 
-// New chapters, parts and folders start with their name ready to type; scenes open in the editor.
 export function useTreeHandlers(actions: ReturnType<typeof useProjectActions>) {
   const [renameRequestId, setRenameRequestId] = useState<string | null>(null);
   return {

@@ -10,14 +10,12 @@ import type { Project } from "../useProject.js";
 import type { ExportChoices } from "./useExport.js";
 import { t } from "../../i18n/i18n.js";
 
-/** Where each optional part keeps its text in project.json. */
 export const EXTRA_FIELDS = {
   hasDedication: "dedication",
   hasThanks: "thanks",
   hasAbout: "aboutAuthor",
 } as const;
 
-// Only the parts the writer ticked, and only those with text, go into the book.
 export function chosenExtras(project: Project, choices: ExportChoices): BookExtras {
   const textOf = (key: keyof typeof EXTRA_FIELDS) => {
     const value = project.fields[EXTRA_FIELDS[key]];
@@ -33,10 +31,8 @@ export function chosenExtras(project: Project, choices: ExportChoices): BookExtr
   };
 }
 
-/** How far the reading has come, counted in chapters as the design shows it. */
 export type ExportProgress = (chapter: number, chapters: number) => void;
 
-// Each scene's chapter number, so reading scene 12 can be told as "Kapitel 5 av 8".
 function chapterNumbers(outline: OutlineItem[]) {
   const numbers: number[] = [];
   let chapter = 0;
@@ -47,7 +43,7 @@ function chapterNumbers(outline: OutlineItem[]) {
   return { numbers, chapters: Math.max(1, chapter) };
 }
 
-/** Every scene is read before anything is built, so a missing one stops the export early. */
+/** Every scene is read first, so a missing one stops the export before anything is written. */
 export async function bookMaterial(
   project: Project,
   generalAuthor: string,
@@ -72,7 +68,6 @@ export async function bookMaterial(
 
 export type BookMaterial = Awaited<ReturnType<typeof bookMaterial>>;
 
-/** What Typst sets: the book with its design from project.json, for the PDF and the preview. */
 export function printInput(parts: {
   project: Project;
   material: BookMaterial;

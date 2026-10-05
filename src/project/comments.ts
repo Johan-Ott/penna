@@ -2,14 +2,13 @@ import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 
-/** Where a comment belongs: the quoted words and a little of the text on either side. */
 export interface Anchor {
   quote: string;
   prefix: string;
   suffix: string;
 }
 
-/** A comment as the spec stores it; a reply has `replyTo` and no quote of its own. */
+/** A reply has `replyTo` and no quote of its own. */
 export interface Comment extends Anchor {
   id: string;
   body: string;
@@ -63,10 +62,7 @@ function contextScore(text: string, start: number, length: number, anchor: Ancho
   return score;
 }
 
-/**
- * Where the quote is now. Of several matches the one whose surroundings agree best wins, so
- * the comment survives edits around it; null when the quote is gone.
- */
+/** Of several matches the one with the best-matching surroundings wins; null when the quote is gone. */
 export function locate(text: string, anchor: Anchor): { from: number; to: number } | null {
   if (anchor.quote === "") return null;
   let best: { from: number; score: number } | null = null;
@@ -104,7 +100,7 @@ function commentOf(value: unknown): Comment | null {
   };
 }
 
-// A file that cannot be read is kept as a copy first, so a later save writes over nothing.
+// Kept as a copy first, so a later save overwrites nothing.
 async function keepBrokenCopy(fileSystem: FileSystem, path: string, brokenText: string) {
   const stamp = new Date().toISOString().slice(0, 16).replace(":", "-");
   await writeAtomic(fileSystem, `${path}.trasig-${stamp}`, brokenText);

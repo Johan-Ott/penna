@@ -19,7 +19,7 @@ const fieldLine = (key: string) => new RegExp(`^${key}:[ \\t]*(.*?)[ \\t]*$`, "m
 // A plain YAML value may not contain ": " or start with a quote, so such titles are quoted.
 const NEEDS_QUOTES = /: |^["'#&*!|>%@`]/;
 
-/** A text field of the front matter, unquoted, or null when it is missing or empty. */
+/** Unquoted; null when missing or empty. */
 export function readField(frontMatter: string, key: string): string | null {
   const value = fieldLine(key).exec(frontMatter)?.[1];
   if (value === undefined || value === "") return null;
@@ -33,7 +33,7 @@ export function readField(frontMatter: string, key: string): string | null {
 
 export const sceneTitle = (frontMatter: string) => readField(frontMatter, "title");
 
-/** `link: true` or `link: false` in a note; anything else follows the note's sort. */
+/** Anything but `link: true` or `link: false` follows the note's sort. */
 export function noteLink(frontMatter: string): boolean | null {
   const value = readField(frontMatter, "link");
   if (value === "true" || value === "false") return value === "true";
@@ -46,7 +46,6 @@ export function newSceneText(id: string, title: string): string {
   return `---\nid: ${id}\ntitle: ${yamlValue(title)}\nstatus: idé\n---\n`;
 }
 
-// Replaces the line `key: ...`, or adds it last, just before the closing `---`.
 export function withField(frontMatter: string, key: string, value: string): string {
   const line = `${key}: ${value}`;
   const pattern = new RegExp(`^${key}:.*$`, "m");
@@ -58,7 +57,6 @@ export function withField(frontMatter: string, key: string, value: string): stri
   );
 }
 
-/** The front matter with one text field set, every other line kept as it was. */
 export const withTextField = (frontMatter: string, key: string, value: string) =>
   withField(frontMatter, key, yamlValue(value));
 

@@ -27,7 +27,6 @@ const STATUS_LABELS: Record<SceneStatus, string> = {
   redigering: t("Redigering"),
   klar: t("Klar"),
 };
-/** The project types from onboarding, as a book cover or a subtitle names them. */
 export const KIND_LABELS: Record<string, string> = {
   roman: t("Roman"),
   noveller: t("Noveller"),
@@ -36,7 +35,7 @@ export const KIND_LABELS: Record<string, string> = {
 };
 const DAY = 24 * 60 * 60 * 1000;
 
-/** The stage that holds the most words; on a tie the earlier stage. */
+/** On a tie the earlier stage. */
 export function bookStatus(scenes: Pick<SceneSummary, "words" | "status">[]): string {
   const wordsIn = (status: SceneStatus) =>
     scenes.filter((scene) => scene.status === status).reduce((sum, scene) => sum + scene.words, 0);
@@ -56,7 +55,6 @@ export function bookProgress(scenes: Pick<SceneSummary, "words" | "status">[]): 
 
 const startOfDay = (time: number) => new Date(time).setHours(0, 0, 0, 0);
 
-/** "Skrivet idag", "Igår", "För 3 dagar sedan", "För 2 veckor sedan" or a date. */
 export function whenUpdated(time: number, now: number): string {
   const days = Math.round((startOfDay(now) - startOfDay(time)) / DAY);
   if (days <= 0) return t("Skrivet idag");
@@ -72,7 +70,7 @@ export function whenUpdated(time: number, now: number): string {
 
 const folderTitle = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
 
-// The shelf only reads. A broken project.json is repaired when the project is opened, not here.
+// A broken project.json is repaired when the project opens, not here.
 async function readProjectFields(fileSystem: FileSystem, dir: string) {
   try {
     const parsed = JSON.parse(await fileSystem.readText(joinPath(dir, "project.json"))) as Record<
@@ -87,7 +85,7 @@ async function readProjectFields(fileSystem: FileSystem, dir: string) {
   }
 }
 
-// Scenes in the manuscript count; a project without a usable tree counts every scene file.
+// A project without a usable tree counts every scene file.
 async function bookSceneIds(fileSystem: FileSystem, dir: string, tree: TreeNode[]) {
   const onDisk = (await openProjectFolder(fileSystem, dir)).scenes;
   const inManuscript = manuscriptSceneIds(tree).filter((id) => onDisk.includes(id));
@@ -135,7 +133,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
   };
 }
 
-/** The projects in the Penna folder and those opened from elsewhere, missing ones last. */
+/** Missing ones last. */
 export async function readShelf(
   fileSystem: FileSystem,
   libraryDir: string | null,
@@ -151,7 +149,6 @@ export async function readShelf(
   return [...books.filter((book) => !book.isMissing), ...books.filter((book) => book.isMissing)];
 }
 
-/** The shelf in rows: books on their own first, then each series with its books together. */
 export function shelfGroups(books: ShelfBook[]) {
   const names = [...new Set(books.map((book) => book.series))];
   const ordered = [null, ...names.filter((name) => name !== null)];

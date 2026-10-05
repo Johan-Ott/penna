@@ -22,14 +22,11 @@ function useAppPreferences() {
   return { preferences, update };
 }
 
-/**
- * Opens the last project when its folder is still there. Until that is known `isStarting` is
- * true, so the welcome screen never flashes by before the project appears.
- */
+/** `isStarting` stays true until the folder check is done, so the welcome screen never flashes by. */
 export function useStartup(open: (dir: string) => Promise<void>, openDir: string | null) {
   const { preferences, update } = useAppPreferences();
   const [isStarting, setStarting] = useState(true);
-  // Read once: only the preferences at start decide what opens.
+  // Only the preferences at start decide what opens.
   const [startDir] = useState(preferences.lastProjectDir);
   useEffect(() => {
     const reopen = async () => {

@@ -4,10 +4,7 @@ import { useGoKeys, useShortcut } from "./useShortcut.js";
 import { useWritingSettings } from "./useWritingSettings.js";
 import { t } from "../i18n/i18n.js";
 
-/**
- * Skriv shows the open text (a scene or a note), Innehåll the book, Läs a chapter or the whole
- * book in a row, Publicera the finished book.
- */
+/** Skriv: the open text. Innehåll: the book. Läs: a chapter or the whole book. Publicera: the export. */
 export type View = "skriv" | "innehall" | "las" | "publicera";
 export const VIEWS: [View, string, string][] = [
   ["skriv", t("Skriv"), "G S"],
@@ -15,7 +12,6 @@ export const VIEWS: [View, string, string][] = [
   ["publicera", t("Publicera"), "G P"],
 ];
 
-// Find and replace is open or not; the palette can open it with a word already typed in.
 function useSearchMode() {
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [searchSeed, setSearchSeed] = useState("");
@@ -26,8 +22,7 @@ function useSearchMode() {
   return { isSearchOpen, setSearchOpen, searchSeed, openSearchWith };
 }
 
-// Granska is opened from the top bar, which also shows how much there is to look at:
-// null when the open text has no review.
+// Null when the open text has no review.
 function useReviewState() {
   const [isReviewOpen, setReviewOpen] = useState(false);
   const [reviewCount, setReviewCount] = useState<number | null>(null);
@@ -35,7 +30,6 @@ function useReviewState() {
   return { review, isReviewOpen, setReviewOpen, setReviewCount };
 }
 
-// Läs shows one chapter, or the whole book when the chapter is null.
 function useReading(setView: (view: View) => void) {
   const [readChapterId, setReadChapterId] = useState<string | null>(null);
   const read = useCallback(
@@ -48,10 +42,10 @@ function useReading(setView: (view: View) => void) {
   return { readChapterId, read };
 }
 
-// The width under which the sidebar floats over the card instead of standing beside it.
+// Under this width the sidebar floats over the card.
 const NARROW = 960;
 
-// The sidebar is shown unless the writer hides it; in a narrow window it starts hidden.
+// In a narrow window the sidebar starts hidden.
 function useSidebar() {
   const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= NARROW);
   const toggleSidebar = useCallback(() => setSidebarOpen((current) => !current), []);
@@ -60,7 +54,6 @@ function useSidebar() {
   return { isSidebarOpen, setSidebarOpen, toggleSidebar };
 }
 
-/** How the writer is working right now: view, focus mode, search, settings and the sidebar. */
 export function useWritingMode() {
   const { settings, update } = useWritingSettings();
   const [isFocusMode, setFocusMode] = useState(false);

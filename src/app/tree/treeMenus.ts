@@ -10,7 +10,7 @@ export const STATUS_LABELS: Record<SceneStatus, string> = {
   klar: t("Klar"),
 };
 
-/** Where a new node goes: inside a node (at its end), after a node, or as chosen by the app. */
+/** Null leaves the place to the app. */
 export type Placement = { inside: string } | { after: string } | null;
 
 export interface TreeMenuActions {
@@ -22,19 +22,16 @@ export interface TreeMenuActions {
   setStatus: (node: TreeNode, status: SceneStatus) => void;
   statusOf: (node: TreeNode) => SceneStatus | null;
   showSnapshots: (node: TreeNode) => void;
-  /** Whether a note's name is linked in the text, or null when the node is not a note. */
+  /** Null when the node is not a note. */
   linkOf: (node: TreeNode) => boolean | null;
   setLink: (node: TreeNode, isLinked: boolean) => void;
-  /** Ny anteckning, with the sort already chosen. */
   newNote: (sortId: string) => void;
-  /** Moves a book's note into the book's series; null when the book is in no series. */
+  /** Null when the book is in no series. */
   moveToSeries: ((node: TreeNode) => void) | null;
-  /** Whether a scene is the open one with a scene after it to take in. */
   canMerge: (node: TreeNode) => boolean;
   mergeWithNext: () => void;
 }
 
-/** The add button and a right-click on empty space offer the same four things. */
 export function addMenu(actions: Pick<TreeMenuActions, "add">): MenuItem[] {
   return [
     { label: t("Ny scen"), shortcut: "Ctrl+Alt+N", onSelect: () => actions.add("scene", null) },
@@ -73,7 +70,7 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return byKind[node.kind];
 }
 
-// A note has no status; it can choose whether its name is linked in the text instead.
+// A note has no status; its menu chooses whether its name is linked instead.
 function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null {
   const isLinked = actions.linkOf(node);
   if (isLinked === null) return null;
@@ -91,7 +88,7 @@ function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null 
   ];
 }
 
-// The status is written to the scene file and drives the status and progress on the shelf.
+// The status is written to the scene file and drives the progress on the shelf.
 function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   if (node.kind !== "scene") return [];
   const forNote = noteItems(node, actions);
@@ -121,7 +118,6 @@ function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   ];
 }
 
-/** Everything a right-click on a tree row can do, grouped: open, add, edit. */
 export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuActions): MenuItem[] {
   if (node.id === TRASH_ID) return [];
   if (isInTrash)

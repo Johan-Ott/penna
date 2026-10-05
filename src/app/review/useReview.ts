@@ -25,7 +25,7 @@ const ignoredNames = (project: Project) =>
     ? project.fields["ignoredNames"].filter((name): name is string => typeof name === "string")
     : [];
 
-// The other scenes of the open scene's chapter, read when the chapter changes, not on each save.
+// Read when the chapter changes, not on each save.
 function useChapterTexts(project: Project, sceneId: string) {
   const chapter = chapterOf(project.tree, sceneId);
   const ids = (chapter ? (findNode(project.tree, chapter.id)?.node.children ?? []) : [])
@@ -45,7 +45,6 @@ function useChapterTexts(project: Project, sceneId: string) {
   return texts;
 }
 
-/** What the review panel shows for the open scene: who is in the chapter, and what to look at. */
 export function useReview({ project, scene, doc, cards, repeatWindow }: ReviewInput) {
   const chapterTexts = useChapterTexts(project, scene.id);
   const sceneText = doc.textBetween(0, doc.content.size, "\n");

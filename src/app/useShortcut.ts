@@ -5,7 +5,7 @@ interface ShortcutOptions {
   shift?: boolean;
 }
 
-/** Runs `action` on Ctrl+key (Cmd+key on macOS). Alt and Shift must match exactly. */
+/** Ctrl+key (Cmd on macOS). Alt and Shift must match exactly. */
 export function useShortcut(key: string, action: () => void, options: ShortcutOptions = {}) {
   const actionRef = useRef(action);
   actionRef.current = action;
@@ -24,7 +24,7 @@ export function useShortcut(key: string, action: () => void, options: ShortcutOp
   }, [key, needsAlt, needsShift]);
 }
 
-/** Runs `action` on Escape unless something closer to the focus already handled it. */
+/** Unless something closer to the focus already handled Escape. */
 export function useEscape(action: () => void) {
   const actionRef = useRef(action);
   actionRef.current = action;
@@ -47,10 +47,7 @@ const isTyping = (event: KeyboardEvent) => {
 
 const GO_WAIT_MS = 1000;
 
-/**
- * "G S", "G F": G and then a letter, as in the design's menu, when nothing is being typed.
- * `onLetter` says whether the letter led somewhere.
- */
+/** G and then a letter, when nothing is being typed. `onLetter` says whether the letter led somewhere. */
 export function useGoKeys(onLetter: (letter: string) => boolean) {
   const onLetterRef = useRef(onLetter);
   onLetterRef.current = onLetter;

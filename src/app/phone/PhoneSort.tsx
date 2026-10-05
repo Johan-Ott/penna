@@ -27,7 +27,6 @@ function SortBar({ home, sortId, onBack }: { home: Project; sortId: string; onBa
   );
 }
 
-/** The notes of one sort on a phone, from the series or the book, and a way to add one. */
 export function PhoneSort({ app, sortId, onOpen, onBack }: PhoneSortProps) {
   const home = app.homes.find((candidate) => findNode(candidate.tree, sortId));
   if (!home) return null;

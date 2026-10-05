@@ -1,6 +1,6 @@
 import type { OutlineItem } from "./book.js";
 
-/** How the printed book looks, kept in project.json under `design`. */
+/** Kept in project.json under `design`. */
 export type BookTheme = "klassisk" | "modern" | "luftig";
 
 export interface BookDesign {
@@ -40,7 +40,7 @@ export const DEFAULT_DESIGN: BookDesign = {
 const oneOf = <T>(value: unknown, allowed: T[], fallback: T): T =>
   allowed.includes(value as T) ? (value as T) : fallback;
 
-/** The book's design from project.json; anything missing or unknown is Klassisk's default. */
+/** Anything missing or unknown falls back to Klassisk. */
 export function designOf(fields: Record<string, unknown>): BookDesign {
   const stored = (fields["design"] ?? {}) as Record<string, unknown>;
   const trims = TRIMS.map(([trim]) => trim);
@@ -59,7 +59,7 @@ export function trimSize(trim: string) {
   return { width, height };
 }
 
-/** The book up to the end of its first chapter: enough to judge the design, quick to set. */
+/** Up to the end of the first chapter: enough to judge the design, quick to set. */
 export function previewOutline(outline: OutlineItem[]): OutlineItem[] {
   const firstChapter = outline.findIndex((item) => item.kind === "chapter");
   const next = outline.findIndex((item, index) => index > firstChapter && item.kind !== "scene");

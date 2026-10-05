@@ -56,6 +56,75 @@ describe("syncProject", () => {
     expect(result.conflicts).toEqual(["scenes/S1.md"]);
   });
 
+  it("merges project.json changed on both devices instead of keeping a copy", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+    await phone.writeText(`${BOOK}/project.json`, '{"title":"Isen","dailyGoal":800}');
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    await computer.writeText(`${BOOK}/project.json`, '{"title":"Vintervägen"}');
+    const result = await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    const merged = { title: "Vintervägen", dailyGoal: 800 };
+    expect(JSON.parse(await computer.readText(`${BOOK}/project.json`))).toEqual(merged);
+    expect(JSON.parse(await phone.readText(`${BOOK}/project.json`))).toEqual(merged);
+    expect(result.conflicts).toEqual([]);
+    expect(await computer.list(BOOK)).not.toContain("project (Drive 2026-10-04).json");
+  });
+
+  it("moves a file removed on one device to the trash on the other", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    await computer.rename(`${BOOK}/scenes/S1.md`, "/elsewhere/S1.md");
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    expect(cloud.isInTrash("Penna/Isen.penna/scenes/S1.md")).toBe(true);
+    expect(await phone.list(`${BOOK}/scenes`)).toEqual([]);
+    expect(await phone.readText(`${BOOK}/trash/S1.md`)).toBe("Brevet låg där.");
+  });
+
+  it("keeps a removed file that the other device changed in the meantime", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+    await phone.writeText(`${BOOK}/scenes/S1.md`, "Ändrad på telefonen.");
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    await computer.rename(`${BOOK}/scenes/S1.md`, "/elsewhere/S1.md");
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+
+    expect(await computer.readText(`${BOOK}/scenes/S1.md`)).toBe("Ändrad på telefonen.");
+  });
+
+  it("never sends a conflict copy to Drive", async () => {
+    const { cloud, computer } = twoDevices();
+    await computer.writeText(`${BOOK}/scenes/S1 (Drive 2026-10-04).md`, "Kopia.");
+
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+
+    expect(cloud.textAt("Penna/Isen.penna/scenes/S1 (Drive 2026-10-04).md")).toBeNull();
+  });
+
+  it("keeps the earlier text of a scene as a version before Drive's text replaces it", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+    await phone.writeText(`${BOOK}/scenes/S1.md`, "Från telefonen.");
+    await syncProject(phone, cloud.drive, BOOK, NOW);
+
+    await syncProject(computer, cloud.drive, BOOK, NOW);
+
+    const versions = await computer.list(`${BOOK}/snapshots/S1`);
+    expect(versions).toHaveLength(1);
+    const version = await computer.readText(`${BOOK}/snapshots/S1/${versions[0] ?? ""}`);
+    expect(version).toContain("Brevet låg där.");
+  });
+
   it("brings a new scene written on the phone to the computer", async () => {
     const { cloud, computer, phone } = twoDevices();
     await syncProject(computer, cloud.drive, BOOK, NOW);
@@ -75,7 +144,7 @@ describe("syncProject", () => {
 
     const again = await syncProject(computer, cloud.drive, BOOK, NOW);
 
-    expect(again).toEqual({ uploaded: [], downloaded: [], conflicts: [] });
+    expect(again).toEqual({ uploaded: [], downloaded: [], conflicts: [], trashed: [] });
   });
 
   it("leaves its own memory and half-written files out of Drive", async () => {

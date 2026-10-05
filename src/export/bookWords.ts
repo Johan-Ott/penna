@@ -1,7 +1,6 @@
 import { romanNumeral } from "../project/treeLabels.js";
 import type { OutlineItem } from "./book.js";
 
-/** The fixed words an exported book prints, in the book's language. */
 interface BookWords {
   part: string;
   chapter: string;
@@ -12,7 +11,6 @@ interface BookWords {
   dedication: string;
   thanks: string;
   aboutAuthor: string;
-  /** "ca 85 000 ord" and "av Elin Berg" on the manuscript's first page. */
   about: (words: string) => string;
   byAuthor: (author: string) => string;
 }
@@ -101,7 +99,6 @@ const WORDS: Record<string, BookWords> = {
 export const bookWords = (language: string): BookWords =>
   WORDS[language] ?? (WORDS["sv-SE"] as BookWords);
 
-/** "Del I" or "Kapitel 3" in the book's language. */
 export function headingLabel(
   item: Extract<OutlineItem, { kind: "part" | "chapter" }>,
   language: string,
@@ -112,6 +109,6 @@ export function headingLabel(
     : `${words.chapter} ${item.number}`;
 }
 
-/** The manuscript's length rounded to hundreds, as agents and publishers expect. */
+/** Rounded to hundreds, as agents and publishers expect. */
 export const roundedWords = (words: number, language: string) =>
   bookWords(language).about((Math.round(words / 100) * 100).toLocaleString(language));

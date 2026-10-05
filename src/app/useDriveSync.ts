@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { syncProject } from "../sync/driveSync.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
+import { errorLog } from "./errorLog.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";
 import { t } from "../i18n/i18n.js";
 
-/** How the sync with Google Drive is doing, for the row in Inställningar. */
 export type DriveStatus =
   | { kind: "off" }
   | { kind: "signingIn" }
@@ -14,7 +14,7 @@ export type DriveStatus =
   | { kind: "done"; doneAt: number }
   | { kind: "failed"; message: string };
 
-// While a book is open it syncs when it opens and then every five minutes.
+// A book syncs when it opens and then every five minutes.
 const EVERY = 5 * 60_000;
 
 const failure = (error: unknown): DriveStatus => ({
@@ -25,29 +25,41 @@ const failure = (error: unknown): DriveStatus => ({
       : String(error instanceof Error ? error.message : error),
 });
 
-function useSyncRun(dir: string | null, refresh: () => Promise<void>) {
+async function syncFolders(dirs: string[]) {
+  const signIn = platform.googleSignIn;
+  if (!signIn) return false;
+  const drive = googleDrive(signIn.accessToken, signIn.fetch);
+  let hasChanged = false;
+  for (const dir of dirs) {
+    const result = await syncProject(platform.fileSystem, drive, dir, Date.now());
+    hasChanged ||= result.downloaded.length + result.trashed.length > 0;
+  }
+  return hasChanged;
+}
+
+function useSyncRun(dirs: string[], refresh: () => Promise<void>) {
   const [status, setStatus] = useState<DriveStatus>({ kind: "off" });
   const isRunning = useRef(false);
+  // "|" cannot appear in a path, so the folders make one stable key for the callback.
+  const dirsKey = dirs.join("|");
   const syncNow = useCallback(async () => {
-    const signIn = platform.googleSignIn;
-    if (!signIn || !dir || isRunning.current) return;
+    if (!dirsKey || isRunning.current) return;
     isRunning.current = true;
     setStatus({ kind: "syncing" });
     try {
-      const drive = googleDrive(signIn.accessToken, signIn.fetch);
-      const result = await syncProject(platform.fileSystem, drive, dir, Date.now());
+      const hasChanged = await syncFolders(dirsKey.split("|"));
       setStatus({ kind: "done", doneAt: Date.now() });
-      if (result.downloaded.length > 0) await refresh();
+      if (hasChanged) await refresh();
     } catch (error) {
+      errorLog.record(`Synk: ${String(error)}`);
       setStatus(failure(error));
     } finally {
       isRunning.current = false;
     }
-  }, [dir, refresh]);
+  }, [dirsKey, refresh]);
   return { status, setStatus, syncNow };
 }
 
-// Connecting asks the writer to sign in; disconnecting forgets the sign-in on this device.
 function useDriveConnection(
   updatePreferences: (change: PreferenceChange) => void,
   setStatus: (status: DriveStatus) => void,
@@ -68,16 +80,15 @@ function useDriveConnection(
   return { connect, disconnect };
 }
 
-/** Syncs the open book with Google Drive when the writer has connected Drive on this device. */
 export function useDriveSync(
-  dir: string | null,
+  dirs: string[],
   preferences: AppPreferences,
   updatePreferences: (change: PreferenceChange) => void,
   refresh: () => Promise<void>,
 ) {
   const isAvailable = platform.googleSignIn !== undefined;
   const isOn = preferences.isDriveSyncOn && isAvailable;
-  const { status, setStatus, syncNow } = useSyncRun(dir, refresh);
+  const { status, setStatus, syncNow } = useSyncRun(dirs, refresh);
   useEffect(() => {
     if (!isOn) return setStatus({ kind: "off" });
     void syncNow();

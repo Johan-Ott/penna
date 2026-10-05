@@ -1,7 +1,6 @@
 import type { UiLanguage } from "../i18n/i18n.js";
 import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
 
-/** What Penna remembers between starts on this computer. */
 export interface AppPreferences {
   isOnboardingDone: boolean;
   /** The Penna folder where new projects are made, for example OneDrive/Penna. */
@@ -9,16 +8,13 @@ export interface AppPreferences {
   lastProjectDir: string | null;
   /** Projects opened from outside the library, so the shelf can show them too. */
   knownProjects: string[];
-  /** Used in export; empty until the writer gives one. */
   authorName: string;
-  /** The daily goal a new project starts with. */
   defaultDailyGoal: number;
   isAutoSnapshotOn: boolean;
   /** The language of Penna's own interface; each book has its own language too. */
   uiLanguage: UiLanguage;
   /** The hour of the daily reminder when nothing is written yet; null is off. */
   reminderHour: number | null;
-  /** Each open book syncs with its folder Penna/<book> in the writer's Google Drive. */
   isDriveSyncOn: boolean;
 }
 

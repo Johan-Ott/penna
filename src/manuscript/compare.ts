@@ -16,7 +16,6 @@ function excerptFrom(text: string, start: number): string {
   return opening + cut;
 }
 
-/** Short excerpts of two versions, starting a few words before they first differ. */
 export function differingExcerpts(mine: string, theirs: string) {
   const difference = firstDifference(mine, theirs);
   const wordsBefore = mine.slice(0, difference).split(/(?<=\s)/);
@@ -25,7 +24,7 @@ export function differingExcerpts(mine: string, theirs: string) {
   return { mine: excerptFrom(mine, start), theirs: excerptFrom(theirs, start) };
 }
 
-/** A scene body as the writer sees it, without markdown marks, blocks joined by a space. */
+/** Without Markdown marks, blocks joined by a space. */
 export function plainText(markdown: string, blockSeparator = " "): string {
   const doc = parseMarkdown(markdown);
   return doc.textBetween(0, doc.content.size, blockSeparator);

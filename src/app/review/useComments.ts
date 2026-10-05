@@ -19,7 +19,7 @@ import { t } from "../../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
-// The selected words, with a little text on either side; null when nothing is selected.
+// Null when nothing is selected.
 function selectedAnchor(editor: Editor): Anchor | null {
   const state = editor.viewRef.current?.state;
   if (!state || state.selection.empty) return null;
@@ -27,7 +27,7 @@ function selectedAnchor(editor: Editor): Anchor | null {
   return anchorAt(text, fromDoc(state.selection.from), fromDoc(state.selection.to));
 }
 
-// The open scene's comments file, written one change at a time and read again after.
+// Written one change at a time, then read again.
 function useCommentFile(project: Project | null, scene: OpenScene | null) {
   const [comments, setComments] = useState<Comment[]>([]);
   const queue = useRef(Promise.resolve());
@@ -50,7 +50,6 @@ function useCommentFile(project: Project | null, scene: OpenScene | null) {
   return { comments, save };
 }
 
-// The open comments are marked in the text; a click on one shows it in the panel.
 function useCommentMarks(editor: Editor, comments: Comment[], onComment: (id: string) => void) {
   editor.modes.current.commentAnchors = comments
     .filter((comment) => !comment.replyTo && !comment.resolved)
@@ -60,7 +59,6 @@ function useCommentMarks(editor: Editor, comments: Comment[], onComment: (id: st
   useEffect(() => run(refreshComments, false), [comments, run]);
 }
 
-/** Comments on the open scene: marked in the text, written, answered and resolved in the panel. */
 export function useComments(parts: {
   project: Project | null;
   scene: OpenScene | null;

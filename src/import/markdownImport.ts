@@ -1,10 +1,8 @@
 import { t } from "../i18n/i18n.js";
-/** A book brought in from another program, before it is written as a Penna project. */
 export type ImportedNode =
   | { kind: "part" | "chapter"; title: string; children: ImportedNode[] }
   | { kind: "scene"; title: string; body: string };
 
-/** A problem with the picked file, told to the writer as it is. */
 export class ImportError extends Error {}
 
 interface Heading {
@@ -26,7 +24,6 @@ function headingOf(line: string, hasMarkdownHeadings: boolean): Heading | null {
   return chapter?.[1] ? { level: 1, title: chapter[2] ?? chapter[1] } : null;
 }
 
-/** "Kära Elin om du läser det" for "*Kära Elin*, om du läser det här…". */
 export function titleFromText(body: string): string {
   const words = body
     .replace(/[*_`>#[\]()]/g, "")
@@ -36,7 +33,6 @@ export function titleFromText(body: string): string {
   return words.slice(0, TITLE_WORDS).join(" ") || t("Namnlös scen");
 }
 
-// A scene's text, split at scene breaks; empty pieces are left out.
 function scenesOf(lines: string[], sceneTitle: string | null): ImportedNode[] {
   const pieces: string[][] = [[]];
   for (const line of lines) {
@@ -70,7 +66,7 @@ function sectionsOf(text: string): Section[] {
   return sections;
 }
 
-// The heading levels in use: with two or more, the top one is parts and the next chapters.
+// With two or more heading levels, the top one is parts and the next chapters.
 function rolesOf(sections: Section[]) {
   const levels = [
     ...new Set(sections.flatMap((section) => (section.heading ? [section.heading.level] : []))),
@@ -118,7 +114,6 @@ function addSection(outline: Outline, roles: Roles, { heading, lines }: Section)
   into.push(...scenesOf(lines, sceneTitle));
 }
 
-/** A manuscript in Markdown or plain text as parts, chapters and scenes, split at its headings. */
 export function splitManuscript(text: string): ImportedNode[] {
   const sections = sectionsOf(text);
   const roles = rolesOf(sections);

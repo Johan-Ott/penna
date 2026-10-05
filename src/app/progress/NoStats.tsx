@@ -1,6 +1,5 @@
 import { t } from "../../i18n/i18n.js";
 
-// Before the first day of writing there is nothing to show but where to begin.
 export function NoStats({ onWrite }: { onWrite: () => void }) {
   return (
     <div className="progress-card no-stats">

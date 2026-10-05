@@ -1,7 +1,6 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
 import { t, numberLocale } from "../../i18n/i18n.js";
 
-// The covers of the design, in turn: black, light grey, dark grey and white.
 const COVERS = ["cover-black", "cover-light", "cover-dark", "cover-white"];
 
 interface BookProps {
@@ -57,7 +56,6 @@ function BookMeta({ book }: { book: ShelfBook }) {
   );
 }
 
-// A project whose folder is gone: the text is still where it was put, Penna only lost sight of it.
 function MissingBook({
   book,
   onLocate,

@@ -22,7 +22,6 @@ interface SyncCopy {
 
 const titleOf = (project: Project, id: string) => project.summaries[id]?.title ?? t("Namnlös scen");
 
-/** The sync copy the writer is looking at, and what happens when they choose. */
 export function useSyncCopy(
   project: Project | null,
   session: SceneSession,
@@ -81,7 +80,7 @@ function CrashActions({ onSettle }: { onSettle: (restore: boolean) => void }) {
   );
 }
 
-// Shown before any scene opens, since the next save would write over the crash text.
+// Shown before any scene opens: the next save would overwrite the crash text.
 export function CrashDialog({
   project,
   refresh,
@@ -122,7 +121,6 @@ function notDownloadedNotice(count: number) {
   ];
 }
 
-/** What needs the writer's eye: sync copies to settle, scenes still in the cloud. */
 export function SyncNotices(props: {
   project: Project;
   onShowSyncCopy: (copy: SceneFileRef) => void;

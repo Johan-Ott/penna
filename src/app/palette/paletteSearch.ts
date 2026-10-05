@@ -1,10 +1,9 @@
 export interface PaletteEntry {
   id: string;
   label: string;
-  /** Scener, Kapitel or Kommandon, or the name of a sort such as Personer for a note. */
   group: string;
   shortcut?: string;
-  /** Grey text on the right, such as the chapter a scene belongs to. */
+  /** Grey text on the right, such as the scene's chapter. */
   hint?: string;
   run: () => void;
 }
@@ -35,7 +34,7 @@ function score(label: string, query: string): number {
   return query.length >= 3 && hasLettersInOrder(text, query) ? 1 : 0;
 }
 
-/** Entries that match the query, best first; everything, in order, when the query is empty. */
+/** Best first; everything, in order, when the query is empty. */
 export function searchPalette(entries: PaletteEntry[], query: string): PaletteEntry[] {
   const folded = fold(query.trim());
   if (folded === "") return entries;
@@ -46,10 +45,9 @@ export function searchPalette(entries: PaletteEntry[], query: string): PaletteEn
     .map((match) => match.entry);
 }
 
-// Notes first, as in the design, then scenes, chapters and commands.
+// Notes come first, then scenes, chapters and commands.
 const GROUP_ORDER: Record<string, number> = { Scener: 1, Kapitel: 2, Kommandon: 3 };
 const rank = (entry: PaletteEntry) => GROUP_ORDER[entry.group] ?? 0;
 
-/** Results in groups, as in the design; the best match comes first within a group. */
 export const inGroups = (found: PaletteEntry[]) =>
   [...found].sort((first, second) => rank(first) - rank(second));

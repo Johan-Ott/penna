@@ -3,10 +3,11 @@ import {
   addWritten,
   dailyGoalOf,
   dayKey,
+  readDeviceStats,
   readStats,
   streak,
   wordsAdded,
-  writeStats,
+  writeDeviceStats,
   type Stats,
 } from "../project/stats.js";
 import { platform } from "./platform.js";
@@ -27,7 +28,28 @@ function todayOf(stats: Stats, project: Project | null): Today {
   };
 }
 
-/** Words written per day, kept in the project's stats.json, and today's numbers from it. */
+// Made once at random and kept in localStorage.
+function thisDevice() {
+  const key = "penna.device";
+  try {
+    const known = localStorage.getItem(key);
+    if (known) return known;
+    const made = crypto.randomUUID().slice(0, 8);
+    localStorage.setItem(key, made);
+    return made;
+  } catch {
+    return "enhet";
+  }
+}
+
+async function addToThisDevice(dir: string, added: number) {
+  const { fileSystem } = platform;
+  const device = thisDevice();
+  const own = await readDeviceStats(fileSystem, dir, device);
+  await writeDeviceStats(fileSystem, dir, device, addWritten(own, dayKey(Date.now()), added));
+  return readStats(fileSystem, dir);
+}
+
 export function useWritingStats(project: Project | null) {
   const dir = project?.dir ?? null;
   const [stats, setStats] = useState<Stats>({});
@@ -36,18 +58,15 @@ export function useWritingStats(project: Project | null) {
     setStats({});
     if (dir) void readStats(platform.fileSystem, dir).then(setStats);
   }, [dir]);
-  // Read, add and write in turn, so another device's words that day are kept too. A failed
-  // write only loses a count, never text, so it is not shown as a save error.
+  // A failed write only loses a count, never text, so it is not shown as a save error.
   const recordSave = useCallback(
     (sceneDir: string, before: string, after: string) => {
       const added = wordsAdded(before, after);
       if (added === 0) return;
       queue.current = queue.current
         .then(async () => {
-          const day = dayKey(Date.now());
-          const next = addWritten(await readStats(platform.fileSystem, sceneDir), day, added);
-          await writeStats(platform.fileSystem, sceneDir, next);
-          if (sceneDir === dir) setStats(next);
+          const stats = await addToThisDevice(sceneDir, added);
+          if (sceneDir === dir) setStats(stats);
         })
         .catch(() => undefined);
     },

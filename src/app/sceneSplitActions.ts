@@ -17,14 +17,13 @@ interface SplitInput {
   refresh: () => Promise<void>;
 }
 
-// Only a scene of the open book can be split or merged; a note from the series cannot.
+// A note from the series cannot be split or merged.
 function openBookScene({ project, session }: SplitInput) {
   const scene = session.scene;
   if (!project || project.isReadOnly || !scene || scene.dir !== project.dir) return null;
   return { project, scene };
 }
 
-// The text from the cursor on becomes a new scene right after, with the same status.
 async function split(input: SplitInput) {
   const open = openBookScene(input);
   const state = input.editor.viewRef.current?.state;
@@ -41,7 +40,6 @@ async function split(input: SplitInput) {
   await input.refresh();
 }
 
-// The next scene's text joins the open one; the next scene goes to Papperskorg, file and all.
 async function merge(input: SplitInput) {
   const open = openBookScene(input);
   const nextId = open ? nextSceneSibling(open.project.tree, open.scene.id) : null;
@@ -55,7 +53,6 @@ async function merge(input: SplitInput) {
   await input.refresh();
 }
 
-/** Dela scenen vid markören and Slå ihop med nästa scen. */
 export function sceneSplitActions(input: SplitInput) {
   const open = openBookScene(input);
   return {

@@ -3,12 +3,11 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { rebuildTree, type NodeKind, type TreeNode } from "./tree.js";
 
 export interface ProjectFile {
-  /** Everything in project.json except the tree, kept as it was. */
   fields: Record<string, unknown>;
   tree: TreeNode[];
-  /** File name of the copy kept when project.json could not be read, otherwise null. */
+  /** Null when project.json could be read. */
   repairCopy: string | null;
-  /** Saved by a newer Penna: opened read-only, so this version never writes over it. */
+  /** Opened read-only, so this version never writes over it. */
   isNewerFormat: boolean;
 }
 
@@ -69,7 +68,7 @@ async function repair(
   return { fields: {}, tree, repairCopy, isNewerFormat: false };
 }
 
-/** Reads project.json. A broken file is kept as a copy and the tree is rebuilt from the scenes. */
+/** A broken file is kept as a copy and the tree is rebuilt from the scenes. */
 export async function readProjectFile(
   fileSystem: FileSystem,
   dir: string,

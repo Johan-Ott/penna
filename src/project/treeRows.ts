@@ -7,7 +7,7 @@ export interface TreeRow {
   index: number;
 }
 
-/** The rows a reader sees, top to bottom; the inside of a collapsed node is left out. */
+/** The inside of a collapsed node is left out. */
 export function visibleRows(
   tree: TreeNode[],
   collapsed: ReadonlySet<string>,
@@ -24,7 +24,7 @@ export function visibleRows(
 
 export type DropPosition = "before" | "after" | "inside";
 
-/** Turns a drop on a row into a move. Indexes count after the dragged node is taken out. */
+/** Indexes count after the dragged node is taken out. */
 export function dropMove(
   tree: TreeNode[],
   draggedId: string,
@@ -46,7 +46,6 @@ function dropInside(tree: TreeNode[], dragged: FoundNode, row: TreeRow) {
   return moveNode(tree, dragged.node.id, row.node.id, childCount - (isAlreadyInside ? 1 : 0));
 }
 
-/** The sidebar's three parts: the book, the notes in their sorts, and Papperskorg last. */
 export function sidebarSections(rows: TreeRow[]) {
   const sections = { book: [] as TreeRow[], notes: [] as TreeRow[], trash: [] as TreeRow[] };
   let section = sections.book;
@@ -61,6 +60,5 @@ export function sidebarSections(rows: TreeRow[]) {
   return sections;
 }
 
-/** The rows without sorts that hold nothing, as a book in a series shows its own notes. */
 export const withoutEmptySorts = (rows: TreeRow[]) =>
   rows.filter((row) => !(row.node.kind === "sort" && (row.node.children ?? []).length === 0));

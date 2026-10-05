@@ -20,7 +20,6 @@ export const LAST_STEP = 5;
 
 const START_DETAILS: ProjectDetails = { title: "", type: "roman", dailyGoal: 1000, deadline: "" };
 
-// The cloud folders that exist on this computer, and always "Bara den här enheten".
 async function availableLibraries(): Promise<LibraryCandidate[]> {
   const candidates = libraryCandidates(await platform.knownFolders());
   const checks = await Promise.all(
@@ -47,8 +46,6 @@ function useLibraryChoice(knownLibraryDir: string | null) {
   return { libraries, libraryDir, setLibraryDir, chooseOther };
 }
 
-/** The steps of the first start: welcome, promises, folder, first project, done. */
-/** Where the onboarding starts: the folder Penna knows, the step, and the goal to suggest. */
 export interface OnboardingStart {
   knownLibraryDir: string | null;
   startStep: number;
@@ -87,7 +84,7 @@ export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: 
 
 export type OnboardingState = ReturnType<typeof useOnboarding>;
 
-/** What "Fortsätt" does on each step. Folder and project steps write to disk first. */
+/** The folder and project steps write to disk before moving on. */
 export async function continueFrom(state: OnboardingState) {
   const { step, libraryDir } = state;
   if (step === 3 && libraryDir) {
@@ -118,7 +115,6 @@ export async function openExample(state: OnboardingState) {
   }, t("Exempelprojektet kunde inte sparas i mappen."));
 }
 
-/** Writes the picked manuscript as a new project, named after the file unless a title is set. */
 export async function importFile(state: OnboardingState, picked: PickedFile) {
   const libraryDir = state.libraryDir;
   if (!libraryDir) return;

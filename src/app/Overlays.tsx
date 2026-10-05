@@ -34,6 +34,8 @@ interface OverlayParts {
   conflict: DiskConflict | null;
   editor: ReturnType<typeof useEditorView>;
   refresh: () => Promise<void>;
+  series: Project | null;
+  seriesState: { refreshSeries: () => Promise<void> };
   updateFields: (fields: Record<string, unknown>) => Promise<void>;
   syncCopy: ReturnType<typeof useSyncCopy>;
   snapshots: ReturnType<typeof useSnapshots>;
@@ -68,7 +70,6 @@ function ConflictLayer(props: {
   );
 }
 
-// "Öppna anteckningen" opens the note in the editor.
 function MentionLayer({ app }: { app: OverlayParts }) {
   const { notes, project } = app;
   if (!project) return null;
@@ -79,7 +80,6 @@ function MentionLayer({ app }: { app: OverlayParts }) {
   return <MentionCard notes={notes} homes={app.homes} onOpenNote={openNote} />;
 }
 
-/** What opens over the writing: dialogs and the command palette. */
 // The language is saved before the window may restart for its spelling dictionary.
 function bookSettings(app: OverlayParts, drive: DriveSync) {
   if (!app.project) return null;
@@ -105,10 +105,13 @@ function PaletteLayer({ app }: { app: OverlayParts }) {
   );
 }
 
-// Inställningar, and the Drive sync whose row is there; the sync runs while the dialog is closed.
+// The sync lives here, not in the dialog, so it runs while the dialog is closed.
 function SettingsAndSync({ app }: { app: OverlayParts }) {
   const { preferences, updatePreferences } = app.startup;
-  const drive = useDriveSync(app.project?.dir ?? null, preferences, updatePreferences, app.refresh);
+  const dirs = [app.project?.dir, app.series?.dir].filter((dir) => dir !== undefined);
+  const refresh = async () =>
+    void (await Promise.all([app.refresh(), app.seriesState.refreshSeries()]));
+  const drive = useDriveSync(dirs, preferences, updatePreferences, refresh);
   return (
     <SettingsLayer
       {...app.startup}

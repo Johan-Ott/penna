@@ -1,6 +1,7 @@
 import { TextSelection, type Command, type EditorState } from "prosemirror-state";
 import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
+import { insertFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
 import { usePhone } from "./phone/usePhone.js";
@@ -31,7 +32,6 @@ function MarkButton(props: {
   );
 }
 
-// How long the marked passage is, quietly at the end of the bar.
 function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   if (!editorState) return null;
   const { from, to } = editorState.selection;
@@ -61,8 +61,7 @@ function useEditorFocus(editor: Editor) {
   return hasFocus;
 }
 
-// Above the selection's start, or below its end when there is no room above. On a phone it is
-// always below and in the middle: the phone's own menu (Kopiera, Klistra in) takes the place above.
+// On a phone the bar goes below the selection: Android's own menu takes the place above.
 function barPosition(editor: Editor, isPhone: boolean) {
   const view = editor.viewRef.current;
   const selection = editor.editorState?.selection;
@@ -73,10 +72,7 @@ function barPosition(editor: Editor, isPhone: boolean) {
   return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };
 }
 
-/**
- * Bold, italic, style and comment beside the selected text. Right-click keeps the system's menu,
- * whose spelling suggestions the page cannot read.
- */
+/** Right-click keeps the system menu, whose spelling suggestions the page cannot read. */
 export function SelectionBar({ editor, onComment }: { editor: Editor; onComment: () => void }) {
   const hasFocus = useEditorFocus(editor);
   const isPhone = usePhone();
@@ -96,6 +92,9 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
       {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
       <button className="icon-button" onClick={onComment}>
         {t("Kommentera")}
+      </button>
+      <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
+        {t("Fotnot")}
       </button>
       <SelectedWords editorState={editor.editorState} />
     </div>

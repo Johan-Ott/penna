@@ -3,7 +3,7 @@ import { parentOf } from "../project/libraryFolders.js";
 import { createMemoryFileSystem } from "../storage/memoryFileSystem.js";
 import type { Platform } from "./platform.js";
 
-// A pretend computer for the browser: a home folder with OneDrive, and the example project.
+// The browser version pretends to be a computer with a home folder and the example project.
 const HOME = "/Användare/Elin";
 const fileSystem = createMemoryFileSystem({
   ...DEMO_PROJECT_FILES,
@@ -12,6 +12,7 @@ const fileSystem = createMemoryFileSystem({
 });
 
 export const browserPlatform: Platform = {
+  isPhone: false,
   fileSystem,
   pickFolder: async () => `${HOME}/Dokument`,
   knownFolders: async () => ({ home: HOME, documents: `${HOME}/Dokument` }),
@@ -26,7 +27,7 @@ export const browserPlatform: Platform = {
     const permission = await Notification.requestPermission();
     if (permission === "granted") new Notification(title, { body });
   },
-  // The browser keeps its own dictionaries; the page's lang is the closest hint it takes.
+  // The browser picks its own dictionary; the page's lang is the only hint it takes.
   setSpellLanguage: async (language) => {
     document.documentElement.lang = language;
   },
@@ -44,7 +45,7 @@ export const browserPlatform: Platform = {
       };
       input.click();
     }),
-  // In the browser an export is downloaded; the bytes are copied so the Blob owns its buffer.
+  // The bytes are copied so the Blob owns its buffer.
   saveFile: async (suggestedName, bytes) => {
     const link = document.createElement("a");
     link.href = URL.createObjectURL(new Blob([bytes.slice()]));

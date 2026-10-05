@@ -1,6 +1,5 @@
 import type { Typography } from "../export/book.js";
 
-/** The languages a book can be written in; the tag sets spellcheck and the e-book's language. */
 export const BOOK_LANGUAGES: [string, string][] = [
   ["sv-SE", "Svenska"],
   ["en-GB", "English"],
@@ -12,7 +11,7 @@ export const BOOK_LANGUAGES: [string, string][] = [
 
 const DEFAULT_LANGUAGE = "sv-SE";
 
-/** The book's language from project.json; Swedish when it is missing or unknown. */
+/** Swedish when missing or unknown. */
 export function bookLanguage(fields: Record<string, unknown>): string {
   const language = fields["language"];
   const isKnown = BOOK_LANGUAGES.some(([tag]) => tag === language);

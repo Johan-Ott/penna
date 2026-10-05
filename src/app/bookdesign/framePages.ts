@@ -2,10 +2,7 @@ const SVG = "http://www.w3.org/2000/svg";
 // Space around and between the spreads, in the SVG's own units (points).
 const GAP = 24;
 
-/**
- * Typst draws the pages one under another; this lays them out two by two as spreads, each
- * page on a white sheet, as an open book is seen.
- */
+/** Typst draws the pages in one column; this lays them out two by two as spreads. */
 export function framePages(svg: SVGSVGElement) {
   const pages = Array.from(svg.querySelectorAll<SVGGElement>(".typst-page"));
   const width = Math.max(0, ...pages.map((page) => Number(page.dataset["pageWidth"])));

@@ -4,13 +4,12 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import { locate, type Anchor } from "../project/comments.js";
 import { documentText } from "./documentText.js";
 
-/** A comment to mark in the text: its id and where it belongs. */
 export interface CommentAnchor {
   id: string;
   anchor: Anchor;
 }
 
-/** Each comment's quote, found again by its words, marked in the document. */
+/** A quote is found again by its words, so it survives edits around it. */
 export function commentDecorations(doc: Node, comments: CommentAnchor[]): DecorationSet {
   const { text, toDoc } = documentText(doc);
   const decorations = comments.flatMap(({ id, anchor }) => {
@@ -34,7 +33,6 @@ export const refreshComments: Command = (state, dispatch) => {
   return true;
 };
 
-/** Grey behind commented text; a click on it tells which comment, so the panel can show it. */
 export function commentsPlugin(comments: () => CommentAnchor[], onComment: (id: string) => void) {
   return new Plugin<DecorationSet>({
     key: commentsKey,

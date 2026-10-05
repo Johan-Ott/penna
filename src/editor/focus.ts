@@ -3,7 +3,6 @@ import { Decoration, DecorationSet, type EditorView } from "prosemirror-view";
 
 const sentences = new Intl.Segmenter("sv", { granularity: "sentence" });
 
-/** The sentence around `offset` in a paragraph's text, as start and end offsets. */
 export function sentenceRange(text: string, offset: number): { from: number; to: number } {
   let last = { from: 0, to: text.length };
   for (const { segment, index } of sentences.segment(text)) {
@@ -13,7 +12,7 @@ export function sentenceRange(text: string, offset: number): { from: number; to:
   return last;
 }
 
-// The line being written sits a little above the middle, where the eye rests.
+// Slightly above the middle of the screen.
 const TYPEWRITER_HEIGHT = 0.45;
 
 export function typewriterScrollDelta(view: {
@@ -24,10 +23,7 @@ export function typewriterScrollDelta(view: {
   return view.caretTop - (view.viewTop + view.viewHeight * TYPEWRITER_HEIGHT);
 }
 
-/**
- * Marks the paragraph and the sentence the cursor is in. CSS on the editor decides whether
- * the rest is dimmed, so the focus mode can change without touching the document.
- */
+/** CSS decides whether the rest is dimmed, so the focus mode switches without touching the document. */
 export function focusPlugin() {
   return new Plugin({
     props: {
@@ -47,7 +43,6 @@ export function focusPlugin() {
   });
 }
 
-/** Keeps the line being written at the same height on screen while `isOn()` is true. */
 export function typewriterPlugin(isOn: () => boolean) {
   const keepLineStill = (view: EditorView) => {
     const scroller = view.dom.closest<HTMLElement>(".page");

@@ -4,7 +4,6 @@ import { quoteConverter, type Typography } from "./book.js";
 /** Prose as Typst markup: every character Typst could read as code is escaped. */
 export const escapeTypst = (text: string) => text.replace(/[\\#*_`$<>@[\]~=\-+/"':({]/g, "\\$&");
 
-/** Text inside a Typst string literal, as in `"Vintervägen"`. */
 export const typstString = (text: string) =>
   `"${text.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
@@ -22,15 +21,20 @@ function marked(text: string, child: Node) {
   return markup;
 }
 
+const footnote = (child: Node, convert: (text: string) => string) =>
+  `#footnote[${escapeTypst(convert(String(child.attrs["text"])))}]`;
+
 function inline(children: Node[], convert: (text: string) => string) {
   return children
-    .map((child) =>
-      child.type.name === "lineBreak" ? " \\\n" : marked(convert(child.text ?? ""), child),
-    )
+    .map((child) => {
+      if (child.type.name === "lineBreak") return " \\\n";
+      if (child.type.name === "footnote") return footnote(child, convert);
+      return marked(convert(child.text ?? ""), child);
+    })
     .join("");
 }
 
-// The paragraph as words, each with its own marks; a word split by a mark stays one word.
+// A word split by a mark stays one word.
 function wordsOf(children: Node[], convert: (text: string) => string) {
   const words: string[] = [""];
   for (const child of children) {
@@ -38,7 +42,10 @@ function wordsOf(children: Node[], convert: (text: string) => string) {
       words.push("#linebreak()", "");
       continue;
     }
-    // Split keeps the spaces at odd places: a space starts a new word, text adds to the last.
+    if (child.type.name === "footnote") {
+      words[words.length - 1] += footnote(child, convert);
+      continue;
+    }
     convert(child.text ?? "")
       .split(/(\s+)/)
       .forEach((piece, index) => {
@@ -52,8 +59,7 @@ function wordsOf(children: Node[], convert: (text: string) => string) {
 const plainLetter = (node: Node | undefined) =>
   node?.isText && node.marks.length === 0 ? /^\p{L}/u.exec(node.text ?? "")?.[0] : undefined;
 
-// The chapter opens with an anfang: the first letter, then the paragraph as words, so Typst
-// can fit as many as there is room for beside the letter.
+// The paragraph as separate words, so Typst can fit as many as there is room for beside the letter.
 function withDropCap(paragraph: Node, convert: (text: string) => string) {
   const [first, ...others] = childrenOf(paragraph);
   const letter = plainLetter(first);
@@ -66,7 +72,6 @@ function withDropCap(paragraph: Node, convert: (text: string) => string) {
 interface SceneOptions {
   typography: Typography;
   sceneBreak: string;
-  /** The first scene of a chapter opens with a drop cap when the design has one. */
   hasDropCap: boolean;
 }
 
@@ -82,7 +87,6 @@ function block(node: Node, options: SceneOptions): string {
   return inline(childrenOf(node), quoteConverter(options.typography));
 }
 
-/** A scene as Typst paragraphs, separated by blank lines as Typst expects. */
 export function sceneTypst(doc: Node, options: SceneOptions): string {
   const blocks: string[] = [];
   const hasAnfang = options.hasDropCap && doc.firstChild?.type.name === "paragraph";

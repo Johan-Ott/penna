@@ -10,9 +10,8 @@ import { t } from "../../i18n/i18n.js";
 
 interface NewNoteDialogProps {
   project: Project;
-  /** The book's series, or null; a note goes there unless the writer keeps it to the book. */
+  /** The note goes to the series unless the writer keeps it to the book. */
   series: Project | null;
-  /** The sort chosen at the start, such as the one whose empty state asked for a note. */
   sortId: string | null;
   onCreate: (note: NewNote, isInSeries: boolean) => void;
   onClose: () => void;
@@ -26,7 +25,6 @@ type SortChipsProps = {
   onNewSort: (title: string) => void;
 };
 
-// "+ Egen sort" turns into a field; a named sort is made together with the note.
 function NewSortChip(props: SortChipsProps) {
   if (props.newSort === null) {
     return (
@@ -126,7 +124,6 @@ function useNoteForm(initialSort: string) {
 const startsInSeries = ({ series, sortId }: NewNoteDialogProps) =>
   series !== null && (sortId === null || findNode(series.tree, sortId) !== null);
 
-// In a book of a series: the series, where every book finds the note, or only this book.
 function HomeChoice(props: {
   series: Project;
   isInSeries: boolean;
@@ -148,7 +145,7 @@ function HomeChoice(props: {
   );
 }
 
-// The folder the note goes in; changing it starts over on Personer, which both have.
+// Changing folder starts over on Personer, which both have.
 function useHome(props: NewNoteDialogProps, form: Form) {
   const [isInSeries, setInSeries] = useState(() => startsInSeries(props));
   const home = isInSeries && props.series ? props.series : props.project;
@@ -156,7 +153,6 @@ function useHome(props: NewNoteDialogProps, form: Form) {
   return { isInSeries, home, changeHome };
 }
 
-/** Avbryt and the button that saves, as Ny anteckning and Serie end. */
 export function DialogActions(props: { isReady: boolean; label?: string; onClose: () => void }) {
   return (
     <div className="dialog-actions">
@@ -170,7 +166,6 @@ export function DialogActions(props: { isReady: boolean; label?: string; onClose
   );
 }
 
-/** Ny anteckning: a name, a sort, and whether the name is linked wherever it is written. */
 export function NewNoteDialog(props: NewNoteDialogProps) {
   const form = useNoteForm(props.sortId ?? CHARACTERS_ID);
   const { isInSeries, home, changeHome } = useHome(props, form);

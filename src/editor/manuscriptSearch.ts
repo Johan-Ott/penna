@@ -5,8 +5,7 @@ import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { joinSceneFile, splitSceneFile } from "../manuscript/sceneFile.js";
 import { serializeMarkdown } from "../manuscript/serializeMarkdown.js";
 
-// Scenes that are not open are searched with the same plugin as the editor, so "Hela ord"
-// and "Aa" count exactly as they do in the open scene.
+// The same plugin as the editor, so "Hela ord" and "Aa" match exactly as in the open scene.
 
 export const applyQuery =
   (query: SearchQuery): Command =>
@@ -32,7 +31,7 @@ export function countMatches(state: EditorState, query: SearchQuery): number {
   return count;
 }
 
-/** Replaces every match in a scene file. Blocks without a match are written back unchanged. */
+/** Blocks without a match are written back unchanged. */
 export function replaceAllInText(sceneText: string, query: SearchQuery) {
   let state = searchableScene(sceneText, query);
   const count = countMatches(state, query);
@@ -42,7 +41,6 @@ export function replaceAllInText(sceneText: string, query: SearchQuery) {
   return { text: joinSceneFile({ frontMatter, body: serializeMarkdown(state.doc) }), count };
 }
 
-/** What the search panel needs to search the whole manuscript, given by the app. */
 export interface ManuscriptScope {
   isOn: boolean;
   toggle: () => void;
@@ -51,7 +49,7 @@ export interface ManuscriptScope {
   replaceAll: (query: SearchQuery) => void;
 }
 
-/** The next scene after `fromId` that has a match, going round; the scene itself comes last. */
+/** Goes round the manuscript; the scene itself comes last. */
 export function nextSceneWith(
   ids: string[],
   fromId: string | null,

@@ -19,7 +19,6 @@ import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
 import { t } from "../../i18n/i18n.js";
 
-/** What a tree is given: the book's or the series' project, and what its rows can do. */
 export interface TreeViewProps {
   project: Project;
   openSceneId: string | null;
@@ -32,11 +31,8 @@ export interface TreeViewProps {
   onSetNoteLink: (id: string, isLinked: boolean) => void;
   onShowSnapshots: (id: string) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
-  /** Ny anteckning, with a sort already chosen or not. */
   onNewNote: (sortId: string | null) => void;
-  /** Moves a book's note into its series, when the book is in one. */
   onMoveToSeries?: (id: string) => void;
-  /** Slå ihop med nästa scen, for the open scene when a scene follows it. */
   canMergeOpenScene?: boolean;
   onMergeWithNext?: () => void;
 }
@@ -45,14 +41,13 @@ export type Actions = ReturnType<typeof useTreeActions>;
 type MenuState = { items: MenuItem[]; x: number; y: number } | null;
 export type View = ReturnType<typeof useTreeViewState>;
 
-// A newly created node is shown, with its parents opened, and its name is ready to type.
 function useRenameRequest(props: TreeViewProps, view: View) {
   const { renameRequestId, project } = props;
   const { expand, setRenamingId } = view;
   const handledId = useRef<string | null>(null);
   useEffect(() => {
     if (!renameRequestId || handledId.current === renameRequestId) return;
-    // The tree state may not hold the new node yet; the effect runs again when it does.
+    // The tree may not hold the new node yet; the effect runs again when it does.
     if (!findNode(project.tree, renameRequestId)) return;
     handledId.current = renameRequestId;
     expand(ancestorIds(project.tree, renameRequestId));
@@ -60,7 +55,7 @@ function useRenameRequest(props: TreeViewProps, view: View) {
   }, [renameRequestId, project.tree, expand, setRenamingId]);
 }
 
-// The sorts and Papperskorg start folded, as in the design; the book starts open.
+// The sorts and Papperskorg start folded; the book starts open.
 function useTreeViewState(tree: TreeNode[]) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(
     () => new Set([...sortsOf(tree).map((sort) => sort.id), TRASH_ID]),
@@ -100,7 +95,7 @@ export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuAct
   };
 }
 
-// Whether a note's name is linked in the text; null for anything that is not a note.
+// Null for anything that is not a note.
 function noteLinkOf(project: Project, id: string) {
   const parent = findNode(project.tree, id)?.parent;
   if (parent?.kind !== "sort") return null;
@@ -133,7 +128,7 @@ export function useTreeView(props: TreeViewProps) {
 
 export type Tree = ReturnType<typeof useTreeView>;
 
-// An empty sort has nothing to unfold; a click starts its first note instead.
+// An empty sort has nothing to unfold, so a click starts its first note.
 export const isEmptySort = (node: TreeNode) => node.kind === "sort" && !node.children?.length;
 
 export function rowHandlers(row: Row, actions: Actions, view: View) {

@@ -26,7 +26,6 @@ const ISEN = `Isen bar. Den hade burit sedan jul, men Elin gick ändå nära str
 På kvällen kom Maja över med en termos.
 `;
 
-// Characters are written like scenes; these two show how Penna finds them in the text.
 const ELIN = `Trettioåtta. Lämnade ön när hon var arton och har inte varit tillbaka sedan pappans begravning.
 
 Säger sällan vad hon tänker, men skriver allt i en svart anteckningsbok.
@@ -84,7 +83,7 @@ const PROJECT = {
   ],
 };
 
-/** The example project shown when Penna runs in a browser without Tauri. */
+/** Shown when Penna runs in a browser without Tauri. */
 export const DEMO_PROJECT_FILES: Record<string, string> = {
   [`${DEMO_PROJECT_DIR}/project.json`]: `${JSON.stringify(PROJECT, null, 2)}\n`,
   ...scene(SCENE_IDS.koket, "Köket", "utkast", KOKET),

@@ -33,7 +33,7 @@ import { PhoneProject } from "./phone/PhoneProject.js";
 import { usePhone } from "./phone/usePhone.js";
 import { sceneSplitActions } from "./sceneSplitActions.js";
 
-// Back to the shelf: the scene is saved first, and a failed save keeps the project open.
+// A failed save keeps the project open, so no text is lost on the way to the shelf.
 function useShowShelf(
   session: SceneSession,
   close: () => void,
@@ -46,7 +46,6 @@ function useShowShelf(
   }, [session, close, update]);
 }
 
-// Each scene save feeds the words-per-day count and the automatic versions.
 function listenToSaves(
   savedRef: ReturnType<typeof useSceneSession>["savedRef"],
   recordSave: (dir: string, before: string, after: string) => void,
@@ -62,7 +61,6 @@ function listenToSaves(
   };
 }
 
-// The book's series: read beside the book, with the same actions for its notes.
 function useSeriesParts(project: Project | null, session: SceneSession, onChange: () => void) {
   const seriesState = useSeries(project, onChange);
   const input = {
@@ -77,7 +75,6 @@ function useSeriesParts(project: Project | null, session: SceneSession, onChange
   };
 }
 
-// The project, the open scene, its comments and how the writer works: what the rest builds on.
 function useCoreState() {
   const sceneState = useSceneSession();
   const { session } = sceneState;
@@ -106,7 +103,6 @@ function useCoreState() {
   return { sceneState, projectState, seriesState, startup, actions, comments, writingMode };
 }
 
-// The notes linked in the text, from the series and the book, and Ny anteckning.
 function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const { projectState, sceneState, writingMode } = core;
   const { project } = projectState;
@@ -200,7 +196,7 @@ function useAppState() {
 
 export type AppState = ReturnType<typeof useAppState>;
 
-// The update notice sits outside both screens, so it asks once and stays dismissed.
+// Outside both screens, so the update question is asked once per start.
 export function App() {
   const app = useAppState();
   const isPhone = usePhone();

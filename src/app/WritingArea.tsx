@@ -21,16 +21,13 @@ import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { t } from "../i18n/i18n.js";
 
 interface WritingAreaProps {
-  /** Granska beside the text, or nothing. */
   aside: ReactNode;
   selectionBar: ReactNode;
-  /** Above the text: the chapter and when, or a note's sort, name and connections. */
   header: ReactNode;
-  /** Below the text: where a note is named. */
   footer: ReactNode;
   /** Saved by a newer Penna: shown, never written to. */
   isReadOnly: boolean;
-  /** Hidden, not removed, while another view shows: the editor keeps its scene and undo. */
+  /** Hidden, not removed, so the editor keeps its scene and undo history. */
   isHidden: boolean;
   manuscriptSearch: ManuscriptScope;
   replaceToast: ReactNode;
@@ -51,13 +48,12 @@ interface WritingAreaProps {
   onNewScene: () => void;
 }
 
-// Focus and typewriter only act in the focus mode; CSS dims the text around the cursor.
 function manuscriptClass(settings: WritingSettings, isFocusMode: boolean) {
   if (!isFocusMode) return "manuscript";
   return `manuscript focus-${settings.focus}${settings.typewriter ? " typewriter" : ""}`;
 }
 
-// Ctrl and plus or minus change the text size; "=" is where plus sits on a US keyboard.
+// "=" is where plus sits on a US keyboard.
 function useTextSizeKeys(change: (change: SettingsChange) => void) {
   const larger = () => change((current) => changeSize(current, 1));
   useShortcut("+", larger);
@@ -95,8 +91,7 @@ function EmptyScene({ onNewScene }: { onNewScene: () => void }) {
   );
 }
 
-// The editor element stays mounted in both modes, so undo history and cursor survive the switch.
-// The page carries the text's width, so the header and footer line up with the text.
+// The editor stays mounted in both modes, so undo history and cursor survive the switch.
 function Page(props: WritingAreaProps) {
   const { editor, settings, isFocusMode, hasScene } = props;
   return (
@@ -112,7 +107,6 @@ function Page(props: WritingAreaProps) {
   );
 }
 
-// What floats over the page: the settings and search panels, and the toasts.
 function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
   return (
     <>
@@ -141,26 +135,24 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
   );
 }
 
-// The writing settings switch the editor's modes, which ProseMirror reads on every update.
+// ProseMirror reads the modes on every update, so no new editor state is needed.
 function useEditorModes(props: WritingAreaProps) {
   const { editor, settings } = props;
   const modes = editor.modes.current;
   modes.isTypewriterOn = props.isFocusMode && settings.typewriter;
   modes.isTypographyOn = settings.typography;
   modes.isSpellcheckOn = settings.spellcheck;
-  // The session makes the editor writable when a scene opens; a read-only project takes it back.
   if (props.isReadOnly) modes.isEditable = false;
   modes.repeatWindow = settings.review ? settings.repeatWindow : null;
   const { run } = editor;
   useEffect(() => run(refreshRepetitions, false), [settings.review, settings.repeatWindow, run]);
-  // The spellcheck attribute is read when the view updates, so a change updates it at once.
+  // ProseMirror reads the spellcheck attribute only when the view updates.
   useEffect(
     () => editor.viewRef.current?.setProps({}),
     [settings.spellcheck, props.isReadOnly, props.hasScene, editor.viewRef],
   );
 }
 
-/** Skriv: the open scene or note, and in the focus mode its quiet header with Aa. */
 export function WritingArea(props: WritingAreaProps) {
   const { editor } = props;
   const panels = usePanels();

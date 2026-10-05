@@ -8,7 +8,7 @@ import { Connections } from "./Connections.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface NotePageProps {
-  /** Where the note lives: the series, or the book itself. */
+  /** The series or the book: where the note lives. */
   project: Project;
   /** The open book, whose chapters the note is named in. */
   book: Project;
@@ -18,7 +18,7 @@ export interface NotePageProps {
   onSaveFields: (fields: Record<string, unknown>) => void;
 }
 
-// "PERSON" above the name: the fixed sorts in the singular, the writer's own by their name.
+// The fixed sorts in the singular ("PERSON"), the writer's own by their name.
 function kindLabel(project: Project, sortId: string) {
   const fixed: Record<string, string> = {
     [CHARACTERS_ID]: t("Person"),
@@ -29,13 +29,11 @@ function kindLabel(project: Project, sortId: string) {
   return fixed[sortId] ?? findNode(project.tree, sortId)?.node.title ?? "";
 }
 
-/** The sort a note lies in, or null when the open text is not a note. */
 export function noteSortOf(project: Project, id: string) {
   const parent = findNode(project.tree, id)?.parent;
   return parent?.kind === "sort" ? parent.id : null;
 }
 
-/** Above a note: its sort, where it is named, its name and its connections. */
 export function NoteHeader(props: NotePageProps & { sortId: string }) {
   const { project, noteId } = props;
   const chapters = mentionedChapters(props.book, props.notes.mentions.get(noteId));
@@ -55,7 +53,6 @@ export function NoteHeader(props: NotePageProps & { sortId: string }) {
   );
 }
 
-/** Below a note: every scene that names it, with the sentence, in reading order. */
 export function NoteMentions({ book: project, noteId, notes, onOpen }: NotePageProps) {
   const mentions = notes.mentions.get(noteId);
   if (!mentions || mentions.sceneIds.length === 0) return null;

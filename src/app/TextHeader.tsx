@@ -11,7 +11,6 @@ interface TextHeaderProps {
   onReadChapter: (chapterId: string) => void;
 }
 
-// "När: dag 3, kväll", written straight into the header and saved when it is left.
 function WhenField(props: { when: string; onSave: (text: string) => void }) {
   return (
     <label className="eyebrow-end text-when">
@@ -28,7 +27,7 @@ function WhenField(props: { when: string; onSave: (text: string) => void }) {
   );
 }
 
-// "Kapitel 8 · Köket", and the node whose "När" is shown: the chapter, or a loose scene itself.
+// "När" belongs to the chapter, or to a scene that is not in a chapter.
 function headingOf(project: Project, sceneId: string) {
   const chapter = chapterOf(project.tree, sceneId);
   const title = project.summaries[sceneId]?.title ?? "";
@@ -39,10 +38,6 @@ function headingOf(project: Project, sceneId: string) {
   return { chapter, place, whenId, when: findNode(project.tree, whenId)?.node.when ?? "" };
 }
 
-/**
- * Above a scene: "Kapitel 8 · Köket", and when it happens. The chapter's title opens its first
- * scene, as in a printed book. "När" belongs to the chapter, as in Innehåll.
- */
 export function TextHeader({ project, sceneId, onChangeTree, onReadChapter }: TextHeaderProps) {
   const { chapter, place, whenId, when } = headingOf(project, sceneId);
   return (

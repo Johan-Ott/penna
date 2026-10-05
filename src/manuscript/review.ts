@@ -1,4 +1,4 @@
-/** Letters to change, add or remove to turn one word into the other (Levenshtein). */
+/** Levenshtein distance. */
 export function editDistance(first: string, second: string): number {
   let previous = Array.from({ length: second.length + 1 }, (_unused, index) => index);
   for (let row = 1; row <= first.length; row++) {
@@ -18,7 +18,6 @@ export function editDistance(first: string, second: string): number {
 
 export interface NameSuspect {
   word: string;
-  /** The known name it is close to. */
   suggestion: string;
   count: number;
   sceneIds: string[];
@@ -26,8 +25,7 @@ export interface NameSuspect {
 
 const CAPITALISED_WORD = /(?<![\p{L}\p{N}])\p{Lu}[\p{L}]{3,}(?![\p{L}\p{N}])/gu;
 
-// One letter off for short names, up to two for longer ones, as the spec says; with two letters
-// allowed for short names nearly every capitalised word would be flagged.
+// One letter off for short names, two for longer: two for short ones would flag most capitals.
 const allowedDistance = (name: string) => (name.length >= 6 ? 2 : 1);
 
 function closestName(word: string, names: string[]): string | null {
@@ -40,10 +38,7 @@ function closestName(word: string, names: string[]): string | null {
   );
 }
 
-/**
- * Capitalised words one or two letters from a known name, such as "Sjöbergh" for Sjöberg,
- * counted over the scenes. The most common first.
- */
+/** For example "Sjöbergh" for Sjöberg. The most common first. */
 export function nameSuspects(
   sceneTexts: Record<string, string>,
   names: string[],
@@ -70,13 +65,13 @@ export interface PlacedWord {
   from: number;
   to: number;
   sentence: number;
-  /** Capitalised inside a sentence, so a name; names come back without being a fault. */
+  /** Capitalised inside a sentence, so a name; names repeat without being a fault. */
   isName: boolean;
 }
 
 const WORD = /[\p{L}\p{N}]+|[.!?]+|\n/gu;
 
-/** The words of a text with where they are and which sentence they are in; a line ends one too. */
+/** A line break also ends a sentence. */
 export function wordsWithSentences(text: string): PlacedWord[] {
   const words: PlacedWord[] = [];
   let sentence = 0;
@@ -108,7 +103,6 @@ export interface Repetition {
   ranges: { from: number; to: number }[];
 }
 
-/** Words used again within `window` sentences, with every place they were used close together. */
 export function repetitions(words: PlacedWord[], window: number): Repetition[] {
   const byWord = new Map<string, PlacedWord[]>();
   for (const placed of words) {

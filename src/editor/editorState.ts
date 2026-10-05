@@ -12,10 +12,10 @@ import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
 import { repetitionsPlugin } from "./repetitionMarks.js";
 import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
+import { insertFootnote, uniqueFootnoteLabels } from "./footnoteEditing.js";
 import { t } from "../i18n/i18n.js";
 
-// Swedish typography as the writer types: Swedish uses ” for both opening and closing quotes.
-// Each rule asks whether it is on, so the setting can change without a new editor state.
+// Swedish uses ” for both opening and closing quotes. Each rule asks whether it is on.
 export function typographyRules(isOn: () => boolean): InputRule[] {
   const rule = (pattern: RegExp, text: string) =>
     new InputRule(pattern, (state, _match, start, end) =>
@@ -34,16 +34,14 @@ const sceneBreakRule = new InputRule(/^\*\*\*$/, (state, _match, start, end) => 
   return transaction.setSelection(TextSelection.create(transaction.doc, before + 2));
 });
 
-/** What the app can switch while the writer types; ProseMirror asks on every update. */
+/** ProseMirror asks these on every update, so they switch without a new state. */
 export interface EditorSwitches {
   isTypewriterOn: () => boolean;
   isTypographyOn: () => boolean;
-  /** The names of the project's cards, underlined where the text mentions them. */
   mentionMatchers: () => MentionMatcher[];
   onMention: (id: string, box: DOMRect) => void;
-  /** Sentences a word may not be repeated within; null when the review is off. */
+  /** Null when the review is off. */
   repeatWindow: () => number | null;
-  /** The open scene's comments, marked where their quotes are. */
   commentAnchors: () => CommentAnchor[];
   onComment: (id: string) => void;
 }
@@ -66,6 +64,7 @@ const writingKeys = keymap({
   "Mod-i": toggleItalic,
   "Mod-Enter": insertSceneBreak,
   "Shift-Enter": insertLineBreak,
+  "Mod-Alt-f": insertFootnote,
   Backspace: undoInputRule,
 });
 
@@ -79,6 +78,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       search(),
       inputRules({ rules: [sceneBreakRule, ...typographyRules(switches.isTypographyOn)] }),
       writingKeys,
+      uniqueFootnoteLabels,
       keymap(baseKeymap),
       focusPlugin(),
       typewriterPlugin(switches.isTypewriterOn),

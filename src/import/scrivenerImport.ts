@@ -38,7 +38,6 @@ function nameItem(item: BinderItem | undefined, title: string) {
   if (item && !item.title) item.title = decode(title).trim();
 }
 
-/** The binder of a .scrivx file as a tree of items. */
 function readBinder(xml: string): BinderItem[] {
   const binder = /<Binder>([\s\S]*)<\/Binder>/.exec(xml)?.[1] ?? "";
   const roots: BinderItem[] = [];
@@ -62,7 +61,7 @@ async function readOrEmpty(fileSystem: FileSystem, path: string) {
   }
 }
 
-// Each item's text as Markdown; Scrivener 3 keeps it in Data/<UUID>, Scrivener 2 in Docs/<ID>.
+// Scrivener 3 keeps a text in Data/<UUID>, Scrivener 2 in Docs/<ID>.
 async function readTexts(fileSystem: FileSystem, dir: string, items: BinderItem[]) {
   const texts = new Map<string, string>();
   for (const item of items) {
@@ -76,9 +75,8 @@ async function readTexts(fileSystem: FileSystem, dir: string, items: BinderItem[
 
 const isFolder = (item: BinderItem) => item.type === "Folder";
 
-/** Turns the binder's draft into parts, chapters and scenes. */
 function draftBook(draft: BinderItem[], texts: Map<string, string>): ImportedNode[] {
-  // A text is a scene; a folder deeper than a chapter adds its texts to that chapter.
+  // A folder deeper than a chapter adds its texts to that chapter.
   const scenes = (item: BinderItem): ImportedNode[] => {
     const body = texts.get(item.id) ?? "";
     const own: ImportedNode[] =
@@ -99,7 +97,6 @@ function draftBook(draft: BinderItem[], texts: Map<string, string>): ImportedNod
   return draft.flatMap((item) => branch(item, true));
 }
 
-/** A Scrivener project folder (.scriv): the texts in its draft, in binder order. */
 export async function readScrivener(fileSystem: FileSystem, dir: string) {
   const scrivx = (await fileSystem.list(dir)).find((name) => name.endsWith(".scrivx"));
   if (!scrivx) throw new ImportError(t("Mappen är inget Scrivener-projekt."));

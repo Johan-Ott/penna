@@ -16,7 +16,7 @@ import {
 
 export interface TopbarProps {
   view: View;
-  /** Shown in the middle instead of the day's words, as in Publicera. */
+  /** Shown instead of the day's words, as in Publicera. */
   title: string | null;
   today: Today;
   navigation: { canGoBack: boolean; canGoForward: boolean; back: () => void; forward: () => void };
@@ -26,7 +26,6 @@ export interface TopbarProps {
   onProgress: () => void;
   onSearch: () => void;
   onFocus: () => void;
-  /** Granska: shown while the open text has a review, with how much there is to look at. */
   review: { count: number | null; isOpen: boolean };
   onReview: () => void;
 }
@@ -50,7 +49,6 @@ function IconButton(props: {
   );
 }
 
-// The pen writes, the book publishes: the two modes of an open book.
 function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   const isPublishing = view === "publicera";
   const mode = (label: string, isOn: boolean, next: View, icon: ReactNode) => (
@@ -73,7 +71,6 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   );
 }
 
-// "812 / 1 000 ord" with a thin bar; a click opens Framsteg.
 function DayProgress({ today, onProgress }: { today: Today; onProgress: () => void }) {
   const format = (words: number) => words.toLocaleString(numberLocale());
   const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : null;
@@ -93,7 +90,6 @@ function DayProgress({ today, onProgress }: { today: Today; onProgress: () => vo
   );
 }
 
-/** On the bookshelf there is no book to go back in, search or write: the menu and the title. */
 export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
   return (
     <header className="topbar">
@@ -107,7 +103,6 @@ export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
   );
 }
 
-// The menu, the sidebar, back and forward, and the two modes.
 function TopbarStart(props: TopbarProps) {
   const { navigation } = props;
   return (
@@ -135,7 +130,6 @@ function TopbarStart(props: TopbarProps) {
   );
 }
 
-// A list with ticks, and the number of things to look at in a small badge.
 export function ReviewButton({ review, onReview }: Pick<TopbarProps, "review" | "onReview">) {
   if (review.count === null) return null;
   return (
@@ -152,7 +146,6 @@ export function ReviewButton({ review, onReview }: Pick<TopbarProps, "review" | 
   );
 }
 
-/** The bar over an open book: where to go on the left, the day or a title, search and focus. */
 export function Topbar(props: TopbarProps) {
   return (
     <header className="topbar">

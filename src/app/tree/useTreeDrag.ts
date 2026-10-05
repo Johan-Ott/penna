@@ -15,7 +15,7 @@ function positionInRow(event: DragEvent<HTMLElement>, node: TreeNode): DropPosit
   return offset < 0.5 ? "before" : "after";
 }
 
-/** HTML5 drag and drop for tree rows. A drop only changes the tree, never a scene file. */
+/** A drop only changes the tree, never a scene file. */
 export function useTreeDrag(tree: TreeNode[], onChangeTree: (tree: TreeNode[]) => void) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);

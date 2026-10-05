@@ -25,7 +25,7 @@ export function projectFolderName(title: string): string {
   return `${name || t("Namnlöst projekt")}.penna`;
 }
 
-/** A project folder in the library that does not exist yet: "Isen.penna", "Isen 2.penna", ... */
+/** "Isen.penna", "Isen 2.penna", and so on. */
 async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title: string) {
   const taken = new Set(await fileSystem.list(libraryDir));
   const base = projectFolderName(title).replace(/\.penna$/, "");
@@ -42,7 +42,6 @@ const EMPTY_BOOK: ImportedNode[] = [
   },
 ];
 
-// Writes each scene of the book as a file and returns the tree that holds them.
 async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
   const tree: TreeNode[] = [];
   for (const node of book) {
@@ -64,10 +63,7 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
   return tree;
 }
 
-/**
- * A new project. Without a book it gets one chapter and one scene, so the writer can start
- * typing at once; with an imported book it gets the book's parts, chapters and scenes.
- */
+/** Without an imported book it gets one chapter and one scene, so the writer can start at once. */
 export async function createProject(
   fileSystem: FileSystem,
   libraryDir: string,
@@ -88,7 +84,6 @@ export async function createProject(
   return { dir, sceneId };
 }
 
-/** Writes the example project "Vintervägen" into the library and returns its folder. */
 export async function copyExampleProject(fileSystem: FileSystem, libraryDir: string) {
   const dir = await freeProjectDir(fileSystem, libraryDir, "Vintervägen");
   for (const [examplePath, text] of Object.entries(DEMO_PROJECT_FILES)) {

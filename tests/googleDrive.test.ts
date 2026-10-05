@@ -74,6 +74,16 @@ describe("googleDrive", () => {
     expect(await new Response(calls[0]?.init.body).text()).toContain('"parents":["scenes1"]');
   });
 
+  it("moves a file to Drive's trash instead of deleting it", async () => {
+    const { calls, fetcher } = fakeFetch([{ body: {} }]);
+
+    await googleDrive(token, fetcher).trash("f1");
+
+    expect(calls[0]?.url).toBe("https://www.googleapis.com/drive/v3/files/f1");
+    expect(calls[0]?.init.method).toBe("PATCH");
+    expect(calls[0]?.init.body).toBe('{"trashed":true}');
+  });
+
   it("reports an ended sign-in as a DriveError with status 401", async () => {
     const { fetcher } = fakeFetch([{ status: 401, body: { error: "expired" } }]);
 

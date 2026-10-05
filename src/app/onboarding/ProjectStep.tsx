@@ -64,7 +64,6 @@ function TypeChips({ details, onChange }: FieldProps) {
   );
 }
 
-// Enter in a field does what "Fortsätt" does, as in any form.
 function NewProjectFields(props: FieldProps & { onSubmit: () => void }) {
   return (
     <div
@@ -103,7 +102,7 @@ function OpenProjectChoices({ state }: { state: OnboardingState }) {
   );
 }
 
-// A dropped file has no path in the browser view, so it is read from its bytes.
+// A dropped file has no path in the web view, so it is read from its bytes.
 async function dropFile(state: OnboardingState, event: DragEvent) {
   event.preventDefault();
   const file = event.dataTransfer.files[0];

@@ -54,7 +54,6 @@ function GoalFields({ form, onChange }: { form: GoalForm; onChange: (form: GoalF
   ));
 }
 
-/** "Ändra mål": the project's daily goal, the length aimed at, and the deadline. */
 export function GoalsDialog({ fields, onSave, onClose }: GoalsDialogProps) {
   const [form, setForm] = useState(() => formOf(fields));
   useEscape(onClose);

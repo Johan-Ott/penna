@@ -36,7 +36,7 @@ från molnsynk. Håller inte detta måste teknikvalet ses över.
 ```
 Vintervägen.penna/
   project.json      titel, mål, trädets ordning, bokdesign
-  stats.json        ord per dag
+  stats/<enhet>.json  ord per dag på den enheten (äldre stats.json räknas med)
   scenes/<ULID>.md  en fil per scen, front matter id/title/status, CommonMark
   notes/  comments/  snapshots/  trash/
 ```

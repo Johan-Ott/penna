@@ -6,7 +6,7 @@ export interface OpenedProject extends SceneFolderListing {
   recoverable: RecoverableTemp[];
 }
 
-/** Reads what the folder the user picked holds. Writes nothing. */
+/** Writes nothing. */
 export async function openProjectFolder(fileSystem: FileSystem, dir: string) {
   const scenesDir = joinPath(dir, "scenes");
   const listing = classifySceneFiles(await fileSystem.list(scenesDir));

@@ -18,8 +18,7 @@ interface SeriesActionsInput {
   refreshSeries: () => Promise<void>;
 }
 
-// A note being moved is closed first, so its autosave never writes to the old place, and
-// opened again from the series afterwards.
+// Closed first, so its autosave never writes to the old place.
 async function closeIfOpen(session: SceneSession, ids: string[]) {
   const openId = session.scene?.id ?? null;
   const isMoving = openId !== null && ids.includes(openId);
@@ -39,7 +38,6 @@ async function moveToSeries(input: SeriesActionsInput, ids: string[]) {
   if (reopen) await openScene(session, series.dir, reopen);
 }
 
-// The new series is written straight to disk; the book's next read loads it as its series.
 async function createAndJoin(input: SeriesActionsInput, title: string, noteIds: string[]) {
   const { book, session } = input;
   if (!book || book.isReadOnly) return;
@@ -58,7 +56,6 @@ async function createAndJoin(input: SeriesActionsInput, title: string, noteIds: 
   if (reopen) await openScene(session, series.dir, reopen);
 }
 
-/** Putting a book in a series, making a new series, and moving the book's notes into it. */
 export function useSeriesActions(input: SeriesActionsInput) {
   return {
     moveToSeries: (ids: string[]) => moveToSeries(input, ids),

@@ -18,8 +18,7 @@ import { numberLocale, t } from "../../i18n/i18n.js";
 
 type Props = { app: AppState; project: Project };
 
-// The bar over the text: back, the chapter (or the note) and the day's words, Granska and search.
-// Android's own back button puts the keyboard away.
+// Android's back button puts the keyboard away, so the bar has no Klar.
 function TextBar({ app, project, onBack }: Props & { onBack: () => void }) {
   const scene = app.scene;
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
@@ -73,8 +72,7 @@ function Floating({ app, project }: Props) {
   );
 }
 
-// Whenever another text opens, from the tree, the palette, a name or a new note, it gets a screen
-// of its own. The text a book opens with at the start stays behind Boken.
+// The text a book opens with at the start stays behind Boken; later texts get a screen each.
 function useTextFollowsScene(
   sceneId: string | null,
   screen: PhoneScreen,
@@ -90,7 +88,6 @@ function useTextFollowsScene(
   }, [sceneId, screen, showText]);
 }
 
-// Back to an earlier text screen opens that text again.
 function useScreenOpensText(app: AppState, screen: PhoneScreen) {
   const appRef = useRef(app);
   appRef.current = app;
@@ -121,7 +118,6 @@ function usePhoneScreens({ app, project }: Props) {
   return { ...navigation, openText, continueWriting };
 }
 
-/** An open book on a phone: Boken, a sort's notes, or the text, one screen at a time. */
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
   const { screen } = screens;

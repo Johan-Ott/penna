@@ -93,7 +93,6 @@ function controlSymbol(rtf: Rtf, symbol: string) {
   else text(rtf, SYMBOLS.get(symbol) ?? symbol);
 }
 
-/** The prose of an RTF file, such as a Scrivener text, as Penna's Markdown. */
 export function rtfToMarkdown(source: string): string {
   const rtf: Rtf = {
     reader: newBlockReader(),

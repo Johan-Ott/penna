@@ -27,6 +27,7 @@ import type { PaletteEntry } from "./paletteSearch.js";
 import { cardEntries, sceneEntries } from "./bookEntries.js";
 import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
+import { insertFootnote } from "../../editor/footnoteEditing.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
@@ -44,18 +45,16 @@ export interface PaletteContext {
   showSnapshots: (() => void) | null;
   openSettings: () => void;
   showView: (view: View) => void;
-  /** The linked notes, from the series and the book, each with its sort's name. */
   cards: (Card & { sortLabel: string })[];
-  /** "Elins farbror": the first sentence of a note, beside its name. */
+  /** The first sentence of a note, shown beside its name. */
   describe: (id: string) => string;
   openCard: (id: string) => void;
   newNote: () => void;
   /** Null when there is nothing to split or merge. */
   splitScene: (() => void) | null;
   mergeScene: (() => void) | null;
-  /** Läs: a chapter, or the whole book when null. */
+  /** A chapter, or the whole book when null. Null on a phone, which has no reading view. */
   read: ((chapterId: string | null) => void) | null;
-  /** The chapter of the open scene, or null. */
   openChapterId: string | null;
 }
 
@@ -121,6 +120,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Kursiv"), () => run(toggleItalic), "Ctrl+I"),
     command(t("Rensa formatering"), () => run(clearFormatting)),
     command(t("Scenbrytning"), () => run(insertSceneBreak), "Ctrl+Enter"),
+    command(t("Infoga fotnot"), () => run(insertFootnote), "Ctrl+Alt+F"),
     ...styles,
   ];
 }
@@ -185,7 +185,6 @@ function switchEntries({
   ];
 }
 
-/** Everything the command palette can find: scenes, chapters, characters, commands, settings. */
 export function paletteEntries(context: PaletteContext): PaletteEntry[] {
   return [
     ...placeEntries(context),

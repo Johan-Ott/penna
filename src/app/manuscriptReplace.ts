@@ -11,7 +11,6 @@ export interface SceneChange {
 
 const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);
 
-/** "Alla" over the whole manuscript: every scene file, the open one already saved. */
 export async function replaceInScenes(
   fileSystem: FileSystem,
   dir: string,
@@ -32,10 +31,7 @@ export async function replaceInScenes(
   return { changes, count };
 }
 
-/**
- * "Ångra" puts the scenes back. A scene written in since then keeps its new text, so undoing
- * never loses words; the ids of those scenes come back.
- */
+/** A scene written in since the replace keeps its new text, so undoing never loses words. */
 export async function undoReplace(fileSystem: FileSystem, dir: string, changes: SceneChange[]) {
   const skipped: string[] = [];
   for (const change of changes) {

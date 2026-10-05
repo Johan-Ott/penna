@@ -3,7 +3,7 @@ export interface DiffPart {
   text: string;
 }
 
-// Words with the space after them, so joining the tokens gives the text back.
+// Each token keeps its spaces, so joining the tokens gives the text back.
 const tokens = (text: string) => text.match(/\s*\S+\s*/g) ?? [];
 const sameWord = (first: string | undefined, second: string | undefined) =>
   first?.trim() === second?.trim();
@@ -75,8 +75,7 @@ function diffMiddle(old: string[], now: string[]): DiffPart[] {
   return parts;
 }
 
-// A word or two in common between changes reads better as part of the change, and each
-// change shows what was cut before what came in.
+// A word or two in common between changes reads better as part of the change.
 const ISLAND_WORDS = 2;
 
 function grouped(parts: DiffPart[]): DiffPart[] {
@@ -117,7 +116,6 @@ function merged(parts: DiffPart[]): DiffPart[] {
   return result;
 }
 
-/** Two versions of a scene's text, word by word: what stayed, what was cut, what came in. */
 export function diffWords(oldText: string, newText: string): DiffPart[] {
   const old = tokens(oldText);
   const now = tokens(newText);
@@ -131,7 +129,7 @@ export function diffWords(oldText: string, newText: string): DiffPart[] {
   );
 }
 
-/** How many words differ between two texts, counted in the changed middle. */
+/** Counted in the changed middle. */
 export function changedWords(oldText: string, newText: string): number {
   const old = tokens(oldText);
   const now = tokens(newText);

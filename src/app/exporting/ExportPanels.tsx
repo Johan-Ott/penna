@@ -7,7 +7,6 @@ import type { ExportState } from "./useExport.js";
 import { t } from "../../i18n/i18n.js";
 import { platform } from "../platform.js";
 
-// The writer's picture, or the typographic cover the e-book gets without one.
 function EbookPreview({ book, coverUrl }: { book: BookDetails; coverUrl: string | null }) {
   const cover =
     coverUrl ?? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(epubCover(book))}`;
@@ -19,7 +18,6 @@ function EbookPreview({ book, coverUrl }: { book: BookDetails; coverUrl: string 
   );
 }
 
-/** The title page as the export will write it, with the pages the manuscript will fill. */
 export function Preview(props: {
   project: Project;
   generalAuthor: string;
@@ -78,8 +76,6 @@ function ExportFailure(props: {
   );
 }
 
-/** Klar and fel, as the design shows them; pågår shows on the export button. */
-// Pågår, as the design shows it: the chapter being read, a bar and Avbryt.
 function ExportRunning(props: {
   state: Extract<ExportState, { kind: "running" }>;
   onCancel: () => void;

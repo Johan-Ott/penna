@@ -26,7 +26,7 @@ function jpegSize(bytes: Uint8Array, view: DataView): ImageSize | null {
   return null;
 }
 
-/** What kind of picture the bytes are and how big, read from the header; null for anything else. */
+/** Null for anything but JPEG and PNG. */
 export function imageSize(bytes: Uint8Array): ImageSize | null {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   if (bytes.length >= 24 && PNG_SIGNATURE.every((byte, index) => bytes[index] === byte)) {

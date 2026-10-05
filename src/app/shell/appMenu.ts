@@ -13,7 +13,6 @@ export interface AppMenuActions {
   openShortcuts: () => void;
 }
 
-/** The menu behind the three lines in the top bar, as the design lists it. */
 export function appMenu(actions: AppMenuActions): MenuItem[] {
   const bookItems: MenuItem[] = [
     ...(actions.showVersions

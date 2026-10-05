@@ -26,7 +26,6 @@ interface MenuProps {
 
 const EDGE = 8;
 
-// Closes on a press outside the menu and when the window loses focus.
 function useDismiss(onClose: () => void) {
   useEffect(() => {
     window.addEventListener("pointerdown", onClose);
@@ -38,7 +37,6 @@ function useDismiss(onClose: () => void) {
   }, [onClose]);
 }
 
-// Keeps the menu inside the window, flipping it up or left near an edge.
 function useFittedPosition(x: number, y: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ left: x, top: y });
@@ -62,7 +60,7 @@ function moveFocus(event: KeyboardEvent<HTMLDivElement>, onClose: () => void) {
   if (step !== undefined) items[(index + step + items.length) % items.length]?.focus();
 }
 
-// A pure choice menu opens on the current choice; any other menu on its first item.
+// A choice menu opens on the current choice; other menus on their first item.
 function focusIndexOf(items: MenuItem[]) {
   const isChoiceMenu = items.every((item) => item.isChecked !== undefined);
   return isChoiceMenu
@@ -73,7 +71,7 @@ function focusIndexOf(items: MenuItem[]) {
     : 0;
 }
 
-/** One menu for the whole app: right-click, the add button and the style picker. */
+/** The one menu used for right-click, the add button and the style picker. */
 export function Menu({ x, y, items, label, onClose }: MenuProps) {
   useDismiss(onClose);
   const { ref, position } = useFittedPosition(x, y);
@@ -130,7 +128,6 @@ function MenuRow(props: {
   );
 }
 
-/** A menu that opens under the button that was pressed, as the top bar and Innehåll use it. */
 export function useMenuButton(label: string, items: MenuItem[]) {
   const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
   const open = (event: ReactMouseEvent<HTMLElement>) => {

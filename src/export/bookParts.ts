@@ -2,7 +2,7 @@ import type { BookDetails } from "./book.js";
 import { bookWords } from "./bookWords.js";
 import { escapeXml } from "./xhtml.js";
 
-/** One XHTML file in the book; `tocLabel` puts it in the table of contents. */
+/** `tocLabel` puts the page in the table of contents. */
 export interface Page {
   id: string;
   title: string;
@@ -10,7 +10,7 @@ export interface Page {
   tocLabel?: string;
 }
 
-/** The writer's own words around the story; a part is left out when it has no text. */
+/** A part is left out when it has no text. */
 export interface BookExtras {
   dedication?: string;
   thanks?: string;
@@ -26,7 +26,6 @@ interface FrontInput {
   extras: BookExtras;
 }
 
-// A blank line starts a new paragraph, as in the scenes.
 const paragraphs = (text: string) =>
   text
     .split(/\n\s*\n/)
@@ -55,7 +54,6 @@ function copyrightPage({ book, modified, language }: FrontInput): Page {
   };
 }
 
-/** The cover, title page, copyright page and dedication, in that order. */
 export function frontPages(input: FrontInput): Page[] {
   const { book, parts } = input;
   const words = bookWords(input.language);
@@ -75,7 +73,6 @@ export function frontPages(input: FrontInput): Page[] {
   return pages;
 }
 
-/** Thanks and about the author close the book, and are listed in the contents. */
 export function backPages(extras: BookExtras, language: string): Page[] {
   const words = bookWords(language);
   const parts: [string, string, string | undefined][] = [

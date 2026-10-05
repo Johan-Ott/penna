@@ -4,7 +4,7 @@ import { quoteConverter, type Typography } from "./book.js";
 export const escapeXml = (text: string) =>
   text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** A whole XHTML page; EPUB requires the XHTML namespace and an epub namespace for its types. */
+/** EPUB requires the XHTML namespace and an epub namespace for its types. */
 export function xhtmlPage(title: string, body: string, language: string) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
@@ -21,10 +21,33 @@ ${body}
 `;
 }
 
-function inline(paragraph: Node, convert: (text: string) => string) {
+// A scene's footnotes, numbered from 1. Ids carry the scene's id, as a chapter page holds several.
+interface SceneNotes {
+  sceneId: string;
+  texts: string[];
+}
+
+function noteReference(notes: SceneNotes, text: string) {
+  notes.texts.push(text);
+  const number = notes.texts.length;
+  const id = `${notes.sceneId}-${number}`;
+  return `<a epub:type="noteref" href="#note-${id}" id="ref-${id}"><sup>${number}</sup></a>`;
+}
+
+const noteAsides = (notes: SceneNotes) =>
+  notes.texts.map((text, index) => {
+    const id = `${notes.sceneId}-${index + 1}`;
+    const back = `<a href="#ref-${id}">${index + 1}</a>`;
+    return `<aside epub:type="footnote" id="note-${id}"><p>${back} ${text}</p></aside>`;
+  });
+
+function inline(paragraph: Node, convert: (text: string) => string, notes: SceneNotes) {
   let html = "";
   paragraph.forEach((child) => {
     if (child.type.name === "lineBreak") return void (html += "<br />");
+    if (child.type.name === "footnote") {
+      return void (html += noteReference(notes, escapeXml(convert(String(child.attrs["text"])))));
+    }
     let text = escapeXml(convert(child.text ?? ""));
     const marks = new Set(child.marks.map((mark) => mark.type.name));
     if (marks.has("italic")) text = `<em>${text}</em>`;
@@ -34,27 +57,26 @@ function inline(paragraph: Node, convert: (text: string) => string) {
   return html;
 }
 
-// The first paragraph, and the one after a scene break, are set without indent, as in print.
-function block(node: Node, isFirst: boolean, typography: Typography): string {
+function block(node: Node, isFirst: boolean, typography: Typography, notes: SceneNotes): string {
   const name = node.type.name;
   if (name === "sceneBreak") return '<hr class="scene-break" />';
   if (name === "rawBlock") return `<p>${escapeXml(String(node.attrs["source"]))}</p>`;
   if (name === "styleBlock") {
     const inner: string[] = [];
-    node.forEach((child) => inner.push(block(child, true, typography)));
+    node.forEach((child) => inner.push(block(child, true, typography, notes)));
     return `<div class="${escapeXml(String(node.attrs["style"]))}">${inner.join("\n")}</div>`;
   }
-  const html = inline(node, quoteConverter(typography));
+  const html = inline(node, quoteConverter(typography), notes);
   return isFirst ? `<p class="first">${html}</p>` : `<p>${html}</p>`;
 }
 
-/** A scene's text as XHTML paragraphs. */
-export function sceneXhtml(doc: Node, typography: Typography): string {
+export function sceneXhtml(doc: Node, typography: Typography, sceneId = "scen"): string {
+  const notes: SceneNotes = { sceneId, texts: [] };
   const blocks: string[] = [];
   let isFirst = true;
   doc.forEach((node) => {
-    blocks.push(block(node, isFirst, typography));
+    blocks.push(block(node, isFirst, typography, notes));
     isFirst = node.type.name === "sceneBreak";
   });
-  return blocks.join("\n");
+  return [...blocks, ...noteAsides(notes)].join("\n");
 }

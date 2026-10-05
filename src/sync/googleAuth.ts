@@ -1,17 +1,16 @@
-// Signing in to Google on a computer: Google's page in the browser, then a code traded for keys.
-// The challenge (PKCE) means a stolen code is useless without this sign-in's own secret word.
+// PKCE: a stolen code is useless without this sign-in's own secret word.
 
 const SIGN_IN = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN = "https://oauth2.googleapis.com/token";
 export const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
 
-/** Penna's client in Google Cloud. A computer's secret is not truly secret; Google knows. */
+/** A desktop client's secret is not truly secret; Google treats it so. */
 export interface Client {
   id: string;
   secret: string;
 }
 
-/** A short-lived access key and when it runs out, in ms since 1970. */
+/** `expiresAt` in ms since 1970. */
 export interface Access {
   token: string;
   expiresAt: number;
@@ -23,14 +22,13 @@ const base64Url = (bytes: Uint8Array) =>
     .replaceAll("/", "_")
     .replace(/=+$/, "");
 
-/** A random secret word for one sign-in, and its hash that Google sees first. */
 export async function keyChallenge() {
   const verifier = base64Url(crypto.getRandomValues(new Uint8Array(48)));
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
   return { verifier, challenge: base64Url(new Uint8Array(digest)) };
 }
 
-/** Google's sign-in page; `{redirect}` is left for the app to fill with its one-time address. */
+/** `{redirect}` is left for the app to fill with its one-time address. */
 export function signInUrl(client: Client, challenge: string, state: string) {
   const params = new URLSearchParams({
     client_id: client.id,
@@ -45,7 +43,7 @@ export function signInUrl(client: Client, challenge: string, state: string) {
   return `${SIGN_IN}?${params}&redirect_uri={redirect}`;
 }
 
-/** The code in Google's answer, which must carry the state this sign-in sent. */
+/** The answer must carry the state this sign-in sent. */
 export function codeFrom(query: string, state: string) {
   const answer = new URLSearchParams(query);
   const code = answer.get("code");
@@ -73,7 +71,6 @@ async function askForToken(fetcher: typeof fetch, form: Record<string, string>, 
   return { access, lastingKey: answer.refresh_token ?? null };
 }
 
-/** Trades the code from the sign-in for an access key and the lasting key kept for later. */
 export async function exchangeCode(
   fetcher: typeof fetch,
   client: Client,
@@ -93,7 +90,7 @@ export async function exchangeCode(
   return { access, lastingKey };
 }
 
-/** A new access key from the lasting one; fails with "invalid_grant" when access was taken back. */
+/** Fails with "invalid_grant" when access was taken back. */
 export async function refreshAccess(
   fetcher: typeof fetch,
   client: Client,
@@ -109,7 +106,7 @@ export async function refreshAccess(
   return (await askForToken(fetcher, form, now)).access;
 }
 
-/** Hands out the same access key until a minute before it runs out, then fetches a new one. */
+/** Reuses the access key until a minute before it runs out. */
 export function tokenCache(fetchNew: () => Promise<Access>, now: () => number) {
   let current: Access | null = null;
   return async () => {

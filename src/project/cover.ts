@@ -15,7 +15,7 @@ export interface CoverPicture {
   size: ImageSize;
 }
 
-/** The picture the writer chose for the cover, kept in the project folder; null without one. */
+/** Null without one. */
 export async function findCover(fileSystem: FileSystem, dir: string): Promise<CoverPicture | null> {
   const names = await fileSystem.list(dir);
   for (const fileName of Object.values(COVER_NAMES)) {
@@ -27,7 +27,7 @@ export async function findCover(fileSystem: FileSystem, dir: string): Promise<Co
   return null;
 }
 
-/** Saves a new cover; the one before it goes to trash/ rather than being written over. */
+/** The old cover goes to trash/ rather than being overwritten. */
 export async function saveCover(fileSystem: FileSystem, dir: string, bytes: Uint8Array) {
   const size = imageSize(bytes);
   if (!size) throw new Error(t("Omslaget måste vara en JPG eller PNG."));
@@ -38,6 +38,5 @@ export async function saveCover(fileSystem: FileSystem, dir: string, bytes: Uint
   await writeAtomic(fileSystem, joinPath(dir, COVER_NAMES[size.type]), bytes);
 }
 
-/** True when a cover is smaller than what e-book shops accept. */
 export const isCoverTooSmall = (size: ImageSize) =>
   size.width < COVER_MINIMUM.width || size.height < COVER_MINIMUM.height;

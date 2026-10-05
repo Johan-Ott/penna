@@ -14,7 +14,7 @@ const SETTLE_MS = 300;
 type Preview =
   { kind: "working" } | { kind: "ready"; svg: string } | { kind: "failed"; reason: string };
 
-// The first chapter, set by the same Typst and template as the PDF, so the two look alike.
+// Same Typst and template as the PDF, so the preview matches it.
 async function previewSvg(project: Project, generalAuthor: string) {
   const material = await bookMaterial(project, generalAuthor);
   const choices = {
@@ -28,7 +28,6 @@ async function previewSvg(project: Project, generalAuthor: string) {
   return appTypst.svg(typstSource(input));
 }
 
-/** The first pages of the printed book, set again whenever the project or its design changes. */
 export function usePrintPreview(project: Project, generalAuthor: string): Preview {
   const [preview, setPreview] = useState<Preview>({ kind: "working" });
   useEffect(() => {

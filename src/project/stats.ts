@@ -4,7 +4,7 @@ import { countDocumentWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 
-/** stats.json: words written per day, as { "2026-10-02": 812 }. */
+/** Words written per day, as { "2026-10-02": 812 }. */
 export type Stats = Record<string, number>;
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -22,7 +22,7 @@ const dayBefore = (key: string) =>
 const bodyWords = (sceneText: string) =>
   countDocumentWords(parseMarkdown(splitSceneFile(sceneText).body));
 
-/** What one save of a scene added, so moving or trashing scenes never counts as writing. */
+/** Only what a save added, so moving or trashing scenes never counts as writing. */
 export const wordsAdded = (before: string, after: string) => bodyWords(after) - bodyWords(before);
 
 export const addWritten = (stats: Stats, day: string, words: number): Stats => ({
@@ -30,7 +30,7 @@ export const addWritten = (stats: Stats, day: string, words: number): Stats => (
   [day]: Math.max(0, (stats[day] ?? 0) + words),
 });
 
-/** Days in a row with words written. Today only breaks the streak once it is over. */
+/** Today only breaks the streak once it is over. */
 export function streak(stats: Stats, today: string): number {
   let day = (stats[today] ?? 0) > 0 ? today : dayBefore(today);
   let days = 0;
@@ -41,12 +41,14 @@ export function streak(stats: Stats, today: string): number {
   return days;
 }
 
-const statsPath = (dir: string) => joinPath(dir, "stats.json");
+// One file per device, so two devices never write the same file. stats.json is the older shared one.
+const sharedPath = (dir: string) => joinPath(dir, "stats.json");
+const devicePath = (dir: string, device: string) => joinPath(dir, `stats/${device}.json`);
 
-export async function readStats(fileSystem: FileSystem, dir: string): Promise<Stats> {
+async function readStatsFile(fileSystem: FileSystem, path: string): Promise<Stats> {
   try {
-    const parsed: unknown = JSON.parse(await fileSystem.readText(statsPath(dir)));
-    if (typeof parsed !== "object" || parsed === null) return {};
+    const parsed: unknown = JSON.parse(await fileSystem.readText(path));
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return {};
     const entries = Object.entries(parsed).filter(([, words]) => typeof words === "number");
     return Object.fromEntries(entries) as Stats;
   } catch {
@@ -54,8 +56,39 @@ export async function readStats(fileSystem: FileSystem, dir: string): Promise<St
   }
 }
 
-export const writeStats = (fileSystem: FileSystem, dir: string, stats: Stats) =>
-  writeAtomic(fileSystem, statsPath(dir), `${JSON.stringify(stats, null, 2)}\n`);
+const addUp = (all: Stats[]): Stats =>
+  all.reduce<Stats>((sum, stats) => {
+    for (const [day, words] of Object.entries(stats)) sum[day] = (sum[day] ?? 0) + words;
+    return sum;
+  }, {});
+
+export async function readStats(fileSystem: FileSystem, dir: string): Promise<Stats> {
+  const names = await fileSystem.list(joinPath(dir, "stats")).catch(() => []);
+  const paths = names
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => joinPath(dir, `stats/${name}`));
+  return addUp(
+    await Promise.all([sharedPath(dir), ...paths].map((path) => readStatsFile(fileSystem, path))),
+  );
+}
+
+export const readDeviceStats = (fileSystem: FileSystem, dir: string, device: string) =>
+  readStatsFile(fileSystem, devicePath(dir, device));
+
+export async function writeDeviceStats(
+  fileSystem: FileSystem,
+  dir: string,
+  device: string,
+  stats: Stats,
+) {
+  await fileSystem.makeDir(joinPath(dir, "stats"));
+  await writeAtomic(
+    fileSystem,
+    devicePath(dir, device),
+    `${JSON.stringify(stats, null, 2)}
+`,
+  );
+}
 
 export function dailyGoalOf(fields: Record<string, unknown>): number | null {
   const goal = fields["dailyGoal"];

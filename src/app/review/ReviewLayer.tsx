@@ -12,8 +12,7 @@ import type { useComments } from "./useComments.js";
 
 type Comments = ReturnType<typeof useComments>;
 
-// "Ändra alla" replaces the name in the whole manuscript, with Ångra in one step as the spec
-// asks; only whole words with the same capital letters are changed.
+// Only whole words with the same capital letters change; Ångra undoes all of it in one step.
 const replaceAllQuery = (suspect: NameSuspect) =>
   new SearchQuery({
     search: suspect.word,
@@ -53,7 +52,6 @@ function ShownReview(props: ShownProps) {
   );
 }
 
-/** Granska beside the text, while writing a scene with Granskning on or comments on it. */
 export function ReviewLayer({ app, project }: { app: AppState; project: Project }) {
   const { scene, writingMode, comments } = app;
   const doc = app.editor.editorState?.doc;

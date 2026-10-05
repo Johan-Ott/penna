@@ -8,7 +8,6 @@ import { t } from "../../i18n/i18n.js";
 import type { Project } from "../useProject.js";
 import { bookMaterial } from "../exporting/bookMaterial.js";
 
-// The first chapter as the e-book's own XHTML and stylesheet; the reader's device does the rest.
 async function ebookPage(project: Project, generalAuthor: string) {
   const material = await bookMaterial(project, generalAuthor);
   const language = bookLanguage(project.fields);
@@ -24,7 +23,6 @@ async function ebookPage(project: Project, generalAuthor: string) {
   return `<!doctype html><html lang="${language}"><head><meta charset="utf-8" /><style>${EBOOK_STYLE} body { margin: 24px; font-size: 15px; }</style></head><body>${body.join("\n")}</body></html>`;
 }
 
-/** The e-book as a reader shows it, reflowed on a small screen. */
 export function EbookPreview({
   project,
   generalAuthor,

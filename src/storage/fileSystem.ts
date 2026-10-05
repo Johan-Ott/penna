@@ -1,8 +1,7 @@
-// The same storage logic runs on Node in tests, on Tauri in the app and in memory in a browser.
+// Node in tests, Tauri in the app, memory in a browser.
 export interface FileSystem {
   readText(path: string): Promise<string>;
   writeText(path: string, text: string): Promise<void>;
-  /** Pictures and other files that are not text, such as a cover image. */
   readBytes(path: string): Promise<Uint8Array>;
   writeBytes(path: string, bytes: Uint8Array): Promise<void>;
   /** Replaces `to` if it exists. */
@@ -11,7 +10,6 @@ export interface FileSystem {
   list(dir: string): Promise<string[]>;
   /** Milliseconds since 1970, or null when the file is missing. */
   modifiedAt(path: string): Promise<number | null>;
-  /** Creates the folder and any missing parents. */
   makeDir(dir: string): Promise<void>;
 }
 

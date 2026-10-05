@@ -7,14 +7,14 @@ import {
   type TypstRenderer,
 } from "@myriaddreamin/typst.ts";
 
-/** Where Typst's WebAssembly and the book fonts come from: fetched in the app, read in tests. */
+/** Fetched in the app, read from disk in tests. */
 export interface TypstAssets {
   compilerWasm: () => Promise<Uint8Array>;
   rendererWasm: () => Promise<Uint8Array>;
   fonts: () => Promise<Uint8Array[]>;
 }
 
-/** Typst refused the document; the message is Typst's own. */
+/** The message is Typst's own. */
 export class TypstError extends Error {}
 
 const MAIN = "/main.typ";
@@ -48,7 +48,7 @@ async function compile(compiler: TypstCompiler, source: string, format: number) 
   return output.result;
 }
 
-/** One Typst for the app: started on first use, then kept, since starting takes a moment. */
+/** Started on first use, then kept, since starting takes a moment. */
 export function createTypst(assets: TypstAssets) {
   let compiler: Promise<TypstCompiler> | null = null;
   let renderer: Promise<TypstRenderer> | null = null;
@@ -56,7 +56,7 @@ export function createTypst(assets: TypstAssets) {
   const rendererOnce = () => (renderer ??= startRenderer(assets));
   return {
     pdf: async (source: string) => compile(await compilerOnce(), source, PDF),
-    /** The pages as one SVG, drawn from the same compilation as the PDF. */
+    /** Drawn from the same compilation as the PDF. */
     svg: async (source: string) => {
       const vector = await compile(await compilerOnce(), source, VECTOR);
       const drawer = await rendererOnce();

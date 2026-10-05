@@ -4,7 +4,6 @@ import { t, numberLocale } from "../../i18n/i18n.js";
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
-/** The last 12 weeks, shaded by how much of the daily goal was written. */
 export function Heatmap(props: { stats: Stats; today: string; dailyGoal: number | null }) {
   return (
     <section className="progress-section">

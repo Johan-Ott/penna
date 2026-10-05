@@ -37,7 +37,6 @@ function readTag(reader: BlockReader, tag: string, isClosing: boolean) {
   else reader.block.heading = tag.startsWith("h") ? Number(tag.slice(1)) : 0;
 }
 
-/** Mammoth's HTML as Penna's Markdown: headings, paragraphs, italic, bold and line breaks. */
 export function htmlToMarkdown(html: string): string {
   const reader = newBlockReader();
   for (const [, closing, tag = "", text] of html.matchAll(TOKEN)) {
@@ -47,7 +46,6 @@ export function htmlToMarkdown(html: string): string {
   return blocksToMarkdown(reader);
 }
 
-/** A Word file as Markdown, its heading styles as headings. */
 export async function docxToMarkdown(bytes: Uint8Array): Promise<string> {
   const arrayBuffer = bytes.slice().buffer;
   // Mammoth reads `buffer` in Node and `arrayBuffer` in the browser build.

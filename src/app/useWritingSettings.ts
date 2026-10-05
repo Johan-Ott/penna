@@ -9,7 +9,6 @@ import { browserStorage } from "./browserStorage.js";
 
 export type SettingsChange = (current: WritingSettings) => WritingSettings;
 
-// Light or dark as the writer chose, or as the system says.
 function useTheme(theme: Theme) {
   useEffect(() => {
     const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
@@ -25,7 +24,7 @@ function useTheme(theme: Theme) {
 
 export function useWritingSettings() {
   const [settings, setSettings] = useState(() => loadSettings(browserStorage()));
-  // Changes start from the current settings, so quick changes in a row never undo each other.
+  // Changes start from the current settings, so quick changes never undo each other.
   const update = useCallback((change: SettingsChange) => {
     setSettings((current) => {
       const next = change(current);

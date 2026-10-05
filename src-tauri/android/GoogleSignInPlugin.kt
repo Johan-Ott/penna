@@ -20,8 +20,7 @@ class AuthorizeArgs {
   var interactive: Boolean = false
 }
 
-// Copied into src-tauri/gen/android by scripts/build-android.mjs, beside MainActivity.kt.
-// Google Play signs the writer in and hands out an access key for the files Penna makes in Drive.
+// Copied into src-tauri/gen/android by scripts/build-android.mjs.
 @TauriPlugin
 class GoogleSignInPlugin(private val activity: Activity) : Plugin(activity) {
   private val request = AuthorizationRequest.builder()
@@ -34,8 +33,7 @@ class GoogleSignInPlugin(private val activity: Activity) : Plugin(activity) {
     invoke.resolve(JSObject().put("token", token))
   }
 
-  // The first time Google asks the writer which account and whether Penna may use Drive. A quiet
-  // request, as from a sync in the background, never asks and fails instead.
+  // A background sync is not interactive: it fails instead of showing Google's consent screen.
   @Command
   fun authorize(invoke: Invoke) {
     val isInteractive = invoke.parseArgs(AuthorizeArgs::class.java).interactive

@@ -1,6 +1,7 @@
 import {
   AlignmentType,
   Document,
+  FootnoteReferenceRun,
   Header,
   Packer,
   PageNumber,
@@ -17,7 +18,6 @@ interface ManuscriptInput {
   outline: OutlineItem[];
   scenes: Map<string, Node>;
   typography: Typography;
-  /** A language tag such as "sv-SE", for the fixed words and Word's spellcheck. */
   language: string;
   hasTitlePage: boolean;
 }
@@ -32,10 +32,33 @@ const INDENT = 720;
 const HEADING_DROP = 3600;
 const SCENE_BREAK = "* * *";
 
-function runs(paragraph: Node, convert: (text: string) => string): ParagraphChild[] {
+// Word numbers footnotes through the whole document, in the order they are added.
+interface WordNotes {
+  entries: Record<number, { children: Paragraph[] }>;
+  count: number;
+}
+
+function noteReference(notes: WordNotes, text: string) {
+  notes.count += 1;
+  notes.entries[notes.count] = { children: [new Paragraph({ children: [new TextRun(text)] })] };
+  return new FootnoteReferenceRun(notes.count);
+}
+
+interface TextSettings {
+  typography: Typography;
+  notes: WordNotes;
+}
+
+function runs(paragraph: Node, settings: TextSettings): ParagraphChild[] {
+  const convert = quoteConverter(settings.typography);
   const children: ParagraphChild[] = [];
   paragraph.forEach((child) => {
     if (child.type.name === "lineBreak") return void children.push(new TextRun({ break: 1 }));
+    if (child.type.name === "footnote") {
+      return void children.push(
+        noteReference(settings.notes, convert(String(child.attrs["text"]))),
+      );
+    }
     const marks = new Set(child.marks.map((mark) => mark.type.name));
     children.push(
       new TextRun({
@@ -51,7 +74,6 @@ function runs(paragraph: Node, convert: (text: string) => string): ParagraphChil
 const centered = (text: string, extra: object = {}) =>
   new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun(text)], ...extra });
 
-// Letters, quotes, poems and messages stand indented as a block, without first-line indent.
 function paragraphIndent(isFirst: boolean, isInStyle: boolean) {
   if (isInStyle) return { left: INDENT };
   return { firstLine: isFirst ? 0 : INDENT };
@@ -60,7 +82,7 @@ function paragraphIndent(isFirst: boolean, isInStyle: boolean) {
 function blockParagraphs(
   block: Node,
   place: { isFirst: boolean; isInStyle: boolean },
-  typography: Typography,
+  settings: TextSettings,
 ): Paragraph[] {
   const name = block.type.name;
   if (name === "sceneBreak") return [centered(SCENE_BREAK)];
@@ -68,20 +90,20 @@ function blockParagraphs(
   if (name === "styleBlock") {
     const inner: Paragraph[] = [];
     block.forEach((child) =>
-      inner.push(...blockParagraphs(child, { isFirst: true, isInStyle: true }, typography)),
+      inner.push(...blockParagraphs(child, { isFirst: true, isInStyle: true }, settings)),
     );
     return inner;
   }
-  const children = runs(block, quoteConverter(typography));
+  const children = runs(block, settings);
   return [new Paragraph({ children, indent: paragraphIndent(place.isFirst, place.isInStyle) })];
 }
 
-/** A scene's blocks; the first paragraph, and the one after a scene break, are not indented. */
-function sceneParagraphs(doc: Node, typography: Typography): Paragraph[] {
+/** The first paragraph, and the one after a scene break, are not indented. */
+function sceneParagraphs(doc: Node, settings: TextSettings): Paragraph[] {
   const paragraphs: Paragraph[] = [];
   let isFirst = true;
   doc.forEach((block) => {
-    paragraphs.push(...blockParagraphs(block, { isFirst, isInStyle: false }, typography));
+    paragraphs.push(...blockParagraphs(block, { isFirst, isInStyle: false }, settings));
     isFirst = block.type.name === "sceneBreak";
   });
   return paragraphs;
@@ -98,7 +120,8 @@ function headingParagraphs(
   ];
 }
 
-function bodyParagraphs({ outline, scenes, typography, language }: ManuscriptInput): Paragraph[] {
+function bodyParagraphs(input: ManuscriptInput, notes: WordNotes): Paragraph[] {
+  const { outline, scenes, typography, language } = input;
   const paragraphs: Paragraph[] = [];
   let previous: OutlineItem["kind"] | null = null;
   for (const item of outline) {
@@ -106,7 +129,7 @@ function bodyParagraphs({ outline, scenes, typography, language }: ManuscriptInp
     else {
       const doc = scenes.get(item.id);
       if (previous === "scene") paragraphs.push(centered(SCENE_BREAK));
-      if (doc) paragraphs.push(...sceneParagraphs(doc, typography));
+      if (doc) paragraphs.push(...sceneParagraphs(doc, { typography, notes }));
     }
     previous = item.kind;
   }
@@ -126,7 +149,6 @@ function titlePage(book: BookDetails, language: string): Paragraph[] {
   ];
 }
 
-// "Berg / Vintervägen / 12" at the top right of every page after the title page.
 function pageHeader(book: BookDetails) {
   const surname = book.author.trim().split(/\s+/).pop() ?? "";
   const text = [surname, book.title].filter((part) => part !== "").join(" / ");
@@ -140,10 +162,13 @@ function pageHeader(book: BookDetails) {
   });
 }
 
-/** The book as a standard manuscript (DOCX), built whole in memory before anything is saved. */
+/** Built whole in memory before anything is saved. */
 export async function standardManuscript(input: ManuscriptInput): Promise<Uint8Array> {
   const page = { margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } };
+  const notes: WordNotes = { entries: {}, count: 0 };
+  const body = bodyParagraphs(input, notes);
   const document = new Document({
+    footnotes: notes.entries,
     creator: input.book.author,
     title: input.book.title,
     styles: {
@@ -162,7 +187,7 @@ export async function standardManuscript(input: ManuscriptInput): Promise<Uint8A
       {
         properties: { page: { ...page, pageNumbers: { start: 1 } } },
         headers: { default: pageHeader(input.book) },
-        children: bodyParagraphs(input),
+        children: body,
       },
     ],
   });

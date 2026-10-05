@@ -14,7 +14,9 @@ import "./editor/editor.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App.js";
+import { recordUncaughtErrors } from "./app/errorLog.js";
 
+recordUncaughtErrors();
 const root = document.getElementById("root");
 if (!root) throw new Error("index.html has no #root element for Penna to render into.");
 createRoot(root).render(

@@ -1,6 +1,5 @@
-//! Signing in to Google for Drive sync. On a computer Google's page opens in the browser and
-//! answers to a one-time address on this computer; the lasting key is kept in the system's
-//! password store. On Android, Google Play's own sign-in hands out the access key.
+//! Google sign-in for Drive sync. Computer: browser plus a local redirect, the refresh token in the
+//! system's password store. Android: Google Play's authorization API.
 
 #[cfg(desktop)]
 mod desktop {
@@ -31,7 +30,7 @@ mod desktop {
             .unwrap_or_default()
     }
 
-    // Waits for the browser's one visit, at most five minutes, and thanks it.
+    // Polls instead of blocking, so an abandoned sign-in ends after WAIT.
     fn answer_once(listener: &TcpListener) -> Result<String, String> {
         listener
             .set_nonblocking(true)
@@ -61,8 +60,7 @@ mod desktop {
         }
     }
 
-    /// Opens Google's sign-in page, where `{redirect}` in the address becomes this computer's
-    /// one-time address, and returns that address and what Google sent back to it.
+    /// `{redirect}` in `url` becomes the local redirect address. Returns it and Google's query.
     #[tauri::command]
     pub async fn sign_in_in_browser(app: AppHandle, url: String) -> Result<BrowserAnswer, String> {
         let listener = TcpListener::bind("127.0.0.1:0").map_err(|error| error.to_string())?;
@@ -78,7 +76,7 @@ mod desktop {
         let query = tauri::async_runtime::spawn_blocking(move || answer_once(&listener))
             .await
             .map_err(|error| error.to_string())??;
-        // Penna comes back in front by itself, so the writer need not look for it.
+        // Bring Penna back in front after the browser.
         if let Some(window) = app.get_webview_window("main") {
             let _ = window.unminimize();
             let _ = window.set_focus();
@@ -90,13 +88,12 @@ mod desktop {
         keyring::Entry::new(KEYRING_SERVICE, KEYRING_USER).map_err(|error| error.to_string())
     }
 
-    /// The lasting key from an earlier sign-in, or nothing.
     #[tauri::command]
     pub fn saved_google_key() -> Option<String> {
         entry().ok()?.get_password().ok()
     }
 
-    /// Keeps the lasting key, or forgets it when there is none.
+    /// `None` forgets the key.
     #[tauri::command]
     pub fn save_google_key(key: Option<String>) -> Result<(), String> {
         let entry = entry()?;
@@ -140,8 +137,7 @@ mod mobile {
             .build()
     }
 
-    /// An access key for Drive. When `interactive`, Google may ask the writer for an account and
-    /// for consent; otherwise it fails rather than ask.
+    /// Without `interactive` it fails rather than show Google's account and consent screen.
     #[tauri::command]
     pub async fn google_access_token(
         sign_in: State<'_, GoogleSignIn>,

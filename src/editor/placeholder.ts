@@ -1,7 +1,6 @@
 import { Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
-/** Shows a short invitation in a scene that has no text yet. */
 export function placeholder(text: string) {
   return new Plugin({
     props: {

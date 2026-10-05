@@ -487,5 +487,13 @@
   "”{word}” {times} inom {window} meningar.": "“{word}” {times} within {window} sentences.",
   "← Tillbaka till texten": "← Back to the text",
   "Fortsätt i Googles inloggning.": "Continue in Google's sign-in.",
-  "Penna kommer tillbaka av sig själv när du är klar.": "Penna comes back by itself when you are done."
+  "Penna kommer tillbaka av sig själv när du är klar.": "Penna comes back by itself when you are done.",
+  "Felrapport": "Error report",
+  "Kopiera felrapport": "Copy error report",
+  "Kopierad": "Copied",
+  "Version, enhet och de senaste felen, att klistra in i ett mejl till oss.": "Version, device and the latest errors, to paste into an email to us.",
+  "Fotnot": "Footnote",
+  "Fotnotens text": "Footnote text",
+  "Infoga fotnot": "Insert footnote",
+  "Ta bort": "Remove"
 }

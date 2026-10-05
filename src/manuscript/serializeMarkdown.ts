@@ -1,17 +1,17 @@
 import type { Node } from "prosemirror-model";
+import { footnoteDefinitions } from "./footnotes.js";
 import { serializeInlineContent } from "./serializeInline.js";
 
 export { serializeInlineContent };
 
 export function serializeMarkdown(doc: Node): string {
-  return serializeBlocks(doc) + String(doc.attrs["trailing"] ?? "");
+  return serializeBlocks(doc) + String(doc.attrs["trailing"] ?? "") + footnoteDefinitions(doc);
 }
 
 const BLANK_LINE = /\n[ \t]*\r?\n/;
 const LINE_BREAK = /\n/;
 
-// A block that was moved, lifted or pasted carries the gap from where it came from. The gap is
-// kept only while it still separates the blocks; text after a paragraph needs a blank line.
+// A moved block keeps its old gap only while that gap still separates the blocks.
 function gapBefore(block: Node, previous: Node | null): string {
   const before = block.attrs["before"] as string | null;
   if (!previous) return before ?? "";
@@ -39,8 +39,7 @@ function serializeBlock(block: Node): string {
   return source !== null && canonical === block.attrs["canonical"] ? source : canonical;
 }
 
-// ProseMirror keeps unchanged paragraphs as the same objects, so after a keystroke only the
-// edited paragraph is serialized again.
+// Unchanged paragraphs keep their object identity, so only the edited one is serialized again.
 const canonicalByParagraph = new WeakMap<Node, string>();
 
 function cachedCanonical(paragraph: Node): string {

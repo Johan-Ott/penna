@@ -11,10 +11,7 @@ async function addFolder(fileSystem: FileSystem, zip: JSZip, dir: string, zipDir
   }
 }
 
-/**
- * Whole folders as one zip, each under its own name: a book and, when it has one, its series.
- * For a backup or to send with a support question.
- */
+/** A book and, when it has one, its series, each under its own name. */
 export async function projectZip(fileSystem: FileSystem, dirs: string[]): Promise<Uint8Array> {
   const zip = new JSZip();
   for (const dir of dirs)

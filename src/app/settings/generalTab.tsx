@@ -94,14 +94,15 @@ function ReminderChoice({ preferences, updatePreferences }: TabProps) {
   );
 }
 
-// Where new projects go and the goal they start with.
 function LibraryRows(props: TabProps) {
   const hint = t("Där nya projekt skapas. Lägg den i din molnmapp för synk.");
   return (
     <>
-      <Row label={t("Projektmapp")} hint={props.preferences.libraryDir ?? hint}>
-        <LibraryButton {...props} />
-      </Row>
+      {!platform.isPhone && (
+        <Row label={t("Projektmapp")} hint={props.preferences.libraryDir ?? hint}>
+          <LibraryButton {...props} />
+        </Row>
+      )}
       <Row label={t("Dagligt ordmål")} hint={t("Standard för nya projekt.")}>
         <GoalInput {...props} />
       </Row>

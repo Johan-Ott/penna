@@ -14,7 +14,7 @@ export interface SceneSummary {
   title: string;
   words: number;
   status: SceneStatus;
-  /** A note's own choice to link its name in the text; without one it follows its sort. */
+  /** Without one the note follows its sort. */
   link?: boolean;
 }
 
@@ -30,8 +30,7 @@ function summarize(text: string): SceneSummary {
   };
 }
 
-// Every autosave makes the folder watcher read the project again, so a scene is only parsed
-// again when its text has changed. One entry per scene file keeps the cache small.
+// Every autosave rereads the project, so a scene is parsed again only when its text changed.
 const latestByPath = new Map<string, { text: string; summary: SceneSummary }>();
 
 function cachedSummary(path: string, text: string): SceneSummary {
@@ -42,7 +41,6 @@ function cachedSummary(path: string, text: string): SceneSummary {
   return summary;
 }
 
-/** Title and word count for each scene, keyed by scene id. */
 export async function readSceneSummaries(fileSystem: FileSystem, dir: string, sceneIds: string[]) {
   const entries = await Promise.all(
     sceneIds.map(async (id) => {

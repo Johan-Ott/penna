@@ -3,8 +3,7 @@ import { Schema } from "prosemirror-model";
 export const STYLE_NAMES = ["brev", "citat", "dikt", "meddelande"] as const;
 export type StyleName = (typeof STYLE_NAMES)[number];
 
-// Every block remembers the exact text it was read from (`source`) and the whitespace before
-// it (`before`), so blocks the writer did not touch are saved byte for byte.
+// `source` and `before` keep each block's original text, so untouched blocks are saved byte for byte.
 const blockAttrs = { before: { default: null }, source: { default: null } };
 
 const isStyleName = (value: string | null): value is StyleName =>
@@ -13,8 +12,7 @@ const isStyleName = (value: string | null): value is StyleName =>
 // ProseMirror reads null as "matches, no attributes" and false as "does not match".
 const isBoldWeight = (value: string) => /^(bold|[6-9]00)$/.test(value);
 
-// parseDOM rules decide what survives a paste: paragraphs, italic and bold from Word or a web
-// page are kept; headings and list items become paragraphs.
+// Pasting keeps paragraphs, italic and bold; headings and list items become paragraphs.
 export const manuscriptSchema = new Schema({
   nodes: {
     doc: { content: "block*", attrs: { trailing: { default: "\n" } } },
@@ -67,6 +65,31 @@ export const manuscriptSchema = new Schema({
       toDOM: (node) => ["pre", { class: "raw-block" }, String(node.attrs["source"])],
     },
     text: { group: "inline" },
+    // A footnote's text is plain text kept on the node; CSS numbers the markers in order.
+    footnote: {
+      group: "inline",
+      inline: true,
+      atom: true,
+      attrs: { label: { default: "1" }, text: { default: "" } },
+      parseDOM: [
+        {
+          tag: "sup.footnote",
+          getAttrs: (element) => ({
+            label: element.getAttribute("data-label") ?? "1",
+            text: element.getAttribute("data-text") ?? "",
+          }),
+        },
+      ],
+      toDOM: (node) => [
+        "sup",
+        {
+          class: "footnote",
+          "data-label": String(node.attrs["label"]),
+          "data-text": String(node.attrs["text"]),
+          title: String(node.attrs["text"]),
+        },
+      ],
+    },
     lineBreak: {
       group: "inline",
       inline: true,

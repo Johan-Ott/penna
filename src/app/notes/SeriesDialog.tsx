@@ -12,7 +12,6 @@ import { t } from "../../i18n/i18n.js";
 interface SeriesDialogProps {
   book: Project;
   onJoin: (folder: string | null) => void;
-  /** A new series, and the book's own notes to move into it. */
   onCreate: (title: string, noteIds: string[]) => void;
   onClose: () => void;
 }
@@ -65,7 +64,6 @@ type NewSeriesProps = {
   onFlip: () => void;
 };
 
-// A new series can take the book's notes with it, which is what a first book usually wants.
 function MoveNotesRow(props: NewSeriesProps) {
   if (props.noteCount === 0) return null;
   return (
@@ -119,7 +117,6 @@ function useSeriesForm(props: SeriesDialogProps) {
   return { choice, setChoice, name, setName, isMoving, setMoving, noteIds, isReady, save };
 }
 
-/** Serie: which series the book belongs to, or a new one; its notes are shared by its books. */
 export function SeriesDialog(props: SeriesDialogProps) {
   const folders = useSeriesFolders(props.book);
   const form = useSeriesForm(props);

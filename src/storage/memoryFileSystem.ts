@@ -1,6 +1,5 @@
 import type { FileSystem } from "./fileSystem.js";
 
-// Text and pictures are kept as they were written; reading turns one into the other if asked.
 type Content = string | Uint8Array;
 
 interface Disk {
@@ -48,7 +47,7 @@ const asText = (content: Content) =>
 const asBytes = (content: Content) =>
   typeof content === "string" ? new TextEncoder().encode(content) : content.slice();
 
-/** A disk in memory, used when Penna runs in a plain browser without Tauri. */
+/** Used when Penna runs in a plain browser without Tauri. */
 export function createMemoryFileSystem(initialFiles: Record<string, string>): FileSystem {
   const disk: Disk = { files: new Map(), folders: new Set() };
   Object.entries(initialFiles).forEach(([path, text]) => store(disk, path, text));

@@ -29,7 +29,6 @@ function ChevronDown() {
   );
 }
 
-/** The style of the paragraph at the cursor, as in the design: a label and a small menu. */
 export function StylePicker({ editorState, run }: StylePickerProps) {
   const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
   const style = editorState ? currentStyle(editorState) : "brodtext";

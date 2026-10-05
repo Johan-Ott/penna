@@ -12,13 +12,12 @@ import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
-/** Which scene: the project folder and the scene id. */
 export interface SceneRef {
   dir: string;
   id: string;
 }
 
-/** A copy of a scene file in snapshots/<scene id>/, named after when it was taken. */
+/** Stored in snapshots/<scene id>/, named after when it was taken. */
 export interface Snapshot {
   fileName: string;
   time: number;
@@ -51,7 +50,7 @@ function timeOf(fileName: string): number | null {
 const snapshotDir = (scene: SceneRef) => joinPath(scene.dir, `snapshots/${scene.id}`);
 const wordsIn = (body: string) => countDocumentWords(parseMarkdown(body));
 
-// Newest first. "-2" marks a later snapshot taken the same minute, a longer name a later one.
+// "-2" marks a later snapshot taken the same minute.
 const newestFirst = (first: Snapshot, second: Snapshot) =>
   second.time - first.time ||
   second.fileName.length - first.fileName.length ||
@@ -72,7 +71,7 @@ export async function listSnapshots(fileSystem: FileSystem, scene: SceneRef) {
   return snapshots.sort(newestFirst);
 }
 
-/** Saves a snapshot of a scene text. With a label it is manual, otherwise automatic. */
+/** With a label it is manual, otherwise automatic. */
 export async function takeSnapshot(
   fileSystem: FileSystem,
   scene: SceneRef,
@@ -101,10 +100,7 @@ export async function takeSnapshot(
   return fileName;
 }
 
-/**
- * After a save: the text from before it is kept when the scene had no snapshot yet, or when the
- * new text has moved SNAPSHOT_WORDS words or more away from the last one.
- */
+/** The text before a save is kept when the scene has no snapshot yet or has moved SNAPSHOT_WORDS words. */
 export async function snapshotOnSave(
   fileSystem: FileSystem,
   scene: SceneRef,
@@ -123,7 +119,6 @@ export async function snapshotOnSave(
   return true;
 }
 
-/** Short Swedish month names, as dates are written in the app: "2 okt". */
 export const MONTHS = [
   "jan",
   "feb",
@@ -140,7 +135,6 @@ export const MONTHS = [
 ];
 const DAY = 24 * 60 * 60 * 1000;
 
-/** "Idag 11:20", "Igår 14:03" or "2 okt 14:03", as the snapshot list shows it. */
 export function snapshotWhen(time: number, now: number): string {
   const date = new Date(time);
   const clock = `${pad(date.getHours())}:${pad(date.getMinutes())}`;

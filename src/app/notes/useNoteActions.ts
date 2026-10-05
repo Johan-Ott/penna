@@ -6,7 +6,6 @@ import { platform } from "../platform.js";
 import { createScene, openScene, setNoteLink, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
 
-/** What Ny anteckning asks for. A new sort is made first when the writer named one. */
 export interface NewNote {
   name: string;
   sortId: string | null;
@@ -21,14 +20,13 @@ interface NoteActionsInput {
   refresh: () => Promise<void>;
 }
 
-// The sort the note goes in, made first if it is new.
 function withSort(tree: TreeNode[], note: NewNote) {
   if (!note.newSortTitle) return { tree, sortId: note.sortId ?? "" };
   const sort: TreeNode = { id: newSceneId(), kind: "sort", title: note.newSortTitle, children: [] };
   return { tree: insertNode(tree, sort, null, 0), sortId: sort.id };
 }
 
-/** Notes are scene files in a sort; only a choice that differs from the sort's is written down. */
+/** Only a link choice that differs from the sort's is written to the note. */
 export function useNoteActions({ project, session, updateTree, refresh }: NoteActionsInput) {
   const newNote = useCallback(
     async (note: NewNote) => {

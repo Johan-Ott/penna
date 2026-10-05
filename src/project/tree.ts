@@ -1,10 +1,7 @@
 /** A sort holds notes of one kind, such as Personer; the writer can add sorts of their own. */
 export type NodeKind = "part" | "chapter" | "scene" | "folder" | "sort";
 
-/**
- * A scene node has no title: the scene's title lives in its own file's front matter.
- * `summary` and `when` are what Innehåll shows for a chapter, or a scene outside a chapter.
- */
+/** A scene node has no title: it lives in the scene file's front matter. */
 export interface TreeNode {
   id: string;
   kind: NodeKind;
@@ -21,8 +18,7 @@ export const THINGS_ID = "saker";
 export const NOTES_ID = "anteckningar";
 export const TRASH_ID = "trash";
 
-// Notes are ordinary scene files kept in sorts beside the manuscript, so they are written, moved
-// and thrown away like any scene. These four always exist; the ids are kept from older projects.
+// Notes are scene files kept in sorts, so they are written, moved and trashed like any scene.
 const FIXED_SORTS: { id: string; kind: "sort"; title: string }[] = [
   { id: CHARACTERS_ID, kind: "sort", title: "Personer" },
   { id: PLACES_ID, kind: "sort", title: "Platser" },
@@ -31,7 +27,7 @@ const FIXED_SORTS: { id: string; kind: "sort"; title: string }[] = [
 ];
 const TRASH: TreeNode = { id: TRASH_ID, kind: "folder", title: "Papperskorg" };
 
-// Older projects had these as fixed folders; with texts in them they become sorts of their own.
+// Older projects had these as fixed folders; with texts in them they become sorts.
 const RETIRED_FOLDERS = ["tidslinje", "research"];
 
 const isSpecial = (id: string) => id === TRASH_ID || FIXED_SORTS.some((sort) => sort.id === id);
@@ -47,7 +43,6 @@ const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
   scene: [],
 };
 
-/** The manuscript first, then the four fixed sorts, the writer's own sorts and Papperskorg. */
 export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
   const ordinary = tree.filter((node) => !isNoteSide(node) && !isSpecial(node.id));
   const fixed = FIXED_SORTS.map((sort) => {
@@ -64,7 +59,6 @@ export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
   return [...ordinary, ...fixed, ...own, trash];
 }
 
-/** The sorts in the order the sidebar lists them. */
 export const sortsOf = (tree: TreeNode[]) => tree.filter((node) => node.kind === "sort");
 
 export interface FoundNode {
@@ -108,7 +102,7 @@ function insertInto(tree: TreeNode[], node: TreeNode, parentId: string, index: n
   });
 }
 
-/** Inserts at `index` among the parent's children; at the root, always before the special folders. */
+/** At the root, always before the special folders. */
 export function insertNode(
   tree: TreeNode[],
   node: TreeNode,
@@ -126,10 +120,7 @@ export function insertNode(
   return insertAt(tree, node, Math.max(0, Math.min(index, manuscriptEnd)));
 }
 
-/**
- * Moves a node to `index` among the new parent's children, counted after the node is taken out.
- * An impossible move returns the same tree.
- */
+/** `index` is counted after the node is taken out. An impossible move returns the same tree. */
 export function moveNode(tree: TreeNode[], id: string, parentId: string | null, index: number) {
   const found = findNode(tree, id);
   if (!found || !canMoveInto(tree, found.node, parentId)) return tree;
@@ -163,11 +154,10 @@ function collect(nodes: TreeNode[], wanted: NodeKind): TreeNode[] {
 
 const manuscript = (tree: TreeNode[]) => tree.filter((node) => !isNoteSide(node));
 
-/** Nodes of one kind in the manuscript, in reading order; notes and Papperskorg left out. */
+/** Notes and Papperskorg left out. */
 export const manuscriptNodes = (tree: TreeNode[], kind: NodeKind) =>
   collect(manuscript(tree), kind);
 
-/** The scenes kept in one folder or sort, such as all the notes in Personer. */
 export const sceneIdsIn = (tree: TreeNode[], folderId: string) =>
   collect(findNode(tree, folderId)?.node.children ?? [], "scene").map((node) => node.id);
 
@@ -186,14 +176,11 @@ export function reconcileScenes(tree: TreeNode[], sceneIdsOnDisk: string[]) {
   return { tree: withUnknown, missing };
 }
 
-/** A tree from scene files alone, in creation order (scene ids are ULIDs). */
+/** In creation order, as scene ids are ULIDs. */
 export const rebuildTree = (sceneIds: string[]) =>
   withSpecialFolders([...sceneIds].sort().map((id): TreeNode => ({ id, kind: "scene" })));
 
-/**
- * Inserts right after `siblingId`, or at the end of the manuscript when there is no sibling.
- * A node that may not sit next to the sibling goes after the nearest parent where it may.
- */
+/** At the end of the manuscript when there is no sibling. */
 export function insertAfter(
   tree: TreeNode[],
   node: TreeNode,
@@ -209,7 +196,6 @@ export function insertAfter(
   return insertNode(tree, node, sibling.parent?.id ?? null, sibling.index + 1);
 }
 
-/** Numbers through the whole manuscript, as a reader would count parts or chapters. */
 export function numberNodes(tree: TreeNode[], kind: "part" | "chapter"): Map<string, number> {
   return new Map(collect(manuscript(tree), kind).map((node, index) => [node.id, index + 1]));
 }
@@ -230,10 +216,9 @@ function pathTo(tree: TreeNode[], id: string): string[] | null {
   return null;
 }
 
-/** The ids of every node above `id`, from the root down; empty when `id` is not in the tree. */
+/** From the root down; empty when `id` is not in the tree. */
 export const ancestorIds = (tree: TreeNode[], id: string) => pathTo(tree, id) ?? [];
 
-/** The scene right after `id` under the same parent, which Slå ihop med nästa takes in. */
 export function nextSceneSibling(tree: TreeNode[], id: string): string | null {
   const found = findNode(tree, id);
   if (!found) return null;

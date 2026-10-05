@@ -5,6 +5,7 @@ import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf } from "./notes/NotePage.js";
 import { ReplaceToast } from "./SaveToast.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
+import { FootnotePopover } from "./FootnotePopover.js";
 import { SelectionBar } from "./SelectionBar.js";
 import { TextHeader } from "./TextHeader.js";
 import { openInHome } from "./notes/noteHomes.js";
@@ -13,13 +14,11 @@ import type { OpenScene } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 
-// A scene or note opens in Skriv from whichever folder holds it, the book or its series.
 const openText = (app: AppState) => (id: string) => {
   app.writingMode.setView("skriv");
   openInHome(app.session, app.homes, id);
 };
 
-// "Kapitel 8 · Köket" in the focus mode's header.
 function focusLocation(project: Project, scene: OpenScene | null) {
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
   const title = scene?.title ?? "";
@@ -37,7 +36,6 @@ function sceneHeader(app: AppState, project: Project, sceneId: string) {
   );
 }
 
-// A note gets its sort, name, connections and mentions; a scene its chapter and when.
 function textParts(app: AppState, project: Project) {
   const scene = app.scene;
   if (!scene) return { header: null, footer: null };
@@ -61,7 +59,6 @@ function textParts(app: AppState, project: Project) {
   };
 }
 
-/** What the sidebar is given from the app's state. */
 export function sidebarProps(app: AppState, project: Project) {
   const { writingMode } = app;
   return {
@@ -89,7 +86,6 @@ export function sidebarProps(app: AppState, project: Project) {
   };
 }
 
-/** The series' part of the sidebar: its notes, renamed and moved in the series' own tree. */
 function seriesTreeProps(app: AppState, series: Project) {
   const { actions, writingMode } = app;
   return {
@@ -106,7 +102,6 @@ function seriesTreeProps(app: AppState, series: Project) {
   };
 }
 
-/** What the writing area is given from the app's state. */
 export function writingAreaProps(app: AppState, project: Project) {
   return {
     editor: app.editor,
@@ -122,7 +117,12 @@ export function writingAreaProps(app: AppState, project: Project) {
     manuscriptSearch: app.search.scope,
     replaceToast: <ReplaceToast {...app.search} />,
     aside: <ReviewLayer app={app} project={project} />,
-    selectionBar: <SelectionBar editor={app.editor} onComment={app.comments.start} />,
+    selectionBar: (
+      <>
+        <SelectionBar editor={app.editor} onComment={app.comments.start} />
+        <FootnotePopover editor={app.editor} />
+      </>
+    ),
     onRetrySave: () => void app.session.autosave.flush(),
     onNewScene: () => void app.actions.newItem("scene"),
   };

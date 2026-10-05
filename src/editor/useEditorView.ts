@@ -30,7 +30,6 @@ interface ViewSwitches extends EditorSwitches {
   isSpellcheckOn: () => boolean;
 }
 
-/** What the app switches while the writer types; set on `editor.modes.current`. */
 export interface EditorModes {
   isTypewriterOn: boolean;
   isTypographyOn: boolean;
@@ -72,8 +71,7 @@ function useModeSwitches() {
   return { switches, modes };
 }
 
-// A hidden editor can not take focus. A request made while it is hidden is kept until
-// `focusIfRequested` runs after the editor is shown.
+// A hidden editor cannot take focus, so the request waits until it is shown.
 function useFocusRequest(viewRef: React.RefObject<EditorView | null>) {
   const isRequested = useRef(false);
   const requestFocus = useCallback(() => {
@@ -89,7 +87,7 @@ function useFocusRequest(viewRef: React.RefObject<EditorView | null>) {
   return { requestFocus, focusIfRequested };
 }
 
-/** Owns one ProseMirror view. React re-renders on every transaction through `editorState`. */
+/** React re-renders on every transaction through `editorState`. */
 export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
   const onDocChangeRef = useRef(onDocChange);

@@ -2,7 +2,7 @@ import compilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_w
 import rendererWasmUrl from "@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm?url";
 import { createTypst } from "../export/typstCompile.js";
 
-// The book fonts ship with Penna in public/fonts, each with its OFL licence beside it.
+// Each font in public/fonts has its OFL licence beside it.
 const FONT_FILES = [
   "literata-400-normal",
   "literata-400-italic",
@@ -21,7 +21,7 @@ async function bytesAt(url: string) {
   return new Uint8Array(await response.arrayBuffer());
 }
 
-/** The app's Typst: started the first time a book is set, which takes a moment. */
+/** Started the first time a book is set, which takes a moment. */
 export const appTypst = createTypst({
   compilerWasm: () => bytesAt(compilerWasmUrl),
   rendererWasm: () => bytesAt(rendererWasmUrl),

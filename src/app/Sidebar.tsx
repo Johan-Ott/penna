@@ -31,8 +31,6 @@ function useSeriesDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
-// The book's title opens Innehåll; the chevron adds to the book, picks its series, or goes
-// back to the shelf.
 function BookTitle(props: SidebarProps) {
   const series = useSeriesDialog(props);
   const menu = useMenuButton(t("Lägg till"), [
@@ -59,7 +57,6 @@ function BookTitle(props: SidebarProps) {
   );
 }
 
-/** The book: its title, the manuscript, the notes in their sorts, and Papperskorg at the bottom. */
 export function Sidebar(props: SidebarProps) {
   return (
     <nav className="sidebar" aria-label={t("Boken")}>

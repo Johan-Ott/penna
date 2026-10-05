@@ -6,7 +6,6 @@ import { t } from "../../i18n/i18n.js";
 
 type Comments = ReturnType<typeof useComments>;
 
-// A small text box with a button, for a new comment or a reply.
 function Writer(props: { label: string; onSend: (body: string) => void; onCancel: () => void }) {
   const [body, setBody] = useState("");
   return (
@@ -110,7 +109,6 @@ function CommentCard(props: {
   );
 }
 
-/** Kommentarer, as in the design's panel: the quote, the comment, who wrote it and when. */
 export function CommentsSection({ comments, text }: { comments: Comments; text: string }) {
   const [isShowingResolved, setShowingResolved] = useState(false);
   const top = comments.comments.filter((comment) => !comment.replyTo);

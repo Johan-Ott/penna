@@ -16,7 +16,7 @@ export interface TabProps {
   updatePreferences: (change: PreferenceChange) => void;
   settings: WritingSettings;
   onChangeSettings: (change: SettingsChange) => void;
-  /** The open book's language and its zip copy, or null on the bookshelf. */
+  /** Null on the bookshelf. */
   book: {
     language: string;
     onChangeLanguage: (language: string) => void;

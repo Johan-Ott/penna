@@ -48,7 +48,7 @@ const TYPOGRAPHY: [Typography, string][] = [
   ["engelsk", t("Engelsk")],
 ];
 
-// The quotes start as the book's language writes them; the writer can still pick the other.
+// The quotes follow the book's language until the writer picks the other kind.
 const startChoices = (project: Project): ExportChoices => ({
   format: "ebok",
   typography: quoteStyleFor(bookLanguage(project.fields)),
@@ -88,7 +88,6 @@ function ExportStep(props: { choices: ExportChoices; setChoices: (next: ExportCh
   );
 }
 
-// One numbered step; only the open one shows its settings.
 function StepBox(props: {
   number: number;
   label: string;
@@ -109,7 +108,6 @@ function StepBox(props: {
 
 type Publishing = ReturnType<typeof usePublishing>;
 
-// What Publicera keeps while it is open: the open step, the export choices and the cover.
 function usePublishing(props: PublishProps) {
   const { project } = props;
   const [step, setStep] = useState<Step>("design");
@@ -140,7 +138,6 @@ function Steps({ props, publishing }: { props: PublishProps; publishing: Publish
   );
 }
 
-// The design step shows the printed book; the others show the format being exported.
 function PublishPreview({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
   const { choices } = publishing;
   if (publishing.step === "design") {
@@ -156,7 +153,6 @@ function PublishPreview({ props, publishing }: { props: PublishProps; publishing
   );
 }
 
-/** Publicera: design, the book's details and the export in three steps, the book beside them. */
 export function PublishView(props: PublishProps) {
   const publishing = usePublishing(props);
   const { choices, exporter } = publishing;

@@ -3,7 +3,7 @@ import { platform, type AppUpdate } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
 import { t } from "../i18n/i18n.js";
 
-/** Asks once at start whether a newer Penna exists; offline or failing, it just stays quiet. */
+/** Offline or failing, the check stays quiet. */
 function useAppUpdate() {
   const [update, setUpdate] = useState<AppUpdate | null>(null);
   useEffect(() => {
@@ -15,7 +15,6 @@ function useAppUpdate() {
   return { update, dismiss: () => setUpdate(null) };
 }
 
-/** "Penna 1.0.3 finns", with a restart that saves the open scene first. */
 export function UpdateNotice({ session }: { session: SceneSession }) {
   const { update, dismiss } = useAppUpdate();
   const [isInstalling, setInstalling] = useState(false);

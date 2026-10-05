@@ -5,7 +5,7 @@ import { ImportError, splitManuscript, type ImportedNode } from "./markdownImpor
 import { readScrivener } from "./scrivenerImport.js";
 import { t } from "../i18n/i18n.js";
 
-/** What the open dialog offers. A Scrivener project is picked by the .scrivx file inside it. */
+/** A Scrivener project is picked by the .scrivx file inside it. */
 export const MANUSCRIPT_FILES = {
   name: t("Manus"),
   extensions: ["docx", "scrivx", "md", "markdown", "txt"],
@@ -24,7 +24,6 @@ async function readBook(fileSystem: FileSystem, path: string, bytes: Uint8Array)
   return splitManuscript(new TextDecoder().decode(bytes));
 }
 
-/** A picked manuscript as a book to write as a new project, named after its file. */
 export async function importManuscript(
   fileSystem: FileSystem,
   picked: { path: string; bytes: Uint8Array },

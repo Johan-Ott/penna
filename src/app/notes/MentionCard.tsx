@@ -7,13 +7,11 @@ import { t } from "../../i18n/i18n.js";
 const CARD_WIDTH = 310;
 const EDGE = 16;
 
-// Below the name, kept inside the window.
 function placeOf(box: DOMRect) {
   const left = Math.min(Math.max(EDGE, box.left - 24), window.innerWidth - CARD_WIDTH - EDGE);
   return { top: box.bottom + 8, left };
 }
 
-// The card goes away on Escape, on a click outside it, or as soon as the writer types on.
 function useCloseOnOutside(onClose: () => void) {
   const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -34,7 +32,6 @@ function useCloseOnOutside(onClose: () => void) {
   return cardRef;
 }
 
-/** "Elin, brorsdotter · Henrik, bror": the note's connections, named by the other notes' titles. */
 function connectionLine(project: Project, noteId: string) {
   return connectionsOf(project.fields, noteId)
     .flatMap((connection) => {
@@ -45,10 +42,9 @@ function connectionLine(project: Project, noteId: string) {
     .join(" · ");
 }
 
-/** The card shown when a name in the text is clicked: who it is, who they are to others. */
 export function MentionCard(props: {
   notes: Notes;
-  /** The series and the book: a note's connections are kept where the note lives. */
+  /** A note's connections are kept where the note lives: the series or the book. */
   homes: Project[];
   onOpenNote: (id: string) => void;
 }) {

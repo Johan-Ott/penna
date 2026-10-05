@@ -12,7 +12,6 @@ const found = (doc: Node, window: number) => {
   }));
 };
 
-/** The repeated words of a scene, each once, for the review panel. */
 export const sceneRepetitions = (doc: Node, window: number) =>
   found(doc, window).map((repetition) => ({
     word: repetition.word,
@@ -28,13 +27,12 @@ export function repetitionDecorations(doc: Node, window: number): DecorationSet 
 
 const repetitionsKey = new PluginKey<DecorationSet>("repetitions");
 
-/** Run after the review setting or its window changes. */
 export const refreshRepetitions: Command = (state, dispatch) => {
   dispatch?.(state.tr.setMeta(repetitionsKey, true));
   return true;
 };
 
-/** Dots under words used again too soon. `window` is asked on each change; null turns it off. */
+/** `window` is asked on each change; null turns the marks off. */
 export function repetitionsPlugin(window: () => number | null) {
   const decorate = (doc: Node) => {
     const sentences = window();

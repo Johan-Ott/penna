@@ -6,7 +6,7 @@ import { bookWords, headingLabel } from "./bookWords.js";
 import { bookTemplate } from "./typstTemplate.js";
 import { escapeTypst, sceneTypst, typstString } from "./typstText.js";
 
-/** Everything the printed book is made from; the same input gives the preview and the PDF. */
+/** The same input gives the preview and the PDF. */
 export interface PrintInput {
   book: BookDetails;
   outline: OutlineItem[];
@@ -34,7 +34,6 @@ function copyrightPage({ book, year, language }: PrintInput) {
   return `#v(1fr)\n#text(size: 0.8em)[© ${year} ${owner} \\\n${escapeTypst(rights)}]\n#pagebreak()`;
 }
 
-// Title page, copyright page, dedication and contents, each on its own page, without numbers.
 function frontMatter(input: PrintInput): string[] {
   const { parts, extras } = input;
   const pages: string[] = [];
@@ -50,7 +49,6 @@ function frontMatter(input: PrintInput): string[] {
   return pages;
 }
 
-// Consecutive scenes are parted by the design's scene break; a chapter's first gets the anfang.
 function story(input: PrintInput): string[] {
   const parts: string[] = ["#in-story.update(true)\n#counter(page).update(1)"];
   let previous: OutlineItem["kind"] | null = null;
@@ -72,7 +70,7 @@ function story(input: PrintInput): string[] {
   return parts;
 }
 
-// Thanks and about the author open like chapters, so they are listed in the contents too.
+// Thanks and about the author open like chapters, so the contents list them.
 function backMatter({ extras, language }: PrintInput): string[] {
   const words = bookWords(language);
   const pages: [string, string | undefined][] = [
@@ -86,7 +84,6 @@ function backMatter({ extras, language }: PrintInput): string[] {
   });
 }
 
-/** The whole printed book as one Typst document in the Klassisk theme. */
 export function typstSource(input: PrintInput): string {
   return [
     bookTemplate(input.design, input.book.title, input.language),

@@ -9,7 +9,7 @@ import { t } from "../../i18n/i18n.js";
 
 type PartKey = Exclude<keyof ExportChoices, "format" | "typography">;
 
-// A standard manuscript has only a title page; a book, printed or e-book, has the rest too.
+// A standard manuscript has only a title page; a printed or e-book has the other parts too.
 const PARTS: [PartKey, string, boolean][] = [
   ["hasTitlePage", t("Titelsida"), true],
   ["hasCopyrightPage", t("Upphovsrättssida"), false],
@@ -27,7 +27,6 @@ const PLACEHOLDERS: Record<keyof typeof EXTRA_FIELDS, string> = {
 
 const isExtra = (key: PartKey): key is keyof typeof EXTRA_FIELDS => key in EXTRA_FIELDS;
 
-// The part's own text, kept in project.json and saved when the box is left.
 function PartText(
   props: { field: string; placeholder: string } & Pick<BookFieldsProps, "project" | "onSaveFields">,
 ) {
@@ -57,7 +56,7 @@ interface BookFieldsProps {
   onSaveFields: (fields: Record<string, unknown>) => void;
 }
 
-// Saved when the field is left, so typing does not write project.json on every key.
+// Saves when the field is left, not on every key.
 function DetailField(props: {
   label: string;
   value: string;
@@ -132,7 +131,6 @@ function coverHint({ picture, problem }: BookFieldsProps["cover"]) {
   return picture ? t("Din bild används som omslag.") : `JPG eller PNG, minst ${minimum}.`;
 }
 
-// Without a picture of their own the book gets the typographic cover shown in the preview.
 function CoverRow({ cover }: Pick<BookFieldsProps, "cover">) {
   return (
     <div className="cover-row">
@@ -150,7 +148,6 @@ function CoverRow({ cover }: Pick<BookFieldsProps, "cover">) {
   );
 }
 
-/** Bokuppgifter and bokens delar. The details are the book's, so they are kept in project.json. */
 export function BookFields(props: BookFieldsProps) {
   return (
     <div className="export-column">

@@ -99,3 +99,27 @@
 .manuscript.typewriter .ProseMirror {
   padding-bottom: 60vh;
 }
+
+/* A footnote in the text: a raised number, counted in order through the scene */
+.ProseMirror {
+  counter-reset: footnote;
+}
+
+.ProseMirror sup.footnote {
+  padding: 0 1px;
+  color: var(--text);
+  font-size: 0.7em;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ProseMirror sup.footnote::after {
+  counter-increment: footnote;
+  content: counter(footnote);
+}
+
+.ProseMirror sup.footnote.ProseMirror-selectednode {
+  border-radius: 3px;
+  outline: none;
+  background: var(--surface-hover);
+}

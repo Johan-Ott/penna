@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-/** One line in the settings: what it is and why on the left, the control on the right. */
 export function Row(props: { label: string; hint?: string; children?: ReactNode }) {
   return (
     <div className="settings-row">

@@ -16,17 +16,14 @@ import type { FileKind, PickKind, Platform } from "./platform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { t } from "../i18n/i18n.js";
 
-// On a phone Penna keeps its books in its own folder: there is no other folder to pick, and
-// updates come as a new app file instead of from GitHub.
+// On a phone the books live in the app's own folder and updates come from the app store.
 const isPhone = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-// Android signs in through Google Play and a computer through the browser; iPad has no way yet.
 function googleSignInHere() {
   if (/Android/i.test(navigator.userAgent)) return { googleSignIn: androidSignIn };
   return isPhone ? {} : { googleSignIn: computerSignIn };
 }
 
-// Windows paths come with backslashes and sometimes a trailing one; Penna uses forward slashes.
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
 
 const askToCloseAnyway = () =>
@@ -75,7 +72,7 @@ async function checkForUpdate() {
   };
 }
 
-// The dialog grants Penna the picked file, so it can be read wherever it lies.
+// The dialog grants Penna the picked file, wherever it lies.
 async function pickFile(kind: PickKind) {
   const picked = await open({ filters: [kind] });
   if (typeof picked !== "string") return null;
@@ -93,6 +90,7 @@ const phoneFolders = async () => {
 };
 
 export const tauriPlatform: Platform = {
+  isPhone,
   saveFile,
   pickFile,
   fileSystem: tauriFileSystem,
@@ -110,7 +108,7 @@ export const tauriPlatform: Platform = {
     return typeof picked === "string" ? withForwardSlashes(picked) : null;
   },
 
-  // Where folders cannot be watched, as on some phones, Penna reads them again on its own saves.
+  // Some phones cannot watch folders; Penna then reads them again on its own saves.
   watchFolder: (dir, onChange) =>
     watch(dir, onChange, { recursive: true, delayMs: 300 }).catch(() => () => undefined),
 

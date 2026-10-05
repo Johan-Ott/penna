@@ -31,7 +31,7 @@ interface SearchParts {
   isSearchOpen: boolean;
 }
 
-// Scenes still in the cloud have no text here, so they are left out of the search.
+// Scenes still in the cloud have no text here.
 const manuscriptIds = (project: Project) =>
   manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
 
@@ -45,7 +45,7 @@ async function loadScenes(project: Project) {
   return scenes;
 }
 
-/** The open scene as the editor has it, every other scene as it is on disk. */
+/** The open scene as the editor has it; every other scene as it is on disk. */
 function useSceneStates(parts: SearchParts, isOn: boolean) {
   const [scenes, setScenes] = useState(new Map<string, EditorState>());
   const { project, isSearchOpen } = parts;
@@ -120,7 +120,6 @@ function sceneToStepTo(
   });
 }
 
-// Next match in the open scene, otherwise the first match of the next scene that has one.
 async function stepAcross(parts: StepParts, query: SearchQuery, isBackwards: boolean) {
   const { project, session } = parts;
   const view = parts.editor.viewRef.current;

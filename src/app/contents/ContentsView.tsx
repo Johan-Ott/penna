@@ -27,7 +27,6 @@ interface ContentsProps {
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
-// "Roman · 48 210 av 80 000 ord · deadline 15 jan"
 function metaLine(project: Project) {
   const words = manuscriptWords(project.tree, project.summaries);
   const goals = projectGoals(project.fields);
@@ -45,7 +44,7 @@ const timeOrderOf = (fields: Record<string, unknown>) => {
   return Array.isArray(stored) ? stored.filter((id): id is string => typeof id === "string") : [];
 };
 
-// A quiet field: it looks like text until it is clicked, and saves when it is left.
+// Saves when the field is left, not on every key.
 function InlineText(props: {
   value: string;
   label: string;
@@ -84,7 +83,6 @@ function StatusButton(props: ContentsProps & { row: ContentsRow }) {
   );
 }
 
-// The chapter's number and title; a click opens its first scene.
 function RowTitle(props: { row: ContentsRow; onOpenScene: (id: string) => void }) {
   const { row } = props;
   const firstScene = row.sceneIds[0];
@@ -124,7 +122,6 @@ function Row(
   );
 }
 
-// In Tidsordning the rows are dragged into the order the story happens in.
 function useRowDrag(shown: ContentsRow[], onOrder: (order: string[]) => void) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   return {
@@ -144,7 +141,6 @@ function useRowDrag(shown: ContentsRow[], onOrder: (order: string[]) => void) {
   };
 }
 
-// Läsordning or Tidsordning: the book as it is read, or as the story happens.
 function OrderSwitch(props: { isTimeOrder: boolean; onChange: (isTimeOrder: boolean) => void }) {
   const option = (label: string, isTimeOrder: boolean) => (
     <button
@@ -163,7 +159,6 @@ function OrderSwitch(props: { isTimeOrder: boolean; onChange: (isTimeOrder: bool
   );
 }
 
-/** Innehåll: the book's title and numbers, and every chapter with what happens, when and how far. */
 export function ContentsView(props: ContentsProps) {
   const { project } = props;
   const [isTimeOrder, setTimeOrder] = useState(false);

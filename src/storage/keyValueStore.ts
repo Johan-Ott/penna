@@ -3,7 +3,7 @@ export interface KeyValueStorage {
   setItem(key: string, value: string): void;
 }
 
-/** The object stored under `key`, or an empty object when there is none or it can not be read. */
+/** An empty object when there is none or it cannot be read. */
 export function readStoredObject(storage: KeyValueStorage, key: string): Record<string, unknown> {
   try {
     const stored: unknown = JSON.parse(storage.getItem(key) ?? "{}");

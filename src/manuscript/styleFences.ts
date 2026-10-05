@@ -31,7 +31,7 @@ function splitLines(text: string): Line[] {
   return lines;
 }
 
-/** Finds `::: stil` ... `:::` blocks. An opening line without a closing line is plain text. */
+/** An opening line without a closing line is plain text. */
 export function findStyleFences(text: string): StyleFence[] {
   const lines = splitLines(text);
   const fences: StyleFence[] = [];

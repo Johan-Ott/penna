@@ -10,7 +10,6 @@ interface FocusHeaderProps {
   onLeave: () => void;
 }
 
-// With a daily goal the header shows the day's progress, otherwise the scene's length.
 function focusCount({ wordCount, today }: Pick<FocusHeaderProps, "wordCount" | "today">) {
   const format = (words: number) => words.toLocaleString(numberLocale());
   if (today.goal === null) return `${format(wordCount)} ord`;
@@ -30,7 +29,6 @@ function SettingsButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
   );
 }
 
-/** The quiet header of the focus mode: a way out, where you are, and the settings. */
 export function FocusHeader(props: FocusHeaderProps) {
   return (
     <header className="focus-header">

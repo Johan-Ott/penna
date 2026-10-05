@@ -15,24 +15,21 @@ export interface EpubInput {
   typography: Typography;
   /** A language tag such as "sv-SE". */
   language: string;
-  /** Stays the same between exports of a book, so readers know it is the same book. */
+  /** The same between exports, so readers know it is the same book. */
   identifier: string;
   modified: Date;
   parts: { hasTitlePage: boolean; hasCopyrightPage: boolean; hasContents: boolean };
-  /** Dedication, thanks and about the author: only the parts the writer chose, with text. */
   extras: BookExtras;
-  /** The writer's own picture; without one the book gets a typographic cover. */
+  /** Without a picture the book gets a typographic cover. */
   cover?: { type: "jpeg" | "png"; bytes: Uint8Array };
 }
 
-// The cover file in the book: the writer's picture, or the typographic SVG.
 function coverFile({ cover, book }: EpubInput) {
   if (!cover) return { name: "cover.svg", mediaType: "image/svg+xml", content: epubCover(book) };
   const name = cover.type === "jpeg" ? "cover.jpg" : "cover.png";
   return { name, mediaType: `image/${cover.type}`, content: cover.bytes };
 }
 
-// Items in the package document go on lines of their own, indented under their parent.
 const LIST_SEPARATOR = "\n    ";
 
 export const EBOOK_STYLE = `body { font-family: serif; line-height: 1.5; margin: 0 5%; }
@@ -57,7 +54,6 @@ function heading(item: Extract<OutlineItem, { kind: "part" | "chapter" }>, langu
   return { label, tocLabel, html: `<h1><span class="label">${label}</span>${title}</h1>` };
 }
 
-// A part or chapter starts a new file; scenes before the first chapter open the book.
 function textPages({ outline, scenes, typography, book, language }: EpubInput): Page[] {
   const pages: Page[] = [];
   let current: Page | null = null;
@@ -71,7 +67,7 @@ function textPages({ outline, scenes, typography, book, language }: EpubInput): 
       if (!current) pages.push((current = { id: "opening", title: book.title, body: "" }));
       if (previous === "scene") current.body += '\n<hr class="scene-break" />';
       const doc = scenes.get(item.id);
-      if (doc) current.body += `\n${sceneXhtml(doc, typography)}`;
+      if (doc) current.body += `\n${sceneXhtml(doc, typography, item.id)}`;
     }
     previous = item.kind;
   }
@@ -102,7 +98,7 @@ function metadata({ book, identifier, modified, language }: EpubInput) {
   </metadata>`;
 }
 
-// The contents page is always in the manifest, as EPUB requires, but read only when chosen.
+// EPUB requires the contents page in the manifest; it is read only when chosen.
 function spine(front: Page[], text: Page[], hasContents: boolean) {
   const ids = [
     ...front.map((page) => page.id),
@@ -144,7 +140,7 @@ const CONTAINER = `<?xml version="1.0" encoding="UTF-8"?>
 </container>
 `;
 
-/** The book as EPUB 3, built whole in memory. The mimetype goes first and uncompressed. */
+/** The mimetype goes first and uncompressed, as EPUB requires. */
 export async function buildEpub(input: EpubInput): Promise<Uint8Array> {
   const front = frontPages({ ...input, coverName: coverFile(input).name });
   const text = [...textPages(input), ...backPages(input.extras, input.language)];

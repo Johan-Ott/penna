@@ -6,7 +6,6 @@ import { t } from "../../i18n/i18n.js";
 
 const PICTURE = { name: t("Bild"), extensions: ["jpg", "jpeg", "png"] };
 
-/** The project's cover picture, with a URL the page can show, and a way to pick a new one. */
 export function useCover(project: Project) {
   const [picture, setPicture] = useState<CoverPicture | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
@@ -31,7 +30,7 @@ export function useCover(project: Project) {
   return { picture, url, problem, choose: () => void choose() };
 }
 
-// An object URL lives until it is revoked, so the old one goes when the picture changes.
+// An object URL lives until it is revoked.
 function usePictureUrl(picture: CoverPicture | null) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {

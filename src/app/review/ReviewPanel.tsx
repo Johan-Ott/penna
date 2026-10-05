@@ -5,19 +5,18 @@ import type { useReview } from "./useReview.js";
 import { t } from "../../i18n/i18n.js";
 
 interface ReviewPanelProps {
-  /** Null when Granskning is off and only the comments are shown. */
+  /** Null when Granskning is off and only comments are shown. */
   review: ReturnType<typeof useReview> | null;
   commentsSection: ReactNode;
   repeatWindow: number;
   onOpenCard: (id: string) => void;
   onReplaceAll: (suspect: NameSuspect) => void;
   onIgnore: (word: string) => void;
-  /** Kept open, as while a comment is being written. */
+  /** Kept open while a comment is being written. */
   isPinnedOpen: boolean;
-  /** Opened and closed from the Granska button in the top bar. */
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  /** Tells the top bar how much there is to look at, or null when the panel goes away. */
+  /** Null when the panel goes away, so the top bar hides its count. */
   onCount: (count: number | null) => void;
   commentCount: number;
 }
@@ -107,13 +106,11 @@ function ReviewHeader(props: { onClose: () => void }) {
   );
 }
 
-// The top bar shows the count on its Granska button; it goes away with the panel.
 function useCountInTopbar(count: number, onCount: (count: number | null) => void) {
   useEffect(() => onCount(count), [count, onCount]);
   useEffect(() => () => onCount(null), [onCount]);
 }
 
-/** Granska, as in the design: what there is to look at, beside the text when asked for. */
 export function ReviewPanel(props: ReviewPanelProps) {
   const { review } = props;
   const count = (review ? review.suspects.length + review.repeats.length : 0) + props.commentCount;

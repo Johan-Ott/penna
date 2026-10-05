@@ -20,7 +20,6 @@ interface PhoneBookProps {
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
-// "812 / 1 000 ord idag", a bar, and "12 dagar i rad · 103 dagar till deadline".
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const { today } = app;
   const { deadline } = projectGoals(project.fields);
@@ -47,7 +46,6 @@ function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   );
 }
 
-// The text that was open last, as "8. Brevet · Köket".
 function ContinueButton({ app, project, onContinue }: PhoneBookProps) {
   const scene = app.scene;
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
@@ -63,7 +61,6 @@ function ContinueButton({ app, project, onContinue }: PhoneBookProps) {
   );
 }
 
-// Anteckningar as tiles: the series' sorts first, then the book's, each with its count.
 function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
   const sorts = app.homes.flatMap((home) =>
     sortsOf(home.tree).map((sort) => ({
@@ -89,7 +86,7 @@ function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
   );
 }
 
-// A phone has no keyboard shortcuts or folders to pick, so its menu is the short one.
+// A phone has no keyboard shortcuts or folders to pick, so the menu is short.
 function phoneMenu(app: AppState): MenuItem[] {
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
@@ -126,7 +123,6 @@ function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project
   );
 }
 
-/** Boken on a phone, as the mobile design: the day, Fortsätt skriva, the book and its notes. */
 export function PhoneBook(props: PhoneBookProps) {
   const { app, project } = props;
   return (

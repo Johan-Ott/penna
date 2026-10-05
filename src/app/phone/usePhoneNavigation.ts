@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 
-/** The phone's screens: the book, one text, or the notes of one sort. */
 export type PhoneScreen =
   { kind: "book" } | { kind: "text"; sceneId: string } | { kind: "sort"; sortId: string };
 
-/**
- * Screens stacked like a phone expects: each step forward is a history entry, so Android's back
- * button and the back arrow in the bar both return to the screen before.
- */
+/** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {
   const [stack, setStack] = useState<PhoneScreen[]>([{ kind: "book" }]);
   useEffect(() => {

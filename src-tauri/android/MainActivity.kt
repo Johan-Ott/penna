@@ -10,8 +10,8 @@ class MainActivity : TauriActivity() {
     super.onCreate(savedInstanceState)
   }
 
-  // Back on the shelf puts Penna in the background instead of closing it: Tauri cannot start a
-  // closed window again in the same process, so the app would hang on its splash when reopened.
+  // Tauri cannot recreate a destroyed activity in the same process (it hangs on the splash), so
+  // back on the shelf moves the app to the background instead of finishing it.
   @Deprecated("Tauri's back handling calls this when the page has nowhere to go back to.")
   override fun onBackPressed() {
     moveTaskToBack(true)

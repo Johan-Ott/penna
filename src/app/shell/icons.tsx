@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-// The line icons of the design, drawn in the text colour.
 function Icon({ size = 16, children }: { size?: number; children: ReactNode }) {
   return (
     <svg

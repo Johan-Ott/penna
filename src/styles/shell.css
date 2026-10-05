@@ -1013,10 +1013,50 @@
   gap: 2px;
 }
 
-/* A phone: Inställningar stacks its tabs over the settings. */
+/* A phone: Inställningar fills the screen, its tabs a row to swipe, each control under its text
+   when the row is too narrow for both. */
 @media (max-width: 600px) {
   .settings-dialog {
+    position: fixed;
+    inset: 0;
     flex-direction: column;
-    height: calc(100vh - 32px);
+    width: auto;
+    height: auto;
+    max-height: none;
+    padding-top: max(16px, env(safe-area-inset-top));
+    border: 0;
+    border-radius: 0;
+  }
+
+  .settings-tabs {
+    flex-direction: row;
+    width: auto;
+    padding: 4px 16px 10px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .settings-tab {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+  }
+
+  .settings-content {
+    padding: 16px 20px 32px;
+  }
+
+  .settings-row {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    padding: 14px 0;
+  }
+
+  .settings-row .setting-text {
+    flex: 1 1 180px;
   }
 }

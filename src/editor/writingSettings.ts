@@ -6,7 +6,7 @@ export type TextWidth = "smal" | "normal" | "bred";
 export type FocusMode = "av" | "mening" | "stycke";
 export type Theme = "ljust" | "mörkt" | "system";
 
-/** How the manuscript looks and behaves. Saved per writer, not per project. */
+/** Saved per writer, not per project. */
 export interface WritingSettings {
   font: ProseFont;
   size: number;
@@ -16,11 +16,8 @@ export interface WritingSettings {
   focus: FocusMode;
   typewriter: boolean;
   theme: Theme;
-  /** The system spell checker underlines misspelled words. */
   spellcheck: boolean;
-  /** -- becomes a dash and "quotes" become Swedish ones while typing. */
   typography: boolean;
-  /** Name spelling and repeated words, marked in the text and listed beside it. */
   review: boolean;
   /** A word used again within this many sentences is marked. */
   repeatWindow: number;
@@ -57,7 +54,7 @@ const WIDTHS: Record<TextWidth, string> = { smal: "520px", normal: "600px", bred
 const isOneOf = <T extends string>(value: unknown, options: Record<T, unknown>): value is T =>
   typeof value === "string" && value in options;
 
-// Every stored value is checked on its own, so one bad value never resets the others.
+// Each stored value is checked on its own, so one bad value never resets the others.
 function validated(stored: Record<string, unknown>): WritingSettings {
   const pick = <K extends keyof WritingSettings>(key: K, isValid: (value: unknown) => boolean) =>
     (isValid(stored[key]) ? stored[key] : DEFAULT_SETTINGS[key]) as WritingSettings[K];
@@ -72,7 +69,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     indent: pick("indent", isBoolean),
     focus: pick("focus", (value) => ["av", "mening", "stycke"].includes(value as string)),
     typewriter: pick("typewriter", isBoolean),
-    // Before the theme had three choices, dark was a switch on top of the system theme.
+    // Older settings stored dark as a switch on top of the system theme.
     theme:
       stored["darkTheme"] === true ? "mörkt" : pick("theme", (value) => isOneOf(value, THEMES)),
     spellcheck: pick("spellcheck", isBoolean),
@@ -100,7 +97,6 @@ export function nextLineHeight(current: number): number {
 export const nextWidth = (current: TextWidth): TextWidth =>
   (({ smal: "normal", normal: "bred", bred: "smal" }) as const)[current];
 
-/** CSS custom properties for the manuscript element. */
 export function proseStyle(settings: WritingSettings): Record<string, string> {
   return {
     "--prose-font": FONTS[settings.font],
@@ -117,7 +113,6 @@ export const THEME_LABELS: Record<Theme, string> = {
   system: t("System"),
 };
 
-/** The dark switch in the Aa panel: dark, or back to following the system. */
 export const toggleDark = (settings: WritingSettings): WritingSettings => ({
   ...settings,
   theme: settings.theme === "mörkt" ? "system" : "mörkt",

@@ -4,6 +4,7 @@ import { AboutTab, ShortcutsTab } from "./infoTabs.js";
 import { GeneralTab } from "./generalTab.js";
 import { SyncTab } from "./syncTab.js";
 import { EditorTab, VersionsTab, type TabProps } from "./settingsTabs.js";
+import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 
 const TABS: [string, (props: TabProps) => ReactNode][] = [
@@ -14,28 +15,31 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Kortkommandon"), ShortcutsTab],
   ["Om Penna", AboutTab],
 ];
+// A phone has no keyboard to take shortcuts from.
+const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));
 
-/** Kortkommandon, opened straight from Hjälp och kortkommandon in the menu. */
 export const SHORTCUTS_TAB = 4;
 
 function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }) {
   return (
     <nav className="settings-tabs" aria-label={t("Inställningar")}>
-      {TABS.map(([label], index) => (
-        <button
-          key={label}
-          className={index === tab ? "settings-tab chosen" : "settings-tab"}
-          aria-current={index === tab}
-          onClick={() => onPick(index)}
-        >
-          {label}
-        </button>
-      ))}
+      {TABS.map(
+        ([label], index) =>
+          isShown(label) && (
+            <button
+              key={label}
+              className={index === tab ? "settings-tab chosen" : "settings-tab"}
+              aria-current={index === tab}
+              onClick={() => onPick(index)}
+            >
+              {label}
+            </button>
+          ),
+      )}
     </nav>
   );
 }
 
-/** Inställningar, as in the design: the tabs on the left, one setting per row on the right. */
 export function SettingsDialog(props: TabProps & { startTab: number; onClose: () => void }) {
   const [tab, setTab] = useState(props.startTab);
   useEscape(props.onClose);
@@ -64,7 +68,6 @@ export function SettingsDialog(props: TabProps & { startTab: number; onClose: ()
   );
 }
 
-/** Which tab of Inställningar is open, or null. Ctrl+, opens it, as in most desktop apps. */
 export function useSettingsDialog() {
   const [openTab, setOpenTab] = useState<number | null>(null);
   useShortcut(",", () => setOpenTab(0));

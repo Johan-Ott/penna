@@ -40,7 +40,10 @@ function leaves(nodes: Node[]): PhrasingContent[] {
     plain = "";
   };
   for (const node of nodes) {
-    if (hasMark(node, "raw")) {
+    if (node.type.name === "footnote") {
+      flush();
+      result.push({ type: "html", value: `[^${String(node.attrs["label"])}]` });
+    } else if (hasMark(node, "raw")) {
       flush();
       result.push({ type: "html", value: node.text ?? "" });
     } else plain += node.type.name === "lineBreak" ? "\n" : (node.text ?? "");
@@ -97,8 +100,7 @@ function expelEdgeSpaces(nodes: Node[]): Node[] {
 
 const isLineEdge = (node: Node | undefined) => !node || node.type.name === "lineBreak";
 
-// Spaces at the start or end of a line carry no meaning in prose, and Markdown would have to
-// encode them as `&#x20;`, so they are left out of the file.
+// Markdown would encode spaces at a line's edge as `&#x20;`, and they mean nothing in prose.
 function trimLineEdges(nodes: Node[]): Node[] {
   return nodes.flatMap((node, index) => {
     if (!node.isText) return [node];
@@ -109,7 +111,6 @@ function trimLineEdges(nodes: Node[]): Node[] {
   });
 }
 
-/** Penna's own Markdown for a paragraph: `*kursiv*`, `**fet**`, escaped text. */
 export function serializeInlineContent(paragraph: Node): string {
   const nodes = trimLineEdges(expelEdgeSpaces([...paragraph.children]));
   const children = toPhrasing(nodes, []);

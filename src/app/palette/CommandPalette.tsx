@@ -3,8 +3,7 @@ import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
 import { usePhone } from "../phone/usePhone.js";
 import { t } from "../../i18n/i18n.js";
 
-// The group is a key in the search; its heading is shown in the interface language.
-// A note's group is its sort's name, already in the interface language.
+// A command's group is a search key; a note's group is its sort's name, already translated.
 const groupLabel = (group: string) =>
   ({
     Scener: t("Scener"),
@@ -43,7 +42,6 @@ interface ResultProps {
   found: PaletteEntry[];
   selected: number;
   onHover: (index: number) => void;
-  /** A phone has no keyboard shortcuts to show. */
   isPhone: boolean;
   onChoose: (entry: PaletteEntry) => void;
 }
@@ -124,8 +122,6 @@ function PaletteInput(props: {
   );
 }
 
-/** Ctrl+K: jump to a scene or chapter, or run any command, by typing a few letters. */
-// Whatever is typed can also be searched for in the whole manuscript, last among the commands.
 function searchEntry(query: string, onSearch: (text: string) => void): PaletteEntry[] {
   const text = query.trim();
   if (!text) return [];

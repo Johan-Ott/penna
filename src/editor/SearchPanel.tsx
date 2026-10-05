@@ -18,7 +18,6 @@ interface SearchPanelProps {
   run: (command: Command, shouldFocus?: boolean) => void;
   onClose: () => void;
   manuscript?: ManuscriptScope | undefined;
-  /** What the search starts with, as when the palette opened it. */
   initialSearch?: string | undefined;
 }
 
@@ -29,8 +28,7 @@ function matchPosition(editorState: EditorState | null) {
   return { total: matches.length, current: index + 1 };
 }
 
-// Opening another scene gives the editor a fresh state, so the query is put back whenever
-// the editor has a different query.
+// Another scene gives the editor a fresh state, so the query is put back.
 function useSearchQuery(props: SearchPanelProps) {
   const { run, editorState } = props;
   const [search, setSearch] = useState(props.initialSearch ?? "");
@@ -52,7 +50,7 @@ function useSearchQuery(props: SearchPanelProps) {
 
 type SearchQueryState = ReturnType<typeof useSearchQuery>;
 
-// One scene or the whole manuscript: the rows below call these and need not know which.
+// The rows below need not know whether one scene or the whole manuscript is searched.
 function searchActions(props: SearchPanelProps, query: SearchQuery) {
   const { run, editorState } = props;
   const scope = props.manuscript?.isOn ? props.manuscript : null;
@@ -147,7 +145,6 @@ function SearchOptions({
 }: {
   query: SearchQueryState;
   manuscript?: ManuscriptScope | undefined;
-  /** What the search starts with, as when the palette opened it. */
   initialSearch?: string | undefined;
 }) {
   return (

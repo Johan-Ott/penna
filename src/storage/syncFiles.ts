@@ -5,14 +5,13 @@ export interface SceneFileRef {
 
 export interface SceneFolderListing {
   scenes: string[];
-  /** Copies a sync service made next to a scene. Never deleted automatically. */
+  /** Never deleted automatically. */
   conflicts: SceneFileRef[];
   /** iCloud placeholders: the scene exists but is not on this device yet. */
   notDownloaded: SceneFileRef[];
 }
 
-// Scene ids are ULIDs (Crockford base32), so a space, "(" or "-" after the id can only
-// come from a sync service renaming a copy.
+// Ids are ULIDs (Crockford base32), so a space, "(" or "-" after one means a sync service made a copy.
 const SCENE_ID = "[0-9A-HJKMNP-TV-Z]+";
 const PLAIN_SCENE = new RegExp(`^(${SCENE_ID})\\.md$`);
 const CONFLICT_COPY = new RegExp(`^(${SCENE_ID})[ (-].*\\.md$`);
@@ -40,7 +39,6 @@ export interface OpenSceneTexts {
   editorText: string;
 }
 
-/** What to do when the file watcher reports that an open scene changed on disk. */
 export function decideExternalChange(texts: OpenSceneTexts): ExternalChange {
   const { diskText, lastSavedText, editorText } = texts;
   if (diskText === lastSavedText || diskText === editorText) return "unchanged";

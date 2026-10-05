@@ -11,8 +11,7 @@ import {
 } from "../sync/googleAuth.js";
 import type { GoogleSignIn } from "./platform.js";
 
-// Penna's clients in Google Cloud (project "Penna"). Android needs no id here: Google knows the
-// app by its package name and signing key. The computer's secret comes from .env.local.
+// Android needs no client id: Google knows the app by package name and signing key.
 const COMPUTER: Client = {
   id: "1065620639017-4f8bpo212reisvg8fgnmru4cjhh5piqu.apps.googleusercontent.com",
   secret: import.meta.env.VITE_GOOGLE_COMPUTER_SECRET ?? "",
@@ -20,7 +19,7 @@ const COMPUTER: Client = {
 
 const fetcher = appFetch as typeof fetch;
 
-/** On Android, Google Play keeps the sign-in and hands out fresh access keys itself. */
+/** Google Play keeps the sign-in and hands out fresh access keys. */
 export const androidSignIn: GoogleSignIn = {
   connect: async () => void (await invoke("google_access_token", { interactive: true })),
   accessToken: () => invoke<string>("google_access_token", { interactive: false }),
@@ -39,7 +38,7 @@ async function signInInBrowser() {
   return exchangeCode(fetcher, COMPUTER, { code, verifier, redirect: answer.redirect }, Date.now());
 }
 
-// The lasting key lives in the system's password store, never in a file.
+// Kept in the system's password store, never in a file.
 async function lastingKey() {
   const key = await invoke<string | null>("saved_google_key");
   if (!key) throw new Error("Inte inloggad");
@@ -51,7 +50,6 @@ const accessToken = tokenCache(
   Date.now,
 );
 
-/** On a computer, Google's page opens in the browser, and the lasting key is kept by the system. */
 export const computerSignIn: GoogleSignIn = {
   connect: async () => {
     const { lastingKey: key } = await signInInBrowser();

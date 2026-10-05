@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { readShelf, type ShelfBook } from "../../project/shelf.js";
 import { platform } from "../platform.js";
 
-/** The books on the shelf, read again whenever something changes in the Penna folder. */
 export function useShelf(libraryDir: string | null, knownProjects: string[]) {
   const [books, setBooks] = useState<ShelfBook[] | null>(null);
   const known = knownProjects.join("\n");

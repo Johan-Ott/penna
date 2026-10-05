@@ -9,10 +9,7 @@ interface Block {
   length: number;
 }
 
-/**
- * The document as one text, a line per paragraph, with ways between text offsets and document
- * positions. Repetitions and comments are found in the text and marked in the document.
- */
+/** Repetitions and comments are found in this text and mapped back to document positions. */
 export function documentText(doc: Node) {
   let text = "";
   const blocks: Block[] = [];

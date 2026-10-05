@@ -5,26 +5,22 @@ import { writeProjectFile } from "./projectFile.js";
 import { connectionsOf, withConnection } from "./connections.js";
 import { findNode, insertNode, removeNode, withSpecialFolders, type TreeNode } from "./tree.js";
 
-/**
- * A series is a folder beside its books, such as "Vintervägen.serie", built like a project
- * (project.json and scenes/) but holding only notes. A book names it in project.json `series`.
- */
+/** A folder beside its books, such as "Vintervägen.serie", built like a project but holding only notes. */
 const SUFFIX = ".serie";
 
 export const seriesTitle = (folder: string) => folder.replace(/\.serie$/, "");
 
-/** The folder of the series a book belongs to, or null when it belongs to none. */
+/** Null when the book belongs to no series. */
 export function seriesDirOf(bookDir: string, fields: Record<string, unknown>) {
   const folder = fields["series"];
   return typeof folder === "string" && folder !== "" ? joinPath(parentOf(bookDir), folder) : null;
 }
 
-/** The series beside the books in a folder, by folder name. */
 export async function listSeries(fileSystem: FileSystem, dir: string) {
   return (await fileSystem.list(dir)).filter((name) => name.endsWith(SUFFIX)).sort();
 }
 
-/** Makes an empty series in `dir` and returns its folder name: "Isen.serie", "Isen 2.serie"... */
+/** "Isen.serie", "Isen 2.serie", and so on. */
 export async function createSeries(fileSystem: FileSystem, dir: string, title: string) {
   const taken = new Set(await fileSystem.list(dir));
   const base = projectFolderName(title).replace(/\.penna$/, "");
@@ -36,24 +32,20 @@ export async function createSeries(fileSystem: FileSystem, dir: string, title: s
   return folder;
 }
 
-/** What a move reads and returns of the book and the series: their folder, fields and tree. */
 interface NoteFolder {
   dir: string;
   fields: Record<string, unknown>;
   tree: TreeNode[];
 }
 
-// The series gets the same sort the note lay in: the fixed ones exist, an own one is made.
+// The fixed sorts exist in the series; an own sort is made there.
 function withSortFor(seriesTree: TreeNode[], sort: TreeNode) {
   if (findNode(seriesTree, sort.id)) return seriesTree;
   const copy: TreeNode = { id: sort.id, kind: "sort", title: sort.title ?? "", children: [] };
   return insertNode(seriesTree, copy, null, 0);
 }
 
-/**
- * Moves notes into the series by renaming their files, keeping ids and connections; the caller
- * closes an open note first and writes both project.json files with what comes back.
- */
+/** Renames the files, keeping ids and connections. The caller closes an open note first. */
 export async function moveNotesToSeries(
   fileSystem: FileSystem,
   book: NoteFolder,

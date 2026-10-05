@@ -14,7 +14,6 @@ import type { Project } from "../useProject.js";
 import { bookMaterial, chosenExtras, printInput, type ExportProgress } from "./bookMaterial.js";
 import { t } from "../../i18n/i18n.js";
 
-/** Pågår, klar and fel, as the design shows them. */
 export type ExportState =
   | { kind: "idle" }
   | { kind: "running"; chapter: number; chapters: number }
@@ -44,8 +43,7 @@ export const FILE_KINDS: Record<ExportFormat, FileKind> = {
 
 const fileNameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1);
 
-// The same id every time, so e-book readers know a new export is the same book: the ISBN when
-// there is one, otherwise an id made at the first export and kept in project.json.
+// The same id on every export, so e-readers see one book: the ISBN or an id kept in project.json.
 function bookIdentifier(project: Project, saveFields: SaveFields) {
   const isbn = String(project.fields["isbn"] ?? "").replace(/[^\dX]/gi, "");
   if (isbn) return `urn:isbn:${isbn}`;
@@ -106,7 +104,6 @@ async function exportBook(job: ExportJob, isCancelled: () => boolean): Promise<E
 
 const BACKUP_KIND: FileKind = { name: t("Zip-arkiv"), extension: "zip" };
 
-// The whole folder, snapshots and comments included, named with today's date.
 async function saveBackup(project: Project): Promise<ExportState> {
   try {
     const seriesDir = seriesDirOf(project.dir, project.fields);
@@ -127,8 +124,7 @@ async function saveBackup(project: Project): Promise<ExportState> {
 
 const STARTED: ExportState = { kind: "running", chapter: 0, chapters: 0 };
 
-// Avbryt stops the export before anything is saved; each run has its own number to check.
-// Each run has its own number; Avbryt moves on to the next, so an old run's result is dropped.
+// Each run has a number; Avbryt moves on to the next, so an old run's result is dropped.
 function useRuns() {
   const [state, setState] = useState<ExportState>({ kind: "idle" });
   const current = useRef(0);

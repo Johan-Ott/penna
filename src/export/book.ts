@@ -6,7 +6,6 @@ import { isSpecialFolder, numberNodes, type TreeNode } from "../project/tree.js"
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
-/** What every export format needs to know about the book. */
 export interface BookDetails {
   title: string;
   subtitle: string;
@@ -17,7 +16,7 @@ export interface BookDetails {
 /** Swedish keeps ”…”; English opens with “ and closes with ”. Dashes are kept in both. */
 export type Typography = "svensk" | "engelsk";
 
-/** One converter per paragraph: Swedish quotes are all ”, so in English every other one opens. */
+/** Swedish quotes are all ”, so in English every other one opens. */
 export function quoteConverter(typography: Typography) {
   let isOpen = false;
   return (text: string) =>
@@ -29,11 +28,10 @@ export function quoteConverter(typography: Typography) {
         });
 }
 
-/** The manuscript in reading order: a part or chapter starts, or a scene follows. */
 export type OutlineItem =
   { kind: "part" | "chapter"; number: number; title: string } | { kind: "scene"; id: string };
 
-/** An export stops at the first scene it cannot use, and says which one and why. */
+/** Stops at the first scene it cannot use and names it. */
 export class ExportError extends Error {
   constructor(
     readonly sceneTitle: string,
@@ -43,7 +41,7 @@ export class ExportError extends Error {
   }
 }
 
-// Folders only group scenes for the writer, so their scenes are read as if they were not there.
+// Folders only group scenes for the writer, so the export reads through them.
 export function bookOutline(tree: TreeNode[]): OutlineItem[] {
   const numbers = { part: numberNodes(tree, "part"), chapter: numberNodes(tree, "chapter") };
   const walk = (nodes: TreeNode[]): OutlineItem[] =>
@@ -58,7 +56,7 @@ export function bookOutline(tree: TreeNode[]): OutlineItem[] {
   return walk(tree);
 }
 
-/** Every scene of the book, read before anything is written. `titles` names them in errors. */
+/** Read before anything is written. `titles` names the scenes in errors. */
 export async function readBookScenes(
   fileSystem: FileSystem,
   dir: string,
@@ -78,7 +76,7 @@ export async function readBookScenes(
 
 const text = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
-/** Title, subtitle and author as the export shows them. The author set in the project wins. */
+/** The author set in the project wins over the general one. */
 export function bookDetails(
   fields: Record<string, unknown>,
   generalAuthor: string,

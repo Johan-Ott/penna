@@ -32,7 +32,6 @@ function numbersOf(project: Project, stats: Stats, today: string) {
 
 type Numbers = ReturnType<typeof numbersOf>;
 
-// "12 dagar i rad", "940 ord per dag i snitt", "103 dagar till deadline".
 function Figures({ numbers, stats, today }: { numbers: Numbers; stats: Stats; today: string }) {
   const { deadline } = numbers.goals;
   const figures: [string, string][] = [
@@ -65,7 +64,6 @@ function planLine(numbers: Numbers) {
   });
 }
 
-// "Mot slutmanus": how far the manuscript has come, and what it takes to make the deadline.
 function TowardsGoal({ numbers }: { numbers: Numbers }) {
   const { words, goals } = numbers;
   if (!goals.totalGoal) return null;
@@ -127,7 +125,6 @@ function ProgressBody(props: { project: Project; stats: Stats; onWrite: () => vo
   );
 }
 
-/** Framsteg, opened from the day's words in the top bar: the numbers, the goal, the weeks. */
 export function ProgressPopover(props: {
   project: Project;
   stats: Stats;

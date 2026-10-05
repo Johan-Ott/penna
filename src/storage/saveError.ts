@@ -1,5 +1,4 @@
-// Windows reports a file locked by a sync client as "access denied", the same error as a
-// protected file, so the two share one reason.
+// Windows reports a file locked by a sync client as "access denied", so the two share one reason.
 export type SaveFailure = "blocked" | "diskFull" | "readOnly" | "folderMissing" | "unknown";
 
 const BY_NODE_CODE: Record<string, SaveFailure> = {

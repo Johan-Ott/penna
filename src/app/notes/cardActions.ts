@@ -7,7 +7,6 @@ export interface CardActions {
   open: (id: string) => void;
 }
 
-/** A note is a scene: it opens in Skriv, from the series or the book, wherever it lives. */
 export function cardActions(parts: {
   homes: Project[];
   session: SceneSession;

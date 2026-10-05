@@ -25,14 +25,12 @@ interface StartScreenProps {
   };
 }
 
-// The example goes into the Penna folder when there is one, otherwise into Documents.
 async function exampleDir(libraryDir: string | null) {
   const target = libraryDir ?? `${(await platform.knownFolders()).documents}/Penna`;
   await platform.fileSystem.makeDir(target);
   return copyExampleProject(platform.fileSystem, target);
 }
 
-// "Leta upp mappen": the writer points at where the project went, and the shelf follows.
 async function locate(book: ShelfBook, update: (change: PreferenceChange) => void) {
   const found = await platform.pickFolder();
   if (!found || !(await platform.fileSystem.list(found)).includes("project.json")) return;
@@ -64,7 +62,6 @@ function shelfHandlers(app: StartScreenProps["app"]) {
   };
 }
 
-// The shelf's top bar has only the menu: new project, open a folder, settings and help.
 function ShelfFrame(
   props: StartScreenProps & { onNewProject: () => void; isPhone: boolean; children: ReactNode },
 ) {
@@ -82,7 +79,6 @@ function ShelfFrame(
       openShortcuts: () => settings.open(SHORTCUTS_TAB),
     }),
   );
-  // The phone's shelf is a screen of its own, without the top bar.
   if (props.isPhone) return <div className="phone-screen">{props.children}</div>;
   return (
     <div className="shelf-app">
@@ -94,7 +90,6 @@ function ShelfFrame(
   );
 }
 
-// The first time the onboarding; after Nytt projekt in a book, the new project's step.
 function useOnboardingStep(app: StartScreenProps["app"], projectStep: number) {
   return useState(() => {
     if (!app.startup.preferences.isOnboardingDone) return 1;
@@ -123,7 +118,6 @@ function Shelf(props: StartScreenProps & { onNewProject: () => void }) {
   );
 }
 
-/** Before a project is open: the onboarding the first time, then the bookshelf. */
 export function StartScreen({ app }: StartScreenProps) {
   const { preferences } = app.startup;
   const projectStep = preferences.libraryDir ? 4 : 3;

@@ -22,7 +22,7 @@ interface ReadViewProps {
   onBack: () => void;
 }
 
-// The scenes are read again whenever the project is, which every save brings about.
+// Every save reads the project again, and with it the scenes.
 function useSceneDocs(project: Project, ids: string[]) {
   const [docs, setDocs] = useState<Record<string, Node>>({});
   const key = ids.join(",");
@@ -43,7 +43,7 @@ function useSceneDocs(project: Project, ids: string[]) {
 
 const serializer = DOMSerializer.fromSchema(manuscriptSchema);
 
-// The scene drawn with the editor's own markup, so it looks as it does when written.
+// Uses the editor's markup and CSS, so the text looks as it does in Skriv.
 function SceneText(props: { doc: Node | undefined; onClickBlock: (index: number) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -73,7 +73,6 @@ function ReadScene(props: ReadViewProps & { scene: ReadingScene; doc: Node | und
   );
 }
 
-/** Läs: a chapter or the whole book in one go; a click goes back to writing at that spot. */
 export function ReadView(props: ReadViewProps) {
   const scenes = readingScenes(props.project.tree, props.chapterId);
   const docs = useSceneDocs(

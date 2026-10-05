@@ -1,9 +1,6 @@
 import { joinPath, type FileSystem } from "./fileSystem.js";
 
-/**
- * Nothing the writer chose away is deleted: it goes to the project's trash/ folder, under a
- * free name so an older file there is never replaced.
- */
+/** Goes to the project's trash/ folder under a free name, so an older file there is never replaced. */
 export async function setAside(fileSystem: FileSystem, dir: string, path: string, name: string) {
   const trash = joinPath(dir, "trash");
   await fileSystem.makeDir(trash);

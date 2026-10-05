@@ -2,7 +2,6 @@ import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey, type Command } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
-/** A name to look for in the text: the id of its card and the pattern for its names. */
 export interface MentionMatcher {
   id: string;
   pattern: RegExp | null;
@@ -14,7 +13,7 @@ export interface Mention {
   to: number;
 }
 
-/** Every mention in a text, the longer name winning where two cards match the same words. */
+/** The longer name wins where two cards match the same words. */
 export function findMentions(text: string, matchers: MentionMatcher[]): Mention[] {
   const found = matchers.flatMap(({ id, pattern }) =>
     pattern
@@ -37,7 +36,7 @@ export function findMentions(text: string, matchers: MentionMatcher[]): Mention[
 // A leaf such as a line break counts as one character, so text offsets are document offsets.
 const LEAF = "￼";
 
-/** The mentions in a document as inline decorations; nothing is written into the text. */
+/** Decorations only; nothing is written into the text. */
 export function mentionDecorations(doc: Node, matchers: MentionMatcher[]): DecorationSet {
   const decorations: Decoration[] = [];
   doc.descendants((node, position) => {
@@ -57,16 +56,12 @@ export function mentionDecorations(doc: Node, matchers: MentionMatcher[]): Decor
 
 const mentionsKey = new PluginKey<DecorationSet>("mentions");
 
-/** Run after the cards change, so a new character is linked in the text at once. */
 export const refreshMentions: Command = (state, dispatch) => {
   dispatch?.(state.tr.setMeta(mentionsKey, true));
   return true;
 };
 
-/**
- * Underlines known names in the open scene. `matchers` is asked when the text or the cards
- * change; `onMention` gets the card's id and the name's place on screen when one is clicked.
- */
+/** `onMention` gets the card's id and the name's place on screen. */
 export function mentionsPlugin(
   matchers: () => MentionMatcher[],
   onMention: (id: string, box: DOMRect) => void,

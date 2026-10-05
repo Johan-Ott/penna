@@ -1,7 +1,6 @@
 import { trimSize, type BookDesign, type BookTheme } from "./bookDesign.js";
 import { typstString } from "./typstText.js";
 
-// How the three themes differ, as the design draws them: the headings and the margins.
 const THEMES: Record<BookTheme, { heading: string; margins: string }> = {
   klassisk: {
     heading: `font: "Literata", weight: 600, style: "normal", align: center`,
@@ -17,8 +16,7 @@ const THEMES: Record<BookTheme, { heading: string; margins: string }> = {
   },
 };
 
-// The anfang sinks two lines into the text: Typst measures how many words fit beside the letter.
-// The first words after it are set in small capitals, as the design shows.
+// Typst measures how many words fit beside the two-line anfang.
 const ANFANG = `#let leadin(words) = text(size: 0.8em, tracking: 0.06em, upper(words))
 #let anfang(letter, words) = layout(size => {
   set par(first-line-indent: 0pt)
@@ -39,8 +37,7 @@ const ANFANG = `#let leadin(words) = text(size: 0.8em, tracking: 0.06em, upper(w
   if more { par(words.slice(count).join([ ])) }
 })`;
 
-// The parts that do not change with the theme: the scene break, the styles, how parts and
-// chapters open. The space under a heading is its own block's; a v() would indent the text.
+// The space under a heading belongs to its own block; a v() would be lost at a page break.
 const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4em, below: 1.4em, mark))
 #let stil(name, body) = {
   set par(first-line-indent: 0pt)
@@ -67,10 +64,7 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
 #let kapitel(label, title) = opening(label, title, 18%)
 #let del(label, title) = { opening(label, title, 30%); pagebreak() }`;
 
-/**
- * The book's page in Typst. The story's pages carry the title at the head, except where a part
- * or chapter opens, and the page number centred at the foot.
- */
+/** The title at the head of each page, except where a part or chapter opens. */
 export function bookTemplate(design: BookDesign, title: string, language: string) {
   const { width, height } = trimSize(design.trim);
   const theme = THEMES[design.theme];

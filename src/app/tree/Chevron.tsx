@@ -1,4 +1,4 @@
-/** A small chevron drawn as SVG, so it looks the same in every font. */
+/** SVG, so it looks the same in every font. */
 export function Chevron({ isOpen }: { isOpen: boolean }) {
   return (
     <svg

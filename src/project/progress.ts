@@ -31,10 +31,7 @@ export function projectGoals(fields: Record<string, unknown>): ProjectGoals {
   };
 }
 
-/**
- * "Du behöver 303 ord per dag för att nå deadline": the words left spread over the days left,
- * rounded up. Null without both a goal and a deadline.
- */
+/** The words left spread over the days left, rounded up. Null without both a goal and a deadline. */
 export function deadlinePlan(
   manuscript: { words: number; goal: number | null; deadline: string | null },
   today: string,
@@ -62,7 +59,7 @@ export function longestStreak(stats: Stats): number {
   return longest;
 }
 
-/** Words per day over the last 30 days, today included, counting days without words too. */
+/** Over the last 30 days, today included, counting days without words too. */
 export function averagePerDay(stats: Stats, today: string): number {
   let sum = 0;
   for (let back = 0; back < AVERAGE_DAYS; back++) sum += stats[dayAfter(today, -back)] ?? 0;
@@ -76,13 +73,12 @@ export interface HeatmapCell {
   level: number | null;
 }
 
-// Half a goal, a goal, one and a half: the steps between the design's five shades.
 function levelOf(words: number, goal: number): number {
   if (words <= 0) return 0;
   return Math.min(4, 1 + Math.floor((2 * words) / goal));
 }
 
-/** The last 12 weeks, a column per week from Monday, as the design's grid shows them. */
+/** A column per week, starting on Monday. */
 export function heatmap(stats: Stats, today: string, dailyGoal: number | null): HeatmapCell[] {
   const weekday = (new Date(utcOf(today)).getUTCDay() + 6) % 7;
   const start = dayAfter(today, -weekday - 7 * (HEATMAP_WEEKS - 1));

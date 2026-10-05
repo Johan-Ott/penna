@@ -4,7 +4,6 @@ import { framePages } from "./framePages.js";
 import { usePrintPreview } from "./usePrintPreview.js";
 import { t } from "../../i18n/i18n.js";
 
-// Frames the pages each time Typst has drawn a new SVG into the container.
 function usePageFrames(svg: string | null) {
   const pages = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -14,10 +13,7 @@ function usePageFrames(svg: string | null) {
   return pages;
 }
 
-/**
- * The first chapter as it will be printed. The SVG is drawn by Typst from the writer's own
- * text on this computer, never from outside, so it is set straight into the page.
- */
+/** The SVG comes from Typst and the writer's own text, never from outside, so it is set as HTML. */
 export function PrintPreview({
   project,
   generalAuthor,

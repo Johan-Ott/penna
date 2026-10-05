@@ -20,7 +20,6 @@ const THEME_NAMES: Record<BookTheme, string> = {
 
 const sizeLabel = (size: number) => `${String(size).replace(".", ",")} pt`;
 
-// Each theme card shows "Aa" in the theme's heading type, as in the design.
 function ThemeCards({ design, save }: ControlProps) {
   return (
     <div className="design-block">
@@ -43,7 +42,6 @@ function ThemeCards({ design, save }: ControlProps) {
   );
 }
 
-// A row with the value on the right, which opens a list to choose from.
 function SelectRow(props: {
   label: string;
   value: string;
@@ -68,7 +66,6 @@ function SelectRow(props: {
   );
 }
 
-// Brödtext is one choice of typeface and size, shown as "Literata · 10,5 pt".
 const BODY_CHOICES: [string, string][] = BODY_FONTS.flatMap((font) =>
   BODY_SIZES.map((size): [string, string] => [`${font}|${size}`, `${font} · ${sizeLabel(size)}`]),
 );
@@ -106,7 +103,6 @@ function DropCapRow({ design, save }: ControlProps) {
   );
 }
 
-/** The book's look: theme, format, body text, anfang and scene break. */
 export function DesignControls({ design, save }: ControlProps) {
   const chooseBody = (choice: string) => {
     const [bodyFont = design.bodyFont, size] = choice.split("|");

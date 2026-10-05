@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { View } from "../useWritingMode.js";
 
-/** Where the writer has been: a view, and the text that was open in it. */
 export interface Place {
   view: View;
   sceneId: string | null;
@@ -12,16 +11,13 @@ const ARRIVAL_MS = 2000;
 const samePlace = (first: Place | undefined, second: Place) =>
   first?.view === second.view && first.sceneId === second.sceneId;
 
-/**
- * Bakåt and Framåt in the top bar. Every new place is remembered; going back only moves the
- * pointer, so the place it lands on is already the current one and nothing new is added.
- */
+/** Going back only moves the pointer, so landing on a place adds nothing new to the history. */
 export function useNavigation(current: Place, goTo: (place: Place) => void) {
   const [places, setPlaces] = useState<Place[]>([current]);
   const [index, setIndex] = useState(0);
   const goToRef = useRef(goTo);
   goToRef.current = goTo;
-  // A scene opens a moment after its view shows; the places on the way are not remembered.
+  // A scene opens a moment after its view shows; places passed on the way are not remembered.
   const arriving = useRef<{ place: Place; until: number } | null>(null);
   useEffect(() => {
     const target = arriving.current;

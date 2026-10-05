@@ -44,16 +44,29 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   (`storage/syncFiles.ts`, `atomicWrite.ts`) and settled in `app/syncRepairs.ts`. What the
   writer chooses away goes to the project's `trash/` folder, never deleted. Crash text is settled
   in a dialog before any scene opens, because the next save would write over the temp file.
-- Google Drive sync (Inställningar, Synk): the open book syncs with `Penna/<book>` in the writer's
-  Drive when it opens and every five minutes (`app/useDriveSync.ts`, engine in `sync/driveSync.ts`,
-  Drive's web API in `sync/googleDrive.ts`). Scope `drive.file`: Penna sees only files it made.
+- Google Drive sync (Inställningar, Synk): the open book and its series sync with
+  `Penna/<folder>` in the writer's Drive when the book opens and every five minutes
+  (`app/useDriveSync.ts`, engine in `sync/driveSync.ts`, Drive's web API in `sync/googleDrive.ts`).
+  Scope `drive.file`: Penna sees only files it made. A text changed on both sides is kept twice
+  ("(Drive date)" copy, never uploaded); project.json is merged instead (`sync/mergeProject.ts`).
+  A file removed on one side goes to Drive's trash or the book's `trash/` on the other. Before
+  Drive's text replaces a scene, the old text becomes a version in Versioner (`sync/localSide.ts`).
   Sign-in is `platform.googleSignIn`: on Android Google Play hands out access keys
   (`src-tauri/android/GoogleSignInPlugin.kt` via `google_access_token` in `src-tauri/src/google.rs`);
   on a computer Google's page opens in the browser and answers to `127.0.0.1`, and the lasting key
   is kept in the system's password store (`app/tauriGoogleSignIn.ts`, `sync/googleAuth.ts`).
-- Words per day live in the project's `stats.json` as `{ "2026-10-02": 812 }` (`project/stats.ts`).
+- Words per day live in `stats/<device>.json` as `{ "2026-10-02": 812 }`, one file per device so
+  synced devices never write the same file; reading adds them up with the older `stats.json`
+  (`project/stats.ts`). The device name is made once and kept in localStorage.
   Each scene save adds what it changed (`onSaved` in `sceneSession.ts`), so moving or trashing
   scenes never counts as writing. The daily goal is `dailyGoal` in project.json.
+- Footnotes are Markdown footnotes: `[^1]` in the text, `[^1]: Text.` at the end of the scene file
+  (`manuscript/footnotes.ts`). In the editor a footnote is an inline atom holding its plain text;
+  CSS numbers them. Ctrl+Alt+F, the palette or the selection bar inserts one
+  (`editor/footnoteEditing.ts`, `app/FootnotePopover.tsx`). Export: Word footnotes, EPUB notes
+  per scene, Typst `#footnote`.
+- Error report: `app/errorLog.ts` keeps the latest 20 errors of the session in memory (failed saves,
+  sync errors, uncaught errors). Om Penna copies a report to the clipboard; nothing is sent.
 - Search (Ctrl+F) covers the whole manuscript by default ("Hela manuset"). Other scenes are
   searched with the same prosemirror-search plugin as the editor (`editor/manuscriptSearch.ts`),
   so counts match. "Alla" writes every scene file and can be undone while no one wrote in them
@@ -162,7 +175,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   object, `editor.modes.current`, read by ProseMirror on every update.
 - Tauri may read and write under $HOME and $DOCUMENT without a dialog (capabilities), and
   `tauri-plugin-persisted-scope` keeps folders picked in the dialog across restarts.
-- `npm run icons` rebuilds the app icons from `src-tauri/icons/icon-source.svg`.
+- `npm run icons` rebuilds every icon from the logo `src-tauri/icons/icon-source.png`: desktop,
+  Android launcher (`src-tauri/icons/android`, copied in by `build:android`) and
+  `src/assets/penna-logo.png` for the logo inside the app.
 - `src-tauri/`: plugin setup only. Permissions are in `capabilities/default.json`.
 
 ## Running

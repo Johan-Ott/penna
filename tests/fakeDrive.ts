@@ -4,6 +4,7 @@ interface Stored {
   file: RemoteFile;
   parentId: string | null;
   bytes: Uint8Array;
+  isTrashed?: boolean;
 }
 
 /** A Google Drive in memory: folders and files by id, a new version on every write. */
@@ -18,7 +19,9 @@ export function createFakeDrive() {
   };
   const drive: Drive = {
     list: async (folderId) =>
-      [...items.values()].filter((item) => item.parentId === folderId).map((item) => item.file),
+      [...items.values()]
+        .filter((item) => item.parentId === folderId && !item.isTrashed)
+        .map((item) => item.file),
     findFolder: async (name, parentId) =>
       [...items.values()].find(
         (item) => item.file.isFolder && item.file.name === name && item.parentId === parentId,
@@ -33,10 +36,16 @@ export function createFakeDrive() {
       return item.file;
     },
     download: async (fileId) => items.get(fileId)?.bytes ?? new Uint8Array(),
+    trash: async (fileId) => {
+      const item = items.get(fileId);
+      if (item) item.isTrashed = true;
+    },
   };
   // What another device does: change a file in Drive by its path under a folder.
+  const find = (path: string) =>
+    [...items.values()].find((candidate) => !candidate.isTrashed && pathOf(candidate) === path);
   const textAt = (path: string) => {
-    const item = [...items.values()].find((candidate) => pathOf(candidate) === path);
+    const item = find(path);
     return item ? new TextDecoder().decode(item.bytes) : null;
   };
   const pathOf = (item: Stored): string => {
@@ -44,8 +53,10 @@ export function createFakeDrive() {
     return parent ? `${pathOf(parent)}/${item.file.name}` : item.file.name;
   };
   const writeAt = async (path: string, text: string) => {
-    const item = [...items.values()].find((candidate) => pathOf(candidate) === path);
+    const item = find(path);
     if (item) await drive.update(item.file.id, new TextEncoder().encode(text));
   };
-  return { drive, textAt, writeAt };
+  const isInTrash = (path: string) =>
+    [...items.values()].some((item) => item.isTrashed && pathOf(item) === path);
+  return { drive, textAt, writeAt, isInTrash };
 }

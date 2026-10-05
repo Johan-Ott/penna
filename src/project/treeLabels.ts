@@ -72,7 +72,7 @@ export function shortWordCount(words: number): string {
   return `${Math.round(words / 1000)}k`;
 }
 
-/** The small grey text at the end of a tree row: words, or how many notes a sort holds. */
+/** Words, or how many notes a sort holds. */
 export function nodeMeta(node: TreeNode, summaries: Summaries): string {
   if (node.kind === "scene") return (summaries[node.id]?.words ?? 0).toLocaleString(numberLocale());
   if (node.kind === "sort") return String(sceneIdsIn([node], node.id).length);
@@ -85,7 +85,7 @@ export interface SceneChapter {
   id: string;
   number: number;
   title: string;
-  /** True for the chapter's first scene, where the chapter heading is shown above the text. */
+  /** The chapter heading is shown above the text of the chapter's first scene. */
   isFirstScene: boolean;
 }
 
@@ -98,7 +98,6 @@ export function chapterOf(tree: TreeNode[], sceneId: string): SceneChapter | nul
   return { id: chapter.id, number, title: chapter.title ?? "", isFirstScene: found.index === 0 };
 }
 
-/** "Ord per kapitel" in Framsteg: each chapter of the manuscript with its label and words. */
 export const chapterWords = (tree: TreeNode[], summaries: Summaries) =>
   manuscriptNodes(tree, "chapter").map((node) => ({
     id: node.id,
@@ -106,6 +105,6 @@ export const chapterWords = (tree: TreeNode[], summaries: Summaries) =>
     words: nodeWords(node, summaries),
   }));
 
-/** All words in the manuscript, Research and Papperskorg left out. */
+/** Notes and Papperskorg left out. */
 export const manuscriptWords = (tree: TreeNode[], summaries: Summaries) =>
   manuscriptSceneIds(tree).reduce((sum, id) => sum + (summaries[id]?.words ?? 0), 0);

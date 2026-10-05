@@ -95,11 +95,10 @@ export function isMarkActive(state: EditorState, markName: "bold" | "italic"): b
   return state.doc.rangeHasMark(from, to, markType);
 }
 
-/** The quote button in the toolbar: turns the paragraph into a quote, or back into body text. */
 export const toggleQuote: Command = (state, dispatch) =>
   setStyle(currentStyle(state) === "citat" ? "brodtext" : "citat")(state, dispatch);
 
-/** Removes bold and italic. Styles say what the text is, so they stay. */
+/** Styles say what the text is, so they stay. */
 export const clearFormatting: Command = (state, dispatch) => {
   const { from, to } = state.selection;
   const transaction = state.tr
@@ -110,7 +109,6 @@ export const clearFormatting: Command = (state, dispatch) => {
   return true;
 };
 
-/** Moves the cursor to the start of the `index`th block, as a click in the reading view asks. */
 export const cursorAtBlock =
   (index: number): Command =>
   (state, dispatch) => {

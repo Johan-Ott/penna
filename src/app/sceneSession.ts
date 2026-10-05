@@ -37,7 +37,7 @@ export interface SceneSessionHooks {
   onScene(scene: OpenScene | null): void;
   onConflict(conflict: DiskConflict | null): void;
   onSaveStatus(status: SaveStatus): void;
-  /** After each scene save, with the text before and after, for the words-per-day count. */
+  /** Before and after each save, for the words-per-day count. */
   onSaved?: (scene: { dir: string; id: string }, before: string, after: string) => void;
 }
 
@@ -74,7 +74,7 @@ export function sceneEdited(session: SceneSession, doc: Node) {
   if (session.scene) session.autosave.changed(textOf(session, doc));
 }
 
-/** Saves and closes the open scene. When saving fails the scene stays open and false comes back. */
+/** When saving fails the scene stays open and false comes back. */
 export async function closeScene(session: SceneSession) {
   if (!(await session.autosave.flush())) return false;
   session.scene = null;
@@ -93,7 +93,7 @@ function showScene(session: SceneSession, dir: string, id: string, text: string)
   session.hooks.editor.load(parseMarkdown(body));
 }
 
-// Leaving a scene whose text is not on disk would lose that text, so the switch waits.
+// Leaving a scene whose text is not on disk would lose it, so the switch waits for the save.
 export async function openScene(session: SceneSession, dir: string, id: string) {
   if (!(await session.autosave.flush())) return false;
   const text = await session.fileSystem.readText(scenePath(dir, id));
@@ -103,8 +103,7 @@ export async function openScene(session: SceneSession, dir: string, id: string) 
   return true;
 }
 
-// A check still reading when another scene opens is dropped: it would weigh one scene's file
-// against the other's text, and keeping "mine" would write the wrong text into the file.
+// Dropped when another scene opened meanwhile; keeping "mine" would write the wrong text.
 export async function checkDisk(session: SceneSession) {
   const scene = session.scene;
   if (!scene) return;
@@ -122,7 +121,6 @@ export async function checkDisk(session: SceneSession) {
   session.hooks.onConflict({ diskText, editorText });
 }
 
-/** Writes a new scene file and returns its id. */
 export async function createScene(fileSystem: FileSystem, dir: string, title: string, body = "") {
   const id = newSceneId();
   await fileSystem.makeDir(joinPath(dir, "scenes"));
@@ -154,8 +152,7 @@ export async function resolveConflict(
   await session.autosave.flush();
 }
 
-// Title and status live in the scene file's front matter. The open scene changes through the
-// editor's autosave, so what is being written is saved with it.
+// The open scene's front matter changes through its autosave, so unsaved text is saved with it.
 async function changeFrontMatter(
   session: SceneSession,
   where: { dir: string; id: string },

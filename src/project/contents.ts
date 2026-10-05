@@ -4,10 +4,10 @@ import { numberNodes, TRASH_ID, type TreeNode } from "./tree.js";
 
 type Summaries = Record<string, SceneSummary>;
 
-/** One line in Innehåll: a chapter, or a scene that stands outside any chapter. */
+/** A chapter, or a scene outside any chapter. */
 export interface ContentsRow {
   id: string;
-  /** The chapter's number in reading order; null for a scene outside a chapter. */
+  /** Null for a scene outside a chapter. */
   number: number | null;
   title: string;
   summary: string;
@@ -41,7 +41,7 @@ function rowOf(node: TreeNode, number: number | null, summaries: Summaries): Con
   };
 }
 
-// Parts and folders only group; their chapters and loose scenes are listed in reading order.
+// Parts and folders only group, so they are walked through.
 function walk(nodes: TreeNode[], numbers: Map<string, number>, summaries: Summaries) {
   return nodes.flatMap((node): ContentsRow[] => {
     if (node.kind === "chapter") return [rowOf(node, numbers.get(node.id) ?? null, summaries)];
@@ -50,13 +50,12 @@ function walk(nodes: TreeNode[], numbers: Map<string, number>, summaries: Summar
   });
 }
 
-/** Innehåll in reading order. */
 export function contentsRows(tree: TreeNode[], summaries: Summaries): ContentsRow[] {
   const book = tree.filter((node) => node.kind !== "sort" && node.id !== TRASH_ID);
   return walk(book, numberNodes(tree, "chapter"), summaries);
 }
 
-/** Tidsordning: the order the writer has dragged the rows into; new rows keep reading order. */
+/** New rows keep reading order. */
 export function inTimeOrder(rows: ContentsRow[], order: string[]): ContentsRow[] {
   const rank = (row: ContentsRow) => {
     const index = order.indexOf(row.id);
@@ -65,13 +64,11 @@ export function inTimeOrder(rows: ContentsRow[], order: string[]): ContentsRow[]
   return [...rows].sort((first, second) => rank(first) - rank(second));
 }
 
-/** The time order after a row is dropped at `index` among the rows as they are shown. */
 export function movedInTime(shown: ContentsRow[], id: string, index: number): string[] {
   const ids = shown.map((row) => row.id).filter((rowId) => rowId !== id);
   return [...ids.slice(0, index), id, ...ids.slice(index)];
 }
 
-/** The tree with new text in a node's Innehåll fields. */
 export function withNodeText(
   tree: TreeNode[],
   id: string,

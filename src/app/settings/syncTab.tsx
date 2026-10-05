@@ -43,10 +43,6 @@ function DriveRow({ drive }: { drive: DriveSync }) {
   );
 }
 
-/**
- * Synk: the open book in the writer's own Google Drive. Penna sees only the files it made there;
- * nothing is deleted on either side, and a text changed in both places is kept twice.
- */
 export function SyncTab({ book }: TabProps) {
   if (!book) return <Row label={t("Öppna en bok för att synka den.")} />;
   if (!book.drive.isAvailable) return <Row label={t("Synk finns inte på den här enheten än.")} />;
