@@ -26,6 +26,8 @@ interface ProjectActionsInput {
   session: SceneSession;
   updateTree: (tree: TreeNode[]) => Promise<void>;
   refresh: () => Promise<void>;
+  /** Puts the cursor in a new scene, so the writer can type at once. */
+  focusEditor?: () => void;
 }
 
 const NEW_TITLES: Record<NodeKind, string> = {
@@ -87,16 +89,21 @@ async function newNode(project: Project, kind: NodeKind, placement: Placement): 
   return { id: await createScene(platform.fileSystem, project.dir, title), kind };
 }
 
-export function useProjectActions({ project, session, updateTree, refresh }: ProjectActionsInput) {
+export function useProjectActions(input: ProjectActionsInput) {
+  const { project, session, updateTree, refresh, focusEditor } = input;
   const newItem = useCallback(
     async (kind: NodeKind, placement: Placement = null) => {
       if (!project || project.isReadOnly) return null;
       const node = await newNode(project, kind, placement);
       await updateTree(place(project.tree, node, placement, session.scene?.id ?? null));
-      if (kind === "scene") await refresh().then(() => openScene(session, project.dir, node.id));
+      if (kind === "scene") {
+        await refresh();
+        await openScene(session, project.dir, node.id);
+        focusEditor?.();
+      }
       return node.id;
     },
-    [project, session, updateTree, refresh],
+    [project, session, updateTree, refresh, focusEditor],
   );
   return { newItem, ...useSceneFileActions({ project, session, refresh }) };
 }

@@ -374,7 +374,7 @@ button {
   background: var(--surface-hover);
 }
 
-/* As in the design: top-level rows and the open text in black, deeper rows in a softer grey. */
+/* Top-level rows and the open text in black, deeper rows in a softer grey. */
 .tree .tree-row {
   color: var(--text-tree);
 }
@@ -637,7 +637,7 @@ button {
   color: var(--text-muted);
 }
 
-/* Toolbar details from the Skriv design */
+/* Toolbar details */
 .style-picker {
   display: flex;
   align-items: center;
@@ -763,7 +763,7 @@ button {
   gap: 8px;
 }
 
-/* Onboarding, as in the design: one card with five steps */
+/* Onboarding: one card with five steps */
 .onboarding {
   display: flex;
   align-items: center;
@@ -991,7 +991,7 @@ button {
   font-weight: 500;
 }
 
-/* Bookshelf, as in the design */
+/* Bookshelf */
 /* The shelf fills the white card under the top bar. */
 .shelf-screen {
   display: flex;
@@ -1185,7 +1185,7 @@ button.book-cover:hover {
   opacity: 0.75;
 }
 
-/* Snapshots, as in the design: the list on the left, the comparison on the right. */
+/* Snapshots: the list on the left, the comparison on the right. */
 .snapshots-dialog {
   width: 820px;
 }
@@ -1289,7 +1289,7 @@ button.book-cover:hover {
   align-self: flex-start;
 }
 
-/* Inställningar, as in the design: tabs on the left, one setting per row. */
+/* Inställningar: tabs on the left, one setting per row. */
 .settings-dialog {
   display: flex;
   width: 820px;
@@ -1692,7 +1692,7 @@ button.book-cover:hover {
   line-height: 1.4;
 }
 
-/* Granskning, as in the design: a panel beside the text, and dots under repeated words. */
+/* Granskning: a panel beside the text, and dots under repeated words. */
 .writing-body {
   display: flex;
   flex-grow: 1;
@@ -1800,7 +1800,7 @@ button.book-cover:hover {
   }
 }
 
-/* Comments: grey behind the commented words, as in the design, and the cards in the panel. */
+/* Comments: grey behind the commented words, and the cards in the panel. */
 .manuscript .commented {
   border-radius: 3px;
   background: var(--match);
@@ -2008,17 +2008,6 @@ button.book-cover:hover {
   stroke: var(--border-soft);
   stroke-width: 0.5;
 }
-
-/* The e-book on a reader's screen, reflowed by the device. */
-.ebook-screen {
-  width: 360px;
-  height: 620px;
-  border: 10px solid var(--text);
-  border-radius: 28px;
-  background: #ffffff;
-}
-
-/* At the foot of the page while writing: today's words against the goal and the minutes written. */
 
 .no-stats {
   display: flex;

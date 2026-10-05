@@ -2,7 +2,7 @@ import type { Mark, Node } from "prosemirror-model";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { serializeInlineContent } from "../manuscript/serializeInline.js";
 
-export interface Block {
+interface Block {
   /** 1 to 6 for a heading, 0 for a paragraph. */
   heading: number;
   inline: Node[];

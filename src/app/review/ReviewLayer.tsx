@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { Node } from "prosemirror-model";
 import { SearchQuery } from "prosemirror-search";
 import type { NameSuspect } from "../../manuscript/review.js";
@@ -33,6 +34,12 @@ function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
   const review = useReview({ ...props, cards: app.notes.cards, repeatWindow });
+  const isWriting = props.comments.draft !== null;
+  const { setReviewOpen } = app.writingMode;
+  // Opened while a comment is written, so the comment is still in view once it is sent.
+  useEffect(() => {
+    if (isWriting) setReviewOpen(true);
+  }, [isWriting, setReviewOpen]);
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}

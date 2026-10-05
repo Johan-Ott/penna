@@ -26,6 +26,12 @@ const testKey = join(homedir(), ".android", "debug.keystore");
 const android = "src-tauri/gen/android/app";
 const signInLibrary = 'implementation("com.google.android.gms:play-services-auth:21.3.0")';
 
+// Adds `line` after the first `anchor` in a generated file, once.
+function addOnce(file, anchor, line) {
+  const text = readFileSync(file, "utf8");
+  if (!text.includes(line)) writeFileSync(file, text.replace(anchor, `${anchor}\n${line}`));
+}
+
 function addOwnSources() {
   for (const file of readdirSync("src-tauri/android")) {
     copyFileSync(
@@ -34,18 +40,10 @@ function addOwnSources() {
     );
   }
   cpSync("src-tauri/icons/android", join(android, "src/main/res"), { recursive: true });
-  const gradle = join(android, "build.gradle.kts");
-  const text = readFileSync(gradle, "utf8");
-  if (!text.includes(signInLibrary)) {
-    writeFileSync(
-      gradle,
-      text.replace(
-        "dependencies {",
-        `dependencies {
-    ${signInLibrary}`,
-      ),
-    );
-  }
+  addOnce(join(android, "build.gradle.kts"), "dependencies {", `    ${signInLibrary}`);
+  // The books live in the app's folder, so uninstalling asks whether to keep them.
+  const manifest = join(android, "src/main/AndroidManifest.xml");
+  addOnce(manifest, "<application", '        android:hasFragileUserData="true"');
 }
 
 function step(title, command, args) {

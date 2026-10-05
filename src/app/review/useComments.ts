@@ -11,6 +11,7 @@ import {
   type Anchor,
   type Comment,
 } from "../../project/comments.js";
+import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
 import { useShortcut } from "../useShortcut.js";
@@ -45,7 +46,7 @@ function useCommentFile(project: Project | null, scene: OpenScene | null) {
     if (!dir || !sceneId) return;
     queue.current = queue.current
       .then(() => writeComments(platform.fileSystem, dir, sceneId, next))
-      .catch(() => undefined);
+      .catch(recordFailure("Kommentaren kunde inte sparas"));
   };
   return { comments, save };
 }

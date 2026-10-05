@@ -1,6 +1,5 @@
 import { parentOf } from "../project/libraryFolders.js";
 import type { FileSystem } from "../storage/fileSystem.js";
-import { docxToMarkdown } from "./docxImport.js";
 import { ImportError, splitManuscript, type ImportedNode } from "./markdownImport.js";
 import { readScrivener } from "./scrivenerImport.js";
 import { t } from "../i18n/i18n.js";
@@ -20,7 +19,10 @@ async function readBook(fileSystem: FileSystem, path: string, bytes: Uint8Array)
     throw new ImportError(t("Välj Scrivener-projektet med Välj fil…, så hittar Penna texterna."));
   }
   if (extension === "scrivx") return readScrivener(fileSystem, parentOf(path));
-  if (extension === "docx") return splitManuscript(await docxToMarkdown(bytes));
+  if (extension === "docx") {
+    const { docxToMarkdown } = await import("./docxImport.js");
+    return splitManuscript(await docxToMarkdown(bytes));
+  }
   return splitManuscript(new TextDecoder().decode(bytes));
 }
 

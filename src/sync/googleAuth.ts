@@ -2,7 +2,7 @@
 
 const SIGN_IN = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN = "https://oauth2.googleapis.com/token";
-export const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
 
 /** A desktop client's secret is not truly secret; Google treats it so. */
 export interface Client {

@@ -19,6 +19,10 @@ export const errorLog = createErrorLog(Date.now);
 
 const messageOf = (reason: unknown) => (reason instanceof Error ? reason.message : String(reason));
 
+/** A catch handler that keeps the error for the report, prefixed with what failed. */
+export const recordFailure = (what: string) => (error: unknown) =>
+  errorLog.record(`${what}: ${messageOf(error)}`);
+
 export function recordUncaughtErrors() {
   window.addEventListener("error", (event) => errorLog.record(event.message));
   window.addEventListener("unhandledrejection", (event) =>

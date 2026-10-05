@@ -29,7 +29,7 @@ export interface Snapshot {
 }
 
 /** A save that changes at least this many words since the last snapshot is "större ändring". */
-export const SNAPSHOT_WORDS = 100;
+const SNAPSHOT_WORDS = 100;
 
 const pad = (value: number) => String(value).padStart(2, "0");
 const FILE_NAME = /^(\d{4})-(\d\d)-(\d\d)T(\d\d)-(\d\d)(?:-\d+)?\.md$/;

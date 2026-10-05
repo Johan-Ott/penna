@@ -31,7 +31,7 @@ describe("bookStatus and bookProgress", () => {
 describe("whenUpdated", () => {
   const now = new Date("2026-10-03T15:00:00").getTime();
 
-  it("speaks of days the way the design does", () => {
+  it("says today, yesterday, days or weeks ago, or the date", () => {
     expect(whenUpdated(now - 60_000, now)).toBe("Skrivet idag");
     expect(whenUpdated(now - DAY, now)).toBe("Igår");
     expect(whenUpdated(now - 3 * DAY, now)).toBe("För 3 dagar sedan");

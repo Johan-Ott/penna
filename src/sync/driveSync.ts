@@ -1,10 +1,11 @@
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import type { Drive, RemoteFile } from "./drive.js";
-import { keepVersion, localFiles, moveToTrash, writeLocal, type LocalBook } from "./localSide.js";
+import { filesIn } from "../storage/folderFiles.js";
+import { keepVersion, moveToTrash, writeLocal, type LocalBook } from "./localSide.js";
 import { mergeProjectText } from "./mergeProject.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
-export interface SyncResult {
+interface SyncResult {
   uploaded: string[];
   downloaded: string[];
   conflicts: string[];
@@ -71,7 +72,7 @@ async function bookFolder(drive: Drive, dir: string, state: SyncState) {
 }
 
 /** Drive's side of a conflict: "scenes/S1.md" becomes "scenes/S1 (Drive 2026-10-04).md". */
-export function conflictCopyPath(path: string, now: number) {
+function conflictCopyPath(path: string, now: number) {
   const day = new Date(now).toISOString().slice(0, 10);
   const dot = path.lastIndexOf(".");
   const cut = dot > path.lastIndexOf("/") ? dot : path.length;
@@ -193,7 +194,7 @@ export async function syncProject(fileSystem: FileSystem, drive: Drive, dir: str
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
   const book = { fileSystem, dir };
-  const local = await localFiles(book);
+  const local = await filesIn(fileSystem, dir);
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const run: Run = { book, drive, now, rootId, remote, state, result };
   for (const path of new Set([...local.keys(), ...remote.files.keys()])) {

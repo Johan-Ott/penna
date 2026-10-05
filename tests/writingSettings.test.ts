@@ -18,7 +18,7 @@ function memoryStorage(initial: Record<string, string> = {}) {
 }
 
 describe("writing settings", () => {
-  it("start from the design's defaults", () => {
+  it("start from the default settings", () => {
     const settings = loadSettings(memoryStorage());
 
     expect(settings).toEqual(DEFAULT_SETTINGS);

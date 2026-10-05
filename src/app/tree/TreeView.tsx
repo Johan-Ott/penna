@@ -16,7 +16,7 @@ import { t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
 
-export function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
+function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
   const { view, actions, drag, openMenu } = tree;
   const menuFor = menuActions(actions, props);
   return rows.map((row) => (
@@ -35,7 +35,7 @@ export function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps;
   ));
 }
 
-export function SectionHeading(props: { label: string; onDrop?: () => void }) {
+function SectionHeading(props: { label: string; onDrop?: () => void }) {
   return (
     <div
       role="none"

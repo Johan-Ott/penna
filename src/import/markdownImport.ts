@@ -24,7 +24,7 @@ function headingOf(line: string, hasMarkdownHeadings: boolean): Heading | null {
   return chapter?.[1] ? { level: 1, title: chapter[2] ?? chapter[1] } : null;
 }
 
-export function titleFromText(body: string): string {
+function titleFromText(body: string): string {
   const words = body
     .replace(/[*_`>#[\]()]/g, "")
     .split(/\s+/)

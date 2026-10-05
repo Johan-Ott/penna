@@ -24,13 +24,18 @@ export function useShortcut(key: string, action: () => void, options: ShortcutOp
   }, [key, needsAlt, needsShift]);
 }
 
+// ProseMirror prevents every Escape typed in the text, so that one still counts as unhandled.
+const isFromEditor = (event: KeyboardEvent) =>
+  event.target instanceof Element && event.target.closest(".ProseMirror") !== null;
+
 /** Unless something closer to the focus already handled Escape. */
 export function useEscape(action: () => void) {
   const actionRef = useRef(action);
   actionRef.current = action;
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || event.defaultPrevented) return;
+      const isHandled = event.defaultPrevented && !isFromEditor(event);
+      if (event.key !== "Escape" || isHandled) return;
       actionRef.current();
     };
     window.addEventListener("keydown", onKeyDown);

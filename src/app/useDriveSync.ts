@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { syncProject } from "../sync/driveSync.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
-import { errorLog } from "./errorLog.js";
+import { errorLog, recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";
 import { t } from "../i18n/i18n.js";
@@ -75,7 +75,7 @@ function useDriveConnection(
   };
   const disconnect = async () => {
     updatePreferences((current) => ({ ...current, isDriveSyncOn: false }));
-    await platform.googleSignIn?.disconnect().catch(() => undefined);
+    await platform.googleSignIn?.disconnect().catch(recordFailure("Utloggning från Google"));
   };
   return { connect, disconnect };
 }

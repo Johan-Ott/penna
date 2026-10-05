@@ -1,4 +1,4 @@
-/* The phone's screens, as the mobile design draws them: a bar on grey, a white card under it. */
+/* The phone's screens: a bar on grey, a white card under it. */
 .phone-app,
 .phone-screen {
   display: flex;

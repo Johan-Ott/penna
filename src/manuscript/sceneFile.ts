@@ -40,7 +40,7 @@ export function noteLink(frontMatter: string): boolean | null {
   return null;
 }
 
-export const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
+const yamlValue = (text: string) => (NEEDS_QUOTES.test(text) ? JSON.stringify(text) : text);
 
 export function newSceneText(id: string, title: string): string {
   return `---\nid: ${id}\ntitle: ${yamlValue(title)}\nstatus: idé\n---\n`;

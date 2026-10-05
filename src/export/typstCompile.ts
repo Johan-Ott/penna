@@ -14,8 +14,7 @@ export interface TypstAssets {
   fonts: () => Promise<Uint8Array[]>;
 }
 
-/** The message is Typst's own. */
-export class TypstError extends Error {}
+import { TypstError } from "./typstError.js";
 
 const MAIN = "/main.typ";
 const PDF = 1;

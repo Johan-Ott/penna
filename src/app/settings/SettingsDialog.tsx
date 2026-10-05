@@ -40,7 +40,7 @@ function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }
   );
 }
 
-export function SettingsDialog(props: TabProps & { startTab: number; onClose: () => void }) {
+function SettingsDialog(props: TabProps & { startTab: number; onClose: () => void }) {
   const [tab, setTab] = useState(props.startTab);
   useEscape(props.onClose);
   const [title, Content] = TABS[tab] ?? TABS[0] ?? ["", () => null];

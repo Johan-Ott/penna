@@ -12,7 +12,7 @@ export interface ProjectFile {
 }
 
 // The project.json format this Penna writes. A newer format needs a migration step per version.
-export const FORMAT_VERSION = 1;
+const FORMAT_VERSION = 1;
 
 const KINDS: NodeKind[] = ["part", "chapter", "scene", "folder", "sort"];
 

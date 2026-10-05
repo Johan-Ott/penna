@@ -108,7 +108,7 @@ function Comparison({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "no
   );
 }
 
-export function SnapshotsDialog(props: SnapshotsDialogProps) {
+function SnapshotsDialog(props: SnapshotsDialogProps) {
   const { state } = props;
   useEscape(state.close);
   return (

@@ -1,4 +1,4 @@
-/* The manuscript as in the Skriv design: Literata 19 px, line height 1.8, 600 px wide. */
+/* The manuscript: Literata 19 px, line height 1.8, 600 px wide. */
 .manuscript {
   width: var(--prose-width, 600px);
   max-width: 100%;

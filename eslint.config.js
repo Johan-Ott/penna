@@ -2,7 +2,16 @@ import eslintJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["node_modules", "dist", "src-tauri/target", "src-tauri/gen"] },
+  {
+    ignores: [
+      "node_modules",
+      "dist",
+      "src-tauri/target",
+      "src-tauri/gen",
+      "test-results",
+      "playwright-report",
+    ],
+  },
   eslintJs.configs.recommended,
   ...tseslint.configs.strict,
   {
@@ -31,7 +40,7 @@ export default tseslint.config(
     languageOptions: { globals: { process: "readonly" } },
   },
   {
-    files: ["tests/**/*.ts"],
+    files: ["tests/**/*.ts", "e2e/**/*.ts"],
     rules: { "max-lines-per-function": "off" },
   },
 );

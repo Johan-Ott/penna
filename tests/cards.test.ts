@@ -100,7 +100,7 @@ describe("countMentions", () => {
 });
 
 describe("chapterRuns", () => {
-  it("writes runs as ranges and the rest as a list, as the design does", () => {
+  it("writes runs as ranges and the rest as a list", () => {
     const labels = [
       chapterRuns([1, 2, 3, 4, 5, 6, 7, 8]),
       chapterRuns([8, 1, 2, 5, 2]),

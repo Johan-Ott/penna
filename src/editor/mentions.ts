@@ -1,3 +1,4 @@
+import { LEAF } from "./documentText.js";
 import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey, type Command } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
@@ -32,9 +33,6 @@ export function findMentions(text: string, matchers: MentionMatcher[]): Mention[
   }
   return kept;
 }
-
-// A leaf such as a line break counts as one character, so text offsets are document offsets.
-const LEAF = "￼";
 
 /** Decorations only; nothing is written into the text. */
 export function mentionDecorations(doc: Node, matchers: MentionMatcher[]): DecorationSet {

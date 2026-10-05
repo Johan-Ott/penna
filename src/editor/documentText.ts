@@ -1,7 +1,7 @@
 import type { Node } from "prosemirror-model";
 
 // A leaf such as a line break counts as one character, so text offsets are document offsets.
-const LEAF = "￼";
+export const LEAF = "￼";
 
 interface Block {
   textStart: number;

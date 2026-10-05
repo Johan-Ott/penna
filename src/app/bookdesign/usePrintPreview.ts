@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { previewOutline } from "../../export/bookDesign.js";
-import { TypstError } from "../../export/typstCompile.js";
+import { TypstError } from "../../export/typstError.js";
 import { typstSource } from "../../export/typstBook.js";
 import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { appTypst } from "../typstAssets.js";

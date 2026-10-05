@@ -6,19 +6,6 @@ export interface LocalBook {
   dir: string;
 }
 
-// A folder cannot be read as a file, so whatever fails to read is walked into.
-export async function localFiles(book: LocalBook, prefix = "") {
-  const found = new Map<string, Uint8Array>();
-  const folder = prefix ? joinPath(book.dir, prefix) : book.dir;
-  for (const name of await book.fileSystem.list(folder)) {
-    const path = prefix ? `${prefix}/${name}` : name;
-    const bytes = await book.fileSystem.readBytes(joinPath(folder, name)).catch(() => null);
-    if (bytes) found.set(path, bytes);
-    else for (const [inner, content] of await localFiles(book, path)) found.set(inner, content);
-  }
-  return found;
-}
-
 // Written beside and renamed, so a half-downloaded file never replaces a whole one.
 export async function writeLocal(book: LocalBook, path: string, bytes: Uint8Array) {
   const target = joinPath(book.dir, path);

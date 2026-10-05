@@ -16,7 +16,7 @@ import { insertFootnote, uniqueFootnoteLabels } from "./footnoteEditing.js";
 import { t } from "../i18n/i18n.js";
 
 // Swedish uses ” for both opening and closing quotes. Each rule asks whether it is on.
-export function typographyRules(isOn: () => boolean): InputRule[] {
+function typographyRules(isOn: () => boolean): InputRule[] {
   const rule = (pattern: RegExp, text: string) =>
     new InputRule(pattern, (state, _match, start, end) =>
       isOn() ? state.tr.insertText(text, start, end) : null,

@@ -64,7 +64,7 @@ describe("tree labels", () => {
     expect(nodeMeta(find("del1"), summaries)).toBe("");
   });
 
-  it("shortens large word counts the way the design does", () => {
+  it("shortens large word counts to thousands", () => {
     expect(shortWordCount(812)).toBe("812");
     expect(shortWordCount(7300)).toBe("7,3k");
     expect(shortWordCount(48210)).toBe("48k");

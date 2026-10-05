@@ -179,10 +179,19 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   Android launcher (`src-tauri/icons/android`, copied in by `build:android`) and
   `src/assets/penna-logo.png` for the logo inside the app.
 - `src-tauri/`: plugin setup only. Permissions are in `capabilities/default.json`.
+- The webview has a strict CSP (`app.security.csp` in tauri.conf.json): only Penna's own files, plus
+  `'wasm-unsafe-eval'` for Typst and inline styles for React. A new kind of resource (an outside
+  URL, a worker) needs a line there. `style-src` is left without Tauri's nonces, or the browser
+  would ignore `'unsafe-inline'`.
+- Heavy modules load on first use, not at start: Word export and import, EPUB, zip and Typst
+  (`await import(...)` in `useExport.ts`, `importManuscript.ts`, `typstAssets.ts`). Keep it so.
 
 ## Running
 
 - `npm run dev` starts the Tauri window. Johan runs it; Claude does not start windows.
+- `npm run test:ui`: Playwright flows in `e2e/` against `dev:web` (the example project in memory):
+  writing, footnotes, palette, search, focus mode, export, the tree and the phone screens. Not part
+  of `npm run check`; run it before a release or after changing the interface.
 - `npm run dev:web` serves the same app in a browser against the example project in memory.
   Start it with `--host 127.0.0.1` for Claude's browser pane, which can not reach `::1`.
 - Typing tests in the browser pane: the pane's `type` action pastes whole strings, so input
@@ -203,6 +212,10 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   in `.env.local` (ignored by git; the release build takes it from a GitHub secret of that name).
   Without it, Koppla Drive says the key is missing. Android needs no secret: Google knows the app by
   `se.penna.app` and the SHA-1 of the signing key, which today is Android's test key.
+- The Windows installer installs for the current user (no admin prompt), in Swedish or English
+  after Windows. Uninstalling removes the Google sign-in from Credential Manager
+  (`src-tauri/windows/hooks.nsh`) and offers to remove the app's data; the books are never touched.
+  On Android `hasFragileUserData` makes uninstalling ask whether to keep the books.
 - `npm run build:check`: the full check, then the desktop app without installers.
 
 ## Releasing

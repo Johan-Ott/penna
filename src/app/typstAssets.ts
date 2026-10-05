@@ -1,6 +1,6 @@
 import compilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm?url";
 import rendererWasmUrl from "@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm?url";
-import { createTypst } from "../export/typstCompile.js";
+import type { createTypst } from "../export/typstCompile.js";
 
 // Each font in public/fonts has its OFL licence beside it.
 const FONT_FILES = [
@@ -21,9 +21,20 @@ async function bytesAt(url: string) {
   return new Uint8Array(await response.arrayBuffer());
 }
 
-/** Started the first time a book is set, which takes a moment. */
-export const appTypst = createTypst({
-  compilerWasm: () => bytesAt(compilerWasmUrl),
-  rendererWasm: () => bytesAt(rendererWasmUrl),
-  fonts: () => Promise.all(FONT_FILES.map((name) => bytesAt(`/fonts/${name}.ttf`))),
-});
+// Typst and its 28 MB compiler load the first time a book is set, not when Penna starts.
+let started: ReturnType<typeof createTypst> | null = null;
+
+async function typst() {
+  const typstCompile = await import("../export/typstCompile.js");
+  started ??= typstCompile.createTypst({
+    compilerWasm: () => bytesAt(compilerWasmUrl),
+    rendererWasm: () => bytesAt(rendererWasmUrl),
+    fonts: () => Promise.all(FONT_FILES.map((name) => bytesAt(`/fonts/${name}.ttf`))),
+  });
+  return started;
+}
+
+export const appTypst = {
+  pdf: async (source: string) => (await typst()).pdf(source),
+  svg: async (source: string) => (await typst()).svg(source),
+};

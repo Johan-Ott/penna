@@ -32,7 +32,7 @@ function coverFile({ cover, book }: EpubInput) {
 
 const LIST_SEPARATOR = "\n    ";
 
-export const EBOOK_STYLE = `body { font-family: serif; line-height: 1.5; margin: 0 5%; }
+const EBOOK_STYLE = `body { font-family: serif; line-height: 1.5; margin: 0 5%; }
 p { margin: 0; text-indent: 1.5em; }
 p.first { text-indent: 0; }
 h1 { text-align: center; font-weight: normal; margin: 3em 0 2em; }

@@ -1,13 +1,11 @@
 import { useRef, useState } from "react";
 import { ExportError, type Typography } from "../../export/book.js";
-import { buildEpub } from "../../export/epub.js";
-import { TypstError } from "../../export/typstCompile.js";
+import { TypstError } from "../../export/typstError.js";
 import { typstSource } from "../../export/typstBook.js";
 import { seriesDirOf } from "../../project/series.js";
-import { projectZip } from "../../export/projectZip.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
-import { standardManuscript } from "../../export/standardManuscript.js";
 import { findCover } from "../../project/cover.js";
+import { recordFailure } from "../errorLog.js";
 import { platform, type FileKind } from "../platform.js";
 import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
@@ -35,7 +33,7 @@ export interface ExportChoices {
 
 type SaveFields = (fields: Record<string, unknown>) => void;
 
-export const FILE_KINDS: Record<ExportFormat, FileKind> = {
+const FILE_KINDS: Record<ExportFormat, FileKind> = {
   manus: { name: "Word-dokument", extension: "docx" },
   ebok: { name: t("E-bok"), extension: "epub" },
   tryck: { name: t("PDF för tryck"), extension: "pdf" },
@@ -65,6 +63,7 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
   const material = await bookMaterial(project, generalAuthor, onProgress);
   const language = bookLanguage(project.fields);
   if (choices.format === "manus") {
+    const { standardManuscript } = await import("../../export/standardManuscript.js");
     return standardManuscript({ ...material, ...choices, language });
   }
   if (choices.format === "tryck") {
@@ -72,6 +71,7 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     return appTypst.pdf(typstSource(printInput({ project, material, choices, extras })));
   }
   const picture = await findCover(platform.fileSystem, project.dir);
+  const { buildEpub } = await import("../../export/epub.js");
   return buildEpub({
     ...material,
     ...(picture ? { cover: { type: picture.size.type, bytes: picture.bytes } } : {}),
@@ -92,6 +92,7 @@ async function exportBook(job: ExportJob, isCancelled: () => boolean): Promise<E
     const path = await platform.saveFile(`${job.project.name}.${kind.extension}`, bytes, kind);
     return path ? { kind: "saved", fileName: fileNameOf(path), path } : { kind: "idle" };
   } catch (error) {
+    recordFailure("Export")(error);
     const known = error instanceof ExportError;
     const reason = error instanceof TypstError ? `Typst: ${error.message}` : null;
     return {
@@ -109,11 +110,13 @@ async function saveBackup(project: Project): Promise<ExportState> {
     const seriesDir = seriesDirOf(project.dir, project.fields);
     const hasSeries = seriesDir !== null && (await platform.folderExists(seriesDir));
     const dirs = hasSeries ? [project.dir, seriesDir] : [project.dir];
+    const { projectZip } = await import("../../export/projectZip.js");
     const bytes = await projectZip(platform.fileSystem, dirs);
     const name = `${project.name} ${new Date().toISOString().slice(0, 10)}.zip`;
     const path = await platform.saveFile(name, bytes, BACKUP_KIND);
     return path ? { kind: "saved", fileName: fileNameOf(path), path } : { kind: "idle" };
-  } catch {
+  } catch (error) {
+    recordFailure("Säkerhetskopia")(error);
     return {
       kind: "failed",
       sceneTitle: project.name,

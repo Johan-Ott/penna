@@ -10,6 +10,7 @@ import {
   writeDeviceStats,
   type Stats,
 } from "../project/stats.js";
+import { recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
 import type { Project } from "./useProject.js";
 
@@ -68,7 +69,7 @@ export function useWritingStats(project: Project | null) {
           const stats = await addToThisDevice(sceneDir, added);
           if (sceneDir === dir) setStats(stats);
         })
-        .catch(() => undefined);
+        .catch(recordFailure("Ord per dag kunde inte sparas"));
     },
     [dir],
   );

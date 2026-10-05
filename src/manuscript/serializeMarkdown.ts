@@ -2,8 +2,6 @@ import type { Node } from "prosemirror-model";
 import { footnoteDefinitions } from "./footnotes.js";
 import { serializeInlineContent } from "./serializeInline.js";
 
-export { serializeInlineContent };
-
 export function serializeMarkdown(doc: Node): string {
   return serializeBlocks(doc) + String(doc.attrs["trailing"] ?? "") + footnoteDefinitions(doc);
 }

@@ -77,16 +77,16 @@ function useSeriesParts(project: Project | null, session: SceneSession, onChange
 
 function useCoreState() {
   const sceneState = useSceneSession();
-  const { session } = sceneState;
+  const { session, editor } = sceneState;
   const onFolderChange = useCallback(() => void checkDisk(session), [session]);
   const projectState = useProject(onFolderChange);
   const { project, open, refresh, updateTree } = projectState;
   const startup = useStartup(open, project?.dir ?? null);
   const { seriesState, seriesActions } = useSeriesParts(project, session, onFolderChange);
   const seriesDir = seriesState.series?.dir ?? null;
-  useOpenFirstScene(project, session, sceneState.editor.requestFocus, seriesDir);
+  useOpenFirstScene(project, session, editor.requestFocus, seriesDir);
   useSpellLanguage(project, session);
-  const input = { project, session, updateTree, refresh };
+  const input = { project, session, updateTree, refresh, focusEditor: editor.requestFocus };
   const actions = {
     ...useProjectActions(input),
     notes: useNoteActions(input),

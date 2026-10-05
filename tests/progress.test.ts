@@ -10,7 +10,7 @@ import {
 } from "../src/project/progress";
 
 describe("deadlinePlan", () => {
-  it("matches the design's sum by hand: 31 790 words left in 105 days is 303 a day", () => {
+  it("spreads the words left over the days left: 31 790 in 105 days is 303 a day", () => {
     const plan = deadlinePlan(
       { words: 48_210, goal: 80_000, deadline: "2027-01-15" },
       "2026-10-02",

@@ -30,7 +30,7 @@ interface ViewSwitches extends EditorSwitches {
   isSpellcheckOn: () => boolean;
 }
 
-export interface EditorModes {
+interface EditorModes {
   isTypewriterOn: boolean;
   isTypographyOn: boolean;
   isSpellcheckOn: boolean;

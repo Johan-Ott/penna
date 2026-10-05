@@ -72,8 +72,11 @@ describe("tree menus", () => {
     ]);
   });
 
-  it("lets a fixed sort hold new notes but never be renamed or trashed; an own sort can be", () => {
+  it("lets a fixed sort hold new notes but never be renamed or trashed", () => {
     expect(labels(rowMenu(node("sort", CHARACTERS_ID), false, actions))).toEqual(["Ny anteckning"]);
+  });
+
+  it("lets the writer's own sort be renamed and trashed", () => {
     expect(labels(rowMenu(node("sort", "fordon"), false, actions))).toEqual([
       "Ny anteckning",
       "| Byt namn",
