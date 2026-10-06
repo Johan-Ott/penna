@@ -43,6 +43,8 @@ function RenameInput({
       className="tree-rename"
       aria-label={t("Nytt namn")}
       autoFocus
+      // The old name is chosen, so typing replaces it, as in any file manager.
+      onFocus={(event) => event.target.select()}
       value={value}
       onChange={(event) => setValue(event.target.value)}
       onBlur={() => finish(value)}
