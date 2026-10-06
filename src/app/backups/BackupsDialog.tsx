@@ -8,7 +8,7 @@ import {
 import { Dialog } from "../controls.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
-import { backupNow } from "../useAutoBackup.js";
+import { autoBackup, backupNow } from "../useAutoBackup.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 type BackupsApp = {
@@ -37,13 +37,33 @@ async function restore(app: BackupsApp, book: string, file: BackupFile) {
   await app.open(await restoreBackup(platform.fileSystem, bytes, library, name));
 }
 
+const Problem = ({ text }: { text: string }) => (
+  <p className="backup-problem" role="alert">
+    {text}
+  </p>
+);
+
+/** Why the copy failed, or null when it was saved. */
+async function saveCopy(dirs: string[], label: string) {
+  try {
+    await backupNow(dirs, label.trim() || null);
+    return null;
+  } catch (error) {
+    recordFailure("Säkerhetskopia")(error);
+    return error instanceof Error ? error.message : String(error);
+  }
+}
+
 function SaveNow(props: { dirs: string[]; onSaved: () => void }) {
   const [label, setLabel] = useState("");
   const [isSaving, setSaving] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
   const save = async () => {
     setSaving(true);
-    await backupNow(props.dirs, label.trim() || null).catch(recordFailure("Säkerhetskopia"));
+    const reason = await saveCopy(props.dirs, label);
+    setFailure(reason);
     setSaving(false);
+    if (reason) return;
     setLabel("");
     props.onSaved();
   };
@@ -58,6 +78,7 @@ function SaveNow(props: { dirs: string[]; onSaved: () => void }) {
       <button className="button secondary" disabled={isSaving} onClick={() => void save()}>
         {t("Spara kopia nu")}
       </button>
+      {failure && <Problem text={t("Kopian kunde inte sparas: {reason}", { reason: failure })} />}
     </div>
   );
 }
@@ -96,6 +117,13 @@ export function BackupsDialog(props: { app: BackupsApp; dirs: string[]; onClose:
           "Penna kopierar boken när den öppnas och var halvtimme medan du skriver. De tio senaste sparas, en per dag i trettio dagar, och alla du ger ett namn.",
         )}
       </span>
+      {autoBackup.failure && (
+        <Problem
+          text={t("Den senaste automatiska kopian kunde inte sparas: {reason}", {
+            reason: autoBackup.failure,
+          })}
+        />
+      )}
       {props.dirs.length > 0 && <SaveNow dirs={props.dirs} onSaved={() => void reload()} />}
       {books?.length === 0 && <span>{t("Inga kopior än.")}</span>}
       {books?.map((entry) => (

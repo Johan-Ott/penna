@@ -1007,6 +1007,12 @@ button {
   font-weight: 500;
 }
 
+.backup-problem {
+  flex-basis: 100%;
+  margin: 0;
+  font-weight: 500;
+}
+
 .onboarding-problem {
   margin: 0;
   color: var(--text);
@@ -2333,6 +2339,7 @@ button.book-cover:hover {
 
 .backup-save {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 

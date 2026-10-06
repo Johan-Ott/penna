@@ -21,14 +21,15 @@ export function UpdateNotice({ session }: { session: SceneSession }) {
   if (!update) return null;
   const install = async () => {
     setInstalling(true);
-    await session.autosave.flush();
+    // A scene that cannot be saved stays open; the restart would lose it.
+    if (!(await session.autosave.flush())) return setInstalling(false);
     await update.install().catch(() => setInstalling(false));
   };
   return (
     <div className="toast update-notice" role="status">
       <span>{t("Penna {version} finns.", { version: update.version })}</span>
       <button className="link-button" disabled={isInstalling} onClick={() => void install()}>
-        {isInstalling ? "Uppdaterar…" : t("Starta om och uppdatera")}
+        {isInstalling ? t("Uppdaterar…") : t("Starta om och uppdatera")}
       </button>
       <button className="link-button quiet" onClick={dismiss}>
         {t("Senare")}

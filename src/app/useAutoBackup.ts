@@ -13,6 +13,17 @@ const EVERY = 30 * 60 * 1000;
 /** A book reopened within this time is not copied again. */
 const FRESH = 10 * 60 * 1000;
 
+/** Why the last automatic copy failed, for the dialog to say; null when it worked. */
+export const autoBackup = { failure: null as string | null };
+
+const automatically = (copy: Promise<void>) =>
+  copy
+    .then(() => void (autoBackup.failure = null))
+    .catch((error: unknown) => {
+      autoBackup.failure = error instanceof Error ? error.message : String(error);
+      recordFailure("Säkerhetskopia")(error);
+    });
+
 /** Copies the book, and its series, then removes the copies past what is kept. */
 export async function backupNow(dirs: string[], label: string | null = null) {
   const backups = platform.backups;
@@ -45,12 +56,12 @@ export function useAutoBackup(dirs: string[], project: unknown) {
   const key = dirs.join("\n");
   useEffect(() => {
     if (!key) return;
-    void openingBackup(current.current).catch(recordFailure("Säkerhetskopia"));
+    void automatically(openingBackup(current.current));
     hasChanged.current = false;
     const timer = setInterval(() => {
       if (!hasChanged.current) return;
       hasChanged.current = false;
-      void backupNow(current.current).catch(recordFailure("Säkerhetskopia"));
+      void automatically(backupNow(current.current));
     }, EVERY);
     return () => clearInterval(timer);
   }, [key]);

@@ -4,10 +4,9 @@ import { platform } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 
-/** Saves first, since the window restarts when the language changes. */
+/** Saves first, since the window restarts when the language changes; unsaved, it waits. */
 export async function applySpellLanguage(session: SceneSession, language: string) {
-  await session.autosave.flush();
-  await platform.setSpellLanguage(language);
+  if (await session.autosave.flush()) await platform.setSpellLanguage(language);
 }
 
 /** Inställningar applies a change itself, once saved. */

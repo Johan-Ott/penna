@@ -640,5 +640,8 @@
   "Exportera som PDF för tryck, som e-bok (EPUB), som manus i Word, eller tryckomslaget med rygg.": "Export as a PDF for print, as an e-book (EPUB), as a manuscript in Word, or the print cover with its spine.",
   "Vad saknar du, och vad skulle det hjälpa dig med?": "What are you missing, and what would it help you with?",
   "Skriv det du vill säga.": "Write what you want to say.",
+  "Uppdaterar…": "Updating…",
+  "Kopian kunde inte sparas: {reason}": "The copy could not be saved: {reason}",
+  "Den senaste automatiska kopian kunde inte sparas: {reason}": "The latest automatic copy could not be saved: {reason}",
   "Bokens mapp i Drive är tom eller borta. Inget har ändrats här.": "The book's folder in Drive is empty or gone. Nothing has changed here."
 }
