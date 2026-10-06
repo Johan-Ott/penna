@@ -10,7 +10,7 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import { check } from "@tauri-apps/plugin-updater";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, open, save } from "@tauri-apps/plugin-dialog";
-import { exists, readFile, rename, watch, writeFile } from "@tauri-apps/plugin-fs";
+import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
 import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
 import type { FileKind, PickKind, Platform } from "./platform.js";
@@ -29,6 +29,12 @@ function googleSignInHere() {
 // The system's question, unless a test has answered it already.
 const confirm = async (...question: Parameters<typeof ask>) =>
   (await testAsk()) ?? ask(...question);
+
+// The debounced watch hands a list of events, each with its paths; none means read it all.
+function changedPaths(event: WatchEvent | WatchEvent[]) {
+  const paths = [event].flat().flatMap((one) => one.paths.map(withForwardSlashes));
+  return paths.length > 0 ? paths : undefined;
+}
 
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
 
@@ -152,7 +158,9 @@ export const tauriPlatform: Platform = {
 
   // Some phones cannot watch folders; Penna then reads them again on its own saves.
   watchFolder: (dir, onChange) =>
-    watch(dir, onChange, { recursive: true, delayMs: 300 }).catch(() => () => undefined),
+    watch(dir, (event) => onChange(changedPaths(event)), { recursive: true, delayMs: 300 }).catch(
+      () => () => undefined,
+    ),
 
   guardClose(isSafeToClose) {
     const appWindow = getCurrentWindow();

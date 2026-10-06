@@ -11,7 +11,8 @@ export interface Platform {
   /** With forward slashes. */
   knownFolders(): Promise<{ home: string; documents: string }>;
   folderExists(path: string): Promise<boolean>;
-  watchFolder(dir: string, onChange: () => void): Promise<() => void>;
+  /** `onChange` gets the paths that changed, or none when the system does not say. */
+  watchFolder(dir: string, onChange: (changed?: string[]) => void): Promise<() => void>;
   /** `isSafeToClose` saves first; when it fails, the writer is asked before the window closes. */
   guardClose(isSafeToClose: () => Promise<boolean>): () => void;
   /** The saved path, or null if cancelled. */

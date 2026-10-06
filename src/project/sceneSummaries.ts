@@ -41,11 +41,24 @@ function cachedSummary(path: string, text: string): SceneSummary {
   return summary;
 }
 
-export async function readSceneSummaries(fileSystem: FileSystem, dir: string, sceneIds: string[]) {
+/** What is known already: the summaries read last time, and which files changed since. */
+export interface KnownSummaries {
+  summaries: Record<string, SceneSummary>;
+  changed: Set<string>;
+}
+
+// A save changes one scene; reading all of them again would be a file call per scene each time.
+export async function readSceneSummaries(
+  fileSystem: FileSystem,
+  dir: string,
+  sceneIds: string[],
+  known?: KnownSummaries,
+) {
   const entries = await Promise.all(
     sceneIds.map(async (id) => {
       const path = joinPath(dir, `scenes/${id}.md`);
-      return [id, cachedSummary(path, await fileSystem.readText(path))] as const;
+      const kept = known && !known.changed.has(path) ? known.summaries[id] : undefined;
+      return [id, kept ?? cachedSummary(path, await fileSystem.readText(path))] as const;
     }),
   );
   return Object.fromEntries(entries);

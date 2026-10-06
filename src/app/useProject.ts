@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { readProjectFile, writeProjectFile } from "../project/projectFile.js";
-import { readSceneSummaries, type SceneSummary } from "../project/sceneSummaries.js";
+import {
+  readSceneSummaries,
+  type KnownSummaries,
+  type SceneSummary,
+} from "../project/sceneSummaries.js";
 import { reconcileScenes, type TreeNode } from "../project/tree.js";
 import { openProjectFolder, type OpenedProject } from "../storage/projectFolder.js";
 import { describeSaveError, type SaveFailure } from "../storage/saveError.js";
@@ -21,12 +25,12 @@ export interface Project extends OpenedProject {
 const folderName = (dir: string) =>
   (dir.split("/").pop() ?? dir).replace(/\.penna$/, "").replace(/\.serie$/, "");
 
-export async function readProject(dir: string): Promise<Project> {
+export async function readProject(dir: string, known?: KnownSummaries): Promise<Project> {
   const fileSystem = platform.fileSystem;
   const listing = await openProjectFolder(fileSystem, dir);
   const file = await readProjectFile(fileSystem, dir, listing.scenes);
   const { tree } = reconcileScenes(file.tree, listing.scenes);
-  const summaries = await readSceneSummaries(fileSystem, dir, listing.scenes);
+  const summaries = await readSceneSummaries(fileSystem, dir, listing.scenes, known);
   const title = file.fields["title"];
   const name = typeof title === "string" ? title : folderName(dir);
   return {
@@ -95,13 +99,21 @@ export function useProject(onFolderChange: () => void) {
   const dir = project?.dir ?? null;
 
   const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
-  // A read that finishes after the project closed is dropped, so a save on close cannot reopen it.
-  // One that fails, say while another program holds a file, keeps what is shown.
-  const refresh = useCallback(async () => {
-    if (!dir) return;
-    const fresh = await readProject(dir).catch(recordFailure("Boken kunde inte läsas om"));
-    if (fresh) setProject((current) => (current?.dir === dir ? fresh : current));
-  }, [dir]);
+  // A read after the project closed is dropped; one that fails keeps what is shown. Given the
+  // paths the folder watch saw, only those scenes are read again.
+  const refresh = useCallback(
+    async (changed?: string[]) => {
+      if (!dir) return;
+      const current = projectRef.current;
+      const known =
+        changed && current?.dir === dir
+          ? { summaries: current.summaries, changed: new Set(changed) }
+          : undefined;
+      const fresh = await readProject(dir, known).catch(recordFailure("Boken kunde inte läsas om"));
+      if (fresh) setProject((latest) => (latest?.dir === dir ? fresh : latest));
+    },
+    [dir],
+  );
   const choose = useCallback(async () => {
     const folder = await platform.pickFolder();
     if (folder) await open(folder);
@@ -111,17 +123,29 @@ export function useProject(onFolderChange: () => void) {
   return { project, open, close, choose, refresh, ...updates };
 }
 
+const GATHER_MS = 100;
+
 export function useFolderWatch(
   dir: string | null,
-  refresh: () => Promise<void>,
+  refresh: (changed?: string[]) => Promise<void>,
   onChange: () => void,
 ) {
   useEffect(() => {
     if (!dir) return;
-    const stopWatching = platform.watchFolder(dir, () => {
-      void refresh();
-      onChange();
+    // One save comes as several events, for the file and its folder; they make one read, since
+    // reads finishing out of order could leave an older word count.
+    let changed: Set<string> | null = new Set();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const stopWatching = platform.watchFolder(dir, (paths) => {
+      if (changed) paths?.forEach((path) => changed?.add(path));
+      if (!paths) changed = null;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        void refresh(changed ? [...changed] : undefined);
+        changed = new Set();
+        onChange();
+      }, GATHER_MS);
     });
-    return () => void stopWatching.then((stop) => stop());
+    return () => (clearTimeout(timer), void stopWatching.then((stop) => stop()));
   }, [dir, refresh, onChange]);
 }
