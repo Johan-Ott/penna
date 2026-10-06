@@ -1,0 +1,47 @@
+<!doctype html>
+<!--
+  The installer's window: Penna's logo and name on dark, 440 × 300 at 1x.
+  node scripts/make-installer-splash.mjs makes splash.bmp and splash@2x.bmp from it.
+  The progress bar is drawn by the installer itself, at the line near the bottom.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Literata";
+        font-weight: 700;
+        src: url("../../public/fonts/literata-700-normal.ttf");
+      }
+      html,
+      body {
+        margin: 0;
+        width: 440px;
+        height: 300px;
+        background: #151517;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 64px;
+        box-sizing: border-box;
+      }
+      img {
+        width: 84px;
+        height: 84px;
+      }
+      h1 {
+        margin: 18px 0 0;
+        color: #f2eee7;
+        font: 700 30px "Literata";
+        letter-spacing: 0.01em;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="../icons/icon-source.png" alt="" />
+    <h1>Penna</h1>
+  </body>
+</html>
