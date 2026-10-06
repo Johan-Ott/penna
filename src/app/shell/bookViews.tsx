@@ -65,6 +65,7 @@ export function ReadScreen({ app, project, onBack }: ViewProps) {
       settings={writingMode.settings}
       onOpenAt={(sceneId, blockIndex) => openAt(app, project, sceneId, blockIndex)}
       onBack={onBack}
+      beforeRead={app.session.autosave.flush}
     />
   );
 }

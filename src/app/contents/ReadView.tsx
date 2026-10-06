@@ -20,10 +20,12 @@ interface ReadViewProps {
   /** A click in the text: the scene opens in Skriv with the cursor at that paragraph. */
   onOpenAt: (sceneId: string, blockIndex: number) => void;
   onBack: () => void;
+  /** Saves the open scene first, so what was written a moment ago is read too. */
+  beforeRead: () => Promise<unknown>;
 }
 
 // Every save reads the project again, and with it the scenes.
-function useSceneDocs(project: Project, ids: string[]) {
+function useSceneDocs(project: Project, ids: string[], beforeRead: () => Promise<unknown>) {
   const [docs, setDocs] = useState<Record<string, Node>>({});
   const key = ids.join(",");
   useEffect(() => {
@@ -33,11 +35,13 @@ function useSceneDocs(project: Project, ids: string[]) {
       return [id, parseMarkdown(splitSceneFile(text).body)] as const;
     };
     const wanted = key ? key.split(",") : [];
-    void Promise.all(wanted.map((id) => read(id).catch(() => null))).then((entries) => {
-      if (isCurrent) setDocs(Object.fromEntries(entries.filter((entry) => entry !== null)));
-    });
+    void beforeRead()
+      .then(() => Promise.all(wanted.map((id) => read(id).catch(() => null))))
+      .then((entries) => {
+        if (isCurrent) setDocs(Object.fromEntries(entries.filter((entry) => entry !== null)));
+      });
     return () => void (isCurrent = false);
-  }, [project, key]);
+  }, [project, key, beforeRead]);
   return docs;
 }
 
@@ -78,6 +82,7 @@ export function ReadView(props: ReadViewProps) {
   const docs = useSceneDocs(
     props.project,
     scenes.map((scene) => scene.sceneId),
+    props.beforeRead,
   );
   useEscape(props.onBack);
   return (
