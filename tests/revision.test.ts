@@ -28,6 +28,16 @@ describe("an editor's changes", () => {
     ]);
   });
 
+  it("are one change where the editor replaced a phrase, so rejecting it brings the phrase back", () => {
+    const mine = "– Det kom i morse, sa Arvid utan att se upp från spisen.";
+    const theirs = "– Det kom i morse, sa Arvid vid spisen.";
+
+    const changes = revisionChanges(mine, theirs);
+
+    expect(changes).toHaveLength(1);
+    expect(withoutChange(theirs, firstChange(mine, theirs))).toBe(mine);
+  });
+
   it("disappear from the editor's version when rejected", () => {
     const revised = withoutChange(THEIRS, firstChange(MINE, THEIRS));
 

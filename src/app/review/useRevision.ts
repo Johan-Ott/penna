@@ -57,7 +57,9 @@ function useChanges(editor: Editor, revised: string | null) {
     modes.current.revisionChanges = changes;
     run(refreshRevision, false);
   }, [changes, modes, run]);
-  return changes;
+  // After Godta the list is counted again at once, so a quick next click hits the next change.
+  const settleNow = () => setSettled(editor.viewRef.current?.state.doc);
+  return { changes, settleNow };
 }
 
 // One at a time, counted again after each; stops if a change would not go away.
@@ -73,13 +75,14 @@ function acceptEvery(editor: Editor, revised: string) {
 export function useRevision(parts: Parts) {
   const { editor } = parts;
   const { revised, setRevised, dir, sceneId, reload } = useRevisedText(parts);
-  const changes = useChanges(editor, revised);
+  const { changes, settleNow } = useChanges(editor, revised);
   // Found again in the text as it is now, since the writer may have typed since it was shown.
   const fresh = (change: RevisionChange) =>
     revised === null ? null : sameChange(revisionChanges(currentText(editor), revised), change);
   const accept = (change: RevisionChange) => {
     const found = fresh(change);
     if (found) editor.run(acceptChange(found));
+    settleNow();
   };
   const reject = (change: RevisionChange) => {
     const found = fresh(change);
@@ -88,7 +91,7 @@ export function useRevision(parts: Parts) {
     setRevised(next);
     void writeRevision(platform.fileSystem, dir, sceneId, next).catch(recordFailure("Redigering"));
   };
-  const acceptAll = () => acceptEvery(editor, revised ?? "");
+  const acceptAll = () => (acceptEvery(editor, revised ?? ""), settleNow());
   const finish = () => {
     if (!dir || !sceneId) return;
     setRevised(null);
