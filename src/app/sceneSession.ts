@@ -15,6 +15,7 @@ import { writeAtomic } from "../storage/atomicWrite.js";
 import { createAutosave, type SaveStatus } from "../storage/autosave.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
+import { takeSnapshot } from "../project/snapshots.js";
 import { decideExternalChange } from "../storage/syncFiles.js";
 import { t } from "../i18n/i18n.js";
 
@@ -164,6 +165,10 @@ export async function resolveConflict(
       t("{title} (andra versionen)", { title: scene.title }),
       otherBody,
     );
+  }
+  // The editor's text is kept among the scene's versions, so nothing is lost.
+  if (choice === "theirs") {
+    await takeSnapshot(session.fileSystem, scene, conflict.editorText, { time: Date.now() });
   }
   session.autosave.release();
   session.hooks.onConflict(null);

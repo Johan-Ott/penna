@@ -12,6 +12,7 @@ import {
   type DiskConflict,
 } from "../src/app/sceneSession";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
+import { listSnapshots } from "../src/project/snapshots";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const SCENE_PATH = "/bok/scenes/01J9Z4K2QX.md";
@@ -123,6 +124,20 @@ describe("scene session", () => {
     expect(await files.readText(SCENE_PATH)).toContain("Brevet låg kvar.");
     expect(await files.readText(`/bok/scenes/${otherName}`)).toContain("på bordet");
     expect(await files.readText(`/bok/scenes/${otherName}`)).toContain("Köket (andra versionen)");
+  });
+
+  it("keeps the editor's text among the versions when the other one is chosen", async () => {
+    const { files, session, conflicts, type } = setup();
+    await openScene(session, "/bok", "01J9Z4K2QX");
+    type("Brevet låg kvar.\n");
+    await files.writeText(SCENE_PATH, SCENE.replace("där", "på bordet"));
+    await checkDisk(session);
+    const conflict = conflicts.at(-1);
+
+    if (conflict) await resolveConflict(session, "theirs", conflict);
+
+    const [kept] = await listSnapshots(files, { dir: "/bok", id: "01J9Z4K2QX" });
+    expect(kept?.body).toContain("Brevet låg kvar.");
   });
 });
 
