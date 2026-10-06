@@ -117,3 +117,14 @@ test("the standard manuscript is exported as a Word file", async ({ page }) => {
 
   expect((await download).suggestedFilename()).toMatch(/\.docx$/);
 });
+
+test("the focus mode button keeps the cursor in the text, so nothing typed is lost", async ({
+  page,
+}) => {
+  await cursorAfterFirstParagraph(page);
+  await page.getByRole("button", { name: "Fokusläge · Ctrl+Shift+F" }).click();
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("Vädret håller.");
+
+  await expect(editor(page).locator("p").nth(1)).toHaveText("Vädret håller.");
+});

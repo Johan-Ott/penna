@@ -44,7 +44,8 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       onView={writingMode.setView}
       onProgress={() => writingMode.setProgressOpen(true)}
       onSearch={app.palette.open}
-      onFocus={writingMode.onToggleFocus}
+      // The button took the cursor from the text; it goes back there, where the writer was.
+      onFocus={() => (writingMode.onToggleFocus(), app.editor.requestFocus())}
       review={writingMode.review}
       onReview={() => writingMode.setReviewOpen(!writingMode.isReviewOpen)}
     />
