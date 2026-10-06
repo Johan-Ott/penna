@@ -195,6 +195,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   own, under `%APPDATA%\se.penna.test`. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
   answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
+- The phone the same way: start the emulator (Medium_Phone_API_36.1), `npm run build:android --
+--emulator` puts a debug build in it, and `node scripts/drive-app.mjs --android steps.mjs`
+  drives it through adb. It is the normal app, since the emulator holds no real books.
 - `e2e/roller/`: whole sessions as the people Penna is for (a novelist on her phone, a planner,
   the editor's round in Word, the print, a move from Word). They go through the screen as a
   person would and run with `npm run test:ui`; a step that fails is often a real finding.

@@ -61,6 +61,22 @@ if (!existsSync("src-tauri/gen/android")) {
   step("Android-projektet skapas (bara första gången)", "npx", ["tauri android init --ci"]);
 }
 addOwnSources();
+
+// `npm run build:android -- --emulator`: a debug build in the running emulator, for
+// `node scripts/drive-app.mjs --android`. The emulator is a test phone; no real books are near it.
+if (process.argv.includes("--emulator")) {
+  const adb = join(sdk, "platform-tools", "adb");
+  step("Penna byggs för emulatorn (x86_64, felsökning)", "npx", [
+    "tauri android build --debug --apk --target x86_64",
+  ]);
+  const debug = "src-tauri/gen/android/app/build/outputs/apk/universal/debug";
+  const apk = readdirSync(debug).find((name) => name.endsWith(".apk")) ?? "";
+  step("Installeras i emulatorn", adb, [`install -r -d ${join(debug, apk)}`]);
+  step("Startas", adb, ["shell monkey -p se.penna.app 1"]);
+  say("Klart: node scripts/drive-app.mjs --android steg.mjs");
+  process.exit(0);
+}
+
 step("Penna byggs för moderna telefoner (arm64)", "npx", [
   "tauri android build --apk --target aarch64",
 ]);
