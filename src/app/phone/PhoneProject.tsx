@@ -13,7 +13,8 @@ import type { Project } from "../useProject.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
-import { SyncView } from "../sync/SyncReview.js";
+import type { View } from "../useWritingMode.js";
+import { TabBar, tabOf, ViewScreen, type Tab } from "./PhoneTabs.js";
 import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -117,15 +118,32 @@ function usePhoneScreens({ app, project }: Props) {
     if (app.scene) showText(app.scene.id);
     else if (first) openText(first);
   };
-  return { ...navigation, openText, continueWriting };
+  const { setView } = app.writingMode;
+  const showView = (view: View) => (setView(view), show({ kind: "view" }));
+  // Opening a text leaves Innehåll or Läs for Skriv.
+  const writeIn = (id: string) => (setView("skriv"), openText(id));
+  const onTab = (tab: Tab) => {
+    if (tab === "boken") return show({ kind: "book" });
+    if (tab === "skriv") return (setView("skriv"), continueWriting());
+    showView(tab);
+  };
+  return { ...navigation, openText: writeIn, continueWriting, showView, onTab };
 }
+
+// The text shows while writing, also when Läs or Innehåll has just opened one.
+const isTextShown = (screen: PhoneScreen, view: View) =>
+  (screen.kind === "text" || screen.kind === "view") && view === "skriv";
 
 function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens> }) {
   const { app, project, screens } = props;
   const { authorName } = app.startup.preferences;
   const pageMap = usePageMap(project, authorName, app.writingMode.settings.showPages);
   return (
-    <div className={screens.screen.kind === "text" ? "phone-text" : "phone-text hidden"}>
+    <div
+      className={
+        isTextShown(screens.screen, app.writingMode.view) ? "phone-text" : "phone-text hidden"
+      }
+    >
       <TextBar app={app} project={project} onBack={screens.back} />
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
     </div>
@@ -136,8 +154,12 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
 function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens> }) {
   const { app, project, screens } = props;
   const { screen } = screens;
-  if (screen.kind === "sync")
-    return <SyncView project={project} review={app.syncReview} onBack={screens.back} />;
+  if (screen.kind === "text" || screen.kind === "view") {
+    if (app.writingMode.view === "skriv") return null;
+    return (
+      <ViewScreen app={app} project={project} onBack={screens.back} onOpenText={screens.openText} />
+    );
+  }
   if (screen.kind === "sort")
     return (
       <PhoneSort app={app} sortId={screen.sortId} onOpen={screens.openText} onBack={screens.back} />
@@ -150,7 +172,7 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
       onOpenText={screens.openText}
       onContinue={screens.continueWriting}
       onSort={(sortId) => screens.show({ kind: "sort", sortId })}
-      onSync={() => screens.show({ kind: "sync" })}
+      onSync={() => screens.showView("synk")}
     />
   );
 }
@@ -161,6 +183,9 @@ export function PhoneProject({ app, project }: Props) {
     <div className="phone-app">
       <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
+      {!isTextShown(screens.screen, app.writingMode.view) && (
+        <TabBar tab={tabOf(screens.screen, app.writingMode.view)} onTab={screens.onTab} />
+      )}
       <Floating app={app} project={project} />
     </div>
   );

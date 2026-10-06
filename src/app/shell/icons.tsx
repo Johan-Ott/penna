@@ -91,3 +91,19 @@ export const ChevronDownIcon = () => (
     <path d="m6 9 6 6 6-6" />
   </Icon>
 );
+
+export const TreeIcon = () => (
+  <Icon>
+    <path d="M4 6h16" />
+    <path d="M8 12h12" />
+    <path d="M8 18h12" />
+  </Icon>
+);
+
+export const ContentsIcon = () => (
+  <Icon>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M3 10h18" />
+    <path d="M9 10v10" />
+  </Icon>
+);

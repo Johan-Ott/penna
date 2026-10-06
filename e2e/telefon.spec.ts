@@ -44,11 +44,21 @@ test("selecting a word shows the bar with Fotnot", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Fotnot" })).toBeVisible();
 });
 
-test("the palette on the phone offers only what the phone can show", async ({ page }) => {
-  await page.getByRole("button", { name: "Sök" }).first().click();
-  await page.keyboard.type("Gå till");
+test("the tabs go to Innehåll and Publicera, and back to Boken", async ({ page }) => {
+  await page.getByRole("button", { name: "Innehåll" }).click();
+  await expect(page.locator(".contents-view")).toBeVisible();
+  await page.getByRole("button", { name: "Publicera" }).click();
+  await expect(page.locator(".phone-view")).toContainText(/Exportera|Design/);
 
-  await expect(page.getByText("Gå till Innehåll")).toBeHidden();
+  await page.getByRole("button", { name: "Boken" }).click();
+
+  await expect(page.getByRole("button", { name: /Fortsätt skriva/ })).toBeVisible();
+});
+
+test("the palette on the phone has no folder to pick", async ({ page }) => {
+  await page.getByRole("button", { name: "Sök" }).first().click();
+  await page.keyboard.type("mapp");
+
   await expect(page.getByText("Öppna projektmapp…")).toBeHidden();
 });
 
@@ -77,4 +87,11 @@ test("a scene in Boken has its menu behind ⋯", async ({ page }) => {
   await page.getByRole("button", { name: "Meny för Köket" }).click();
 
   await expect(page.getByRole("menuitem", { name: /Ny scen efter/ })).toBeVisible();
+});
+
+test("Läs kapitlet reads the chapter on the phone", async ({ page }) => {
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+  await page.getByRole("button", { name: "Läs kapitlet" }).click();
+
+  await expect(page.locator(".read-view")).toContainText("Brevet låg på köksbordet");
 });

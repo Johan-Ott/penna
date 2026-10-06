@@ -5,7 +5,7 @@ import { paletteEntries, type PaletteContext } from "./paletteEntries.js";
 
 export function usePalette(context: PaletteContext | null) {
   const [isOpen, setOpen] = useState(false);
-  // A phone has its own screens and no folders to pick, so those entries are left out there.
+  // A phone has no folders to pick, so that entry is left out there.
   const isPhone = usePhone();
   useShortcut("k", () => setOpen((current) => !current));
   return {

@@ -1,36 +1,22 @@
 import type { MouseEvent } from "react";
 import type { AppState } from "../App.js";
-import { ContentsView } from "../contents/ContentsView.js";
-import { ReadView } from "../contents/ReadView.js";
-import { cursorAtBlock } from "../../editor/commands.js";
-import { openScene } from "../sceneSession.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { ProgressPopover } from "../progress/ProgressPopover.js";
-import { PublishView } from "../publish/PublishView.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
 import { useShortcut } from "../useShortcut.js";
 import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
+import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";
 import { Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
-import type { PageMap } from "../../project/pageMap.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { t } from "../../i18n/i18n.js";
-import { SyncView } from "../sync/SyncReview.js";
 
 type ScreenProps = { app: AppState; project: Project };
-
-// A failed export names the scene by title, so it is found by its title.
-function openSceneTitled(app: AppState, project: Project, title: string) {
-  const id = Object.keys(project.summaries).find((key) => project.summaries[key]?.title === title);
-  if (!id) return;
-  app.writingMode.setView("skriv");
-  openIfOnDisk(app.session, project, id);
-}
 
 function useScreenNavigation({ app, project }: ScreenProps) {
   const { writingMode, session } = app;
@@ -65,55 +51,19 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
   );
 }
 
-function openAt(app: AppState, project: Project, sceneId: string, blockIndex: number) {
-  app.writingMode.setView("skriv");
-  void openScene(app.session, project.dir, sceneId).then(
-    (isOpen) => isOpen && app.editor.run(cursorAtBlock(blockIndex)),
-  );
-}
-
-function Contents({ app, project, pageMap }: ScreenProps & { pageMap: PageMap | null }) {
-  return (
-    <ContentsView
-      project={project}
-      pageMap={pageMap}
-      onOpenScene={sidebarProps(app, project).onOpenScene}
-      onChangeTree={(tree) => void app.updateTree(tree)}
-      onSaveFields={(fields) => void app.updateFields(fields)}
-      onSetStatus={(ids, status) =>
-        ids.forEach((id) => app.treeHandlers.onSetSceneStatus(id, status))
-      }
-      onReadBook={() => app.writingMode.read(null)}
-    />
-  );
-}
-
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const isCounting = writingMode.view === "innehall" || writingMode.settings.showPages;
   const pageMap = usePageMap(project, app.startup.preferences.authorName, isCounting);
+  const views = { app, project, onBack: () => writingMode.setView("skriv") };
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       {writingMode.view === "innehall" && (
-        <Contents app={app} project={project} pageMap={pageMap} />
+        <ContentsScreen app={app} project={project} pageMap={pageMap} />
       )}
-      {writingMode.view === "synk" && (
-        <SyncView
-          project={project}
-          review={app.syncReview}
-          onBack={() => writingMode.setView("skriv")}
-        />
-      )}
-      {writingMode.view === "las" && (
-        <ReadView
-          project={project}
-          chapterId={writingMode.readChapterId}
-          settings={writingMode.settings}
-          onOpenAt={(sceneId, blockIndex) => openAt(app, project, sceneId, blockIndex)}
-          onBack={() => writingMode.setView("skriv")}
-        />
-      )}
+      {writingMode.view === "synk" && <SyncScreen {...views} />}
+      {writingMode.view === "las" && <ReadScreen {...views} />}
     </div>
   );
 }
@@ -165,13 +115,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
       <div className="sidebar-backdrop" onClick={() => writingMode.setSidebarOpen(false)} />
       <MainCard app={app} project={project} />
       {isPublishing && (
-        <PublishView
-          project={project}
-          generalAuthor={app.startup.preferences.authorName}
-          onSaveFields={(fields) => void app.updateFields(fields)}
-          onOpenScene={(title) => openSceneTitled(app, project, title)}
-          onBack={() => writingMode.setView("skriv")}
-        />
+        <PublishScreen app={app} project={project} onBack={() => writingMode.setView("skriv")} />
       )}
       <Floating app={app} project={project} />
       {menu.menu}

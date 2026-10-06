@@ -4,7 +4,8 @@ export type PhoneScreen =
   | { kind: "book" }
   | { kind: "text"; sceneId: string }
   | { kind: "sort"; sortId: string }
-  | { kind: "sync" };
+  /** Innehåll, Läs, Publicera or Från synken, as the writing mode's view says. */
+  | { kind: "view" };
 
 /** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {

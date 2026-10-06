@@ -204,7 +204,6 @@
   font-size: 18px;
 }
 
-.phone-text .read-link,
 .phone-text .chapter-title {
   display: none;
 }
@@ -385,4 +384,95 @@
 .phone-text .review-close {
   width: 44px;
   height: 44px;
+}
+
+/* The four tabs along the bottom: Boken, Skriv, Innehåll, Publicera. */
+.phone-app {
+  --phone-tabs: calc(56px + env(safe-area-inset-bottom));
+  padding-bottom: var(--phone-tabs);
+}
+
+.phone-tabs {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: var(--phone-tabs);
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.phone-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font: inherit;
+  font-size: 11px;
+}
+
+.phone-tab.chosen {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Innehåll, Läs, Publicera and Från synken fill the screen above the tabs. */
+.phone-view {
+  position: fixed;
+  inset: 0 0 var(--phone-tabs);
+  z-index: 10;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Innehåll on a phone: each chapter's title and synopsis on top, when, words and status below. */
+.phone-view .contents-column {
+  max-width: calc(100% - 32px);
+  padding: 24px 0 32px;
+}
+
+.phone-view .contents-header h1 {
+  font-size: 30px;
+}
+
+.phone-view .contents-row {
+  grid-template-columns: 1fr auto auto;
+  gap: 4px 16px;
+}
+
+.phone-view .contents-main {
+  grid-column: 1 / -1;
+}
+
+/* Publicera on a phone: the choices first, the preview under them, all in one scroll. */
+.phone-view .publish {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.phone-view .publish-steps {
+  flex-shrink: 0;
+  padding: 12px 8px 0;
+  overflow: visible;
+}
+
+.phone-view .publish-back {
+  display: none;
+}
+
+.phone-view .publish-preview {
+  flex-shrink: 0;
+  min-height: 480px;
+  margin: 16px;
 }
