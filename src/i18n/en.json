@@ -598,9 +598,6 @@
   "Versioner: varje text sparas som en ny version vid större ändringar. Meny, Versioner av den här texten.": "Versions: each text is saved as a new version after larger changes. Menu, Versions of this text.",
   "Säkerhetskopior: hela boken kopieras när den öppnas och var halvtimme. Meny, Säkerhetskopior.": "Backups: the whole book is copied when it opens and every half hour. Menu, Backups.",
   "Synk: koppla din Google Drive under Synk så finns boken på alla dina enheter.": "Sync: connect your Google Drive under Sync to have the book on all your devices.",
-  "Under Publicera väljer du format, typsnitt, kapitelöppningar och scenbrytning, och ser boken som den blir tryckt.": "Under Publish you choose the size, typefaces, chapter openings and scene break, and see the book as it will be printed.",
-  "Känt i alfaversionen": "Known in the alpha",
-  "Penna finns för Windows och Android. Mac och iPad kommer senare.": "Penna runs on Windows and Android. Mac and iPad come later.",
   "Windows kan varna för en okänd utgivare när du installerar. Välj Mer info och sedan Kör ändå.": "Windows may warn about an unknown publisher when you install. Choose More info, then Run anyway.",
   "Hittar du något fel?": "Found something wrong?",
   "Meny, Skicka feedback. Allt läses, och små saker är lika välkomna som stora.": "Menu, Send feedback. Everything is read, and small things are as welcome as big ones.",
@@ -620,7 +617,6 @@
   "Klar, behåll resten som det är": "Done, keep the rest as it is",
   "Alla ändringar är genomgångna.": "Every change has been gone through.",
   "Läs in redaktörens Word-fil…": "Read in the editor's Word file…",
-  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject.",
   "{title}, jämförd med {when}": "{title}, compared with {when}",
   "Bredvid": "Beside",
   "Jämför bredvid texten": "Compare beside the text",
@@ -643,5 +639,11 @@
   "Uppdaterar…": "Updating…",
   "Kopian kunde inte sparas: {reason}": "The copy could not be saved: {reason}",
   "Den senaste automatiska kopian kunde inte sparas: {reason}": "The latest automatic copy could not be saved: {reason}",
-  "Bokens mapp i Drive är tom eller borta. Inget har ändrats här.": "The book's folder in Drive is empty or gone. Nothing has changed here."
+  "Bokens mapp i Drive är tom eller borta. Inget har ändrats här.": "The book's folder in Drive is empty or gone. Nothing has changed here.",
+  "Under Publicera väljer du format, typsnitt och scenbrytning, och ser boken som den blir tryckt. Kapitelöppningar är mallar med bilder, och varje kapitel kan byta ut bilderna.": "Under Publish you choose the size, typefaces and scene break, and see the book as it will be printed. Chapter openings are templates with pictures, and each chapter can swap the pictures.",
+  "Känt i den tidiga versionen": "Known in the early version",
+  "Penna finns för Windows och Android. Mac-versionen byggs men är inte signerad eller prövad än, och iPad kommer senare.": "Penna runs on Windows and Android. The Mac version is built but not yet signed or tried, and iPad comes later.",
+  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den på datorn under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in on the computer under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject.",
+  "Bilder: paletten, Infoga bild…, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.": "Pictures: the palette, Insert image…, puts a map or a photo in the text, narrow, wide or on a page of its own.",
+  "Bredvid: högerklicka på en scen i sidomenyn och välj Öppna bredvid, eller jämför en äldre version bredvid texten under Versioner.": "Beside: right-click a scene in the sidebar and choose Open beside, or compare an older version beside the text under Versions."
 }

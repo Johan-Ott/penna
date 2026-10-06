@@ -11,6 +11,12 @@ const SECTIONS: [string, string[]][] = [
       t(
         "Delar, kapitel och scener ordnar du i sidomenyn. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.",
       ),
+      t(
+        "Bilder: paletten, Infoga bild…, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
+      ),
+      t(
+        "Bredvid: högerklicka på en scen i sidomenyn och välj Öppna bredvid, eller jämför en äldre version bredvid texten under Versioner.",
+      ),
     ],
   ],
   [
@@ -30,20 +36,22 @@ const SECTIONS: [string, string[]][] = [
     t("Publicera"),
     [
       t(
-        "Under Publicera väljer du format, typsnitt, kapitelöppningar och scenbrytning, och ser boken som den blir tryckt.",
+        "Under Publicera väljer du format, typsnitt och scenbrytning, och ser boken som den blir tryckt. Kapitelöppningar är mallar med bilder, och varje kapitel kan byta ut bilderna.",
       ),
       t(
         "Exportera som PDF för tryck, som e-bok (EPUB), som manus i Word, eller tryckomslaget med rygg.",
       ),
       t(
-        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
+        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den på datorn under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
       ),
     ],
   ],
   [
-    t("Känt i alfaversionen"),
+    t("Känt i den tidiga versionen"),
     [
-      t("Penna finns för Windows och Android. Mac och iPad kommer senare."),
+      t(
+        "Penna finns för Windows och Android. Mac-versionen byggs men är inte signerad eller prövad än, och iPad kommer senare.",
+      ),
       t(
         "Windows kan varna för en okänd utgivare när du installerar. Välj Mer info och sedan Kör ändå.",
       ),

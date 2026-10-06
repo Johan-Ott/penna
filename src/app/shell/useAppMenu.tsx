@@ -11,7 +11,7 @@ import { appMenu } from "./appMenu.js";
 import { t } from "../../i18n/i18n.js";
 
 // The dialogs the menu opens come with it.
-function useMenuDialogs({ app, project }: { app: AppState; project: Project }) {
+export function useMenuDialogs({ app, project }: { app: AppState; project: Project }) {
   const dirs = [project.dir, app.series?.dir].filter((dir) => dir !== undefined);
   const backups = useBackupsDialog(app, dirs);
   const feedback = useFeedbackDialog();

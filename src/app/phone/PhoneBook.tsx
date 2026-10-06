@@ -6,6 +6,7 @@ import type { AppState } from "../App.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
 import { sidebarProps } from "../paneProps.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";
+import { useMenuDialogs } from "../shell/useAppMenu.js";
 import { TreeView } from "../tree/TreeView.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -87,7 +88,7 @@ function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
 }
 
 // A phone has no keyboard shortcuts or folders to pick, so the menu is short.
-function phoneMenu(app: AppState): MenuItem[] {
+function phoneMenu(app: AppState, dialogs: ReturnType<typeof useMenuDialogs>): MenuItem[] {
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
     ...(app.scene
@@ -99,16 +100,21 @@ function phoneMenu(app: AppState): MenuItem[] {
         ]
       : []),
     { label: t("Exportera allt som zip"), onSelect: app.zip.backup },
+    ...(dialogs.backups.open
+      ? [{ label: t("Säkerhetskopior…"), onSelect: dialogs.backups.open }]
+      : []),
     {
       label: t("Inställningar"),
       separatorBefore: true,
       onSelect: () => app.writingMode.settingsDialog.open(),
     },
+    { label: t("Skicka feedback…"), onSelect: dialogs.feedback.open },
   ];
 }
 
 function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
-  const menu = useMenuButton(t("Meny"), phoneMenu(app));
+  const dialogs = useMenuDialogs({ app, project });
+  const menu = useMenuButton(t("Meny"), phoneMenu(app, dialogs));
   return (
     <header className="phone-bar">
       <button className="topbar-button" aria-label={t("Meny")} onClick={menu.open}>
@@ -119,6 +125,7 @@ function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project
         <SearchIcon />
       </button>
       {menu.menu}
+      {dialogs.layers}
     </header>
   );
 }
