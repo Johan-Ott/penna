@@ -131,3 +131,10 @@ test("the phone's menu has Serie… and the editor's Word file", async ({ page }
   await expect(page.getByRole("menuitem", { name: "Serie…" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: /redaktörens Word-fil/ })).toBeVisible();
 });
+
+test("Öppna bredvid from Boken shows the other text over the whole screen", async ({ page }) => {
+  await page.getByRole("button", { name: "Meny för Isen" }).click();
+  await page.getByRole("menuitem", { name: "Öppna bredvid" }).click();
+
+  await expect(page.locator(".beside-pane")).toContainText("Isen bar.");
+});

@@ -103,11 +103,21 @@ function useScreenOpensText(app: AppState, screen: PhoneScreen) {
   }, [screen]);
 }
 
+// Öppna bredvid from Boken: what is beside the text shows over the text screen.
+function useBesideShowsText(app: AppState, showText: (id: string) => void) {
+  const { beside } = app.writingMode;
+  const sceneId = app.scene?.id;
+  useEffect(() => {
+    if (beside && sceneId) showText(sceneId);
+  }, [beside, sceneId, showText]);
+}
+
 function usePhoneScreens({ app, project }: Props) {
   const navigation = usePhoneNavigation();
   const { show, screen } = navigation;
   const showText = useCallback((sceneId: string) => show({ kind: "text", sceneId }), [show]);
   useTextFollowsScene(app.scene?.id ?? null, screen, showText);
+  useBesideShowsText(app, showText);
   useScreenOpensText(app, screen);
   // Granska covers the whole screen, so it closes when another text or screen shows.
   const { setReviewOpen } = app.writingMode;

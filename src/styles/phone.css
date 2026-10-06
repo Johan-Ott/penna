@@ -397,7 +397,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 20;
+  z-index: 5;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   height: var(--phone-tabs);
@@ -520,4 +520,53 @@
   right: 8px;
   left: 8px;
   width: auto;
+}
+
+/* Another text or a version beside this one: on a phone it takes the screen, with Stäng on top. */
+.phone-text .beside-pane {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  width: auto;
+  min-width: 0;
+  padding-top: max(16px, env(safe-area-inset-top));
+  border-left: 0;
+}
+
+/* Versioner on a phone: the whole screen, the list of versions above the text of the chosen one. */
+@media (max-width: 600px) {
+  .snapshots-dialog {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    max-height: none;
+    padding-top: max(16px, env(safe-area-inset-top));
+    border: 0;
+    border-radius: 0;
+  }
+
+  .snapshots {
+    flex-direction: column;
+    flex-grow: 1;
+    height: auto;
+    max-height: none;
+  }
+
+  .snapshot-list {
+    width: auto;
+    max-height: 30vh;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* Over the phone's own screens and tabs, and a menu opened in a dialog over the dialog. */
+@media (max-width: 600px) {
+  .dialog-backdrop {
+    z-index: 25;
+  }
+
+  .menu {
+    z-index: 35;
+  }
 }
