@@ -574,3 +574,25 @@
 .phone-card .sidebar-notices {
   margin: 0;
 }
+
+/* A chapter opening template on a phone: the page on top, its settings under it. */
+@media (max-width: 600px) {
+  .opening-dialog {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    overflow-y: auto;
+    padding-top: max(16px, env(safe-area-inset-top));
+    border: 0;
+    border-radius: 0;
+  }
+
+  .opening-editor {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .opening-page {
+    height: min(52vh, 460px);
+  }
+}
