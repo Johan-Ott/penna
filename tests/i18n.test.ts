@@ -12,11 +12,12 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-// Every `t("…")` in the app, read straight from the source as a reviewer would.
-const TRANSLATED = /\bt\(\s*"((?:[^"\\]|\\.)*)"/g;
+// Every `t("…")` in the app, read straight from the source as a reviewer would. A text with
+// quotes in it is written t('…').
+const TRANSLATED = /\bt\(\s*(?:"((?:[^"\\]|\\.)*)"|'([^'\\]*)')/g;
 const usedTexts = sourceFiles("src").flatMap((path) =>
-  [...readFileSync(path, "utf8").matchAll(TRANSLATED)].map((match) =>
-    JSON.parse(`"${match[1] ?? ""}"`),
+  [...readFileSync(path, "utf8").matchAll(TRANSLATED)].map(
+    (match) => match[2] ?? JSON.parse(`"${match[1] ?? ""}"`),
   ),
 );
 

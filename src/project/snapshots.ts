@@ -120,18 +120,18 @@ export async function snapshotOnSave(
 }
 
 export const MONTHS = [
-  "jan",
-  "feb",
-  "mars",
-  "apr",
-  "maj",
-  "juni",
-  "juli",
-  "aug",
-  "sep",
-  "okt",
-  "nov",
-  "dec",
+  t("jan"),
+  t("feb"),
+  t("mars"),
+  t("apr"),
+  t("maj"),
+  t("juni"),
+  t("juli"),
+  t("aug"),
+  t("sep"),
+  t("okt"),
+  t("nov"),
+  t("dec"),
 ];
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -141,7 +141,7 @@ export function snapshotWhen(time: number, now: number): string {
   const days = Math.round(
     (new Date(now).setHours(0, 0, 0, 0) - new Date(time).setHours(0, 0, 0, 0)) / DAY,
   );
-  if (days === 0) return `Idag ${clock}`;
+  if (days === 0) return t("Idag {clock}", { clock });
   if (days === 1) return t("Igår {clock}", { clock });
   return `${date.getDate()} ${MONTHS[date.getMonth()] ?? ""} ${clock}`;
 }

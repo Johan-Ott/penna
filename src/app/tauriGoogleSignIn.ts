@@ -10,6 +10,7 @@ import {
   type Client,
 } from "../sync/googleAuth.js";
 import type { GoogleSignIn } from "./platform.js";
+import { t } from "../i18n/i18n.js";
 
 // Android needs no client id: Google knows the app by package name and signing key.
 const COMPUTER: Client = {
@@ -28,7 +29,7 @@ export const androidSignIn: GoogleSignIn = {
 };
 
 async function signInInBrowser() {
-  if (!COMPUTER.secret) throw new Error("Den här versionen av Penna saknar Google-nyckeln");
+  if (!COMPUTER.secret) throw new Error(t("Den här versionen av Penna saknar Google-nyckeln"));
   const { verifier, challenge } = await keyChallenge();
   const state = crypto.randomUUID();
   const answer = await invoke<{ redirect: string; query: string }>("sign_in_in_browser", {
@@ -41,7 +42,7 @@ async function signInInBrowser() {
 // Kept in the system's password store, never in a file.
 async function lastingKey() {
   const key = await invoke<string | null>("saved_google_key");
-  if (!key) throw new Error("Inte inloggad");
+  if (!key) throw new Error(t("Inte inloggad"));
   return key;
 }
 

@@ -15,7 +15,7 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Synk"), SyncTab],
   [t("Hjälp"), HelpTab],
   [t("Kortkommandon"), ShortcutsTab],
-  ["Om Penna", AboutTab],
+  [t("Om Penna"), AboutTab],
 ];
 // A phone has no keyboard to take shortcuts from.
 const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));

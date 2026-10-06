@@ -15,6 +15,7 @@ export interface TypstAssets {
 }
 
 import { TypstError } from "./typstError.js";
+import { t } from "../i18n/i18n.js";
 
 const MAIN = "/main.typ";
 const PDF = 1;
@@ -51,7 +52,7 @@ async function compile(compiler: TypstCompiler, source: string, files: TypstFile
   const output = await compiler.compile({ mainFilePath: MAIN, format, diagnostics: "full" });
   const errors = (output.diagnostics ?? []).filter((found) => found.severity === "error");
   if (!output.result || errors.length > 0) {
-    throw new TypstError(errors[0]?.message ?? "Typst kunde inte sätta boken.");
+    throw new TypstError(errors[0]?.message ?? t("Typst kunde inte sätta boken."));
   }
   return output.result;
 }

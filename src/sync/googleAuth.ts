@@ -1,3 +1,5 @@
+import { t } from "../i18n/i18n.js";
+
 // PKCE: a stolen code is useless without this sign-in's own secret word.
 
 const SIGN_IN = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -47,7 +49,8 @@ export function signInUrl(client: Client, challenge: string, state: string) {
 export function codeFrom(query: string, state: string) {
   const answer = new URLSearchParams(query);
   const code = answer.get("code");
-  if (answer.get("state") !== state) throw new Error("Svaret kom inte från den här inloggningen");
+  if (answer.get("state") !== state)
+    throw new Error(t("Svaret kom inte från den här inloggningen"));
   if (!code) throw new Error(answer.get("error") ?? "Google gav ingen kod");
   return code;
 }
@@ -86,7 +89,7 @@ export async function exchangeCode(
     grant_type: "authorization_code",
   };
   const { access, lastingKey } = await askForToken(fetcher, form, now);
-  if (!lastingKey) throw new Error("Google gav ingen bestående nyckel");
+  if (!lastingKey) throw new Error(t("Google gav ingen bestående nyckel"));
   return { access, lastingKey };
 }
 

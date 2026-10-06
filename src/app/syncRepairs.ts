@@ -10,6 +10,7 @@ import {
   type DiskConflict,
   type SceneSession,
 } from "./sceneSession.js";
+import { t } from "../i18n/i18n.js";
 
 // Dropbox: "ID (Elins iPhone's conflicted copy 2026-10-03).md", in Swedish "...:s motstridiga
 // kopia". OneDrive: "ID-ELINS-LAPTOP.md". iCloud's "ID 2.md" names no device.
@@ -40,8 +41,11 @@ async function copyAsNewScene(fileSystem: FileSystem, dir: string, copy: SceneFi
   const text = await fileSystem.readText(joinPath(scenesDir(dir), copy.fileName));
   const { frontMatter, body } = splitSceneFile(text);
   const device = copyDevice(copy.fileName);
-  const suffix = device ? `(från ${device})` : "(andra versionen)";
-  return createScene(fileSystem, dir, `${sceneTitle(frontMatter) ?? "Scen"} ${suffix}`, body);
+  const title = sceneTitle(frontMatter) ?? t("Scen");
+  const named = device
+    ? t("{title} (från {device})", { title, device })
+    : t("{title} (andra versionen)", { title });
+  return createScene(fileSystem, dir, named, body);
 }
 
 /** "both" returns the id of the new scene made from the copy. */
@@ -57,7 +61,12 @@ export async function keepVersion(
   if (!(await session.autosave.flush())) return null;
   const newId = choice === "both" ? await copyAsNewScene(fileSystem, dir, copy) : null;
   if (choice === "theirs") {
-    await setAside(fileSystem, dir, scenePath, `${copy.sceneId} (den här datorns).md`);
+    await setAside(
+      fileSystem,
+      dir,
+      scenePath,
+      t("{id} (den här datorns).md", { id: copy.sceneId }),
+    );
     await fileSystem.rename(copyPath, scenePath);
     if (isOpen(session, dir, copy.sceneId)) await openScene(session, dir, copy.sceneId);
   } else {

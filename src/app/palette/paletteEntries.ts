@@ -100,7 +100,7 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
 function writingEntries(context: PaletteContext): PaletteEntry[] {
   const { run } = context;
   const styles = (Object.keys(STYLE_LABELS) as StyleChoice[]).map((style) =>
-    command(`Stil: ${STYLE_LABELS[style]}`, () => run(setStyle(style))),
+    command(t("Stil: {style}", { style: STYLE_LABELS[style] }), () => run(setStyle(style))),
   );
   return [
     command(t("Ny scen"), () => context.add("scene"), "Ctrl+Alt+N"),
@@ -155,7 +155,7 @@ function textEntries({ changeSettings: change }: PaletteContext): PaletteEntry[]
       "Ctrl+0",
     ),
     ...FONTS.map(([font, label]) =>
-      command(`Typsnitt: ${label}`, () => change(changeTo({ font }))),
+      command(t("Typsnitt: {font}", { font: label }), () => change(changeTo({ font }))),
     ),
     command(t("Radavstånd: nästa"), () =>
       change((current) => ({ ...current, lineHeight: nextLineHeight(current.lineHeight) })),

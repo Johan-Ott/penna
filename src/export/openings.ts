@@ -1,3 +1,5 @@
+import { t } from "../i18n/i18n.js";
+
 // A chapter opening is a template: picture areas on the page and where the heading sits.
 // The book has a few; each chapter picks one and can put its own pictures in its areas.
 
@@ -91,7 +93,10 @@ function templateOf(value: unknown, index: number): OpeningTemplate {
   const areas = Array.isArray(stored["areas"]) ? stored["areas"] : [];
   return {
     id: typeof stored["id"] === "string" ? stored["id"] : `mall${index + 1}`,
-    name: typeof stored["name"] === "string" ? stored["name"] : `Mall ${index + 1}`,
+    name:
+      typeof stored["name"] === "string"
+        ? stored["name"]
+        : t("Mall {number}", { number: index + 1 }),
     headingTop: share(stored["headingTop"], 0.24),
     headingAlign: stored["headingAlign"] === "vanster" ? "vanster" : "mitten",
     areas: areas.map(areaOf),

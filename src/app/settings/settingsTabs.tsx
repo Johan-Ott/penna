@@ -58,7 +58,7 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   [
     "typography",
     t("Svensk typografi medan du skriver"),
-    'Två bindestreck blir talstreck och "citat" blir ”citat”.',
+    t('Två bindestreck blir talstreck och "citat" blir ”citat”.'),
   ],
   ["review", t("Granskning"), t("Namnstavning och upprepningar, i texten och i en panel bredvid.")],
 ];
