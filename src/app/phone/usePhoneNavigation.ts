@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
 export type PhoneScreen =
-  { kind: "book" } | { kind: "text"; sceneId: string } | { kind: "sort"; sortId: string };
+  | { kind: "book" }
+  | { kind: "text"; sceneId: string }
+  | { kind: "sort"; sortId: string }
+  | { kind: "sync" };
 
 /** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {

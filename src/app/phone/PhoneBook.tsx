@@ -17,6 +17,7 @@ interface PhoneBookProps {
   onOpenText: (id: string) => void;
   onContinue: () => void;
   onSort: (sortId: string) => void;
+  onSync: () => void;
 }
 
 const format = (words: number) => words.toLocaleString(numberLocale());
@@ -136,6 +137,11 @@ export function PhoneBook(props: PhoneBookProps) {
     <div className="phone-screen">
       <PhoneBookHeader app={app} project={project} />
       <main className="phone-card">
+        {app.syncReview.items.length > 0 && (
+          <button className="link-button phone-sync" onClick={props.onSync}>
+            {t("Från synken: {count} att se över", { count: app.syncReview.items.length })}
+          </button>
+        )}
         <TodayCard app={app} project={project} />
         <ContinueButton {...props} />
         <TreeView {...sidebarProps(app, project)} onOpenScene={props.onOpenText} isBookOnly />

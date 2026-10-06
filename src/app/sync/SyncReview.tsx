@@ -68,7 +68,7 @@ function SyncHeader(props: { onBack: () => void; onDone: () => void }) {
   return (
     <header className="sync-header">
       <button className="link-button quiet" onClick={props.onBack}>
-        {t("← Tillbaka till texten")}
+        {t("← Tillbaka")}
       </button>
       <h2>{t("Från synken")}</h2>
       <button className="button primary small" onClick={props.onDone}>

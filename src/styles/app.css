@@ -1449,6 +1449,36 @@ button.book-cover:hover {
   color: var(--text-muted);
 }
 
+/* On a phone the list sits above, and the two versions one under the other. */
+@media (max-width: 600px) {
+  .sync-view {
+    padding: 16px;
+  }
+
+  .sync-body {
+    flex-direction: column;
+  }
+
+  .sync-list {
+    width: auto;
+    max-height: 35%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sync-pane {
+    padding: 16px 0;
+  }
+
+  .sync-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.phone-sync {
+  align-self: flex-start;
+}
+
 .sync-columns.choice del {
   text-decoration: none;
 }

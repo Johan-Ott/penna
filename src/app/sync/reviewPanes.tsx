@@ -5,8 +5,10 @@ import { diffWords } from "../../manuscript/wordDiff.js";
 import type { FileChange, NodeChange, NodeConflict } from "../../sync/syncLog.js";
 import { platform } from "../platform.js";
 import type { DiskConflict } from "../sceneSession.js";
+import type { SceneFileRef } from "../../storage/syncFiles.js";
 import { copyDevice, readSyncCopy } from "../syncRepairs.js";
 import type { Project } from "../useProject.js";
+import { canTakeBack } from "./takeBack.js";
 import type { ReviewItem, SyncReview } from "./useSyncReview.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -49,6 +51,7 @@ function SideBySide(props: {
   after: string;
   labels: [string, string];
   actions?: [ReactNode, ReactNode];
+  isChoice?: boolean;
 }) {
   const parts = diffWords(props.before, props.after);
   const side = (keep: "removed" | "added") =>
@@ -63,7 +66,7 @@ function SideBySide(props: {
     });
   return (
     // Two versions to choose between: neither is struck out, only the difference is marked.
-    <div className={props.actions ? "sync-columns choice" : "sync-columns"}>
+    <div className={props.isChoice ? "sync-columns choice" : "sync-columns"}>
       {(["removed", "added"] as const).map((keep, index) => (
         <section key={keep} className="sync-column">
           <span className="design-section">{props.labels[index]}</span>
@@ -75,21 +78,26 @@ function SideBySide(props: {
   );
 }
 
-const KeepButton = ({ onClick }: { onClick: () => void }) => (
+const Choice = ({ label, onClick }: { label: string; onClick: () => void }) => (
   <button className="button secondary small" onClick={onClick}>
-    {t("Behåll den här")}
+    {label}
   </button>
 );
+
+function useCopyVersions(dir: string, copy: SceneFileRef) {
+  const [versions, setVersions] = useState<DiskConflict | null>(null);
+  useEffect(() => {
+    void readSyncCopy(platform.fileSystem, dir, copy).then(setVersions);
+  }, [dir, copy]);
+  return versions;
+}
 
 function CopyPane({
   project,
   review,
   item,
 }: PaneProps & { item: Extract<ReviewItem, { kind: "copy" }> }) {
-  const [versions, setVersions] = useState<DiskConflict | null>(null);
-  useEffect(() => {
-    void readSyncCopy(platform.fileSystem, project.dir, item.copy).then(setVersions);
-  }, [project.dir, item.copy]);
+  const versions = useCopyVersions(project.dir, item.copy);
   if (!versions) return null;
   const keep = (choice: "mine" | "theirs" | "both") => () =>
     void review.chooseCopy(item.copy, choice);
@@ -100,9 +108,10 @@ function CopyPane({
         before={bodyOf(versions.editorText)}
         after={bodyOf(versions.diskText)}
         labels={[t("Den här enheten"), other]}
+        isChoice
         actions={[
-          <KeepButton key="mine" onClick={keep("mine")} />,
-          <KeepButton key="theirs" onClick={keep("theirs")} />,
+          <Choice key="mine" label={t("Behåll min")} onClick={keep("mine")} />,
+          <Choice key="theirs" label={t("Behåll den andra")} onClick={keep("theirs")} />,
         ]}
       />
       <button className="button secondary small" onClick={keep("both")}>
@@ -118,39 +127,71 @@ function ConflictPane({ review, conflict }: { review: SyncReview; conflict: Node
       before={shown(conflict.here)}
       after={shown(conflict.drive)}
       labels={[t("Den här enheten"), t("Från Drive")]}
+      isChoice
       actions={[
-        <KeepButton key="here" onClick={() => void review.chooseNode(conflict, false)} />,
-        <KeepButton key="drive" onClick={() => void review.chooseNode(conflict, true)} />,
+        <Choice
+          key="here"
+          label={t("Behåll min")}
+          onClick={() => void review.chooseNode(conflict, false)}
+        />,
+        <Choice
+          key="drive"
+          label={t("Behåll Drives")}
+          onClick={() => void review.chooseNode(conflict, true)}
+        />,
       ]}
     />
   );
 }
 
-function NodePane({ change }: { change: NodeChange }) {
-  if (change.kind !== "changed") return <p>{t("Strukturen ändrades på en annan enhet.")}</p>;
+const TAKE_BACK = {
+  added: t("Släng den nya"),
+  changed: t("Ta tillbaka min"),
+  removed: t("Lägg tillbaka"),
+  moved: "",
+};
+
+// What came from Drive is already here: Godta keeps it, the other button goes back to before.
+function changeActions(
+  review: SyncReview,
+  change: FileChange | NodeChange,
+): [ReactNode, ReactNode] {
+  const settle = (isTakenBack: boolean) => () => void review.settle(change, isTakenBack);
+  return [
+    canTakeBack(change) && (
+      <Choice key="back" label={TAKE_BACK[change.kind]} onClick={settle(true)} />
+    ),
+    <Choice key="accept" label={t("Godta")} onClick={settle(false)} />,
+  ];
+}
+
+function NodePane({ review, change }: { review: SyncReview; change: NodeChange }) {
+  const [before, after] =
+    change.kind === "changed" ? [shown(change.before), shown(change.after)] : ["", ""];
   return (
-    <SideBySide
-      before={shown(change.before)}
-      after={shown(change.after)}
-      labels={[t("Före"), t("Nu")]}
-    />
+    <>
+      {change.kind !== "changed" && <p>{t("Strukturen ändrades på en annan enhet.")}</p>}
+      <SideBySide
+        before={before}
+        after={after}
+        labels={[t("Före, här"), t("Nu, från Drive")]}
+        actions={changeActions(review, change)}
+      />
+    </>
   );
 }
 
 function FilePane({ review, change }: { review: SyncReview; change: FileChange }) {
-  if (change.before === null && change.after === null) return <p>{fileName(change.path)}</p>;
+  const isPicture = change.before === null && change.after === null;
   return (
     <>
+      {isPicture && <p>{fileName(change.path)}</p>}
       <SideBySide
         before={bodyOf(change.before)}
         after={bodyOf(change.after)}
-        labels={[t("Före"), t("Nu")]}
+        labels={[t("Före, här"), t("Nu, från Drive")]}
+        actions={changeActions(review, change)}
       />
-      {change.trashPath && (
-        <button className="button secondary small" onClick={() => void review.putBack(change)}>
-          {t("Lägg tillbaka")}
-        </button>
-      )}
     </>
   );
 }
@@ -159,6 +200,6 @@ function FilePane({ review, change }: { review: SyncReview; change: FileChange }
 export function Pane({ project, review, item }: PaneProps & { item: ReviewItem }) {
   if (item.kind === "copy") return <CopyPane project={project} review={review} item={item} />;
   if (item.kind === "conflict") return <ConflictPane review={review} conflict={item.conflict} />;
-  if (item.kind === "node") return <NodePane change={item.change} />;
+  if (item.kind === "node") return <NodePane review={review} change={item.change} />;
   return <FilePane review={review} change={item.change} />;
 }

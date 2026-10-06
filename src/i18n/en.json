@@ -681,12 +681,10 @@
   "bilderna": "pictures",
   "Del": "Part",
   "Mapp": "Folder",
-  "Behåll den här": "Keep this one",
   "Den här enheten": "This device",
   "Behåll båda, som två scener": "Keep both, as two scenes",
   "Från Drive": "From Drive",
   "Strukturen ändrades på en annan enhet.": "The structure changed on another device.",
-  "Före": "Before",
   "Lägg tillbaka": "Put back",
   "Ny": "New",
   "Ändrad": "Changed",
@@ -696,5 +694,12 @@
   "Från synken": "From the sync",
   "Inget nytt från synken.": "Nothing new from the sync.",
   "Klart": "Done",
-  "Från synken: {count} att se över": "From the sync: {count} to look at"
+  "Från synken: {count} att se över": "From the sync: {count} to look at",
+  "Behåll min": "Keep mine",
+  "Behåll Drives": "Keep Drive's",
+  "Släng den nya": "Throw away the new one",
+  "Ta tillbaka min": "Take mine back",
+  "Före, här": "Before, here",
+  "Nu, från Drive": "Now, from Drive",
+  "← Tillbaka": "← Back"
 }

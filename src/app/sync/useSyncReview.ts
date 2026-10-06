@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { insertAfter, type TreeNode } from "../../project/tree.js";
-import { joinPath, readIfThere } from "../../storage/fileSystem.js";
 import type { SceneFileRef } from "../../storage/syncFiles.js";
 import {
   emptyLog,
@@ -14,6 +13,7 @@ import {
 import { platform } from "../platform.js";
 import type { ConflictChoice, SceneSession } from "../sceneSession.js";
 import { keepVersion } from "../syncRepairs.js";
+import { takeBack, withField } from "./takeBack.js";
 import type { Project } from "../useProject.js";
 
 /** One row in the list: something to choose first, then what came from Drive. */
@@ -40,20 +40,11 @@ export function reviewItems(project: Project, log: SyncLog): ReviewItem[] {
   ];
 }
 
-function withField(tree: TreeNode[], id: string, field: string, value: unknown): TreeNode[] {
-  return tree.map((node) => {
-    if (node.id === id) return { ...node, [field]: value } as TreeNode;
-    return node.children ? { ...node, children: withField(node.children, id, field, value) } : node;
-  });
-}
-
-// Back where it was, unless a file of that name has come since.
-async function putBackFile(dir: string, change: FileChange) {
-  if (!change.trashPath) return;
-  const to = joinPath(dir, change.path);
-  if ((await readIfThere(platform.fileSystem, to)) === null)
-    await platform.fileSystem.rename(joinPath(dir, change.trashPath), to);
-}
+const withoutChange = (log: SyncLog, change: FileChange | NodeChange) => ({
+  ...log,
+  files: log.files.filter((other) => other !== change),
+  nodes: log.nodes.filter((other) => other !== change),
+});
 
 interface ReviewParts {
   project: Project | null;
@@ -96,17 +87,17 @@ export function useSyncReview({ project, session, updateTree, refresh }: ReviewP
       await updateTree(insertAfter(project.tree, { id: newId, kind: "scene" }, copy.sceneId));
     await refresh();
   };
-  const putBack = async (change: FileChange) => {
+  // Accepted or taken back, the change leaves the list.
+  const settle = async (change: FileChange | NodeChange, isTakenBack: boolean) => {
     if (!project) return;
-    await putBackFile(project.dir, change);
-    await save({ ...log, files: log.files.filter((other) => other !== change) });
+    if (isTakenBack) await takeBack({ project, session, updateTree }, change);
+    await save(withoutChange(log, change));
     await refresh();
   };
   // Seen: only the conflicts stay until they are chosen.
   const done = () => save({ ...emptyLog(), conflicts: log.conflicts });
   const items = project ? reviewItems(project, log) : [];
-  const actions = { chooseNode, chooseCopy, putBack, done };
-  return { items, ...actions };
+  return { items, chooseNode, chooseCopy, settle, done };
 }
 
 export type SyncReview = ReturnType<typeof useSyncReview>;

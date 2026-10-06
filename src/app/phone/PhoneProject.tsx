@@ -13,6 +13,7 @@ import type { Project } from "../useProject.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
+import { SyncView } from "../sync/SyncReview.js";
 import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -131,28 +132,34 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
   );
 }
 
+// The text has a screen of its own, kept while hidden; these come and go.
+function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens> }) {
+  const { app, project, screens } = props;
+  const { screen } = screens;
+  if (screen.kind === "sync")
+    return <SyncView project={project} review={app.syncReview} onBack={screens.back} />;
+  if (screen.kind === "sort")
+    return (
+      <PhoneSort app={app} sortId={screen.sortId} onOpen={screens.openText} onBack={screens.back} />
+    );
+  if (screen.kind !== "book") return null;
+  return (
+    <PhoneBook
+      app={app}
+      project={project}
+      onOpenText={screens.openText}
+      onContinue={screens.continueWriting}
+      onSort={(sortId) => screens.show({ kind: "sort", sortId })}
+      onSync={() => screens.show({ kind: "sync" })}
+    />
+  );
+}
+
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
-  const { screen } = screens;
   return (
     <div className="phone-app">
-      {screen.kind === "book" && (
-        <PhoneBook
-          app={app}
-          project={project}
-          onOpenText={screens.openText}
-          onContinue={screens.continueWriting}
-          onSort={(sortId) => screens.show({ kind: "sort", sortId })}
-        />
-      )}
-      {screen.kind === "sort" && (
-        <PhoneSort
-          app={app}
-          sortId={screen.sortId}
-          onOpen={screens.openText}
-          onBack={screens.back}
-        />
-      )}
+      <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
       <Floating app={app} project={project} />
     </div>
