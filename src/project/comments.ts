@@ -1,5 +1,5 @@
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 
 export interface Anchor {
@@ -108,7 +108,7 @@ async function keepBrokenCopy(fileSystem: FileSystem, path: string, brokenText: 
 
 export async function readComments(fileSystem: FileSystem, dir: string, sceneId: string) {
   const path = commentsPath(dir, sceneId);
-  const fileText = await fileSystem.readText(path).catch(() => null);
+  const fileText = await readIfThere(fileSystem, path);
   if (fileText === null) return [];
   try {
     const parsed: unknown = JSON.parse(fileText);

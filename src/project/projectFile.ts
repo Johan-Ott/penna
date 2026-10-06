@@ -1,5 +1,5 @@
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
 import { HEADING_FIELDS, rebuildTree, type NodeKind, type TreeNode } from "./tree.js";
 
 export interface ProjectFile {
@@ -82,7 +82,7 @@ export async function readProjectFile(
   dir: string,
   sceneIds: string[],
 ): Promise<ProjectFile> {
-  const text = await fileSystem.readText(projectPath(dir)).catch(() => null);
+  const text = await readIfThere(fileSystem, projectPath(dir));
   if (text === null) {
     return { fields: {}, tree: rebuildTree(sceneIds), repairCopy: null, isNewerFormat: false };
   }

@@ -28,24 +28,44 @@ function selectedAnchor(editor: Editor): Anchor | null {
   return anchorAt(text, fromDoc(state.selection.from), fromDoc(state.selection.to));
 }
 
+// A file that could not be read is never written, since the list in hand would replace it.
+async function readInto(
+  where: { dir: string; sceneId: string },
+  setComments: (comments: Comment[]) => void,
+  isRead: { current: boolean },
+) {
+  try {
+    setComments(await readComments(platform.fileSystem, where.dir, where.sceneId));
+    isRead.current = true;
+  } catch (error) {
+    isRead.current = false;
+    recordFailure("Kommentarerna kunde inte läsas")(error);
+  }
+}
+
 // Written one change at a time, then read again.
 function useCommentFile(project: Project | null, scene: OpenScene | null) {
   const [comments, setComments] = useState<Comment[]>([]);
   const queue = useRef(Promise.resolve());
+  const isRead = useRef(false);
   const dir = project?.dir ?? null;
   const sceneId = scene?.id ?? null;
   useEffect(() => {
     setComments([]);
+    isRead.current = false;
+  }, [dir, sceneId]);
+  useEffect(() => {
     if (!dir || !sceneId) return;
-    queue.current = queue.current.then(async () =>
-      setComments(await readComments(platform.fileSystem, dir, sceneId)),
-    );
+    queue.current = queue.current.then(() => readInto({ dir, sceneId }, setComments, isRead));
   }, [project, dir, sceneId]);
   const save = (next: Comment[]) => {
     setComments(next);
     if (!dir || !sceneId) return;
     queue.current = queue.current
-      .then(() => writeComments(platform.fileSystem, dir, sceneId, next))
+      .then(() => {
+        if (!isRead.current) throw new Error("filen kunde inte läsas");
+        return writeComments(platform.fileSystem, dir, sceneId, next);
+      })
       .catch(recordFailure("Kommentaren kunde inte sparas"));
   };
   return { comments, save };

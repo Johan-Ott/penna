@@ -27,6 +27,13 @@ describe("readProjectFile", () => {
     expect(project.isNewerFormat).toBe(true);
   });
 
+  it("fails, instead of starting over, when project.json is there but cannot be read", async () => {
+    const files = createMemoryFileSystem({ [PROJECT_PATH]: '{"title":"Vintervägen"}' });
+    files.readText = () => Promise.reject(new Error("os error 32"));
+
+    await expect(readProjectFile(files, "/bok", ["s1"])).rejects.toThrow("os error 32");
+  });
+
   it("starts a tree from the scene files when the folder has no project.json", async () => {
     const files = createMemoryFileSystem({});
 

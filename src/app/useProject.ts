@@ -4,7 +4,7 @@ import { readSceneSummaries, type SceneSummary } from "../project/sceneSummaries
 import { reconcileScenes, type TreeNode } from "../project/tree.js";
 import { openProjectFolder, type OpenedProject } from "../storage/projectFolder.js";
 import { describeSaveError, type SaveFailure } from "../storage/saveError.js";
-import { errorLog } from "./errorLog.js";
+import { errorLog, recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
 
 export interface Project extends OpenedProject {
@@ -96,10 +96,11 @@ export function useProject(onFolderChange: () => void) {
 
   const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
   // A read that finishes after the project closed is dropped, so a save on close cannot reopen it.
+  // One that fails, say while another program holds a file, keeps what is shown.
   const refresh = useCallback(async () => {
     if (!dir) return;
-    const fresh = await readProject(dir);
-    setProject((current) => (current?.dir === dir ? fresh : current));
+    const fresh = await readProject(dir).catch(recordFailure("Boken kunde inte läsas om"));
+    if (fresh) setProject((current) => (current?.dir === dir ? fresh : current));
   }, [dir]);
   const choose = useCallback(async () => {
     const folder = await platform.pickFolder();

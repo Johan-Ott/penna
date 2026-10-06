@@ -17,3 +17,13 @@ export interface FileSystem {
 export function joinPath(dir: string, name: string): string {
   return `${dir}/${name}`;
 }
+
+/** Null only when the file is missing; a file that is there but cannot be read throws. */
+export async function readIfThere(fileSystem: FileSystem, path: string) {
+  try {
+    return await fileSystem.readText(path);
+  } catch (error) {
+    if ((await fileSystem.modifiedAt(path).catch(() => null)) === null) return null;
+    throw error;
+  }
+}
