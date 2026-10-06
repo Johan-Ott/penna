@@ -8,9 +8,10 @@ interface BookshelfProps {
   knownProjects: string[];
   onOpen: (dir: string) => void;
   onNewProject: () => void;
-  onOpenFolder: () => void;
+  /** Null on a phone, where Penna keeps its books in its own folder; so is onLocate. */
+  onOpenFolder: (() => void) | null;
   onOpenExample: () => void;
-  onLocate: (book: ShelfBook) => void;
+  onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
   /** A round plus instead of the new-project book. */
@@ -30,9 +31,11 @@ function EmptyShelf(
         <button className="button primary" onClick={props.onNewProject}>
           {t("Nytt projekt")}
         </button>
-        <button className="button secondary" onClick={props.onOpenFolder}>
-          {t("Öppna mapp…")}
-        </button>
+        {props.onOpenFolder && (
+          <button className="button secondary" onClick={props.onOpenFolder}>
+            {t("Öppna mapp…")}
+          </button>
+        )}
       </div>
       <button className="link-button quiet" onClick={props.onOpenExample}>
         {t("Öppna exempelprojektet")}

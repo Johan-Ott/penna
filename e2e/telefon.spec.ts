@@ -51,3 +51,16 @@ test("the palette on the phone offers only what the phone can show", async ({ pa
   await expect(page.getByText("Gå till Innehåll")).toBeHidden();
   await expect(page.getByText("Öppna projektmapp…")).toBeHidden();
 });
+
+test("the shelf on the phone has a menu with Inställningar, and no folder to pick", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Bokhylla" }).click();
+
+  await page.getByRole("button", { name: "Meny" }).click();
+  await expect(page.getByRole("menuitem", { name: "Öppna mapp…" })).toBeHidden();
+  await page.getByRole("menuitem", { name: "Inställningar" }).click();
+
+  await expect(page.getByRole("dialog")).toBeVisible();
+});

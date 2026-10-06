@@ -9,7 +9,7 @@ interface BookProps {
   book: ShelfBook;
   index: number;
   onOpen: (dir: string) => void;
-  onLocate: (book: ShelfBook) => void;
+  onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
 }
@@ -105,9 +105,11 @@ function MissingBook({
         <span className="book-updated">
           {t("Mappen har flyttats eller döpts om. Texten finns kvar där du lade den.")}
         </span>
-        <button className="link-button" onClick={() => onLocate(book)}>
-          {t("Leta upp mappen")}
-        </button>
+        {onLocate && (
+          <button className="link-button" onClick={() => onLocate(book)}>
+            {t("Leta upp mappen")}
+          </button>
+        )}
         <button className="link-button quiet" onClick={() => onForget(book)}>
           {t("Ta bort från hyllan")}
         </button>
