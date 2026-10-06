@@ -1,3 +1,4 @@
+import { CoverFields } from "./CoverFields.js";
 import { useState, type ReactNode } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
@@ -8,7 +9,7 @@ import { BookFields } from "../exporting/BookFields.js";
 import { ExportStatus, Preview } from "../exporting/ExportPanels.js";
 import { useCover } from "../exporting/useCover.js";
 import { useExport, type ExportChoices, type ExportFormat } from "../exporting/useExport.js";
-import { Choice } from "../settings/controls.js";
+import { Choice } from "../controls.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -41,6 +42,12 @@ const FORMATS: [ExportFormat, string, string, string][] = [
     t("Exportera tryck-PDF"),
     t("Satt enligt designen, med marginaler och sidnummer för tryck på beställning."),
   ],
+  [
+    "omslag",
+    t("Tryckomslag"),
+    t("Exportera omslag"),
+    t("Baksida, rygg och framsida i en PDF med 3 mm utfall. Ryggen räknas fram ur sidantalet."),
+  ],
 ];
 
 const TYPOGRAPHY: [Typography, string][] = [
@@ -60,7 +67,9 @@ const startChoices = (project: Project): ExportChoices => ({
   hasAbout: true,
 });
 
-function ExportStep(props: { choices: ExportChoices; setChoices: (next: ExportChoices) => void }) {
+function ExportStep(
+  props: PublishProps & { choices: ExportChoices; setChoices: (next: ExportChoices) => void },
+) {
   const { choices, setChoices } = props;
   const format = FORMATS.find(([id]) => id === choices.format);
   return (
@@ -72,6 +81,7 @@ function ExportStep(props: { choices: ExportChoices; setChoices: (next: ExportCh
         onSelect={(next) => setChoices({ ...choices, format: next })}
       />
       <span className="setting-hint">{format?.[3]}</span>
+      {choices.format === "omslag" && <CoverFields {...props} />}
       <span className="export-heading">{t("Typografi")}</span>
       <Choice
         label={t("Typografi")}
@@ -126,13 +136,13 @@ function Steps({ props, publishing }: { props: PublishProps; publishing: Publish
   return (
     <>
       <StepBox number={1} label={t("Design")} {...stepProps("design")}>
-        <DesignControls design={design} save={saveDesign} />
+        <DesignControls design={design} save={saveDesign} dir={props.project.dir} />
       </StepBox>
       <StepBox number={2} label={t("Bokuppgifter")} {...stepProps("details")}>
         <BookFields {...props} cover={publishing.cover} choices={choices} setChoices={setChoices} />
       </StepBox>
       <StepBox number={3} label={t("Exportera")} {...stepProps("export")}>
-        <ExportStep choices={choices} setChoices={setChoices} />
+        <ExportStep {...props} choices={choices} setChoices={setChoices} />
       </StepBox>
     </>
   );

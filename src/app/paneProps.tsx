@@ -1,3 +1,4 @@
+import { BesidePane } from "./beside/BesidePane.js";
 import type { TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { SceneFileRef } from "../storage/syncFiles.js";
@@ -69,6 +70,8 @@ export function sidebarProps(app: AppState, project: Project) {
     onShowContents: () => writingMode.setView("innehall"),
     onShowSyncCopy: (copy: SceneFileRef) => void app.syncCopy.showSyncCopy(copy),
     onShowSnapshots: app.snapshots.show,
+    onOpenBeside: (id: string) =>
+      app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),
     onChangeTree: (tree: TreeNode[]) => void app.updateTree(tree),
     onShowShelf: () => void app.showShelf(),
     onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
@@ -95,6 +98,8 @@ function seriesTreeProps(app: AppState, series: Project) {
     onOpenScene: openText(app),
     onChangeTree: (tree: TreeNode[]) => void app.seriesState.updateSeriesTree(tree),
     onShowSnapshots: (id: string) => app.snapshots.show(id, series.dir),
+    onOpenBeside: (id: string) =>
+      app.writingMode.setBeside({ kind: "text", dir: series.dir, sceneId: id }),
     onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
     ...app.seriesTreeHandlers,
     onSetNoteLink: (id: string, isLinked: boolean) =>
@@ -117,6 +122,7 @@ export function writingAreaProps(app: AppState, project: Project) {
     manuscriptSearch: app.search.scope,
     replaceToast: <ReplaceToast {...app.search} />,
     aside: <ReviewLayer app={app} project={project} />,
+    beside: <BesidePane app={app} project={project} />,
     selectionBar: (
       <>
         <SelectionBar editor={app.editor} onComment={app.comments.start} />

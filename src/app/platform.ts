@@ -28,6 +28,19 @@ export interface Platform {
   notify(title: string, body: string): Promise<void>;
   /** Missing where Penna cannot sign in: the browser, and iPad for now. */
   googleSignIn?: GoogleSignIn;
+  /** Asks first; true when the book was removed. Missing in the browser version. */
+  removeBook?: (dir: string, title: string) => Promise<boolean>;
+  /** Reaches the web outside the app's own rules, for feedback. */
+  webFetch: typeof fetch;
+  /** Copies of every book in Penna's own folder. Missing in the browser version. */
+  backups?: Backups;
+}
+
+export interface Backups {
+  /** With forward slashes. */
+  dir(): Promise<string>;
+  /** Removes one old copy; refuses anything outside the copies' folder. */
+  remove(path: string): Promise<void>;
 }
 
 export interface GoogleSignIn {

@@ -3,7 +3,7 @@ import { parentOf } from "../../project/libraryFolders.js";
 import { listSeries, seriesTitle } from "../../project/series.js";
 import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import { platform } from "../platform.js";
-import { Switch } from "../settings/controls.js";
+import { Switch } from "../controls.js";
 import type { Project } from "../useProject.js";
 import { useEscape } from "../useShortcut.js";
 import { DialogActions } from "./NewNoteDialog.js";

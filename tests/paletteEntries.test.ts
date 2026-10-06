@@ -31,6 +31,7 @@ function context() {
     newNote: () => undefined,
     splitScene: null,
     mergeScene: null,
+    insertPicture: null,
     read: () => undefined,
     openChapterId: null,
     chooseFolder: () => undefined,

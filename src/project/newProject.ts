@@ -26,7 +26,7 @@ export function projectFolderName(title: string): string {
 }
 
 /** "Isen.penna", "Isen 2.penna", and so on. */
-async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title: string) {
+export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title: string) {
   const taken = new Set(await fileSystem.list(libraryDir));
   const base = projectFolderName(title).replace(/\.penna$/, "");
   let candidate = `${base}.penna`;

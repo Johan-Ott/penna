@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
 import { AboutTab, ShortcutsTab } from "./infoTabs.js";
 import { GeneralTab } from "./generalTab.js";
+import { HelpTab } from "./helpTab.js";
 import { SyncTab } from "./syncTab.js";
 import { EditorTab, VersionsTab, type TabProps } from "./settingsTabs.js";
 import { platform } from "../platform.js";
@@ -12,13 +13,15 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Editor"), EditorTab],
   [t("Versioner"), VersionsTab],
   [t("Synk"), SyncTab],
+  [t("Hjälp"), HelpTab],
   [t("Kortkommandon"), ShortcutsTab],
   ["Om Penna", AboutTab],
 ];
 // A phone has no keyboard to take shortcuts from.
 const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));
 
-export const SHORTCUTS_TAB = 4;
+/** Where "Hjälp och kortkommandon" opens. */
+export const HELP_TAB = 4;
 
 function TabList({ tab, onPick }: { tab: number; onPick: (tab: number) => void }) {
   return (

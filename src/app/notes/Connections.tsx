@@ -9,6 +9,7 @@ import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import type { Project } from "../useProject.js";
 import type { NotePageProps } from "./NotePage.js";
 import { t } from "../../i18n/i18n.js";
+import { Dropdown } from "../controls.js";
 
 const otherNotes = (project: Project, noteId: string) =>
   sortsOf(project.tree)
@@ -22,17 +23,12 @@ function NoteSelect(props: {
   onChange: (id: string) => void;
 }) {
   return (
-    <select
-      aria-label={t("Anteckning")}
+    <Dropdown
+      label={t("Anteckning")}
       value={props.value}
-      onChange={(event) => props.onChange(event.target.value)}
-    >
-      {props.ids.map((id) => (
-        <option key={id} value={id}>
-          {props.project.summaries[id]?.title}
-        </option>
-      ))}
-    </select>
+      options={props.ids.map((id) => [id, props.project.summaries[id]?.title ?? ""])}
+      onSelect={props.onChange}
+    />
   );
 }
 

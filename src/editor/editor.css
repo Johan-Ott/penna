@@ -22,7 +22,8 @@
 }
 
 /* Book style: every paragraph is indented except the first after a break or a style. */
-.manuscript p + p {
+.manuscript p + p,
+.manuscript p + .page-mark + p {
   text-indent: var(--prose-indent, 1.5em);
 }
 
@@ -122,4 +123,117 @@
   border-radius: 3px;
   outline: none;
   background: var(--surface-hover);
+}
+
+/* Where a printed page begins, when Sidbrytningar is on in Aa */
+.ProseMirror .page-mark {
+  position: relative;
+  height: 0;
+  margin: 0;
+  border-top: 1px dashed var(--border-control);
+  user-select: none;
+}
+
+.ProseMirror .page-mark-label {
+  position: absolute;
+  top: -0.7em;
+  right: 0;
+  padding-left: 6px;
+  background: var(--bg);
+  color: var(--text-label);
+  font: 11px var(--font-ui);
+}
+
+/* A picture in the text, with its caption and size beneath */
+.manuscript .picture {
+  margin: 1.2em 0;
+  text-align: center;
+}
+
+.manuscript .picture-image {
+  max-width: 100%;
+  max-height: 55vh;
+  border-radius: 2px;
+}
+
+.manuscript .picture[data-size="smal"] .picture-image {
+  max-width: 60%;
+}
+
+.manuscript .picture[data-size="sida"] {
+  padding: 12px 0;
+  border-top: 1px dashed var(--border-control);
+  border-bottom: 1px dashed var(--border-control);
+}
+
+.manuscript .picture.selected .picture-image {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.manuscript .picture.missing::before {
+  content: attr(data-missing);
+  display: block;
+  padding: 24px;
+  border: 1px dashed var(--border-control);
+  color: var(--text-label);
+  font: 13px var(--font-ui);
+}
+
+.manuscript .picture-caption {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: italic 0.85em var(--prose-font, var(--font-prose));
+  text-align: center;
+}
+
+.manuscript .picture-sizes {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+  opacity: 0;
+}
+
+.manuscript .picture:hover .picture-sizes,
+.manuscript .picture.selected .picture-sizes {
+  opacity: 1;
+}
+
+.manuscript .picture-size {
+  padding: 2px 8px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text-muted);
+  font: 11px var(--font-ui);
+}
+
+.manuscript .picture-size.chosen {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+/* An editor's changes read back from Word: struck through, and in green what they wrote instead */
+.revision-removed {
+  background: color-mix(in srgb, #d14 12%, transparent);
+  color: inherit;
+  text-decoration: line-through;
+  text-decoration-color: #d14;
+}
+
+.revision-added {
+  margin-left: 2px;
+  padding: 0 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, #1a8f4a 16%, transparent);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #1a8f4a;
+  user-select: none;
 }

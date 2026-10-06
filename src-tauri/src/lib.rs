@@ -1,3 +1,5 @@
+mod backups;
+mod books;
 mod google;
 
 use tauri::WebviewWindowBuilder;
@@ -102,6 +104,8 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             set_spell_language,
+            books::remove_book,
+            backups::remove_backup,
             google::sign_in_in_browser,
             google::saved_google_key,
             google::save_google_key
@@ -111,6 +115,8 @@ pub fn run() {
         .plugin(google::init())
         .invoke_handler(tauri::generate_handler![
             set_spell_language,
+            books::remove_book,
+            backups::remove_backup,
             google::google_access_token
         ]);
     builder

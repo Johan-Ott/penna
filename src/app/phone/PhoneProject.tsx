@@ -14,6 +14,7 @@ import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
 import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
+import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 type Props = { app: AppState; project: Project };
@@ -118,6 +119,18 @@ function usePhoneScreens({ app, project }: Props) {
   return { ...navigation, openText, continueWriting };
 }
 
+function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens> }) {
+  const { app, project, screens } = props;
+  const { authorName } = app.startup.preferences;
+  const pageMap = usePageMap(project, authorName, app.writingMode.settings.showPages);
+  return (
+    <div className={screens.screen.kind === "text" ? "phone-text" : "phone-text hidden"}>
+      <TextBar app={app} project={project} onBack={screens.back} />
+      <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
+    </div>
+  );
+}
+
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
   const { screen } = screens;
@@ -140,10 +153,7 @@ export function PhoneProject({ app, project }: Props) {
           onBack={screens.back}
         />
       )}
-      <div className={screen.kind === "text" ? "phone-text" : "phone-text hidden"}>
-        <TextBar app={app} project={project} onBack={screens.back} />
-        <WritingArea {...writingAreaProps(app, project)} />
-      </div>
+      <TextScreen app={app} project={project} screens={screens} />
       <Floating app={app} project={project} />
     </div>
   );

@@ -13,6 +13,7 @@ const fileSystem = createMemoryFileSystem({
 
 export const browserPlatform: Platform = {
   isPhone: false,
+  webFetch: (input, init) => fetch(input, init),
   fileSystem,
   pickFolder: async () => `${HOME}/Dokument`,
   knownFolders: async () => ({ home: HOME, documents: `${HOME}/Dokument` }),

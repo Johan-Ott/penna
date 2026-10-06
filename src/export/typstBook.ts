@@ -2,7 +2,15 @@ import type { Node } from "prosemirror-model";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
 import type { BookExtras } from "./bookParts.js";
 import type { BookDesign } from "./bookDesign.js";
-import { bookWords, headingLabel } from "./bookWords.js";
+import { bookWords, contentsLabel, designedLabel } from "./bookWords.js";
+import {
+  breakMark,
+  chapterLayout,
+  needsBleed,
+  partLayout,
+  picturePath,
+  plainLayout,
+} from "./typstOpening.js";
 import { bookTemplate } from "./typstTemplate.js";
 import { escapeTypst, sceneTypst, typstString } from "./typstText.js";
 
@@ -17,7 +25,24 @@ export interface PrintInput {
   parts: { hasTitlePage: boolean; hasCopyrightPage: boolean; hasContents: boolean };
   extras: BookExtras;
   year: number;
+  /** For the page map: each block and the book's end say which page they land on. */
+  markPages?: boolean;
+  /** The pictures in the book's bilder/ folder that the design and chapters use, by file name. */
+  images?: Map<string, Uint8Array>;
 }
+
+/** The files the source refers to, for the compiler. */
+export function typstFiles(input: PrintInput): Map<string, Uint8Array> {
+  return new Map([...(input.images ?? [])].map(([name, bytes]) => [picturePath(name), bytes]));
+}
+
+/** True when a picture reaches the paper's edge, so the PDF has 3 mm bleed for the printer. */
+const bookHasBleed = (input: PrintInput) =>
+  needsBleed(
+    input.design,
+    input.outline.flatMap((item) => (item.kind === "chapter" ? [item] : [])),
+    input.images,
+  );
 
 const optional = (text: string) => (text ? typstString(text) : "none");
 
@@ -49,22 +74,47 @@ function frontMatter(input: PrintInput): string[] {
   return pages;
 }
 
-function story(input: PrintInput): string[] {
-  const parts: string[] = ["#in-story.update(true)\n#counter(page).update(1)"];
+function sceneParts(input: PrintInput, id: string, previous: OutlineItem["kind"] | null) {
+  const parts: string[] = [];
+  const doc = input.scenes.get(id);
+  // A part page stands alone; a chapter after it breaks the page itself.
+  if (previous === "part") parts.push("#pagebreak()");
+  if (previous === "scene") parts.push("#scenbrytning(break-mark)");
+  const opensChapter = previous === "chapter";
+  const hasDropCap = input.design.dropCap && opensChapter;
+  const hasLeadIn = input.design.leadIn && opensChapter;
+  const markScene = input.markPages ? id : undefined;
+  const picturePathOf = (name: string) => (input.images?.has(name) ? picturePath(name) : null);
+  const options = { ...input, hasDropCap, hasLeadIn, markScene, picturePath: picturePathOf };
+  if (doc) parts.push(sceneTypst(doc, options));
+  return parts;
+}
+
+type Opening = Extract<OutlineItem, { kind: "part" | "chapter" }>;
+
+function openingCall(input: PrintInput, item: Opening, hasBleed: boolean) {
+  const label = designedLabel(item, input.language, input.design.chapterLabel);
+  const extra = [
+    `subtitle: ${optional(item.subtitle ?? "")}`,
+    `epigraph: ${optional(item.epigraph ?? "")}`,
+    `by: ${optional(item.epigraphBy ?? "")}`,
+  ].join(", ");
+  const toc = typstString(contentsLabel(item, input.language));
+  const start = `${optional(label ?? "")}, ${optional(item.title)}, ${toc}`;
+  if (item.kind === "part") return `#del(${start}, extra: (${extra}))`;
+  const layout = chapterLayout(input.design, item, input.images, hasBleed);
+  return `#kapitel(${start}, layout: ${layout}, extra: (${extra}))`;
+}
+
+function story(input: PrintInput, hasBleed: boolean): string[] {
+  // The story starts on a right-hand page with page 1, as printed books do.
+  const parts: string[] = [
+    '#pagebreak(weak: true, to: "odd")\n#in-story.update(true)\n#counter(page).update(1)',
+  ];
   let previous: OutlineItem["kind"] | null = null;
   for (const item of input.outline) {
-    if (item.kind !== "scene") {
-      const call = item.kind === "part" ? "del" : "kapitel";
-      parts.push(
-        `#${call}(${typstString(headingLabel(item, input.language))}, ${optional(item.title)})`,
-      );
-    } else {
-      const doc = input.scenes.get(item.id);
-      if (previous === "scene")
-        parts.push(`#scenbrytning[${escapeTypst(input.design.sceneBreak)}]`);
-      const hasDropCap = input.design.dropCap && previous === "chapter";
-      if (doc) parts.push(sceneTypst(doc, { ...input, ...input.design, hasDropCap }));
-    }
+    if (item.kind !== "scene") parts.push(openingCall(input, item, hasBleed));
+    else parts.push(...sceneParts(input, item.id, previous));
     previous = item.kind;
   }
   return parts;
@@ -80,15 +130,24 @@ function backMatter({ extras, language }: PrintInput): string[] {
   return pages.flatMap(([title, text]) => {
     if (!text?.trim()) return [];
     const paragraphs = text.split(/\n\s*\n/).map((paragraph) => escapeTypst(paragraph.trim()));
-    return [`#kapitel(none, ${typstString(title)})\n${paragraphs.join("\n\n")}`];
+    const name = typstString(title);
+    return [`#kapitel(none, ${name}, ${name})\n${paragraphs.join("\n\n")}`];
   });
 }
 
 export function typstSource(input: PrintInput): string {
+  const { design } = input;
+  const hasBleed = bookHasBleed(input);
+  const options = {
+    breakMark: breakMark(design, input.images),
+    plainLayout: plainLayout(design),
+    partLayout: partLayout(design),
+    hasBleed,
+  };
   return [
-    bookTemplate(input.design, input.book.title, input.language),
+    bookTemplate(design, input.book, input.language, options),
     ...frontMatter(input),
-    ...story(input),
+    ...story(input, hasBleed),
     ...backMatter(input),
   ].join("\n\n");
 }

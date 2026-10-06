@@ -44,7 +44,7 @@ function useSceneDocs(project: Project, ids: string[]) {
 const serializer = DOMSerializer.fromSchema(manuscriptSchema);
 
 // Uses the editor's markup and CSS, so the text looks as it does in Skriv.
-function SceneText(props: { doc: Node | undefined; onClickBlock: (index: number) => void }) {
+export function SceneText(props: { doc: Node | undefined; onClickBlock: (index: number) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (ref.current && props.doc) {

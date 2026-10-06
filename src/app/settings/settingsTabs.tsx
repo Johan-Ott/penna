@@ -7,7 +7,7 @@ import {
 import type { AppPreferences } from "../appPreferences.js";
 import type { PreferenceChange } from "../useStartup.js";
 import type { SettingsChange } from "../useWritingSettings.js";
-import { Choice, Row, Switch } from "./controls.js";
+import { Choice, Row, Switch } from "../controls.js";
 import type { DriveSync } from "../useDriveSync.js";
 import { t } from "../../i18n/i18n.js";
 

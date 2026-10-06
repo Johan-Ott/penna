@@ -4,6 +4,7 @@ import { designOf } from "../../export/bookDesign.js";
 import type { BookExtras } from "../../export/bookParts.js";
 import type { PrintInput } from "../../export/typstBook.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
+import { picturesUsed, readPictures } from "../../project/pictures.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
@@ -63,7 +64,9 @@ export async function bookMaterial(
     const read = await readBookScenes(platform.fileSystem, project.dir, [id], titles);
     read.forEach((doc, sceneId) => scenes.set(sceneId, doc));
   }
-  return { book: { ...details, title: details.title || project.name }, outline, scenes };
+  const pictures = picturesUsed(designOf(project.fields), outline, scenes.values());
+  const images = await readPictures(platform.fileSystem, project.dir, pictures);
+  return { book: { ...details, title: details.title || project.name }, outline, scenes, images };
 }
 
 export type BookMaterial = Awaited<ReturnType<typeof bookMaterial>>;

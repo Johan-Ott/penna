@@ -46,9 +46,13 @@ export function htmlToMarkdown(html: string): string {
   return blocksToMarkdown(reader);
 }
 
-export async function docxToMarkdown(bytes: Uint8Array): Promise<string> {
+export async function docxHtml(bytes: Uint8Array): Promise<string> {
   const arrayBuffer = bytes.slice().buffer;
   // Mammoth reads `buffer` in Node and `arrayBuffer` in the browser build.
   const input = { arrayBuffer, buffer: arrayBuffer as unknown as Buffer };
-  return htmlToMarkdown((await mammoth.convertToHtml(input)).value);
+  return (await mammoth.convertToHtml(input)).value;
+}
+
+export async function docxToMarkdown(bytes: Uint8Array): Promise<string> {
+  return htmlToMarkdown(await docxHtml(bytes));
 }

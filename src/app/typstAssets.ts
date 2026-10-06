@@ -1,40 +1,38 @@
-import compilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm?url";
-import rendererWasmUrl from "@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm?url";
-import type { createTypst } from "../export/typstCompile.js";
+import type { PageMarks, TypstFiles } from "../export/typstCompile.js";
+import { TypstError } from "../export/typstError.js";
+import type { TypstRequest } from "./typstWorker.js";
 
-// Each font in public/fonts has its OFL licence beside it.
-const FONT_FILES = [
-  "literata-400-normal",
-  "literata-400-italic",
-  "literata-700-normal",
-  "literata-700-italic",
-  "eb-garamond-400-normal",
-  "eb-garamond-400-italic",
-  "eb-garamond-700-normal",
-  "eb-garamond-700-italic",
-  "geist-sans-400-normal",
-];
-
-async function bytesAt(url: string) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`${url} kunde inte läsas.`);
-  return new Uint8Array(await response.arrayBuffer());
-}
+type Answer = { id: number; result?: unknown; error?: string; isTypst?: boolean };
+type Waiting = { resolve: (result: unknown) => void; reject: (error: Error) => void };
 
 // Typst and its 28 MB compiler load the first time a book is set, not when Penna starts.
-let started: ReturnType<typeof createTypst> | null = null;
+let worker: Worker | null = null;
+let nextId = 0;
+const waiting = new Map<number, Waiting>();
 
-async function typst() {
-  const typstCompile = await import("../export/typstCompile.js");
-  started ??= typstCompile.createTypst({
-    compilerWasm: () => bytesAt(compilerWasmUrl),
-    rendererWasm: () => bytesAt(rendererWasmUrl),
-    fonts: () => Promise.all(FONT_FILES.map((name) => bytesAt(`/fonts/${name}.ttf`))),
+function started() {
+  if (worker) return worker;
+  worker = new Worker(new URL("./typstWorker.ts", import.meta.url), { type: "module" });
+  worker.onmessage = (event: MessageEvent<Answer>) => {
+    const { id, result, error, isTypst } = event.data;
+    const asked = waiting.get(id);
+    waiting.delete(id);
+    if (error === undefined) asked?.resolve(result);
+    else asked?.reject(isTypst ? new TypstError(error) : new Error(error));
+  };
+  return worker;
+}
+
+function ask<T>(method: TypstRequest["method"], source: string, files: TypstFiles = new Map()) {
+  const id = ++nextId;
+  return new Promise<T>((resolve, reject) => {
+    waiting.set(id, { resolve: (result) => resolve(result as T), reject });
+    started().postMessage({ id, method, source, files } satisfies TypstRequest);
   });
-  return started;
 }
 
 export const appTypst = {
-  pdf: async (source: string) => (await typst()).pdf(source),
-  svg: async (source: string) => (await typst()).svg(source),
+  pdf: (source: string, files?: TypstFiles) => ask<Uint8Array>("pdf", source, files),
+  svg: (source: string, files?: TypstFiles) => ask<string>("svg", source, files),
+  pageMarks: (source: string, files?: TypstFiles) => ask<PageMarks>("pageMarks", source, files),
 };

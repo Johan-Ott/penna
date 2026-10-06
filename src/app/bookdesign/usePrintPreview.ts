@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { previewOutline } from "../../export/bookDesign.js";
 import { TypstError } from "../../export/typstError.js";
-import { typstSource } from "../../export/typstBook.js";
+import { typstFiles, typstSource } from "../../export/typstBook.js";
 import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
@@ -25,7 +25,7 @@ async function previewSvg(project: Project, generalAuthor: string) {
   };
   const outline = previewOutline(material.outline);
   const input = printInput({ project, material: { ...material, outline }, choices, extras: {} });
-  return appTypst.svg(typstSource(input));
+  return appTypst.svg(typstSource(input), typstFiles(input));
 }
 
 export function usePrintPreview(project: Project, generalAuthor: string): Preview {

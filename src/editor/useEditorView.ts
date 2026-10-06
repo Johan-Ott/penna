@@ -6,6 +6,8 @@ import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { createEditorState, type EditorSwitches } from "./editorState.js";
 import type { MentionMatcher } from "./mentions.js";
 import type { CommentAnchor } from "./commentMarks.js";
+import { pictureNodeView, type PictureUrl } from "./pictureView.js";
+import type { RevisionChange } from "../manuscript/revision.js";
 
 function createView(
   element: HTMLElement,
@@ -16,6 +18,7 @@ function createView(
     state: createEditorState(schema.node("doc"), switches),
     editable: switches.isEditable,
     attributes: () => ({ spellcheck: switches.isSpellcheckOn() ? "true" : "false" }),
+    nodeViews: { picture: pictureNodeView((name) => switches.pictureUrl(name)) },
     dispatchTransaction(transaction) {
       const next = view.state.apply(transaction);
       view.updateState(next);
@@ -28,6 +31,7 @@ function createView(
 interface ViewSwitches extends EditorSwitches {
   isEditable: () => boolean;
   isSpellcheckOn: () => boolean;
+  pictureUrl: PictureUrl;
 }
 
 interface EditorModes {
@@ -38,8 +42,12 @@ interface EditorModes {
   mentionMatchers: MentionMatcher[];
   onMention: (id: string, box: DOMRect) => void;
   repeatWindow: number | null;
+  pageMarks: (number | undefined)[] | null;
   commentAnchors: CommentAnchor[];
   onComment: (id: string) => void;
+  /** Reads a picture in the open book's bilder/ folder. */
+  pictureUrl: PictureUrl;
+  revisionChanges: RevisionChange[];
 }
 
 const START_MODES: EditorModes = {
@@ -50,8 +58,11 @@ const START_MODES: EditorModes = {
   mentionMatchers: [],
   onMention: () => undefined,
   repeatWindow: null,
+  pageMarks: null,
   commentAnchors: [],
   onComment: () => undefined,
+  pictureUrl: async () => null,
+  revisionChanges: [],
 };
 
 // ProseMirror asks these on every update, so the app can switch them without a new state.
@@ -65,8 +76,11 @@ function useModeSwitches() {
     mentionMatchers: () => modes.current.mentionMatchers,
     onMention: (id, box) => modes.current.onMention(id, box),
     repeatWindow: () => modes.current.repeatWindow,
+    pageMarks: () => modes.current.pageMarks,
     commentAnchors: () => modes.current.commentAnchors,
     onComment: (id) => modes.current.onComment(id),
+    pictureUrl: (name) => modes.current.pictureUrl(name),
+    revisionChanges: () => modes.current.revisionChanges,
   }));
   return { switches, modes };
 }

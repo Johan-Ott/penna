@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "desktop",
-  "description": "On a computer the Penna library lives in the home or Documents folder, or in any folder picked in the dialog; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases.",
+  "description": "On a computer the Penna library lives in the home or Documents folder, or in any folder picked in the dialog; its automatic copies in backups/ in Penna's own folder; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases.",
   "platforms": ["windows", "macOS", "linux"],
   "windows": ["main"],
   "permissions": [
@@ -21,6 +21,12 @@
         },
         {
           "path": "$DOCUMENT/**"
+        },
+        {
+          "path": "$APPDATA/backups"
+        },
+        {
+          "path": "$APPDATA/backups/**"
         }
       ]
     }

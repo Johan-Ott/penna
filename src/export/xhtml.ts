@@ -57,10 +57,19 @@ function inline(paragraph: Node, convert: (text: string) => string, notes: Scene
   return html;
 }
 
+function pictureXhtml(picture: Node) {
+  const name = escapeXml(String(picture.attrs["name"]));
+  const caption = escapeXml(String(picture.attrs["caption"]));
+  const size = escapeXml(String(picture.attrs["size"]));
+  const figcaption = caption ? `<figcaption>${caption}</figcaption>` : "";
+  return `<figure class="picture picture-${size}"><img src="../bilder/${name}" alt="${caption}" />${figcaption}</figure>`;
+}
+
 function block(node: Node, isFirst: boolean, typography: Typography, notes: SceneNotes): string {
   const name = node.type.name;
   if (name === "sceneBreak") return '<hr class="scene-break" />';
   if (name === "rawBlock") return `<p>${escapeXml(String(node.attrs["source"]))}</p>`;
+  if (name === "picture") return pictureXhtml(node);
   if (name === "styleBlock") {
     const inner: string[] = [];
     node.forEach((child) => inner.push(block(child, true, typography, notes)));

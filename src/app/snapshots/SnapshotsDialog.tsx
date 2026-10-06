@@ -16,6 +16,8 @@ interface SnapshotsDialogProps {
   /** Blocks separated by blank lines. */
   nowText: string;
   nowWords: number;
+  /** Puts the version beside the text, to keep writing while comparing. */
+  onBeside?: (snapshot: Snapshot) => void;
 }
 
 const formatWords = (words: number) =>
@@ -83,7 +85,20 @@ function SnapshotList({ state, nowWords }: Pick<SnapshotsDialogProps, "state" | 
   );
 }
 
-function Comparison({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "nowText">) {
+/** What a version said, struck through where it differs, and in green what the text says now. */
+export function DiffText({ before, now }: { before: string; now: string }) {
+  return diffWords(before, now).map((part, index) => {
+    if (part.kind === "removed") return <del key={index}>{part.text}</del>;
+    if (part.kind === "added") return <ins key={index}>{part.text}</ins>;
+    return <span key={index}>{part.text}</span>;
+  });
+}
+
+function Comparison({
+  state,
+  nowText,
+  onBeside,
+}: Pick<SnapshotsDialogProps, "state" | "nowText" | "onBeside">) {
   const textRef = useRef<HTMLDivElement>(null);
   // In a long scene the first change could be out of sight.
   useEffect(() => {
@@ -91,19 +106,21 @@ function Comparison({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "no
   }, [state.chosen]);
   const snapshot = state.snapshots.find((candidate) => candidate.fileName === state.chosen);
   if (!snapshot) return <div className="snapshot-text">{nowText}</div>;
-  const parts = diffWords(plainText(snapshot.body, "\n\n"), nowText);
   return (
     <>
       <div className="snapshot-text" ref={textRef}>
-        {parts.map((part, index) => {
-          if (part.kind === "removed") return <del key={index}>{part.text}</del>;
-          if (part.kind === "added") return <ins key={index}>{part.text}</ins>;
-          return <span key={index}>{part.text}</span>;
-        })}
+        <DiffText before={plainText(snapshot.body, "\n\n")} now={nowText} />
       </div>
-      <button className="button primary small restore" onClick={() => state.restore(snapshot)}>
-        {t("Återställ den här versionen")}
-      </button>
+      <div className="review-actions">
+        <button className="button primary small restore" onClick={() => state.restore(snapshot)}>
+          {t("Återställ den här versionen")}
+        </button>
+        {onBeside && (
+          <button className="button secondary small" onClick={() => onBeside(snapshot)}>
+            {t("Jämför bredvid texten")}
+          </button>
+        )}
+      </div>
     </>
   );
 }
@@ -143,6 +160,7 @@ export function SnapshotsLayer(props: {
   state: SnapshotState;
   sceneTitle: string;
   doc: Node | null;
+  onBeside?: (snapshot: Snapshot) => void;
 }) {
   const { state, doc } = props;
   if (!state.sceneId || !doc) return null;
@@ -152,6 +170,7 @@ export function SnapshotsLayer(props: {
       sceneTitle={props.sceneTitle}
       nowText={doc.textBetween(0, doc.content.size, "\n\n")}
       nowWords={countDocumentWords(doc)}
+      {...(props.onBeside ? { onBeside: props.onBeside } : {})}
     />
   );
 }

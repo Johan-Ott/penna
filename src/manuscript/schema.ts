@@ -3,6 +3,10 @@ import { Schema } from "prosemirror-model";
 export const STYLE_NAMES = ["brev", "citat", "dikt", "meddelande"] as const;
 export type StyleName = (typeof STYLE_NAMES)[number];
 
+/** How wide a picture in the text is printed: narrower than the text, as wide, or a page of its own. */
+export const PICTURE_SIZES = ["smal", "bred", "sida"] as const;
+export type PictureSize = (typeof PICTURE_SIZES)[number];
+
 // `source` and `before` keep each block's original text, so untouched blocks are saved byte for byte.
 const blockAttrs = { before: { default: null }, source: { default: null } };
 
@@ -54,6 +58,37 @@ export const manuscriptSchema = new Schema({
       attrs: blockAttrs,
       parseDOM: [{ tag: "hr" }, { tag: "div.scene-break" }],
       toDOM: () => ["div", { class: "scene-break", contenteditable: "false" }, "* * *"],
+    },
+    // A picture in the book's bilder/ folder, written as ![caption](bilder/name.png) in the file.
+    picture: {
+      group: "block",
+      atom: true,
+      draggable: true,
+      attrs: {
+        ...blockAttrs,
+        name: { default: "" },
+        caption: { default: "" },
+        size: { default: "bred" },
+      },
+      parseDOM: [
+        {
+          tag: "figure.picture",
+          getAttrs: (element) => ({
+            name: element.getAttribute("data-name") ?? "",
+            caption: element.querySelector("figcaption")?.textContent ?? "",
+            size: element.getAttribute("data-size") ?? "bred",
+          }),
+        },
+      ],
+      toDOM: (node) => [
+        "figure",
+        {
+          class: "picture",
+          "data-name": String(node.attrs["name"]),
+          "data-size": String(node.attrs["size"]),
+        },
+        ["figcaption", String(node.attrs["caption"])],
+      ],
     },
     rawBlock: {
       group: "block",

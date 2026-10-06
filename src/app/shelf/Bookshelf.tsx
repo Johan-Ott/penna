@@ -12,6 +12,7 @@ interface BookshelfProps {
   onOpenExample: () => void;
   onLocate: (book: ShelfBook) => void;
   onForget: (book: ShelfBook) => void;
+  onRemove: (book: ShelfBook) => void;
   /** A round plus instead of the new-project book. */
   isPhone?: boolean;
 }

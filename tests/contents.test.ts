@@ -4,6 +4,7 @@ import {
   inTimeOrder,
   leastFinished,
   movedInTime,
+  withNodeFields,
   withNodeText,
 } from "../src/project/contents";
 import { CHARACTERS_ID, findNode, withSpecialFolders, type TreeNode } from "../src/project/tree";
@@ -85,5 +86,16 @@ describe("withNodeText", () => {
 
     expect(findNode(changed, "kap2")?.node.when).toBe("Vintern 1987");
     expect(findNode(changed, "kap1")?.node.when).toBe("Dag 1");
+  });
+});
+
+describe("withNodeFields", () => {
+  it("sets a chapter's heading and drops what was emptied", () => {
+    const withHeading = withNodeFields(tree, "kap1", { subtitle: "Elin", epigraph: "Isen bär." });
+
+    const changed = withNodeFields(withHeading, "kap1", { epigraph: undefined });
+
+    expect(findNode(changed, "kap1")?.node.subtitle).toBe("Elin");
+    expect(JSON.stringify(findNode(changed, "kap1")?.node)).not.toContain("epigraph");
   });
 });

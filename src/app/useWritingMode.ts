@@ -1,3 +1,4 @@
+import { useBeside } from "./beside/BesidePane.js";
 import { useCallback, useState } from "react";
 import { useSettingsDialog } from "./settings/SettingsDialog.js";
 import { useGoKeys, useShortcut } from "./useShortcut.js";
@@ -80,5 +81,6 @@ export function useWritingMode() {
     ...useReviewState(),
     ...useSearchMode(),
     ...useSidebar(),
+    ...useBeside(),
   };
 }

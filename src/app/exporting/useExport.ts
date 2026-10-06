@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { ExportError, type Typography } from "../../export/book.js";
+import { designOf } from "../../export/bookDesign.js";
 import { TypstError } from "../../export/typstError.js";
-import { typstSource } from "../../export/typstBook.js";
+import { typstFiles, typstSource } from "../../export/typstBook.js";
 import { seriesDirOf } from "../../project/series.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
 import { findCover } from "../../project/cover.js";
@@ -18,7 +19,7 @@ export type ExportState =
   | { kind: "saved"; fileName: string; path: string }
   | { kind: "failed"; sceneTitle: string; reason: string };
 
-export type ExportFormat = "manus" | "ebok" | "tryck";
+export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag";
 
 export interface ExportChoices {
   format: ExportFormat;
@@ -37,6 +38,7 @@ const FILE_KINDS: Record<ExportFormat, FileKind> = {
   manus: { name: "Word-dokument", extension: "docx" },
   ebok: { name: t("E-bok"), extension: "epub" },
   tryck: { name: t("PDF för tryck"), extension: "pdf" },
+  omslag: { name: t("PDF för tryck"), extension: "pdf" },
 };
 
 const fileNameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1);
@@ -66,9 +68,14 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     const { standardManuscript } = await import("../../export/standardManuscript.js");
     return standardManuscript({ ...material, ...choices, language });
   }
+  if (choices.format === "omslag") {
+    const { printCoverPdf } = await import("./printCover.js");
+    return printCoverPdf(project, material, choices, chosenExtras(project, choices));
+  }
   if (choices.format === "tryck") {
     const extras = chosenExtras(project, choices);
-    return appTypst.pdf(typstSource(printInput({ project, material, choices, extras })));
+    const input = printInput({ project, material, choices, extras });
+    return appTypst.pdf(typstSource(input), typstFiles(input));
   }
   const picture = await findCover(platform.fileSystem, project.dir);
   const { buildEpub } = await import("../../export/epub.js");
@@ -77,6 +84,7 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     ...(picture ? { cover: { type: picture.size.type, bytes: picture.bytes } } : {}),
     typography: choices.typography,
     language,
+    design: designOf(project.fields),
     extras: chosenExtras(project, choices),
     identifier: bookIdentifier(project, saveFields),
     modified: new Date(),
@@ -84,12 +92,18 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
   });
 }
 
+// The cover is a PDF of its own beside the book's, so it gets a name of its own.
+function fileNameFor({ project, choices }: ExportJob) {
+  const name = choices.format === "omslag" ? `${project.name} omslag` : project.name;
+  return `${name}.${FILE_KINDS[choices.format].extension}`;
+}
+
 async function exportBook(job: ExportJob, isCancelled: () => boolean): Promise<ExportState> {
   try {
     const bytes = await buildFile(job);
     if (isCancelled()) return { kind: "idle" };
     const kind = FILE_KINDS[job.choices.format];
-    const path = await platform.saveFile(`${job.project.name}.${kind.extension}`, bytes, kind);
+    const path = await platform.saveFile(fileNameFor(job), bytes, kind);
     return path ? { kind: "saved", fileName: fileNameOf(path), path } : { kind: "idle" };
   } catch (error) {
     recordFailure("Export")(error);

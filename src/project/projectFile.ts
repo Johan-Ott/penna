@@ -1,6 +1,6 @@
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
-import { rebuildTree, type NodeKind, type TreeNode } from "./tree.js";
+import { HEADING_FIELDS, rebuildTree, type NodeKind, type TreeNode } from "./tree.js";
 
 export interface ProjectFile {
   fields: Record<string, unknown>;
@@ -20,12 +20,20 @@ const isOptionalString = (value: unknown) => value === undefined || typeof value
 const isOptionalNodeList = (value: unknown): boolean =>
   value === undefined || (Array.isArray(value) && value.every(isTreeNode));
 
+const isTextRecord = (value: unknown) =>
+  typeof value === "object" &&
+  value !== null &&
+  Object.values(value).every((text) => typeof text === "string");
+
 function isTreeNode(value: unknown): value is TreeNode {
   if (typeof value !== "object" || value === null) return false;
   const node = value as Record<string, unknown>;
   const hasIdAndKind = typeof node["id"] === "string" && KINDS.includes(node["kind"] as NodeKind);
-  const texts = ["title", "summary", "when"].every((key) => isOptionalString(node[key]));
-  return hasIdAndKind && texts && isOptionalNodeList(node["children"]);
+  const texts = ["title", "summary", "when", "opening", ...HEADING_FIELDS].every((key) =>
+    isOptionalString(node[key]),
+  );
+  const pictures = node["pictures"] === undefined || isTextRecord(node["pictures"]);
+  return hasIdAndKind && texts && pictures && isOptionalNodeList(node["children"]);
 }
 
 function parseProject(text: string): { fields: Record<string, unknown>; tree: TreeNode[] } | null {

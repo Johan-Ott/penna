@@ -12,8 +12,8 @@ export function sceneEntries(context: PaletteContext): PaletteEntry[] {
   ];
 }
 
-export function cardEntries({ cards, describe, openCard, newNote }: PaletteContext) {
-  const entries = cards.map((card): PaletteEntry => {
+export function cardEntries({ cards, describe, openCard }: PaletteContext) {
+  return cards.map((card): PaletteEntry => {
     const hint = describe(card.id);
     return {
       id: `kort:${card.id}`,
@@ -23,5 +23,4 @@ export function cardEntries({ cards, describe, openCard, newNote }: PaletteConte
       ...(hint ? { hint } : {}),
     };
   });
-  return [...entries, command(t("Ny anteckning"), newNote)];
 }

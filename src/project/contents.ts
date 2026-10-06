@@ -69,16 +69,26 @@ export function movedInTime(shown: ContentsRow[], id: string, index: number): st
   return [...ids.slice(0, index), id, ...ids.slice(index)];
 }
 
-export function withNodeText(
+type NodeFields = {
+  [Key in Exclude<keyof TreeNode, "id" | "kind" | "children">]?: TreeNode[Key] | undefined;
+};
+
+const withFields = (node: TreeNode, fields: NodeFields) =>
+  Object.fromEntries(
+    Object.entries({ ...node, ...fields }).filter(([, value]) => value !== undefined),
+  ) as unknown as TreeNode;
+
+/** An undefined field is removed from the node. */
+export function withNodeFields(tree: TreeNode[], id: string, fields: NodeFields): TreeNode[] {
+  return tree.map((node) => {
+    if (node.id === id) return withFields(node, fields);
+    return node.children ? { ...node, children: withNodeFields(node.children, id, fields) } : node;
+  });
+}
+
+export const withNodeText = (
   tree: TreeNode[],
   id: string,
   field: "summary" | "when",
   text: string,
-): TreeNode[] {
-  return tree.map((node) => {
-    if (node.id === id) return { ...node, [field]: text };
-    return node.children
-      ? { ...node, children: withNodeText(node.children, id, field, text) }
-      : node;
-  });
-}
+) => withNodeFields(tree, id, { [field]: text });

@@ -2,8 +2,15 @@ import type { Node } from "prosemirror-model";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { KIND_LABELS } from "../project/shelf.js";
-import { isSpecialFolder, numberNodes, type TreeNode } from "../project/tree.js";
+import {
+  HEADING_FIELDS,
+  isSpecialFolder,
+  numberNodes,
+  type ChapterHeading,
+  type TreeNode,
+} from "../project/tree.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import type { ChapterOpening } from "./openings.js";
 import { t } from "../i18n/i18n.js";
 
 export interface BookDetails {
@@ -29,7 +36,17 @@ export function quoteConverter(typography: Typography) {
 }
 
 export type OutlineItem =
-  { kind: "part" | "chapter"; number: number; title: string } | { kind: "scene"; id: string };
+  | ({ kind: "part" | "chapter"; number: number; title: string } & ChapterHeading & ChapterOpening)
+  | { kind: "scene"; id: string };
+
+// Only what is filled in, so an empty subtitle prints nothing.
+const headingOf = (node: TreeNode): ChapterHeading & ChapterOpening => ({
+  ...Object.fromEntries(
+    HEADING_FIELDS.flatMap((key) => (node[key]?.trim() ? [[key, node[key]]] : [])),
+  ),
+  ...(node.opening ? { opening: node.opening } : {}),
+  ...(node.pictures ? { pictures: node.pictures } : {}),
+});
 
 /** Stops at the first scene it cannot use and names it. */
 export class ExportError extends Error {
@@ -51,7 +68,10 @@ export function bookOutline(tree: TreeNode[]): OutlineItem[] {
       if (node.kind === "scene") return [{ kind: "scene", id: node.id }];
       if (node.kind === "folder") return children;
       const number = numbers[node.kind].get(node.id) ?? 0;
-      return [{ kind: node.kind, number, title: node.title ?? "" }, ...children];
+      return [
+        { kind: node.kind, number, title: node.title ?? "", ...headingOf(node) },
+        ...children,
+      ];
     });
   return walk(tree);
 }

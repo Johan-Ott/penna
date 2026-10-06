@@ -2,8 +2,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { bookOutline, readBookScenes } from "../src/export/book";
 import { DEFAULT_DESIGN } from "../src/export/bookDesign";
+import type { OpeningTemplate } from "../src/export/openings";
 import { createTypst } from "../src/export/typstCompile";
-import { typstSource, type PrintInput } from "../src/export/typstBook";
+import { typstFiles, typstSource, type PrintInput } from "../src/export/typstBook";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
@@ -78,9 +79,10 @@ describe("typstSource", () => {
     expect(source).toContain("width: 150mm");
     expect(source).toContain("height: 230mm");
     expect(source).toContain('font: "Literata"');
-    expect(source).toContain('#kapitel("Kapitel 1", "Brevet")');
+    expect(source).toContain('#kapitel("Kapitel 1", "Brevet", "Kapitel 1. Brevet"');
     expect(source).toContain('#anfang("B", ([revet], [låg], [på], [#emph[bordet]\\(alltid).],))');
-    expect(source).toContain("#scenbrytning[\\* \\* \\*]");
+    expect(source).toContain("#let break-mark = [\\* \\* \\*]");
+    expect(source).toContain("#scenbrytning(break-mark)");
   });
 
   it("compiles to a PDF and to preview pages without Typst errors, whatever the text holds", async () => {
@@ -92,4 +94,134 @@ describe("typstSource", () => {
     expect(new TextDecoder().decode(pdf.slice(0, 5))).toBe("%PDF-");
     expect(svg).toContain("<svg");
   }, 30_000);
+
+  it("compiles with chapters on right-hand pages and the chapter's title in the header", async () => {
+    const design = {
+      ...DEFAULT_DESIGN,
+      bodyFont: "Source Serif 4",
+      chapterStart: "hoger" as const,
+      headerLeft: "forfattare" as const,
+      headerRight: "kapitel" as const,
+    };
+
+    const source = typstSource({ ...(await input()), design });
+    const pdf = await typst.pdf(source);
+
+    expect(source).toContain('#let chapter-start = "odd"');
+    expect(new TextDecoder().decode(pdf.slice(0, 5))).toBe("%PDF-");
+  }, 30_000);
+});
+
+// The smallest PNG there is: one transparent pixel.
+const PIXEL = Uint8Array.from(
+  atob(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+  ),
+  (letter) => letter.charCodeAt(0),
+);
+
+// Two templates: a picture across the top, out to the paper's edge, and a small ornament.
+const TEMPLATES: OpeningTemplate[] = [
+  {
+    id: "topp",
+    name: "Bild överst",
+    headingTop: 0.45,
+    headingAlign: "vanster",
+    areas: [{ id: "bild1", picture: "is.png", x: 0, y: 0, width: 1, height: 0.38, fit: "fyll" }],
+  },
+  {
+    id: "ornament",
+    name: "Ornament",
+    headingTop: 0.27,
+    headingAlign: "mitten",
+    areas: [
+      {
+        id: "bild1",
+        picture: "rosett.png",
+        x: 0.35,
+        y: 0.17,
+        width: 0.3,
+        height: 0.07,
+        fit: "hela",
+      },
+    ],
+  },
+];
+
+async function designedInput(): Promise<PrintInput> {
+  const plain = await input();
+  const outline = plain.outline.map((item) =>
+    item.kind === "chapter"
+      ? {
+          ...item,
+          subtitle: "Elin",
+          epigraph: "Isen bär.",
+          epigraphBy: "Gammalt ordspråk",
+          pictures: { bild1: "fyr.png" },
+        }
+      : item,
+  );
+  const design = {
+    ...DEFAULT_DESIGN,
+    chapterLabel: "romersk" as const,
+    titleCase: "kapitaler" as const,
+    dropCap: false,
+    leadIn: true,
+    openings: TEMPLATES,
+    opening: "topp",
+    breakPicture: "rosett.png",
+    sceneBreak: "bild",
+  };
+  const images = new Map(["is.png", "rosett.png", "fyr.png"].map((name) => [name, PIXEL]));
+  return { ...plain, outline, design, images };
+}
+
+describe("typstSource with chapter opening templates", () => {
+  it("prints the label, subtitle and epigraph, with the chapter's own picture in the template", async () => {
+    const source = typstSource(await designedInput());
+
+    expect(source).toContain('#kapitel("I", "Brevet", "Kapitel 1. Brevet", layout: (');
+    expect(source).toContain('subtitle: "Elin", epigraph: "Isen bär.", by: "Gammalt ordspråk"');
+    expect(source).toContain('path: "/bilder/fyr.png"');
+    expect(source).not.toContain('path: "/bilder/is.png"');
+    expect(source).toContain('#let break-mark = fitted("/bilder/rosett.png"');
+    expect(source).toContain("#leadin-par(([Brevet], [låg]");
+    expect(source).toContain('case: "kapitaler"');
+  });
+
+  it("gives the paper 3 mm bleed when a picture reaches its edge, and reaches into it", async () => {
+    const source = typstSource(await designedInput());
+
+    expect(source).toContain("width: 136mm");
+    expect(source).toContain('path: "/bilder/fyr.png", x: -3mm, y: -3mm, width: 136mm');
+  });
+
+  it("has no bleed when the chapter's template keeps its pictures inside the page", async () => {
+    const designed = await designedInput();
+    const outline = designed.outline.map((item) =>
+      item.kind === "chapter" ? { ...item, opening: "ornament", pictures: {} } : item,
+    );
+
+    const source = typstSource({ ...designed, outline });
+
+    expect(source).toContain("width: 130mm");
+    expect(source).toContain('path: "/bilder/rosett.png"');
+  });
+
+  it("compiles with the pictures handed to Typst", async () => {
+    const designed = await designedInput();
+
+    const pdf = await typst.pdf(typstSource(designed), typstFiles(designed));
+
+    expect(new TextDecoder().decode(pdf.slice(0, 5))).toBe("%PDF-");
+  }, 30_000);
+
+  it("leaves out a picture that could not be read instead of failing", async () => {
+    const designed = { ...(await designedInput()), images: new Map<string, Uint8Array>() };
+
+    const source = typstSource(designed);
+
+    expect(source).toContain("pictures: ()");
+    expect(source).toContain("#let break-mark = [\\* \\* \\*]");
+  });
 });

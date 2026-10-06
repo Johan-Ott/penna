@@ -1,5 +1,7 @@
 import type { Node } from "prosemirror-model";
 import { footnoteDefinitions } from "./footnotes.js";
+import { parseMarkdown } from "./parseMarkdown.js";
+import { pictureMarkdown } from "./pictures.js";
 import { serializeInlineContent } from "./serializeInline.js";
 
 export function serializeMarkdown(doc: Node): string {
@@ -28,13 +30,28 @@ function serializeBlocks(parent: Node): string {
   return markdown;
 }
 
+// Every block but a paragraph is written by its kind.
+const OTHER_BLOCKS: Record<string, (block: Node, source: string | null) => string> = {
+  rawBlock: (_block, source) => source ?? "",
+  sceneBreak: (_block, source) => source ?? "* * *",
+  styleBlock: (block) => serializeStyleBlock(block),
+  picture: (block, source) => pictureSource(block, source),
+};
+
 function serializeBlock(block: Node): string {
   const source = block.attrs["source"] as string | null;
-  if (block.type.name === "rawBlock") return source ?? "";
-  if (block.type.name === "sceneBreak") return source ?? "* * *";
-  if (block.type.name === "styleBlock") return serializeStyleBlock(block);
+  const other = OTHER_BLOCKS[block.type.name];
+  if (other) return other(block, source);
   const canonical = cachedCanonical(block);
   return source !== null && canonical === block.attrs["canonical"] ? source : canonical;
+}
+
+// An untouched picture keeps the way it was written.
+function pictureSource(picture: Node, source: string | null) {
+  const canonical = pictureMarkdown(picture);
+  if (source === null) return canonical;
+  const before = parseMarkdown(source).firstChild;
+  return before && pictureMarkdown(before) === canonical ? source : canonical;
 }
 
 // Unchanged paragraphs keep their object identity, so only the edited one is serialized again.

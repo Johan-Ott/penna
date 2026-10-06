@@ -8,8 +8,21 @@ export interface TreeNode {
   title?: string;
   summary?: string;
   when?: string;
+  /** Printed under a chapter's title, such as whose point of view it is. */
+  subtitle?: string;
+  /** A quotation printed before the chapter's text, and who said it. */
+  epigraph?: string;
+  epigraphBy?: string;
+  /** The id of the chapter's opening template, when it is not the book's standard one. */
+  opening?: string;
+  /** The chapter's own picture in bilder/ for an area of its template, by the area's id. */
+  pictures?: Record<string, string>;
   children?: TreeNode[];
 }
+
+/** What a chapter prints around its title. */
+export type ChapterHeading = Pick<TreeNode, "subtitle" | "epigraph" | "epigraphBy">;
+export const HEADING_FIELDS = ["subtitle", "epigraph", "epigraphBy"] as const;
 
 export const CHARACTERS_ID = "karaktarer";
 export const PLACES_ID = "platser";

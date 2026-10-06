@@ -10,7 +10,7 @@ import {
 import type { SettingsChange } from "./useWritingSettings.js";
 import { t } from "../i18n/i18n.js";
 
-type Switch = "typewriter" | "indent";
+type Switch = "typewriter" | "indent" | "showPages";
 
 const changeTo =
   (changes: Partial<WritingSettings>): SettingsChange =>
@@ -179,6 +179,12 @@ export function WritingSettingsPanel(props: PanelProps) {
         hint={t("Bokstil: inget indrag efter rubrik")}
         isOn={settings.indent}
         onFlip={() => onChange(toggle("indent"))}
+      />
+      <Toggle
+        label={t("Sidbrytningar")}
+        hint={t("Var den tryckta bokens sidor börjar")}
+        isOn={settings.showPages}
+        onFlip={() => onChange(toggle("showPages"))}
       />
       <Toggle
         label={t("Mörkt tema")}

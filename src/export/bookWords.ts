@@ -1,5 +1,6 @@
 import { romanNumeral } from "../project/treeLabels.js";
 import type { OutlineItem } from "./book.js";
+import type { ChapterLabel } from "./bookDesign.js";
 
 interface BookWords {
   part: string;
@@ -107,6 +108,27 @@ export function headingLabel(
   return item.kind === "part"
     ? `${words.part} ${romanNumeral(item.number)}`
     : `${words.chapter} ${item.number}`;
+}
+
+/** What a designed book prints above a title; a part always says which part it is. */
+export function designedLabel(
+  item: Extract<OutlineItem, { kind: "part" | "chapter" }>,
+  language: string,
+  style: ChapterLabel,
+): string | null {
+  if (item.kind === "part" || style === "ord") return headingLabel(item, language);
+  if (style === "siffra") return String(item.number);
+  if (style === "romersk") return romanNumeral(item.number);
+  return null;
+}
+
+/** The contents' line for a part or chapter: the label and the title, or what there is. */
+export function contentsLabel(
+  item: Extract<OutlineItem, { kind: "part" | "chapter" }>,
+  language: string,
+) {
+  const label = headingLabel(item, language);
+  return item.title ? `${label}. ${item.title}` : label;
 }
 
 /** Rounded to hundreds, as agents and publishers expect. */

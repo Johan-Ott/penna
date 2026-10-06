@@ -53,6 +53,8 @@ export interface PaletteContext {
   /** Null when there is nothing to split or merge. */
   splitScene: (() => void) | null;
   mergeScene: (() => void) | null;
+  /** Null when no text is open. */
+  insertPicture: (() => void) | null;
   /** A chapter, or the whole book when null. Null on a phone, which has no reading view. */
   read: ((chapterId: string | null) => void) | null;
   openChapterId: string | null;
@@ -121,6 +123,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Rensa formatering"), () => run(clearFormatting)),
     command(t("Scenbrytning"), () => run(insertSceneBreak), "Ctrl+Enter"),
     command(t("Infoga fotnot"), () => run(insertFootnote), "Ctrl+Alt+F"),
+    ...(context.insertPicture ? [command(t("Infoga bild…"), context.insertPicture)] : []),
     ...styles,
   ];
 }

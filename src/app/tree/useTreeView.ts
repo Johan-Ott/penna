@@ -30,6 +30,7 @@ export interface TreeViewProps {
   onSetSceneStatus: (id: string, status: SceneStatus) => void;
   onSetNoteLink: (id: string, isLinked: boolean) => void;
   onShowSnapshots: (id: string) => void;
+  onOpenBeside: (id: string) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
   onNewNote: (sortId: string | null) => void;
   onMoveToSeries?: (id: string) => void;
@@ -86,6 +87,7 @@ export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuAct
     setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
     statusOf: (node) => summaries[node.id]?.status ?? null,
     showSnapshots: (node) => props.onShowSnapshots(node.id),
+    openBeside: (node) => props.onOpenBeside(node.id),
     linkOf: (node) => noteLinkOf(props.project, node.id),
     setLink: (node, isLinked) => props.onSetNoteLink(node.id, isLinked),
     newNote: props.onNewNote,

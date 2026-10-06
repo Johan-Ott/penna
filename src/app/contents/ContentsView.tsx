@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
+import { designOf, trimSize } from "../../export/bookDesign.js";
+import type { PageMap } from "../../project/pageMap.js";
+import { Row } from "./ContentsRowView.js";
+import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import {
   contentsRows,
   inTimeOrder,
   movedInTime,
-  withNodeText,
   type ContentsRow,
 } from "../../project/contents.js";
 import { projectGoals, shortDay } from "../../project/progress.js";
 import { KIND_LABELS } from "../../project/shelf.js";
 import type { TreeNode } from "../../project/tree.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
-import { useMenuButton, type MenuItem } from "../Menu.js";
-import { STATUS_LABELS } from "../tree/treeMenus.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -23,11 +23,13 @@ interface ContentsProps {
   onSaveFields: (fields: Record<string, unknown>) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
   onReadBook: () => void;
+  /** The printed book's pages, once they are counted; null while they are not shown. */
+  pageMap: PageMap | null;
 }
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
-function metaLine(project: Project) {
+function metaLine(project: Project, pageMap: PageMap | null) {
   const words = manuscriptWords(project.tree, project.summaries);
   const goals = projectGoals(project.fields);
   const type = project.fields["type"];
@@ -36,91 +38,17 @@ function metaLine(project: Project) {
     ? t("{words} av {goal} ord", { words: format(words), goal: format(goals.totalGoal) })
     : t("{count} ord", { count: format(words) });
   const deadline = goals.deadline ? t("deadline {day}", { day: shortDay(goals.deadline) }) : null;
-  return [kind, count, deadline].filter(Boolean).join(" · ");
+  const { width, height } = trimSize(designOf(project.fields).trim);
+  const pages = pageMap
+    ? t("{pages} sidor i {width} × {height} mm", { pages: format(pageMap.pages), width, height })
+    : null;
+  return [kind, count, pages, deadline].filter(Boolean).join(" · ");
 }
 
 const timeOrderOf = (fields: Record<string, unknown>) => {
   const stored = fields["timeOrder"];
   return Array.isArray(stored) ? stored.filter((id): id is string => typeof id === "string") : [];
 };
-
-// Saves when the field is left, not on every key.
-function InlineText(props: {
-  value: string;
-  label: string;
-  className: string;
-  onSave: (text: string) => void;
-}) {
-  return (
-    <input
-      key={props.value}
-      className={`inline-text ${props.className}`}
-      aria-label={props.label}
-      placeholder={props.label}
-      defaultValue={props.value}
-      onClick={(event) => event.stopPropagation()}
-      onBlur={(event) => event.target.value !== props.value && props.onSave(event.target.value)}
-      onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
-    />
-  );
-}
-
-function StatusButton(props: ContentsProps & { row: ContentsRow }) {
-  const { row } = props;
-  const items: MenuItem[] = SCENE_STATUSES.map((status) => ({
-    label: STATUS_LABELS[status],
-    isChecked: status === row.status,
-    onSelect: () => props.onSetStatus(row.sceneIds, status),
-  }));
-  const menu = useMenuButton(t("Status"), items);
-  return (
-    <>
-      <button className="contents-status" onClick={menu.open}>
-        {STATUS_LABELS[row.status]}
-      </button>
-      {menu.menu}
-    </>
-  );
-}
-
-function RowTitle(props: { row: ContentsRow; onOpenScene: (id: string) => void }) {
-  const { row } = props;
-  const firstScene = row.sceneIds[0];
-  return (
-    <button className="contents-title" onClick={() => firstScene && props.onOpenScene(firstScene)}>
-      {row.number === null ? row.title : `${row.number}. ${row.title}`}
-    </button>
-  );
-}
-
-function Row(
-  props: ContentsProps & { row: ContentsRow; drag: ReturnType<typeof useRowDrag> | null },
-) {
-  const { row, project } = props;
-  const save = (field: "summary" | "when") => (text: string) =>
-    props.onChangeTree(withNodeText(project.tree, row.id, field, text));
-  return (
-    <div className="contents-row" {...props.drag?.propsFor(row.id)}>
-      <div className="contents-main">
-        <RowTitle row={row} onOpenScene={props.onOpenScene} />
-        <InlineText
-          value={row.summary}
-          label={t("Vad händer?")}
-          className="contents-summary"
-          onSave={save("summary")}
-        />
-      </div>
-      <InlineText
-        value={row.when}
-        label={t("När?")}
-        className="contents-when"
-        onSave={save("when")}
-      />
-      <span className="contents-words">{format(row.words)}</span>
-      <StatusButton {...props} />
-    </div>
-  );
-}
 
 function useRowDrag(shown: ContentsRow[], onOrder: (order: string[]) => void) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -159,6 +87,18 @@ function OrderSwitch(props: { isTimeOrder: boolean; onChange: (isTimeOrder: bool
   );
 }
 
+function ContentsHeader(props: ContentsProps) {
+  return (
+    <header className="contents-header">
+      <h1>{props.project.name}</h1>
+      <span className="contents-meta">{metaLine(props.project, props.pageMap)}</span>
+      <button className="link-button quiet contents-read" onClick={props.onReadBook}>
+        {t("Läs hela boken")}
+      </button>
+    </header>
+  );
+}
+
 export function ContentsView(props: ContentsProps) {
   const { project } = props;
   const [isTimeOrder, setTimeOrder] = useState(false);
@@ -168,13 +108,7 @@ export function ContentsView(props: ContentsProps) {
   return (
     <main className="contents-view">
       <div className="contents-column">
-        <header className="contents-header">
-          <h1>{project.name}</h1>
-          <span className="contents-meta">{metaLine(project)}</span>
-          <button className="link-button quiet contents-read" onClick={props.onReadBook}>
-            {t("Läs hela boken")}
-          </button>
-        </header>
+        <ContentsHeader {...props} />
         <div className="contents-bar">
           <h2>{t("Innehåll")}</h2>
           <OrderSwitch isTimeOrder={isTimeOrder} onChange={setTimeOrder} />
@@ -182,7 +116,13 @@ export function ContentsView(props: ContentsProps) {
         {rows.length === 0 && <p className="contents-empty">{t("Inga kapitel än.")}</p>}
         <div className="contents-list">
           {shown.map((row) => (
-            <Row key={row.id} {...props} row={row} drag={isTimeOrder ? drag : null} />
+            <Row
+              key={row.id}
+              {...props}
+              row={row}
+              pages={props.pageMap?.chapterPages.get(row.id) ?? null}
+              dragProps={isTimeOrder ? drag.propsFor(row.id) : {}}
+            />
           ))}
         </div>
       </div>

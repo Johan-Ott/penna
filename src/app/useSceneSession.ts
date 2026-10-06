@@ -1,3 +1,4 @@
+import { pictureUrlIn } from "./pictureFiles.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../project/tree.js";
 import type { Project } from "./useProject.js";
@@ -22,6 +23,12 @@ const logged = (status: SaveStatus) => {
 };
 
 /** The logic lives in sceneSession.ts; this holds the React state. */
+// The editor is writable, and shows the book's pictures, exactly while a scene is open.
+function openedModes(modes: ReturnType<typeof useEditorView>["modes"], opened: OpenScene | null) {
+  modes.current.isEditable = opened !== null;
+  modes.current.pictureUrl = opened ? (name) => pictureUrlIn(opened.dir, name) : async () => null;
+}
+
 export function useSceneSession() {
   const [scene, setScene] = useState<OpenScene | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus | null>(null);
@@ -39,7 +46,7 @@ export function useSceneSession() {
         editor: { load, currentDoc: () => viewRef.current?.state.doc ?? null },
         // Set before the text loads, so the editor is writable exactly when a scene is open.
         onScene: (opened) => {
-          modes.current.isEditable = opened !== null;
+          openedModes(modes, opened);
           setScene(opened && { ...opened });
         },
         onConflict: setConflict,

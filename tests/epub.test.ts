@@ -1,7 +1,8 @@
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import { bookOutline, readBookScenes } from "../src/export/book";
-import { buildEpub, type BookExtras } from "../src/export/epub";
+import { DEFAULT_DESIGN, type BookDesign } from "../src/export/bookDesign";
+import { buildEpub, type BookExtras, type EpubInput } from "../src/export/epub";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
@@ -26,7 +27,7 @@ const FILES = {
 };
 const BOOK = { title: "Vintervägen", subtitle: "Roman", author: "Elin Berg", words: 1200 };
 
-async function build(language = "sv-SE", extras: BookExtras = {}) {
+async function build(language = "sv-SE", extras: BookExtras = {}, more: Partial<EpubInput> = {}) {
   const files = createMemoryFileSystem(FILES);
   const outline = bookOutline(tree);
   const ids = outline.flatMap((item) => (item.kind === "scene" ? [item.id] : []));
@@ -41,6 +42,7 @@ async function build(language = "sv-SE", extras: BookExtras = {}) {
     identifier: "urn:uuid:3f1c2a64-0d5e-4b7a-9a1e-6c2b8d4e5f70",
     modified: new Date("2026-10-03T12:00:00Z"),
     parts: { hasTitlePage: true, hasCopyrightPage: true, hasContents: true },
+    ...more,
   });
   return { bytes, zip: await JSZip.loadAsync(bytes) };
 }
@@ -77,6 +79,18 @@ describe("buildEpub", () => {
     expect(await read(zip, "OEBPS/nav.xhtml")).toContain("<h1>Contents</h1>");
     expect(await read(zip, "OEBPS/text/chapter-1.xhtml")).toContain("Chapter 1");
     expect(await read(zip, "OEBPS/text/copyright.xhtml")).toContain("All rights reserved.");
+  });
+
+  it("describes its accessibility, as the EU accessibility act asks of e-books", async () => {
+    const { zip } = await build();
+
+    const opf = await read(zip, "OEBPS/content.opf");
+
+    expect(opf).toContain('<meta property="schema:accessMode">textual</meta>');
+    expect(opf).toContain('<meta property="schema:accessModeSufficient">textual</meta>');
+    expect(opf).toContain('<meta property="schema:accessibilityFeature">tableOfContents</meta>');
+    expect(opf).toContain('<meta property="schema:accessibilityHazard">none</meta>');
+    expect(opf).toContain('<meta property="schema:accessibilitySummary">');
   });
 
   it("starts with an uncompressed mimetype, as EPUB readers require", async () => {
@@ -172,5 +186,40 @@ describe("buildEpub with a cover picture", () => {
     expect(zip.file("OEBPS/cover.svg")).toBeNull();
     expect(await zip.file("OEBPS/cover.jpg")?.async("uint8array")).toEqual(picture);
     expect(await read(zip, "OEBPS/text/cover.xhtml")).toContain('src="../cover.jpg"');
+  });
+});
+
+describe("buildEpub with a designed chapter heading", () => {
+  it("prints the subtitle, epigraph and the template's picture, and carries the pictures in the book", async () => {
+    const outline = bookOutline(tree).map((item) =>
+      item.kind === "chapter" && item.number === 1
+        ? { ...item, subtitle: "Elin", epigraph: "Isen bär.", epigraphBy: "Ordspråk" }
+        : item,
+    );
+    const ornament = new Uint8Array([0xff, 0xd8, 0xff, 0xc0, 0, 11, 8, 0, 1, 0, 1, 1, 0, 0]);
+    const area = { id: "a", picture: "rosett.jpg", x: 0.3, y: 0.1, width: 0.4, height: 0.1 };
+    const openings = [{ ...DEFAULT_DESIGN.openings[0], areas: [{ ...area, fit: "hela" }] }];
+    const design = { ...DEFAULT_DESIGN, chapterLabel: "siffra", openings } as BookDesign;
+
+    const { zip } = await build(
+      "sv-SE",
+      {},
+      {
+        outline,
+        design: { ...design, titleCase: "versaler" },
+        images: new Map([["rosett.jpg", ornament]]),
+      },
+    );
+
+    const chapter = await read(zip, "OEBPS/text/chapter-1.xhtml");
+    expect(chapter).toContain(
+      '<div class="opening-picture"><img src="../bilder/rosett.jpg" alt="" />',
+    );
+    expect(chapter).toContain('<span class="label">1</span>');
+    expect(chapter).toContain('<span class="subtitle">Elin</span>');
+    expect(chapter).toContain('<blockquote class="epigraph"><p>Isen bär.</p>');
+    const opf = await read(zip, "OEBPS/content.opf");
+    expect(opf).toContain('href="bilder/rosett.jpg" media-type="image/jpeg"');
+    expect(await read(zip, "OEBPS/style.css")).toContain("text-transform: uppercase");
   });
 });

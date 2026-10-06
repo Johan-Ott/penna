@@ -8,6 +8,8 @@ interface ReviewPanelProps {
   /** Null when Granskning is off and only comments are shown. */
   review: ReturnType<typeof useReview> | null;
   commentsSection: ReactNode;
+  revisionSection: ReactNode;
+  revisionCount: number;
   repeatWindow: number;
   onOpenCard: (id: string) => void;
   onReplaceAll: (suspect: NameSuspect) => void;
@@ -113,12 +115,14 @@ function useCountInTopbar(count: number, onCount: (count: number | null) => void
 
 export function ReviewPanel(props: ReviewPanelProps) {
   const { review } = props;
-  const count = (review ? review.suspects.length + review.repeats.length : 0) + props.commentCount;
+  const found = review ? review.suspects.length + review.repeats.length : 0;
+  const count = found + props.commentCount + props.revisionCount;
   useCountInTopbar(count, props.onCount);
   const isShown = props.isOpen || props.isPinnedOpen;
   return (
     <aside className={isShown ? "review-panel open" : "review-panel"} aria-label={t("Granskning")}>
       <ReviewHeader onClose={() => props.onOpenChange(false)} />
+      {props.revisionSection}
       {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
       {review && <ToLookAt {...props} review={review} />}
       {props.commentsSection}

@@ -49,3 +49,10 @@ export async function selectFirstWord(page: Page) {
 async function settleSelection(page: Page) {
   await page.evaluate(() => new Promise((done) => setTimeout(done, 50)));
 }
+
+/** Runs a command from the palette by its name. */
+export async function runCommand(page: Page, name: string) {
+  await page.keyboard.press("Control+k");
+  await page.keyboard.type(name);
+  await page.keyboard.press("Enter");
+}

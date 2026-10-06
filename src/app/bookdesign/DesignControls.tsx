@@ -2,15 +2,22 @@ import {
   BODY_FONTS,
   BODY_SIZES,
   BOOK_THEMES,
+  HEADER_CONTENTS,
+  BREAK_PICTURE,
   SCENE_BREAKS,
+  THEME_FONTS,
   TRIMS,
-  type BookDesign,
   type BookTheme,
+  type ChapterStart,
+  type HeaderContent,
 } from "../../export/bookDesign.js";
+import { ChoiceRow } from "./ChoiceRow.js";
+import { HeadingControls, type ControlProps } from "./HeadingControls.js";
+import { OpeningList } from "./OpeningList.js";
+import { PictureRow } from "./PictureRow.js";
+import { TrimRow } from "./TrimRow.js";
 import { t } from "../../i18n/i18n.js";
-import { Switch } from "../settings/controls.js";
-
-type ControlProps = { design: BookDesign; save: (change: Partial<BookDesign>) => void };
+import { Switch } from "../controls.js";
 
 const THEME_NAMES: Record<BookTheme, string> = {
   klassisk: t("Klassisk"),
@@ -31,7 +38,7 @@ function ThemeCards({ design, save }: ControlProps) {
             role="radio"
             aria-checked={design.theme === theme}
             className={`theme-card ${theme}`}
-            onClick={() => save({ theme })}
+            onClick={() => save({ theme, headingFont: THEME_FONTS[theme] })}
           >
             <span className="theme-sample">Aa</span>
             {THEME_NAMES[theme]}
@@ -42,89 +49,131 @@ function ThemeCards({ design, save }: ControlProps) {
   );
 }
 
-function SelectRow(props: {
-  label: string;
-  value: string;
-  options: [string, string][];
-  onSelect: (value: string) => void;
-}) {
+const FONT_CHOICES: [string, string][] = BODY_FONTS.map((font) => [font, font]);
+const SIZE_CHOICES: [string, string][] = BODY_SIZES.map((size) => [String(size), sizeLabel(size)]);
+const START_CHOICES: [ChapterStart, string][] = [
+  ["valfri", t("Där förra slutar")],
+  ["hoger", t("Alltid på högersida")],
+];
+const HEADER_NAMES: Record<HeaderContent, string> = {
+  titel: t("Bokens titel"),
+  forfattare: t("Författarnamnet"),
+  kapitel: t("Kapitlets titel"),
+  inget: t("Inget"),
+};
+const HEADER_CHOICES: [string, string][] = HEADER_CONTENTS.map((kind) => [
+  kind,
+  HEADER_NAMES[kind],
+]);
+
+function PageRows({ design, save }: ControlProps) {
   return (
-    <label className="design-row">
-      <span>{props.label}</span>
-      <select
-        className="design-select"
-        value={props.value}
-        onChange={(event) => props.onSelect(event.target.value)}
-      >
-        {props.options.map(([value, text]) => (
-          <option key={value} value={value}>
-            {text}
-          </option>
-        ))}
-      </select>
-    </label>
+    <>
+      <TrimRow trim={design.trim} trims={TRIMS} onChange={(trim) => save({ trim })} />
+      <ChoiceRow
+        label={t("Kapitel börjar")}
+        value={design.chapterStart}
+        choices={START_CHOICES}
+        onChoose={(chapterStart) => save({ chapterStart: chapterStart as ChapterStart })}
+      />
+      <ChoiceRow
+        label={t("Sidhuvud, vänster")}
+        value={design.headerLeft}
+        choices={HEADER_CHOICES}
+        onChoose={(headerLeft) => save({ headerLeft: headerLeft as HeaderContent })}
+      />
+      <ChoiceRow
+        label={t("Sidhuvud, höger")}
+        value={design.headerRight}
+        choices={HEADER_CHOICES}
+        onChoose={(headerRight) => save({ headerRight: headerRight as HeaderContent })}
+      />
+    </>
   );
 }
 
-const BODY_CHOICES: [string, string][] = BODY_FONTS.flatMap((font) =>
-  BODY_SIZES.map((size): [string, string] => [`${font}|${size}`, `${font} · ${sizeLabel(size)}`]),
-);
+function BodyRows({ design, save }: ControlProps) {
+  return (
+    <>
+      <ChoiceRow
+        label={t("Typsnitt")}
+        value={design.bodyFont}
+        choices={FONT_CHOICES}
+        onChoose={(bodyFont) => save({ bodyFont })}
+      />
+      <ChoiceRow
+        label={t("Storlek")}
+        value={String(design.bodySize)}
+        choices={SIZE_CHOICES}
+        onChoose={(size) => save({ bodySize: Number(size) })}
+      />
+      <SwitchRow
+        label={t("Anfang vid kapitelstart")}
+        isOn={design.dropCap}
+        onFlip={() => save({ dropCap: !design.dropCap })}
+      />
+      {!design.dropCap && (
+        <SwitchRow
+          label={t("Första orden i kapitäler")}
+          isOn={design.leadIn}
+          onFlip={() => save({ leadIn: !design.leadIn })}
+        />
+      )}
+    </>
+  );
+}
 
-function SceneBreaks({ design, save }: ControlProps) {
+function SceneBreaks({ design, save, dir }: ControlProps) {
+  const marks = [...SCENE_BREAKS, BREAK_PICTURE];
   return (
     <div className="design-block">
       <span className="design-label">{t("Scenbrytning")}</span>
       <div className="break-choices" role="radiogroup" aria-label={t("Scenbrytning")}>
-        {SCENE_BREAKS.map((mark) => (
+        {marks.map((mark) => (
           <button
             key={mark}
             role="radio"
             aria-checked={design.sceneBreak === mark}
             onClick={() => save({ sceneBreak: mark })}
           >
-            {mark}
+            {mark === BREAK_PICTURE ? t("Bild") : mark}
           </button>
         ))}
       </div>
+      {design.sceneBreak === BREAK_PICTURE && (
+        <PictureRow
+          dir={dir}
+          label={t("Bild som scenbrytning")}
+          name={design.breakPicture}
+          onChange={(breakPicture) => save({ breakPicture })}
+        />
+      )}
     </div>
   );
 }
 
-function DropCapRow({ design, save }: ControlProps) {
+function SwitchRow(props: { label: string; isOn: boolean; onFlip: () => void }) {
   return (
     <div className="design-row">
-      <span>{t("Anfang vid kapitelstart")}</span>
-      <Switch
-        label={t("Anfang")}
-        isOn={design.dropCap}
-        onFlip={() => save({ dropCap: !design.dropCap })}
-      />
+      <span>{props.label}</span>
+      <Switch {...props} />
     </div>
   );
 }
 
-export function DesignControls({ design, save }: ControlProps) {
-  const chooseBody = (choice: string) => {
-    const [bodyFont = design.bodyFont, size] = choice.split("|");
-    save({ bodyFont, bodySize: Number(size) });
-  };
+export function DesignControls(props: ControlProps) {
   return (
-    <>
-      <ThemeCards design={design} save={save} />
-      <SelectRow
-        label={t("Format")}
-        value={design.trim}
-        options={TRIMS}
-        onSelect={(trim) => save({ trim })}
-      />
-      <SelectRow
-        label={t("Brödtext")}
-        value={`${design.bodyFont}|${design.bodySize}`}
-        options={BODY_CHOICES}
-        onSelect={chooseBody}
-      />
-      <DropCapRow design={design} save={save} />
-      <SceneBreaks design={design} save={save} />
-    </>
+    <div className="design-controls">
+      <ThemeCards {...props} />
+      <span className="design-section">{t("Sidan")}</span>
+      <PageRows {...props} />
+      <span className="design-section">{t("Kapitelrubrik")}</span>
+      <HeadingControls {...props} />
+      <span className="design-section">{t("Kapitelöppningar")}</span>
+      <OpeningList {...props} />
+      <span className="design-section">{t("Brödtext")}</span>
+      <BodyRows {...props} />
+      <SceneBreaks {...props} />
+    </div>
   );
 }

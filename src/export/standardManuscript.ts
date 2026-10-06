@@ -1,5 +1,6 @@
 import {
   AlignmentType,
+  Bookmark,
   Document,
   FootnoteReferenceRun,
   Header,
@@ -7,11 +8,13 @@ import {
   PageNumber,
   Paragraph,
   TextRun,
+  type IParagraphOptions,
   type ParagraphChild,
 } from "docx";
 import type { Node } from "prosemirror-model";
 import { quoteConverter, type BookDetails, type OutlineItem, type Typography } from "./book.js";
 import { bookWords, headingLabel, roundedWords } from "./bookWords.js";
+import { sceneEndMark, sceneStartMark } from "./sceneMarks.js";
 
 interface ManuscriptInput {
   book: BookDetails;
@@ -71,8 +74,16 @@ function runs(paragraph: Node, settings: TextSettings): ParagraphChild[] {
   return children;
 }
 
+// Paragraphs are kept as options until the scene is done, so its marks can go inside them.
+type ParagraphOptions = { children: ParagraphChild[] } & Omit<IParagraphOptions, "children">;
+
+const centeredOptions = (text: string): ParagraphOptions => ({
+  alignment: AlignmentType.CENTER,
+  children: [new TextRun(text)],
+});
+
 const centered = (text: string, extra: object = {}) =>
-  new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun(text)], ...extra });
+  new Paragraph({ ...centeredOptions(text), ...extra });
 
 function paragraphIndent(isFirst: boolean, isInStyle: boolean) {
   if (isInStyle) return { left: INDENT };
@@ -83,24 +94,38 @@ function blockParagraphs(
   block: Node,
   place: { isFirst: boolean; isInStyle: boolean },
   settings: TextSettings,
-): Paragraph[] {
+): ParagraphOptions[] {
   const name = block.type.name;
-  if (name === "sceneBreak") return [centered(SCENE_BREAK)];
-  if (name === "rawBlock") return [new Paragraph(String(block.attrs["source"]))];
+  if (name === "sceneBreak") return [centeredOptions(SCENE_BREAK)];
+  if (name === "rawBlock") return [{ children: [new TextRun(String(block.attrs["source"]))] }];
+  // A manuscript for agents and editors carries no pictures; it says where one goes.
+  if (name === "picture") {
+    return [centeredOptions(`[${block.attrs["caption"] || block.attrs["name"]}]`)];
+  }
   if (name === "styleBlock") {
-    const inner: Paragraph[] = [];
+    const inner: ParagraphOptions[] = [];
     block.forEach((child) =>
       inner.push(...blockParagraphs(child, { isFirst: true, isInStyle: true }, settings)),
     );
     return inner;
   }
   const children = runs(block, settings);
-  return [new Paragraph({ children, indent: paragraphIndent(place.isFirst, place.isInStyle) })];
+  return [{ children, indent: paragraphIndent(place.isFirst, place.isInStyle) }];
+}
+
+// Invisible, at the start of the scene's first paragraph and the end of its last.
+function withSceneMarks(paragraphs: ParagraphOptions[], sceneId: string): Paragraph[] {
+  const last = paragraphs.length - 1;
+  return paragraphs.map((options, index) => {
+    const start = index === 0 ? [new Bookmark({ id: sceneStartMark(sceneId), children: [] })] : [];
+    const end = index === last ? [new Bookmark({ id: sceneEndMark(sceneId), children: [] })] : [];
+    return new Paragraph({ ...options, children: [...start, ...options.children, ...end] });
+  });
 }
 
 /** The first paragraph, and the one after a scene break, are not indented. */
-function sceneParagraphs(doc: Node, settings: TextSettings): Paragraph[] {
-  const paragraphs: Paragraph[] = [];
+function sceneParagraphs(doc: Node, settings: TextSettings): ParagraphOptions[] {
+  const paragraphs: ParagraphOptions[] = [];
   let isFirst = true;
   doc.forEach((block) => {
     paragraphs.push(...blockParagraphs(block, { isFirst, isInStyle: false }, settings));
@@ -129,7 +154,8 @@ function bodyParagraphs(input: ManuscriptInput, notes: WordNotes): Paragraph[] {
     else {
       const doc = scenes.get(item.id);
       if (previous === "scene") paragraphs.push(centered(SCENE_BREAK));
-      if (doc) paragraphs.push(...sceneParagraphs(doc, { typography, notes }));
+      if (doc)
+        paragraphs.push(...withSceneMarks(sceneParagraphs(doc, { typography, notes }), item.id));
     }
     previous = item.kind;
   }

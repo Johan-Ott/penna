@@ -13,6 +13,9 @@ import { placeholder } from "./placeholder.js";
 import { repetitionsPlugin } from "./repetitionMarks.js";
 import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
 import { insertFootnote, uniqueFootnoteLabels } from "./footnoteEditing.js";
+import { pageMarksPlugin } from "./pageMarks.js";
+import { revisionPlugin } from "./revisionMarks.js";
+import type { RevisionChange } from "../manuscript/revision.js";
 import { t } from "../i18n/i18n.js";
 
 // Swedish uses ” for both opening and closing quotes. Each rule asks whether it is on.
@@ -44,6 +47,10 @@ export interface EditorSwitches {
   repeatWindow: () => number | null;
   commentAnchors: () => CommentAnchor[];
   onComment: (id: string) => void;
+  /** The printed page of each top-level block, or null when page breaks are not shown. */
+  pageMarks: () => (number | undefined)[] | null;
+  /** The editor's changes to the open text that are not yet accepted or rejected. */
+  revisionChanges: () => RevisionChange[];
 }
 
 export const DEFAULT_SWITCHES: EditorSwitches = {
@@ -54,6 +61,8 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   repeatWindow: () => null,
   commentAnchors: () => [],
   onComment: () => undefined,
+  pageMarks: () => null,
+  revisionChanges: () => [],
 };
 
 const writingKeys = keymap({
@@ -85,6 +94,8 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       mentionsPlugin(switches.mentionMatchers, switches.onMention),
       repetitionsPlugin(switches.repeatWindow),
       commentsPlugin(switches.commentAnchors, switches.onComment),
+      pageMarksPlugin(switches.pageMarks),
+      revisionPlugin(switches.revisionChanges),
       placeholder(t("Börja skriva…")),
     ],
   });

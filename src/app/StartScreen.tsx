@@ -1,9 +1,11 @@
+import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
+import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
 import { useMenuButton } from "./Menu.js";
 import { appMenu } from "./shell/appMenu.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
 import { usePhone } from "./phone/usePhone.js";
-import { SettingsLayer, SHORTCUTS_TAB } from "./settings/SettingsDialog.js";
+import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
 import { copyExampleProject } from "../project/newProject.js";
@@ -59,33 +61,60 @@ function shelfHandlers(app: StartScreenProps["app"]) {
     onOpenExample: () => void exampleDir(preferences.libraryDir).then(app.open),
     onLocate: (book: ShelfBook) => void locate(book, updatePreferences),
     onForget: (book: ShelfBook) => updatePreferences((current) => forgetProject(current, book.dir)),
+    onRemove: (book: ShelfBook) =>
+      void platform.removeBook?.(book.dir, book.title).then((isRemoved) => {
+        if (isRemoved) updatePreferences((current) => forgetProject(current, book.dir));
+      }),
   };
+}
+
+// The shelf's menu, with the dialogs it opens.
+function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void) {
+  const settings = app.writingMode.settingsDialog;
+  const backups = useBackupsDialog(app, []);
+  const feedback = useFeedbackDialog();
+  const menu = useMenuButton(
+    t("Meny"),
+    appMenu({
+      showShelf: () => undefined,
+      newProject: onNewProject,
+      openFolder: () => void app.choose(),
+      showVersions: null,
+      exportZip: null,
+      importRevision: null,
+      showBackups: backups.open,
+      sendFeedback: feedback.open,
+      openSettings: () => settings.open(),
+      openShortcuts: () => settings.open(HELP_TAB),
+    }),
+  );
+  const layers = (
+    <>
+      {menu.menu}
+      {backups.layer}
+      {feedback.layer}
+    </>
+  );
+  return { open: menu.open, layers };
 }
 
 function ShelfFrame(
   props: StartScreenProps & { onNewProject: () => void; isPhone: boolean; children: ReactNode },
 ) {
   const { app } = props;
-  const settings = app.writingMode.settingsDialog;
-  const menu = useMenuButton(
-    t("Meny"),
-    appMenu({
-      showShelf: () => undefined,
-      newProject: props.onNewProject,
-      openFolder: () => void app.choose(),
-      showVersions: null,
-      exportZip: null,
-      openSettings: () => settings.open(),
-      openShortcuts: () => settings.open(SHORTCUTS_TAB),
-    }),
-  );
+  const menu = useShelfMenu(app, props.onNewProject);
   if (props.isPhone) return <div className="phone-screen">{props.children}</div>;
   return (
     <div className="shelf-app">
       <ShelfTopbar title={t("Bokhylla")} onMenu={menu.open} />
       <div className="main-card">{props.children}</div>
-      {menu.menu}
-      <SettingsLayer {...app.startup} {...app.writingMode} dialog={settings} book={null} />
+      {menu.layers}
+      <SettingsLayer
+        {...app.startup}
+        {...app.writingMode}
+        dialog={app.writingMode.settingsDialog}
+        book={null}
+      />
     </div>
   );
 }

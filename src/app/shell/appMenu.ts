@@ -9,19 +9,28 @@ export interface AppMenuActions {
   showVersions: (() => void) | null;
   /** Null on the bookshelf, where there is no book to pack. */
   exportZip: (() => void) | null;
+  /** Null on the bookshelf, where there is no book to read changes into. */
+  importRevision: (() => void) | null;
+  /** Null where Penna keeps no copies, as in the browser. */
+  showBackups: (() => void) | null;
   openSettings: () => void;
   openShortcuts: () => void;
+  sendFeedback: () => void;
 }
 
+// What only a book has, shown when there is one.
+const BOOK_ITEMS: [keyof AppMenuActions, string][] = [
+  ["showVersions", t("Versioner av den här texten")],
+  ["exportZip", t("Exportera allt som zip")],
+  ["importRevision", t("Läs in redaktörens Word-fil…")],
+  ["showBackups", t("Säkerhetskopior…")],
+];
+
 export function appMenu(actions: AppMenuActions): MenuItem[] {
-  const bookItems: MenuItem[] = [
-    ...(actions.showVersions
-      ? [{ label: t("Versioner av den här texten"), onSelect: actions.showVersions }]
-      : []),
-    ...(actions.exportZip
-      ? [{ label: t("Exportera allt som zip"), onSelect: actions.exportZip }]
-      : []),
-  ];
+  const bookItems: MenuItem[] = BOOK_ITEMS.flatMap(([key, label]) => {
+    const onSelect = actions[key];
+    return onSelect ? [{ label, onSelect }] : [];
+  });
   const [firstBookItem, ...restBookItems] = bookItems;
   return [
     { label: t("Bokhylla"), shortcut: "Ctrl+Shift+O", onSelect: actions.showShelf },
@@ -36,5 +45,6 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
       onSelect: actions.openSettings,
     },
     { label: t("Hjälp och kortkommandon"), shortcut: "?", onSelect: actions.openShortcuts },
+    { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
   ];
 }

@@ -4,21 +4,21 @@ import { ContentsView } from "../contents/ContentsView.js";
 import { ReadView } from "../contents/ReadView.js";
 import { cursorAtBlock } from "../../editor/commands.js";
 import { openScene } from "../sceneSession.js";
-import { useMenuButton } from "../Menu.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { ProgressPopover } from "../progress/ProgressPopover.js";
 import { PublishView } from "../publish/PublishView.js";
-import { SHORTCUTS_TAB } from "../settings/SettingsDialog.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
 import { useShortcut } from "../useShortcut.js";
 import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
-import { appMenu } from "./appMenu.js";
 import { Topbar } from "./Topbar.js";
+import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
+import type { PageMap } from "../../project/pageMap.js";
+import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { t } from "../../i18n/i18n.js";
 
 type ScreenProps = { app: AppState; project: Project };
@@ -40,24 +40,6 @@ function useScreenNavigation({ app, project }: ScreenProps) {
       openIfOnDisk(session, project, place.sceneId);
     }
   });
-}
-
-function useAppMenu({ app }: ScreenProps) {
-  const showShelf = () => void app.showShelf();
-  useShortcut("o", showShelf, { shift: true });
-  const items = appMenu({
-    showShelf,
-    newProject: () => {
-      app.newProjectAsked.current = true;
-      showShelf();
-    },
-    openFolder: () => void app.choose(),
-    showVersions: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
-    exportZip: app.zip.backup,
-    openSettings: () => app.writingMode.settingsDialog.open(),
-    openShortcuts: () => app.writingMode.settingsDialog.open(SHORTCUTS_TAB),
-  });
-  return useMenuButton(t("Meny"), items);
 }
 
 function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElement>) => void }) {
@@ -89,10 +71,11 @@ function openAt(app: AppState, project: Project, sceneId: string, blockIndex: nu
   );
 }
 
-function Contents({ app, project }: ScreenProps) {
+function Contents({ app, project, pageMap }: ScreenProps & { pageMap: PageMap | null }) {
   return (
     <ContentsView
       project={project}
+      pageMap={pageMap}
       onOpenScene={sidebarProps(app, project).onOpenScene}
       onChangeTree={(tree) => void app.updateTree(tree)}
       onSaveFields={(fields) => void app.updateFields(fields)}
@@ -106,10 +89,14 @@ function Contents({ app, project }: ScreenProps) {
 
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
+  const isCounting = writingMode.view === "innehall" || writingMode.settings.showPages;
+  const pageMap = usePageMap(project, app.startup.preferences.authorName, isCounting);
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
-      <WritingArea {...writingAreaProps(app, project)} />
-      {writingMode.view === "innehall" && <Contents app={app} project={project} />}
+      <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
+      {writingMode.view === "innehall" && (
+        <Contents app={app} project={project} pageMap={pageMap} />
+      )}
       {writingMode.view === "las" && (
         <ReadView
           project={project}

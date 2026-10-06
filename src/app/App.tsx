@@ -2,10 +2,11 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
 import { usePalette } from "./palette/usePalette.js";
+import { sceneContext } from "./palette/sceneContext.js";
 import { useNotes } from "./notes/useNotes.js";
 import { useNoteActions } from "./notes/useNoteActions.js";
 import { noteSortOf } from "./notes/NotePage.js";
-import { useComments } from "./review/useComments.js";
+import { useReviewParts } from "./review/useReviewParts.js";
 import { UpdateNotice } from "./UpdateNotice.js";
 import { useReminder } from "./reminder.js";
 import { useSpellLanguage } from "./useSpellLanguage.js";
@@ -25,7 +26,6 @@ import { useSyncCopy } from "./SyncLayer.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
 import { snapshotOnSave } from "../project/snapshots.js";
-import { chapterOf } from "../project/treeLabels.js";
 import { platform } from "./platform.js";
 import { useExport } from "./exporting/useExport.js";
 import { ProjectScreen } from "./shell/ProjectScreen.js";
@@ -93,14 +93,9 @@ function useCoreState() {
     series: seriesActions,
   };
   const author = startup.preferences.authorName;
-  const comments = useComments({
-    project,
-    scene: sceneState.scene,
-    editor: sceneState.editor,
-    author,
-  });
+  const review = useReviewParts({ ...sceneState, project, author });
   const writingMode = useWritingMode();
-  return { sceneState, projectState, seriesState, startup, actions, comments, writingMode };
+  return { sceneState, projectState, seriesState, startup, actions, ...review, writingMode };
 }
 
 function useNotesParts(core: ReturnType<typeof useCoreState>) {
@@ -152,17 +147,13 @@ function paletteContextOf(app: PaletteParts): PaletteContext | null {
     openSearch: () => writingMode.setSearchOpen(true),
     chooseFolder: () => void app.choose(),
     showShelf: () => void app.showShelf(),
-    showSnapshots: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
     openSettings: () => writingMode.settingsDialog.open(),
     showView: writingMode.setView,
     cards: app.notes.cards,
     describe: app.notes.descriptionOf,
     openCard: app.cards.open,
     newNote: () => app.setNewNoteSort(null),
-    splitScene: app.scene ? app.sceneSplit.split : null,
-    read: writingMode.read,
-    openChapterId: app.scene ? (chapterOf(project.tree, app.scene.id)?.id ?? null) : null,
-    mergeScene: app.sceneSplit.canMerge ? app.sceneSplit.merge : null,
+    ...sceneContext({ ...app, project }),
   };
 }
 

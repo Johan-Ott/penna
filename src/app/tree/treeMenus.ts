@@ -22,6 +22,8 @@ export interface TreeMenuActions {
   setStatus: (node: TreeNode, status: SceneStatus) => void;
   statusOf: (node: TreeNode) => SceneStatus | null;
   showSnapshots: (node: TreeNode) => void;
+  /** Shows the text beside the one being written. */
+  openBeside: (node: TreeNode) => void;
   /** Null when the node is not a note. */
   linkOf: (node: TreeNode) => boolean | null;
   setLink: (node: TreeNode, isLinked: boolean) => void;
@@ -128,6 +130,7 @@ export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuAct
     node.kind === "scene"
       ? [
           { label: t("Öppna"), onSelect: () => actions.open(node) },
+          { label: t("Öppna bredvid"), onSelect: () => actions.openBeside(node) },
           { label: t("Versioner…"), onSelect: () => actions.showSnapshots(node) },
           ...(actions.canMerge(node)
             ? [{ label: t("Slå ihop med nästa scen"), onSelect: actions.mergeWithNext }]

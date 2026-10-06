@@ -1,3 +1,4 @@
+import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
@@ -25,6 +26,21 @@ function googleSignInHere() {
 }
 
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
+
+// A computer puts the book in its trash; a phone has none, so the question says so.
+async function removeBook(dir: string, title: string) {
+  const message = isPhone
+    ? t("”{title}” raderas från telefonen. En kopia i Google Drive finns kvar.", { title })
+    : t("”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.", { title });
+  const isSure = await ask(message, {
+    title: t("Ta bort boken"),
+    kind: "warning",
+    okLabel: t("Ta bort"),
+    cancelLabel: t("Avbryt"),
+  });
+  if (isSure) await invoke("remove_book", { path: dir });
+  return isSure;
+}
 
 const askToCloseAnyway = () =>
   ask(
@@ -89,8 +105,16 @@ const phoneFolders = async () => {
   return { home: own, documents: own };
 };
 
+const backups = {
+  dir: async () => `${withForwardSlashes(await appDataDir())}/backups`,
+  remove: (path: string) => invoke("remove_backup", { path }).then(() => undefined),
+};
+
 export const tauriPlatform: Platform = {
   isPhone,
+  webFetch: appFetch as typeof fetch,
+  removeBook,
+  backups,
   saveFile,
   pickFile,
   fileSystem: tauriFileSystem,

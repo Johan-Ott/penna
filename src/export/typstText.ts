@@ -69,33 +69,64 @@ function withDropCap(paragraph: Node, convert: (text: string) => string) {
   return `#anfang(${typstString(letter)}, (${words.join(", ")},))`;
 }
 
+function withLeadIn(paragraph: Node, convert: (text: string) => string) {
+  const words = wordsOf(childrenOf(paragraph), convert).map((word) => `[${word}]`);
+  return words.length ? `#leadin-par((${words.join(", ")},))` : "";
+}
+
 interface SceneOptions {
   typography: Typography;
-  sceneBreak: string;
   hasDropCap: boolean;
+  /** The first words in small capitals, when there is no drop cap. */
+  hasLeadIn?: boolean;
+  /** Where Typst finds a picture in the text, or null when it was not found. */
+  picturePath?: (name: string) => string | null;
+  /** The scene's id, when each block should say which page it lands on (see pagemark). */
+  markScene?: string | undefined;
+}
+
+// A picture that was not found is left out, so the book can still be set.
+function pictureTypst(picture: Node, options: SceneOptions) {
+  const path = options.picturePath?.(String(picture.attrs["name"]));
+  if (!path) return "";
+  const caption = String(picture.attrs["caption"]);
+  const size = typstString(String(picture.attrs["size"]));
+  return `#bild(${typstString(path)}, ${size}, ${caption ? typstString(caption) : "none"})`;
 }
 
 function block(node: Node, options: SceneOptions): string {
   const name = node.type.name;
-  if (name === "sceneBreak") return `#scenbrytning[${escapeTypst(options.sceneBreak)}]`;
+  if (name === "sceneBreak") return "#scenbrytning(break-mark)";
   if (name === "rawBlock") return escapeTypst(String(node.attrs["source"]));
+  if (name === "picture") return pictureTypst(node, options);
   if (name === "styleBlock") {
     const inner: string[] = [];
-    node.forEach((child) => inner.push(block(child, { ...options, hasDropCap: false })));
+    node.forEach((child) =>
+      inner.push(block(child, { ...options, hasDropCap: false, hasLeadIn: false })),
+    );
     return `#stil(${typstString(String(node.attrs["style"]))})[\n${inner.join("\n\n")}\n]`;
   }
   return inline(childrenOf(node), quoteConverter(options.typography));
 }
 
+// A picture on a page of its own turns the page first, so its page mark lands on that page.
+const pageTurn = (node: Node) =>
+  node.type.name === "picture" && node.attrs["size"] === "sida" ? "#pagebreak(weak: true)\n" : "";
+
 export function sceneTypst(doc: Node, options: SceneOptions): string {
   const blocks: string[] = [];
-  const hasAnfang = options.hasDropCap && doc.firstChild?.type.name === "paragraph";
+  const startsWithText = doc.firstChild?.type.name === "paragraph";
+  const hasAnfang = options.hasDropCap && startsWithText;
+  const isLedIn = !options.hasDropCap && options.hasLeadIn === true && startsWithText;
+  const markOf = (index: number) =>
+    options.markScene ? `#pagemark(${typstString(options.markScene)}, ${index})` : "";
   doc.forEach((node, _offset, index) => {
     const convert = quoteConverter(options.typography);
-    if (index === 0 && hasAnfang) return void blocks.push(withDropCap(node, convert));
+    if (index === 0 && hasAnfang) return void blocks.push(markOf(0) + withDropCap(node, convert));
+    if (index === 0 && isLedIn) return void blocks.push(markOf(0) + withLeadIn(node, convert));
     // Typst sees the anfang as a block, so the paragraph after it is indented by hand.
     const indent = index === 1 && hasAnfang && node.type.name === "paragraph" ? "#h(1.2em)" : "";
-    blocks.push(indent + block(node, options));
+    blocks.push(pageTurn(node) + markOf(index) + indent + block(node, options));
   });
   return blocks.join("\n\n");
 }

@@ -37,14 +37,43 @@ async function startRenderer(assets: TypstAssets) {
   return renderer;
 }
 
-async function compile(compiler: TypstCompiler, source: string, format: number) {
+export type TypstFiles = Map<string, Uint8Array>;
+
+// The source and the pictures it uses; what an earlier book left behind is cleared first.
+function load(compiler: TypstCompiler, source: string, files: TypstFiles) {
+  compiler.resetShadow();
+  files.forEach((bytes, path) => compiler.mapShadow(path, bytes));
   compiler.addSource(MAIN, source);
+}
+
+async function compile(compiler: TypstCompiler, source: string, files: TypstFiles, format: number) {
+  load(compiler, source, files);
   const output = await compiler.compile({ mainFilePath: MAIN, format, diagnostics: "full" });
   const errors = (output.diagnostics ?? []).filter((found) => found.severity === "error");
   if (!output.result || errors.length > 0) {
     throw new TypstError(errors[0]?.message ?? "Typst kunde inte sätta boken.");
   }
   return output.result;
+}
+
+/** Where each marked block lands, and how many sheets the book has. */
+export interface PageMarks {
+  marks: { scene: string; block: number; page: number }[];
+  /** Every page, blank ones included, as a printer counts them. */
+  pages: number;
+  /** The number printed on the last page. */
+  lastPage: number;
+}
+
+async function queryPages(compiler: TypstCompiler, source: string, files: TypstFiles) {
+  load(compiler, source, files);
+  return compiler.runWithWorld({ mainFilePath: MAIN }, async (world) => {
+    await world.compile();
+    const marks = (await world.query({ selector: "<pm>", field: "value" })) as PageMarks["marks"];
+    const sheets = (await world.query({ selector: "<sheet>", field: "value" })) as number[];
+    const found: PageMarks = { marks, pages: sheets.length, lastPage: sheets.at(-1) ?? 0 };
+    return found;
+  });
 }
 
 /** Started on first use, then kept, since starting takes a moment. */
@@ -54,10 +83,13 @@ export function createTypst(assets: TypstAssets) {
   const compilerOnce = () => (compiler ??= startCompiler(assets));
   const rendererOnce = () => (renderer ??= startRenderer(assets));
   return {
-    pdf: async (source: string) => compile(await compilerOnce(), source, PDF),
+    pdf: async (source: string, files: TypstFiles = new Map()) =>
+      compile(await compilerOnce(), source, files, PDF),
+    pageMarks: async (source: string, files: TypstFiles = new Map()) =>
+      queryPages(await compilerOnce(), source, files),
     /** Drawn from the same compilation as the PDF. */
-    svg: async (source: string) => {
-      const vector = await compile(await compilerOnce(), source, VECTOR);
+    svg: async (source: string, files: TypstFiles = new Map()) => {
+      const vector = await compile(await compilerOnce(), source, files, VECTOR);
       const drawer = await rendererOnce();
       return drawer.runWithSession({ format: "vector", artifactContent: vector }, (session) =>
         drawer.renderSvg({ renderSession: session }),

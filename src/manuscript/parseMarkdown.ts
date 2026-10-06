@@ -1,8 +1,9 @@
-import type { RootContent } from "mdast";
+import type { PhrasingContent, RootContent } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import type { Node } from "prosemirror-model";
 import { splitFootnotes, type FootnoteTexts } from "./footnotes.js";
 import { parseInline } from "./parseInline.js";
+import { pictureOf } from "./pictures.js";
 import { manuscriptSchema as schema, STYLE_NAMES } from "./schema.js";
 import { serializeInlineContent } from "./serializeInline.js";
 import { findStyleFences, type StyleFence } from "./styleFences.js";
@@ -53,10 +54,17 @@ function markdownBlocks(
   });
 }
 
+const onlyPicture = (children: PhrasingContent[]) => {
+  const [only] = children;
+  return children.length === 1 && only?.type === "image" ? pictureOf(only) : null;
+};
+
 function blockFrom(child: RootContent, chunk: string, notes: FootnoteTexts): Node {
   const source = chunk.slice(child.position?.start.offset, child.position?.end.offset);
   if (child.type === "thematicBreak") return schema.node("sceneBreak", { source });
   if (child.type !== "paragraph") return schema.node("rawBlock", { source });
+  const picture = onlyPicture(child.children);
+  if (picture) return schema.node("picture", { ...picture, source });
   const content = parseInline(child.children, chunk, [], notes);
   const canonical = serializeInlineContent(schema.node("paragraph", null, content));
   return schema.node("paragraph", { source, canonical }, content);

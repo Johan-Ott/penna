@@ -2,7 +2,7 @@ import { useState } from "react";
 import { isLinkedByDefault } from "../../project/cards.js";
 import { CHARACTERS_ID, findNode, sortsOf } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
-import { Choice, Switch } from "../settings/controls.js";
+import { Choice, Switch } from "../controls.js";
 import { useEscape } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
 import type { NewNote } from "./useNoteActions.js";

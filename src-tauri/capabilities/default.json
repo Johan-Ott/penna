@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "What Penna may do everywhere: read and write texts, dialogs, notices, restart, and talk to Google Drive.",
+  "description": "What Penna may do everywhere: read and write texts, dialogs, notices, restart, talk to Google Drive, and send feedback the writer chooses to send.",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -30,6 +30,9 @@
         },
         {
           "url": "https://oauth2.googleapis.com/*"
+        },
+        {
+          "url": "https://formspree.io/f/*"
         }
       ]
     }

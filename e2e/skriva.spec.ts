@@ -1,16 +1,16 @@
-import { expect, test, type Page } from "@playwright/test";
-import { cursorAfterFirstParagraph, editor, openExample, selectFirstWord } from "./helpers";
+import { expect, test } from "@playwright/test";
+import {
+  cursorAfterFirstParagraph,
+  editor,
+  openExample,
+  runCommand,
+  selectFirstWord,
+} from "./helpers";
 
 test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 });
   await openExample(page);
 });
-
-async function runCommand(page: Page, name: string) {
-  await page.keyboard.press("Control+k");
-  await page.keyboard.type(name);
-  await page.keyboard.press("Enter");
-}
 
 test("writing adds words to today's count", async ({ page }) => {
   await cursorAfterFirstParagraph(page);

@@ -579,6 +579,40 @@
   text-decoration: underline;
 }
 
+.contents-title-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* The chapter's subtitle, or "Rubrik…" that shows when the row is pointed at */
+.contents-heading {
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: italic 14px var(--font-prose);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contents-heading.quiet {
+  color: var(--text-label);
+  font: 12px var(--font-ui);
+  opacity: 0;
+}
+
+.contents-row:hover .contents-heading.quiet,
+.contents-heading.quiet:focus-visible {
+  opacity: 1;
+}
+
+.contents-heading:hover {
+  color: var(--text);
+}
+
 .inline-text {
   width: 100%;
   padding: 0;
@@ -1059,4 +1093,11 @@
   .settings-row .setting-text {
     flex: 1 1 180px;
   }
+}
+
+/* A chapter's pages in the printed book, under its word count */
+.contents-pages {
+  display: block;
+  color: var(--text-label);
+  font-size: 11px;
 }

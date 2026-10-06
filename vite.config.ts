@@ -12,5 +12,7 @@ export default defineConfig({
   plugins: [react()],
   clearScreen: false,
   server: { port: 1420, strictPort: true },
+  // Typst runs in a worker that loads its parts as modules.
+  worker: { format: "es" },
   define: { __APP_VERSION__: JSON.stringify(tauriConfig.version) },
 });

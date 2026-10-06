@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { errorLog } from "../errorLog.js";
-import { Row } from "./controls.js";
+import { Row } from "../controls.js";
 import { t } from "../../i18n/i18n.js";
 
 const SHORTCUTS: [string, string][] = [
@@ -62,7 +62,9 @@ export function AboutTab() {
       />
       <Row
         label={t("Typsnitt")}
-        hint={t("Literata, EB Garamond och Geist, under SIL Open Font License.")}
+        hint={t(
+          "Literata, EB Garamond, Crimson Pro, Libre Baskerville, Source Serif 4 och Geist, under SIL Open Font License.",
+        )}
       />
       <Row label={t("Boksättning")} hint={t("Typst, under Apache License 2.0.")} />
     </>

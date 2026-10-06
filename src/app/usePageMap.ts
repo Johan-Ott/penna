@@ -1,0 +1,62 @@
+import { useEffect, useState } from "react";
+import { bookLanguage, quoteStyleFor } from "../project/bookLanguage.js";
+import { contentsRows } from "../project/contents.js";
+import { pageMap, type PageMap } from "../project/pageMap.js";
+import { typstFiles, typstSource } from "../export/typstBook.js";
+import { recordFailure } from "./errorLog.js";
+import { bookMaterial, chosenExtras, printInput } from "./exporting/bookMaterial.js";
+import type { ExportChoices } from "./exporting/useExport.js";
+import { appTypst } from "./typstAssets.js";
+import type { Project } from "./useProject.js";
+
+// Waits for a pause in the writing; setting the whole book takes about 0.1 s once Typst is warm.
+const SETTLE_MS = 3000;
+
+// The parts a printed book usually has, so the count is close to the exported PDF.
+const choicesFor = (project: Project): ExportChoices => ({
+  format: "tryck",
+  typography: quoteStyleFor(bookLanguage(project.fields)),
+  hasTitlePage: true,
+  hasCopyrightPage: true,
+  hasContents: true,
+  hasDedication: true,
+  hasThanks: true,
+  hasAbout: true,
+});
+
+async function buildPageMap(project: Project, generalAuthor: string): Promise<PageMap> {
+  const material = await bookMaterial(project, generalAuthor, () => undefined);
+  const choices = choicesFor(project);
+  const extras = chosenExtras(project, choices);
+  const input = { ...printInput({ project, material, choices, extras }), markPages: true };
+  const found = await appTypst.pageMarks(typstSource(input), typstFiles(input));
+  return pageMap(found, contentsRows(project.tree, project.summaries));
+}
+
+/** The open scene's block pages, while page breaks are shown in the margin. */
+export function scenePagesOf(
+  app: { scene: { id: string } | null; writingMode: { settings: { showPages: boolean } } },
+  map: PageMap | null,
+) {
+  if (!app.writingMode.settings.showPages || !app.scene) return null;
+  return map?.blockPages.get(app.scene.id) ?? null;
+}
+
+/** The book set as printed, in the background, while something on screen shows its pages. */
+export function usePageMap(project: Project, generalAuthor: string, isWanted: boolean) {
+  const [map, setMap] = useState<PageMap | null>(null);
+  useEffect(() => {
+    if (!isWanted) return;
+    let isCurrent = true;
+    const timer = setTimeout(() => {
+      buildPageMap(project, generalAuthor)
+        .then((built) => isCurrent && setMap(built))
+        .catch(recordFailure("Sidantal"));
+    }, SETTLE_MS);
+    return () => {
+      isCurrent = false;
+      clearTimeout(timer);
+    };
+  }, [project, generalAuthor, isWanted]);
+  return isWanted ? map : null;
+}

@@ -2,8 +2,16 @@ import JSZip from "jszip";
 import type { Node } from "prosemirror-model";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
 import { backPages, frontPages, type BookExtras, type Page } from "./bookParts.js";
-import { bookWords, headingLabel } from "./bookWords.js";
+import { DEFAULT_DESIGN, type BookDesign } from "./bookDesign.js";
+import { bookWords, contentsLabel } from "./bookWords.js";
 import { epubCover } from "./epubCover.js";
+import {
+  designStyle,
+  openingHtml,
+  pictureFiles,
+  withSceneBreaks,
+  type EpubDesign,
+} from "./epubDesign.js";
 import { escapeXml, sceneXhtml, xhtmlPage } from "./xhtml.js";
 
 export type { BookExtras };
@@ -22,7 +30,15 @@ export interface EpubInput {
   extras: BookExtras;
   /** Without a picture the book gets a typographic cover. */
   cover?: { type: "jpeg" | "png"; bytes: Uint8Array };
+  design?: BookDesign;
+  /** The pictures the design and chapters use, by file name. */
+  images?: Map<string, Uint8Array>;
 }
+
+const lookOf = (input: EpubInput): EpubDesign => ({
+  design: input.design ?? DEFAULT_DESIGN,
+  images: input.images ?? new Map(),
+});
 
 function coverFile({ cover, book }: EpubInput) {
   if (!cover) return { name: "cover.svg", mediaType: "image/svg+xml", content: epubCover(book) };
@@ -37,8 +53,22 @@ p { margin: 0; text-indent: 1.5em; }
 p.first { text-indent: 0; }
 h1 { text-align: center; font-weight: normal; margin: 3em 0 2em; }
 h1 .label { display: block; font-size: 0.7em; letter-spacing: 0.1em; text-transform: uppercase; }
+h1 .subtitle { display: block; font-size: 0.6em; font-style: italic; margin-top: 0.4em; }
+.epigraph { margin: 0 10% 2em; font-style: italic; }
+.epigraph p { text-indent: 0; }
+.epigraph p.by { font-style: normal; font-size: 0.9em; margin-top: 0.3em; }
+.opening { text-align: center; }
+.opening-vanster, .opening-vanster .epigraph { text-align: left; }
+.opening-vanster h1 { text-align: left; }
+.opening-picture { margin-top: 2em; }
+.opening-picture img { max-width: 100%; max-height: 40vh; }
+div.scene-break { text-align: center; margin: 1.5em 0; }
+figure.picture { margin: 1.5em 0; text-align: center; }
+figure.picture img { max-width: 100%; }
+figure.picture-smal img { max-width: 60%; }
+figure.picture figcaption { font-size: 0.85em; font-style: italic; margin-top: 0.4em; }
+div.scene-break img { height: 1.5em; max-width: 40%; }
 hr.scene-break { border: 0; text-align: center; margin: 1.5em 0; }
-hr.scene-break::after { content: "* * *"; }
 div.brev, div.citat, div.dikt, div.meddelande { margin: 1em 2em; }
 div.brev p, div.citat p, div.dikt p, div.meddelande p { text-indent: 0; }
 .title-page, .copyright { text-align: center; text-indent: 0; }
@@ -47,21 +77,17 @@ div.brev p, div.citat p, div.dikt p, div.meddelande p { text-indent: 0; }
 .cover { margin: 0; padding: 0; text-align: center; }
 .cover img { height: 100%; max-width: 100%; }`;
 
-function heading(item: Extract<OutlineItem, { kind: "part" | "chapter" }>, language: string) {
-  const label = headingLabel(item, language);
-  const tocLabel = item.title ? `${label}. ${item.title}` : label;
-  const title = item.title ? `<br />${escapeXml(item.title)}` : "";
-  return { label, tocLabel, html: `<h1><span class="label">${label}</span>${title}</h1>` };
-}
-
-function textPages({ outline, scenes, typography, book, language }: EpubInput): Page[] {
+function textPages(input: EpubInput): Page[] {
+  const { outline, scenes, typography, book, language } = input;
+  const look = lookOf(input);
   const pages: Page[] = [];
   let current: Page | null = null;
   let previous: OutlineItem["kind"] | null = null;
   for (const item of outline) {
     if (item.kind !== "scene") {
-      const { label, tocLabel, html } = heading(item, language);
-      current = { id: `${item.kind}-${item.number}`, title: label, body: html, tocLabel };
+      const tocLabel = contentsLabel(item, language);
+      const body = openingHtml(item, language, look);
+      current = { id: `${item.kind}-${item.number}`, title: tocLabel, body, tocLabel };
       pages.push(current);
     } else {
       if (!current) pages.push((current = { id: "opening", title: book.title, body: "" }));
@@ -71,7 +97,7 @@ function textPages({ outline, scenes, typography, book, language }: EpubInput): 
     }
     previous = item.kind;
   }
-  return pages;
+  return pages.map((page) => ({ ...page, body: withSceneBreaks(page.body, look) }));
 }
 
 function navPage(pages: Page[], language: string) {
@@ -84,6 +110,25 @@ function navPage(pages: Page[], language: string) {
   return xhtmlPage(contents, body, language).replace('href="../style.css"', 'href="style.css"');
 }
 
+// What a reader with a screen reader or a braille display needs to know before buying.
+const ACCESSIBILITY = [
+  ["accessMode", "textual"],
+  ["accessModeSufficient", "textual"],
+  ["accessibilityFeature", "tableOfContents"],
+  ["accessibilityFeature", "readingOrder"],
+  ["accessibilityFeature", "structuralNavigation"],
+  ["accessibilityHazard", "none"],
+  [
+    "accessibilitySummary",
+    "Text in reading order, with a table of contents and headings for navigation.",
+  ],
+]
+  .map(
+    ([name, value]) => `
+    <meta property="schema:${name}">${value}</meta>`,
+  )
+  .join("");
+
 function metadata({ book, identifier, modified, language }: EpubInput) {
   const stamp = `${modified.toISOString().slice(0, 19)}Z`;
   const creator = book.author
@@ -94,7 +139,7 @@ function metadata({ book, identifier, modified, language }: EpubInput) {
     <dc:identifier id="book-id">${escapeXml(identifier)}</dc:identifier>
     <dc:title>${escapeXml(book.title)}</dc:title>${creator}
     <dc:language>${language}</dc:language>
-    <meta property="dcterms:modified">${stamp}</meta>
+    <meta property="dcterms:modified">${stamp}</meta>${ACCESSIBILITY}
   </metadata>`;
 }
 
@@ -123,7 +168,9 @@ ${metadata(input)}
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
     <item id="style" href="style.css" media-type="text/css" />
     <item id="cover-image" href="${cover.name}" media-type="${cover.mediaType}" properties="cover-image" />
-    ${pageItems}
+    ${pageItems}${pictureFiles(lookOf(input))
+      .map((file) => LIST_SEPARATOR + file.item)
+      .join("")}
   </manifest>
   <spine>
     ${spine(front, text, input.parts.hasContents)}
@@ -149,7 +196,8 @@ export async function buildEpub(input: EpubInput): Promise<Uint8Array> {
   zip.file("META-INF/container.xml", CONTAINER);
   zip.file("OEBPS/content.opf", packageDocument(input, front, text));
   zip.file("OEBPS/nav.xhtml", navPage(text, input.language));
-  zip.file("OEBPS/style.css", EBOOK_STYLE);
+  zip.file("OEBPS/style.css", `${EBOOK_STYLE}\n${designStyle(lookOf(input))}`);
+  for (const file of pictureFiles(lookOf(input))) zip.file(file.path, file.bytes);
   const cover = coverFile(input);
   zip.file(`OEBPS/${cover.name}`, cover.content);
   for (const page of [...front, ...text]) {

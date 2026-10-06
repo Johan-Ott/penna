@@ -1,5 +1,5 @@
 import type { DriveStatus, DriveSync } from "../useDriveSync.js";
-import { Row } from "./controls.js";
+import { Row } from "../controls.js";
 import type { TabProps } from "./settingsTabs.js";
 import { t } from "../../i18n/i18n.js";
 

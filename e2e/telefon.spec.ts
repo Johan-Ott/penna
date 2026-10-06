@@ -10,7 +10,7 @@ test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
   await expect(page.getByRole("button", { name: "Tillbaka" })).toBeVisible();
 
-  await page.goBack();
+  await page.evaluate(() => history.back());
 
   await expect(page.getByRole("button", { name: /Fortsätt skriva/ })).toBeVisible();
 });
@@ -20,7 +20,7 @@ test("a person opens from the Personer tile, and back returns to the list", asyn
   await page.getByRole("button", { name: "Elin", exact: true }).click();
   await expect(editor(page)).toContainText("Trettioåtta");
 
-  await page.goBack();
+  await page.evaluate(() => history.back());
 
   await expect(page.getByRole("button", { name: "Arvid", exact: true })).toBeVisible();
 });

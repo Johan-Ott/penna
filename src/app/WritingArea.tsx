@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
+import { refreshPageMarks } from "../editor/pageMarks.js";
 import { refreshRepetitions } from "../editor/repetitionMarks.js";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
@@ -21,7 +22,11 @@ import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { t } from "../i18n/i18n.js";
 
 interface WritingAreaProps {
+  /** The printed page of each block of the open scene, when page breaks are shown. */
+  scenePages?: (number | undefined)[] | null;
   aside: ReactNode;
+  /** Another text, or a version of this one, read beside it. */
+  beside: ReactNode;
   selectionBar: ReactNode;
   header: ReactNode;
   footer: ReactNode;
@@ -144,8 +149,10 @@ function useEditorModes(props: WritingAreaProps) {
   modes.isSpellcheckOn = settings.spellcheck;
   if (props.isReadOnly) modes.isEditable = false;
   modes.repeatWindow = settings.review ? settings.repeatWindow : null;
+  modes.pageMarks = props.scenePages ?? null;
   const { run } = editor;
   useEffect(() => run(refreshRepetitions, false), [settings.review, settings.repeatWindow, run]);
+  useEffect(() => run(refreshPageMarks, false), [props.scenePages, run]);
   // ProseMirror reads the spellcheck attribute only when the view updates.
   useEffect(
     () => editor.viewRef.current?.setProps({}),
@@ -175,6 +182,7 @@ export function WritingArea(props: WritingAreaProps) {
       )}
       <div className="writing-body">
         <Page {...props} />
+        {props.beside}
         {props.aside}
       </div>
       <Floating {...props} isSettingsOpen={panels.isSettingsOpen} />

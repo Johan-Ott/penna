@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+import { useAutoBackup } from "./useAutoBackup.js";
 import { ConflictDialog } from "./ConflictDialog.js";
 import { CommandPalette } from "./palette/CommandPalette.js";
 import type { usePalette } from "./palette/usePalette.js";
@@ -7,6 +9,8 @@ import {
   type OpenScene,
   type SceneSession,
 } from "./sceneSession.js";
+import type { Snapshot } from "../project/snapshots.js";
+import type { Beside } from "./beside/BesidePane.js";
 import { SnapshotsLayer } from "./snapshots/SnapshotsDialog.js";
 import type { useSnapshots } from "./snapshots/useSnapshots.js";
 import { CrashDialog, SyncCopyDialog, type useSyncCopy } from "./SyncLayer.js";
@@ -50,6 +54,7 @@ interface OverlayParts {
     settingsDialog: ReturnType<typeof useSettingsDialog>;
     setView: (view: View) => void;
     openSearchWith: (text: string) => void;
+    setBeside: (beside: Beside | null) => void;
   };
 }
 
@@ -105,13 +110,19 @@ function PaletteLayer({ app }: { app: OverlayParts }) {
   );
 }
 
-// The sync lives here, not in the dialog, so it runs while the dialog is closed.
+// The sync and the copies live here, not in the dialog, so they run while the dialog is closed.
 function SettingsAndSync({ app }: { app: OverlayParts }) {
   const { preferences, updatePreferences } = app.startup;
   const dirs = [app.project?.dir, app.series?.dir].filter((dir) => dir !== undefined);
-  const refresh = async () =>
-    void (await Promise.all([app.refresh(), app.seriesState.refreshSeries()]));
+  // The same function from render to render, or the sync would start again on every one.
+  const { refresh: refreshBook } = app;
+  const { refreshSeries } = app.seriesState;
+  const refresh = useCallback(
+    async () => void (await Promise.all([refreshBook(), refreshSeries()])),
+    [refreshBook, refreshSeries],
+  );
   const drive = useDriveSync(dirs, preferences, updatePreferences, refresh);
+  useAutoBackup(dirs, app.project);
   return (
     <SettingsLayer
       {...app.startup}
@@ -120,6 +131,14 @@ function SettingsAndSync({ app }: { app: OverlayParts }) {
       book={bookSettings(app, drive)}
     />
   );
+}
+
+// The version goes beside the open text, and the dialog closes so the writing can go on.
+function compareBeside(app: OverlayParts, snapshot: Snapshot) {
+  const { scene } = app;
+  if (!scene) return;
+  app.writingMode.setBeside({ kind: "version", dir: scene.dir, sceneId: scene.id, snapshot });
+  app.snapshots.close();
 }
 
 export function Overlays({ app }: { app: OverlayParts }) {
@@ -132,6 +151,7 @@ export function Overlays({ app }: { app: OverlayParts }) {
         state={app.snapshots}
         sceneTitle={app.scene?.title ?? ""}
         doc={app.editor.editorState?.doc ?? null}
+        onBeside={(snapshot) => compareBeside(app, snapshot)}
       />
       <SettingsAndSync app={app} />
       <MentionLayer app={app} />

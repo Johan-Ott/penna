@@ -21,6 +21,8 @@ export interface WritingSettings {
   review: boolean;
   /** A word used again within this many sentences is marked. */
   repeatWindow: number;
+  /** Where the printed book's pages begin, marked in the margin while writing. */
+  showPages: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -36,6 +38,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   typography: true,
   review: true,
   repeatWindow: 3,
+  showPages: false,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -76,6 +79,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     typography: pick("typography", isBoolean),
     review: pick("review", isBoolean),
     repeatWindow: pick("repeatWindow", (value) => REPEAT_WINDOWS.includes(value as number)),
+    showPages: pick("showPages", isBoolean),
   };
 }
 

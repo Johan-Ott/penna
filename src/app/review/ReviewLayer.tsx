@@ -9,6 +9,7 @@ import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
 import { documentText } from "../../editor/documentText.js";
 import { CommentsSection } from "./CommentsSection.js";
+import { RevisionSection } from "./RevisionSection.js";
 import type { useComments } from "./useComments.js";
 
 type Comments = ReturnType<typeof useComments>;
@@ -37,15 +38,19 @@ function ShownReview(props: ShownProps) {
   const isWriting = props.comments.draft !== null;
   const { setReviewOpen } = app.writingMode;
   // Opened while a comment is written, so the comment is still in view once it is sent.
+  // Opened by itself for an editor's changes, too, so they are seen.
+  const hasRevision = app.revision.isOpen;
   useEffect(() => {
-    if (isWriting) setReviewOpen(true);
-  }, [isWriting, setReviewOpen]);
+    if (isWriting || hasRevision) setReviewOpen(true);
+  }, [isWriting, hasRevision, setReviewOpen]);
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}
       commentsSection={
         <CommentsSection comments={props.comments} text={documentText(props.doc).text} />
       }
+      revisionSection={<RevisionSection revision={app.revision} />}
+      revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}
       onOpenCard={app.cards.open}
       onReplaceAll={(suspect) => app.search.scope.replaceAll(replaceAllQuery(suspect))}
@@ -59,11 +64,15 @@ function ShownReview(props: ShownProps) {
   );
 }
 
+// Shown with Granskning on, or whenever there is something from someone else to read.
+function isWanted({ writingMode, comments, revision }: AppState) {
+  const hasComments = comments.comments.length > 0 || comments.draft !== null;
+  return writingMode.settings.review || hasComments || revision.isOpen;
+}
+
 export function ReviewLayer({ app, project }: { app: AppState; project: Project }) {
   const { scene, writingMode, comments } = app;
   const doc = app.editor.editorState?.doc;
-  const hasComments = comments.comments.length > 0 || comments.draft !== null;
-  const isWanted = writingMode.settings.review || hasComments;
-  if (!isWanted || writingMode.isFocusMode || !scene || !doc) return null;
+  if (!isWanted(app) || writingMode.isFocusMode || !scene || !doc) return null;
   return <ShownReview app={app} project={project} scene={scene} doc={doc} comments={comments} />;
 }

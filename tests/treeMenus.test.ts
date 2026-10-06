@@ -9,6 +9,7 @@ const actions: TreeMenuActions = {
   rename: noop,
   trash: noop,
   restore: noop,
+  openBeside: noop,
   setStatus: noop,
   statusOf: () => "utkast",
   showSnapshots: () => undefined,
@@ -37,6 +38,7 @@ describe("tree menus", () => {
   it("gives a scene a complete menu", () => {
     expect(labels(rowMenu(node("scene"), false, actions))).toEqual([
       "Öppna",
+      "Öppna bredvid",
       "Versioner…",
       "| Ny scen efter",
       "Nytt kapitel efter",

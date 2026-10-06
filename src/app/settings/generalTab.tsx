@@ -1,7 +1,7 @@
 import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { platform } from "../platform.js";
-import { Choice, Row } from "./controls.js";
+import { Choice, Dropdown, Row } from "../controls.js";
 import { UiLanguageChoice } from "./UiLanguageChoice.js";
 import { REMINDER_HOURS } from "../reminder.js";
 import type { TabProps } from "./settingsTabs.js";
@@ -14,18 +14,12 @@ function BookLanguage({ book }: Pick<TabProps, "book">) {
       label={t("Bokens språk")}
       hint={t("Stavningskontroll och e-bokens språk. Penna startar om vid byte.")}
     >
-      <select
-        className="settings-select"
-        aria-label={t("Bokens språk")}
+      <Dropdown
+        label={t("Bokens språk")}
         value={book.language}
-        onChange={(event) => book.onChangeLanguage(event.target.value)}
-      >
-        {BOOK_LANGUAGES.map(([tag, name]) => (
-          <option key={tag} value={tag}>
-            {name}
-          </option>
-        ))}
-      </select>
+        options={BOOK_LANGUAGES}
+        onSelect={book.onChangeLanguage}
+      />
     </Row>
   );
 }

@@ -1,5 +1,8 @@
 export const DEMO_PROJECT_DIR = "/Vintervägen.penna";
 
+// The example shows what Penna does: chapters with what happens and when, a subtitle and an
+// epigraph, a footnote, notes linked by name, and one misspelt name for the review to find.
+
 const scene = (id: string, title: string, status: string, body: string) => ({
   [`${DEMO_PROJECT_DIR}/scenes/${id}.md`]: `---\nid: ${id}\ntitle: ${title}\nstatus: ${status}\n---\n${body}`,
 });
@@ -21,12 +24,30 @@ Din Henrik
 
 const ISEN = `Isen bar. Den hade burit sedan jul, men Elin gick ändå nära stranden, där vassen stack upp genom snön.
 
+Hon tänkte på det Arvidd hade sagt, eller snarare på det han inte hade sagt. Fyrtio år av tystnad hade gjort honom bra på det.
+
 * * *
 
 På kvällen kom Maja över med en termos.
+
+– Du har läst det, sa hon. Det syns på dig.
 `;
 
-const ELIN = `Trettioåtta. Lämnade ön när hon var arton och har inte varit tillbaka sedan pappans begravning.
+const FYREN = `Arvid hade inte varit uppe i fyren sedan den automatiserades.[^1] Trappan var brantare än han mindes, och varje steg ekade i tornet.
+
+Högst upp stod linsen kvar, stor som en människa, dammig men hel. Han lade handen mot glaset.
+
+Det var härifrån han hade sett dem den natten. Två ljus på isen, där inga ljus skulle vara.
+
+[^1]: Fyren på Ön släcktes för sista gången med hand 1979.
+`;
+
+const SMALTNINGEN = `I april kom regnet, och isen blev grå och porös. Elin stod på bryggan varje morgon och lyssnade.
+
+Det lät som att någon andades under viken.
+`;
+
+const ELIN = `Trettioåtta. Lämnade Ön när hon var arton och har inte varit tillbaka sedan pappans begravning.
 
 Säger sällan vad hon tänker, men skriver allt i en svart anteckningsbok.
 `;
@@ -36,12 +57,26 @@ const ARVID = `Elins farbror. Fiskare, och fyrens siste vakt innan den automatis
 Vet mer om brevet än han vill säga.
 `;
 
+const MAJA = `Elins barndomsvän. Stannade kvar på Ön och driver affären vid hamnen.
+`;
+
+const ISLAND = `Liten ö i den yttre skärgården, ett trettiotal fastboende vintertid. Fyren står på udden i norr.
+`;
+
+const KUVERTET = `Gult, med frimärke från 1987. Poststämpeln är från ett postkontor som inte finns längre.
+`;
+
 const SCENE_IDS = {
   koket: "01J9Z4K2QX0000000000000001",
   isen: "01J9Z4K2QX0000000000000002",
   fyren: "01J9Z4K2QX0000000000000003",
   elin: "01J9Z4K2QX0000000000000004",
   arvid: "01J9Z4K2QX0000000000000005",
+  smaltningen: "01J9Z4K2QX0000000000000006",
+  hamnen: "01J9Z4K2QX0000000000000007",
+  maja: "01J9Z4K2QX0000000000000008",
+  island: "01J9Z4K2QX0000000000000009",
+  kuvertet: "01J9Z4K2QX0000000000000010",
 };
 
 const PROJECT = {
@@ -58,6 +93,8 @@ const PROJECT = {
           id: "01J9Z4K2QX00000000000000C1",
           kind: "chapter",
           title: "Brevet",
+          summary: "Elin får ett brev från Henrik, som försvann på isen för trettio år sedan.",
+          when: "Januari",
           children: [
             { id: SCENE_IDS.koket, kind: "scene" },
             { id: SCENE_IDS.isen, kind: "scene" },
@@ -67,18 +104,54 @@ const PROJECT = {
           id: "01J9Z4K2QX00000000000000C2",
           kind: "chapter",
           title: "Fyren",
+          subtitle: "Arvid",
+          summary: "Arvid går upp i fyren och minns natten då ljusen syntes på isen.",
+          when: "Samma natt",
           children: [{ id: SCENE_IDS.fyren, kind: "scene" }],
         },
       ],
     },
     {
+      id: "01J9Z4K2QX00000000000000P2",
+      kind: "part",
+      title: "Våren",
+      children: [
+        {
+          id: "01J9Z4K2QX00000000000000C3",
+          kind: "chapter",
+          title: "Smältningen",
+          subtitle: "Elin, april",
+          epigraph: "Det som isen tar, ger våren tillbaka.",
+          epigraphBy: "Ordspråk från skärgården",
+          when: "April",
+          children: [
+            { id: SCENE_IDS.smaltningen, kind: "scene" },
+            { id: SCENE_IDS.hamnen, kind: "scene" },
+          ],
+        },
+      ],
+    },
+    {
       id: "karaktarer",
-      kind: "folder",
-      title: "Karaktärer",
+      kind: "sort",
+      title: "Personer",
       children: [
         { id: SCENE_IDS.elin, kind: "scene" },
         { id: SCENE_IDS.arvid, kind: "scene" },
+        { id: SCENE_IDS.maja, kind: "scene" },
       ],
+    },
+    {
+      id: "platser",
+      kind: "sort",
+      title: "Platser",
+      children: [{ id: SCENE_IDS.island, kind: "scene" }],
+    },
+    {
+      id: "saker",
+      kind: "sort",
+      title: "Saker",
+      children: [{ id: SCENE_IDS.kuvertet, kind: "scene" }],
     },
   ],
 };
@@ -86,9 +159,14 @@ const PROJECT = {
 /** Shown when Penna runs in a browser without Tauri. */
 export const DEMO_PROJECT_FILES: Record<string, string> = {
   [`${DEMO_PROJECT_DIR}/project.json`]: `${JSON.stringify(PROJECT, null, 2)}\n`,
-  ...scene(SCENE_IDS.koket, "Köket", "utkast", KOKET),
+  ...scene(SCENE_IDS.koket, "Köket", "redigering", KOKET),
   ...scene(SCENE_IDS.isen, "Isen", "utkast", ISEN),
-  ...scene(SCENE_IDS.fyren, "Fyren", "idé", ""),
+  ...scene(SCENE_IDS.fyren, "Fyren", "utkast", FYREN),
+  ...scene(SCENE_IDS.smaltningen, "Regnet", "utkast", SMALTNINGEN),
+  ...scene(SCENE_IDS.hamnen, "Hamnen", "idé", ""),
   ...scene(SCENE_IDS.elin, "Elin", "utkast", ELIN),
   ...scene(SCENE_IDS.arvid, "Arvid", "utkast", ARVID),
+  ...scene(SCENE_IDS.maja, "Maja", "utkast", MAJA),
+  ...scene(SCENE_IDS.island, "Ön", "utkast", ISLAND),
+  ...scene(SCENE_IDS.kuvertet, "Kuvertet", "utkast", KUVERTET),
 };

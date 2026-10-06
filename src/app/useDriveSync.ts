@@ -37,8 +37,11 @@ async function syncFolders(dirs: string[]) {
   return hasChanged;
 }
 
+// One object, so turning the sync off when it already is changes nothing and renders nothing.
+const OFF: DriveStatus = { kind: "off" };
+
 function useSyncRun(dirs: string[], refresh: () => Promise<void>) {
-  const [status, setStatus] = useState<DriveStatus>({ kind: "off" });
+  const [status, setStatus] = useState<DriveStatus>(OFF);
   const isRunning = useRef(false);
   // "|" cannot appear in a path, so the folders make one stable key for the callback.
   const dirsKey = dirs.join("|");
@@ -90,7 +93,7 @@ export function useDriveSync(
   const isOn = preferences.isDriveSyncOn && isAvailable;
   const { status, setStatus, syncNow } = useSyncRun(dirs, refresh);
   useEffect(() => {
-    if (!isOn) return setStatus({ kind: "off" });
+    if (!isOn) return setStatus(OFF);
     void syncNow();
     const timer = setInterval(() => void syncNow(), EVERY);
     return () => clearInterval(timer);
