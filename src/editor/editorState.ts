@@ -1,10 +1,10 @@
 import { baseKeymap } from "prosemirror-commands";
-import { history, redo, undo } from "prosemirror-history";
+import { closeHistory, history, redo, undo } from "prosemirror-history";
 import { InputRule, inputRules, undoInputRule } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { Fragment, type Node } from "prosemirror-model";
 import { search } from "prosemirror-search";
-import { EditorState, TextSelection } from "prosemirror-state";
+import { EditorState, TextSelection, type Command } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
@@ -65,7 +65,17 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   revisionChanges: () => [],
 };
 
+// Each new paragraph starts its own undo, so Ctrl+Z takes back the last paragraph, not
+// everything written without a pause.
+export const newParagraph: Command = (state, dispatch, view) =>
+  baseKeymap["Enter"]?.(
+    state,
+    dispatch && ((transaction) => dispatch(closeHistory(transaction))),
+    view,
+  ) ?? false;
+
 const writingKeys = keymap({
+  Enter: newParagraph,
   "Mod-z": undo,
   "Mod-y": redo,
   "Shift-Mod-z": redo,
