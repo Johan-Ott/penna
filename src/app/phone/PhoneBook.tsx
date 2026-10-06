@@ -7,6 +7,7 @@ import { useMenuButton, type MenuItem } from "../Menu.js";
 import { sidebarProps } from "../paneProps.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
+import { SyncNotices } from "../SyncLayer.js";
 import { TreeView } from "../tree/TreeView.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -139,11 +140,11 @@ export function PhoneBook(props: PhoneBookProps) {
     <div className="phone-screen">
       <PhoneBookHeader app={app} project={project} />
       <main className="phone-card">
-        {app.syncReview.items.length > 0 && (
-          <button className="link-button phone-sync" onClick={props.onSync}>
-            {t("Från synken: {count} att se över", { count: app.syncReview.items.length })}
-          </button>
-        )}
+        <SyncNotices
+          project={project}
+          reviewCount={app.syncReview.items.length}
+          onShowReview={props.onSync}
+        />
         <TodayCard app={app} project={project} />
         <ContinueButton {...props} />
         <TreeView {...sidebarProps(app, project)} onOpenScene={props.onOpenText} isBookOnly />

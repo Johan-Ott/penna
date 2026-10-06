@@ -1495,10 +1495,6 @@ button.book-cover:hover {
   }
 }
 
-.phone-sync {
-  align-self: flex-start;
-}
-
 .sync-columns.choice del {
   text-decoration: none;
 }

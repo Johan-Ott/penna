@@ -9,13 +9,13 @@ const SECTIONS: [string, string[]][] = [
         "Varje bok är en vanlig mapp i bokhyllans mapp. Varje scen är en textfil i scenes/, som du kan öppna i vilket program som helst.",
       ),
       t(
-        "Delar, kapitel och scener ordnar du i sidomenyn. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.",
+        "Delar, kapitel och scener ordnar du i sidomenyn, på telefonen under Boken. ⋯ på en rad, eller högerklick, ger radens meny. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.",
       ),
       t(
-        "Bilder: paletten, Infoga bild…, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
+        "Bilder: Infoga bild… i paletten, eller ▣ över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
       ),
       t(
-        "Bredvid: högerklicka på en scen i sidomenyn och välj Öppna bredvid, eller jämför en äldre version bredvid texten under Versioner.",
+        "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen tar den hela skärmen.",
       ),
     ],
   ],
@@ -42,7 +42,7 @@ const SECTIONS: [string, string[]][] = [
         "Exportera som PDF för tryck, som e-bok (EPUB), som manus i Word, eller tryckomslaget med rygg.",
       ),
       t(
-        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den på datorn under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
+        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
       ),
     ],
   ],

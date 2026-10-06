@@ -570,3 +570,7 @@
     z-index: 35;
   }
 }
+
+.phone-card .sidebar-notices {
+  margin: 0;
+}

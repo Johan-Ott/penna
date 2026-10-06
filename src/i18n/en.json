@@ -591,7 +591,6 @@
   "Skicka feedback…": "Send feedback…",
   "Din bok": "Your book",
   "Varje bok är en vanlig mapp i bokhyllans mapp. Varje scen är en textfil i scenes/, som du kan öppna i vilket program som helst.": "Every book is an ordinary folder in the bookshelf's folder. Every scene is a text file in scenes/ that any program can open.",
-  "Delar, kapitel och scener ordnar du i sidomenyn. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.": "Arrange parts, chapters and scenes in the sidebar. Contents shows the whole book: what happens, when, and how far you have come.",
   "Så skyddas texten": "How your text is kept safe",
   "Allt sparas inom en sekund medan du skriver.": "Everything is saved within a second as you write.",
   "Versioner: varje text sparas som en ny version vid större ändringar. Meny, Versioner av den här texten.": "Versions: each text is saved as a new version after larger changes. Menu, Versions of this text.",
@@ -668,9 +667,6 @@
   "Under Publicera väljer du format, typsnitt och scenbrytning, och ser boken som den blir tryckt. Kapitelöppningar är mallar med bilder, och varje kapitel kan byta ut bilderna.": "Under Publish you choose the size, typefaces and scene break, and see the book as it will be printed. Chapter openings are templates with pictures, and each chapter can swap the pictures.",
   "Känt i den tidiga versionen": "Known in the early version",
   "Penna finns för Windows och Android. Mac-versionen byggs men är inte signerad eller prövad än, och iPad kommer senare.": "Penna runs on Windows and Android. The Mac version is built but not yet signed or tried, and iPad comes later.",
-  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den på datorn under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in on the computer under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject.",
-  "Bilder: paletten, Infoga bild…, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.": "Pictures: the palette, Insert image…, puts a map or a photo in the text, narrow, wide or on a page of its own.",
-  "Bredvid: högerklicka på en scen i sidomenyn och välj Öppna bredvid, eller jämför en äldre version bredvid texten under Versioner.": "Beside: right-click a scene in the sidebar and choose Open beside, or compare an older version beside the text under Versions.",
   "titeln": "title",
   "sammanfattningen": "summary",
   "när": "when",
@@ -710,5 +706,9 @@
   "+ Lägg till": "+ Add",
   "{current} av {total}": "{current} of {total}",
   "Föregående träff": "Previous match",
-  "Nästa träff": "Next match"
+  "Nästa träff": "Next match",
+  "Delar, kapitel och scener ordnar du i sidomenyn, på telefonen under Boken. ⋯ på en rad, eller högerklick, ger radens meny. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.": "Arrange parts, chapters and scenes in the sidebar, on a phone under Book. ⋯ on a row, or a right click, gives the row's menu. Contents shows the whole book: what happens, when, and how far you have come.",
+  "Bilder: Infoga bild… i paletten, eller ▣ över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.": "Pictures: Insert image… in the palette, or ▣ above the keyboard on a phone, puts a map or a photo in the text, narrow, wide or on a page of its own.",
+  "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen tar den hela skärmen.": "Beside: choose Open beside in a scene's menu, or compare an older version beside the text under Versions. On a phone it takes the whole screen.",
+  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject."
 }
