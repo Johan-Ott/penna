@@ -10,6 +10,9 @@ export interface Feedback {
   hasReport: boolean;
 }
 
+/** The error report goes along only with something that is wrong, and only if the writer lets it. */
+const withReport = (feedback: Feedback) => feedback.kind === "fel" && feedback.hasReport;
+
 /** A Formspree form, or another endpoint taking the same JSON. Kept in .env.local. */
 const ENDPOINT = import.meta.env.VITE_FEEDBACK_URL ?? "";
 
@@ -20,7 +23,7 @@ export const feedbackReport = () =>
   errorLog.report({ version: __APP_VERSION__, device: navigator.userAgent });
 
 export function feedbackText(feedback: Feedback) {
-  const report = feedback.hasReport ? `\n\n---\n${feedbackReport()}` : "";
+  const report = withReport(feedback) ? `\n\n---\n${feedbackReport()}` : "";
   return `${feedback.message.trim()}${report}`;
 }
 
@@ -34,7 +37,7 @@ export async function sendFeedback(feedback: Feedback, send: typeof fetch) {
       message: feedback.message.trim(),
       ...(feedback.email.trim() ? { email: feedback.email.trim() } : {}),
       version: __APP_VERSION__,
-      ...(feedback.hasReport ? { report: feedbackReport() } : {}),
+      ...(withReport(feedback) ? { report: feedbackReport() } : {}),
     }),
   });
   if (!response.ok) throw new Error(`Feedback: ${response.status}`);

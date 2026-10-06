@@ -18,6 +18,12 @@ const KINDS: [FeedbackKind, string][] = [
   ["annat", t("Annat")],
 ];
 
+const HINTS: Record<FeedbackKind, string> = {
+  fel: t("Vad gjorde du, vad hände, och vad väntade du dig?"),
+  ide: t("Vad saknar du, och vad skulle det hjälpa dig med?"),
+  annat: t("Skriv det du vill säga."),
+};
+
 type Outcome = "skriver" | "skickar" | "skickad" | "kopierad";
 
 // Without an address to send to, or when sending fails, the text goes to the clipboard instead.
@@ -66,9 +72,7 @@ function MessageFields(props: { feedback: Feedback; onChange: (feedback: Feedbac
           value={feedback.message}
           onChange={(event) => onChange({ ...feedback, message: event.target.value })}
         />
-        <span className="setting-hint">
-          {t("Vad gjorde du, vad hände, och vad väntade du dig?")}
-        </span>
+        <span className="setting-hint">{HINTS[feedback.kind]}</span>
       </label>
       <label className="onboarding-field">
         <span className="field-label">{t("Din e-post, om du vill ha svar")}</span>
@@ -93,10 +97,12 @@ function FeedbackFields(props: { feedback: Feedback; onChange: (feedback: Feedba
         onSelect={(kind) => onChange({ ...feedback, kind })}
       />
       <MessageFields feedback={feedback} onChange={onChange} />
-      <ReportChoice
-        isOn={feedback.hasReport}
-        onFlip={() => onChange({ ...feedback, hasReport: !feedback.hasReport })}
-      />
+      {feedback.kind === "fel" && (
+        <ReportChoice
+          isOn={feedback.hasReport}
+          onFlip={() => onChange({ ...feedback, hasReport: !feedback.hasReport })}
+        />
+      )}
     </>
   );
 }

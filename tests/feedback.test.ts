@@ -34,3 +34,11 @@ describe("feedback", () => {
     expect(text).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
   });
 });
+
+describe("the error report", () => {
+  it("goes along only with something that is wrong", () => {
+    const idea = feedbackText({ ...feedback, kind: "ide", hasReport: true });
+
+    expect(idea).not.toContain("---");
+  });
+});

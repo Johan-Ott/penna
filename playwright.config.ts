@@ -12,6 +12,8 @@ export default defineConfig({
     command: "npm run dev:web -- --host 127.0.0.1",
     url: "http://127.0.0.1:1420",
     reuseExistingServer: true,
+    // A pretend address, so the flows send feedback the same way whatever .env.local holds.
+    env: { VITE_FEEDBACK_URL: "https://formspree.io/f/prov" },
     timeout: 60_000,
   },
 });
