@@ -18,20 +18,29 @@ interface PhoneBookProps {
   onOpenText: (id: string) => void;
   onContinue: () => void;
   onSort: (sortId: string) => void;
+  /** The scene Fortsätt skriva opens. */
+  continueId: string | null;
   onSync: () => void;
 }
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
+function todayFacts(streak: number, deadline: string | null) {
+  const daysLeft = deadline ? Math.max(0, daysBetween(dayKey(Date.now()), deadline)) : null;
+  const left =
+    daysLeft === 1
+      ? t("1 dag till deadline")
+      : t("{days} dagar till deadline", { days: daysLeft ?? 0 });
+  return [
+    streak === 1 ? t("1 dag i rad") : t("{days} dagar i rad", { days: streak }),
+    ...(daysLeft === null ? [] : [left]),
+  ];
+}
+
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const { today } = app;
-  const { deadline } = projectGoals(project.fields);
   const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : 0;
-  const daysLeft = deadline ? Math.max(0, daysBetween(dayKey(Date.now()), deadline)) : null;
-  const facts = [
-    t("{days} dagar i rad", { days: today.streak }),
-    ...(daysLeft === null ? [] : [t("{days} dagar till deadline", { days: daysLeft })]),
-  ];
+  const facts = todayFacts(today.streak, projectGoals(project.fields).deadline);
   return (
     <button className="phone-today" onClick={() => app.writingMode.setProgressOpen(true)}>
       <span className="phone-today-words">
@@ -49,10 +58,11 @@ function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   );
 }
 
-function ContinueButton({ app, project, onContinue }: PhoneBookProps) {
-  const scene = app.scene;
-  const chapter = scene ? chapterOf(project.tree, scene.id) : null;
-  const where = scene ? [chapter && `${chapter.number}. ${chapter.title}`, scene.title] : [];
+// The book's text she was last in, not a note she looked at since.
+function ContinueButton({ project, continueId, onContinue }: PhoneBookProps) {
+  const chapter = continueId ? chapterOf(project.tree, continueId) : null;
+  const title = continueId ? project.summaries[continueId]?.title : null;
+  const where = [chapter && `${chapter.number}. ${chapter.title}`, title];
   return (
     <button className="phone-continue" onClick={onContinue}>
       <span className="phone-continue-text">

@@ -15,6 +15,21 @@ test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page
   await expect(page.getByRole("button", { name: /Fortsätt skriva/ })).toBeVisible();
 });
 
+test("Fortsätt skriva leads to the book's text, not a note looked at since", async ({ page }) => {
+  await page.getByRole("button", { name: /Personer/ }).click();
+  await page.getByRole("treeitem").filter({ hasText: "Elin" }).click();
+  await expect(editor(page)).toContainText("Trettioåtta");
+  await page.evaluate(() => history.back());
+  await page
+    .getByRole("navigation", { name: "Läge" })
+    .getByRole("button", { name: "Boken" })
+    .click();
+
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+
+  await expect(editor(page)).not.toContainText("Trettioåtta");
+});
+
 test("a person opens from the Personer tile, and back returns to the list", async ({ page }) => {
   await page.getByRole("button", { name: /Personer/ }).click();
   await page.getByRole("treeitem").filter({ hasText: "Elin" }).click();

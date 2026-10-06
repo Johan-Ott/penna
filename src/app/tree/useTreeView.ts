@@ -92,7 +92,10 @@ export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuAct
     setLink: (node, isLinked) => props.onSetNoteLink(node.id, isLinked),
     newNote: props.onNewNote,
     moveToSeries: props.onMoveToSeries ? (node) => props.onMoveToSeries?.(node.id) : null,
-    canMerge: (node) => props.canMergeOpenScene === true && node.id === props.openSceneId,
+    canMerge: (node) =>
+      props.canMergeOpenScene === true &&
+      node.id === props.openSceneId &&
+      noteLinkOf(props.project, node.id) === null,
     mergeWithNext: () => props.onMergeWithNext?.(),
   };
 }

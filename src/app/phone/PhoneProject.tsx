@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { AppState } from "../App.js";
@@ -112,6 +112,17 @@ function useBesideShowsText(app: AppState, showText: (id: string) => void) {
   }, [beside, sceneId, showText]);
 }
 
+// The last scene of the book itself she wrote in, so a note looked at since is not where she goes on.
+function useLastManuscriptScene(app: AppState, project: Project) {
+  const [last, setLast] = useState<string | null>(null);
+  const sceneId = app.scene?.id ?? null;
+  const inBook = manuscriptSceneIds(project.tree);
+  useEffect(() => {
+    if (sceneId && manuscriptSceneIds(project.tree).includes(sceneId)) setLast(sceneId);
+  }, [sceneId, project.tree]);
+  return last && inBook.includes(last) ? last : (inBook[0] ?? null);
+}
+
 function usePhoneScreens({ app, project }: Props) {
   const navigation = usePhoneNavigation();
   const { show, screen } = navigation;
@@ -124,11 +135,8 @@ function usePhoneScreens({ app, project }: Props) {
   useEffect(() => setReviewOpen(false), [screen, app.scene?.id, setReviewOpen]);
   const openText = (id: string) =>
     id === app.scene?.id ? showText(id) : openInHome(app.session, app.homes, id);
-  const continueWriting = () => {
-    const first = manuscriptSceneIds(project.tree)[0];
-    if (app.scene) showText(app.scene.id);
-    else if (first) openText(first);
-  };
+  const continueId = useLastManuscriptScene(app, project);
+  const continueWriting = () => continueId && openText(continueId);
   const { setView } = app.writingMode;
   const showView = (view: View) => (setView(view), show({ kind: "view" }));
   // Opening a text leaves Innehåll or Läs for Skriv.
@@ -138,7 +146,7 @@ function usePhoneScreens({ app, project }: Props) {
     if (tab === "skriv") return (setView("skriv"), continueWriting());
     showView(tab);
   };
-  return { ...navigation, openText: writeIn, continueWriting, showView, onTab };
+  return { ...navigation, openText: writeIn, continueWriting, continueId, showView, onTab };
 }
 
 // The text shows while writing, also when Läs or Innehåll has just opened one.
@@ -185,6 +193,7 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
       project={project}
       onOpenText={screens.openText}
       onContinue={screens.continueWriting}
+      continueId={screens.continueId}
       onSort={(sortId) => screens.show({ kind: "sort", sortId })}
       onSync={() => screens.showView("synk")}
     />

@@ -585,3 +585,19 @@
     height: min(52vh, 460px);
   }
 }
+
+/* Room for a thumb: rows, their ⋯ and menu items at least 44 px. */
+.phone-app .tree-more {
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-right: -10px;
+}
+
+@media (max-width: 600px) {
+  .menu button {
+    height: 44px;
+    font-size: 15px;
+  }
+}
