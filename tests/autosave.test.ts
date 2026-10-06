@@ -41,7 +41,7 @@ describe("autosave", () => {
 
     expect(beforePause).toEqual([]);
     expect(written).toEqual(["Brevet"]);
-    expect(autosave.hasUnsavedText()).toBe(false);
+    expect(autosave.lastSavedText()).toBe("Brevet");
   });
 
   it("does not write text that is already saved", async () => {
@@ -109,7 +109,21 @@ describe("autosave", () => {
 
     autosave.loaded("från disken");
 
-    expect(autosave.hasUnsavedText()).toBe(false);
     expect(autosave.lastSavedText()).toBe("från disken");
+  });
+
+  it("knows the text it is writing as its own, before the write is done", async () => {
+    let finish: () => void = () => undefined;
+    const autosave = createAutosave({
+      write: () => new Promise<void>((done) => (finish = done)),
+      onStatus: () => undefined,
+    });
+
+    autosave.changed("Brevet");
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(autosave.isOwnText("Brevet")).toBe(true);
+    expect(autosave.isOwnText("Något annat")).toBe(false);
+    finish();
   });
 });

@@ -14,6 +14,8 @@ interface AutosaveState {
   currentText: string;
   isHeld: boolean;
   isPaused: boolean;
+  /** The text on its way to disk, so the folder watcher's news of it is known as ours. */
+  writing: string | null;
   hasFailed: boolean;
   timer: ReturnType<typeof setTimeout> | undefined;
   queue: Promise<boolean>;
@@ -47,8 +49,8 @@ export function createAutosave(options: AutosaveOptions) {
     /** While a sync writes over the file, for a moment. */
     pause: (isPaused: boolean) => void (state.isPaused = isPaused),
     flush,
-    hasUnsavedText: () => state.currentText !== state.savedText,
     lastSavedText: () => state.savedText,
+    isOwnText: (text: string) => text === state.savedText || text === state.writing,
   };
 }
 
@@ -58,6 +60,7 @@ function emptyState(): AutosaveState {
     currentText: "",
     isHeld: false,
     isPaused: false,
+    writing: null,
     hasFailed: false,
     timer: undefined,
     queue: Promise.resolve(true),
@@ -73,6 +76,7 @@ async function attemptSave(
   const needsWrite = text !== state.savedText;
   if (needsWrite && (state.isHeld || state.isPaused)) return false;
   try {
+    state.writing = text;
     if (needsWrite) await options.write(text);
     state.savedText = text;
     if (needsWrite || state.hasFailed) options.onStatus({ kind: "saved" });
@@ -83,5 +87,7 @@ async function attemptSave(
     options.onStatus({ kind: "failed", reason: describeSaveError(error) });
     scheduleRetry();
     return false;
+  } finally {
+    state.writing = null;
   }
 }

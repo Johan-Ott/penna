@@ -113,6 +113,8 @@ export async function checkDisk(session: SceneSession) {
     .catch(() => null);
   const doc = session.hooks.editor.currentDoc();
   if (diskText === null || !doc || session.scene !== scene) return;
+  // Penna's own save, seen before it was done: on a slow phone the watcher can be quicker.
+  if (session.autosave.isOwnText(diskText)) return;
   const editorText = textOf(session, doc);
   const lastSavedText = session.autosave.lastSavedText();
   const decision = decideExternalChange({ diskText, editorText, lastSavedText });
