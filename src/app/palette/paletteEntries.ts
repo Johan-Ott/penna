@@ -39,12 +39,14 @@ export interface PaletteContext {
   changeSettings: (change: SettingsChange) => void;
   toggleFocusMode: () => void;
   openSearch: () => void;
-  chooseFolder: () => void;
+  /** Null on a phone, where Penna keeps its books in its own folder. */
+  chooseFolder: (() => void) | null;
   showShelf: () => void;
   /** Null when no scene is open. */
   showSnapshots: (() => void) | null;
   openSettings: () => void;
-  showView: (view: View) => void;
+  /** Null on a phone, which has its own screens instead of the views. */
+  showView: ((view: View) => void) | null;
   cards: (Card & { sortLabel: string })[];
   /** The first sentence of a note, shown beside its name. */
   describe: (id: string) => string;
@@ -115,9 +117,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
       : []),
     command(t("Inställningar"), context.openSettings, "Ctrl+,"),
-    ...VIEWS.map(([view, label, keys]) =>
-      command(t("Gå till {view}", { view: label }), () => context.showView(view), keys),
-    ),
+    ...viewEntries(context.showView),
     command(t("Fetstil"), () => run(toggleBold), "Ctrl+B"),
     command(t("Kursiv"), () => run(toggleItalic), "Ctrl+I"),
     command(t("Rensa formatering"), () => run(clearFormatting)),
@@ -166,6 +166,13 @@ function textEntries({ changeSettings: change }: PaletteContext): PaletteEntry[]
   ];
 }
 
+const viewEntries = (showView: PaletteContext["showView"]) =>
+  showView
+    ? VIEWS.map(([view, label, keys]) =>
+        command(t("Gå till {view}", { view: label }), () => showView(view), keys),
+      )
+    : [];
+
 function switchEntries({
   settings,
   changeSettings: change,
@@ -184,7 +191,7 @@ function switchEntries({
       command(`Fokus: ${label}`, () => change(changeTo({ focus }))),
     ),
     command(t("Bokhylla"), showShelf),
-    command(t("Öppna projektmapp…"), chooseFolder),
+    ...(chooseFolder ? [command(t("Öppna projektmapp…"), chooseFolder)] : []),
   ];
 }
 

@@ -5,12 +5,16 @@ import { paletteEntries, type PaletteContext } from "./paletteEntries.js";
 
 export function usePalette(context: PaletteContext | null) {
   const [isOpen, setOpen] = useState(false);
-  // A phone has no reading view, so Läs is left out there.
+  // A phone has its own screens and no folders to pick, so those entries are left out there.
   const isPhone = usePhone();
   useShortcut("k", () => setOpen((current) => !current));
   return {
     isOpen: isOpen && context !== null,
-    entries: context ? paletteEntries(isPhone ? { ...context, read: null } : context) : [],
+    entries: context
+      ? paletteEntries(
+          isPhone ? { ...context, read: null, chooseFolder: null, showView: null } : context,
+        )
+      : [],
     open: () => setOpen(true),
     close: () => setOpen(false),
   };

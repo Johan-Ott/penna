@@ -43,3 +43,11 @@ test("selecting a word shows the bar with Fotnot", async ({ page }) => {
   await expect(page.getByRole("toolbar", { name: "Markering" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Fotnot" })).toBeVisible();
 });
+
+test("the palette on the phone offers only what the phone can show", async ({ page }) => {
+  await page.getByRole("button", { name: "Sök" }).first().click();
+  await page.keyboard.type("Gå till");
+
+  await expect(page.getByText("Gå till Innehåll")).toBeHidden();
+  await expect(page.getByText("Öppna projektmapp…")).toBeHidden();
+});
