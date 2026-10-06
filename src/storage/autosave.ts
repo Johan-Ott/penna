@@ -13,14 +13,14 @@ interface AutosaveState {
   savedText: string;
   currentText: string;
   isHeld: boolean;
+  isPaused: boolean;
   hasFailed: boolean;
   timer: ReturnType<typeof setTimeout> | undefined;
   queue: Promise<boolean>;
 }
 
 export function createAutosave(options: AutosaveOptions) {
-  const saveDelayMs = options.saveDelayMs ?? 1000;
-  const retryDelayMs = options.retryDelayMs ?? 10_000;
+  const { saveDelayMs = 1000, retryDelayMs = 10_000 } = options;
   const state = emptyState();
   const schedule = (delayMs: number) => {
     clearTimeout(state.timer);
@@ -35,7 +35,7 @@ export function createAutosave(options: AutosaveOptions) {
   return {
     changed(text: string) {
       state.currentText = text;
-      if (!state.isHeld) schedule(saveDelayMs);
+      if (!state.isHeld && !state.isPaused) schedule(saveDelayMs);
     },
     loaded(text: string) {
       clearTimeout(state.timer);
@@ -44,6 +44,8 @@ export function createAutosave(options: AutosaveOptions) {
     },
     hold: () => void (state.isHeld = true),
     release: () => void (state.isHeld = false),
+    /** While a sync writes over the file, for a moment. */
+    pause: (isPaused: boolean) => void (state.isPaused = isPaused),
     flush,
     hasUnsavedText: () => state.currentText !== state.savedText,
     lastSavedText: () => state.savedText,
@@ -55,6 +57,7 @@ function emptyState(): AutosaveState {
     savedText: "",
     currentText: "",
     isHeld: false,
+    isPaused: false,
     hasFailed: false,
     timer: undefined,
     queue: Promise.resolve(true),
@@ -68,7 +71,7 @@ async function attemptSave(
 ): Promise<boolean> {
   const text = state.currentText;
   const needsWrite = text !== state.savedText;
-  if (needsWrite && state.isHeld) return false;
+  if (needsWrite && (state.isHeld || state.isPaused)) return false;
   try {
     if (needsWrite) await options.write(text);
     state.savedText = text;

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { syncProject } from "../sync/driveSync.js";
+import type { WriteGuard } from "../sync/localSide.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
 import { errorLog, recordFailure } from "./errorLog.js";
@@ -25,13 +26,13 @@ const failure = (error: unknown): DriveStatus => ({
       : String(error instanceof Error ? error.message : error),
 });
 
-async function syncFolders(dirs: string[]) {
+async function syncFolders(dirs: string[], guard: WriteGuard) {
   const signIn = platform.googleSignIn;
   if (!signIn) return false;
   const drive = googleDrive(signIn.accessToken, signIn.fetch);
   let hasChanged = false;
   for (const dir of dirs) {
-    const result = await syncProject(platform.fileSystem, drive, dir, Date.now());
+    const result = await syncProject(platform.fileSystem, drive, dir, { now: Date.now(), guard });
     hasChanged ||= result.downloaded.length + result.trashed.length > 0;
   }
   return hasChanged;
@@ -40,7 +41,13 @@ async function syncFolders(dirs: string[]) {
 // One object, so turning the sync off when it already is changes nothing and renders nothing.
 const OFF: DriveStatus = { kind: "off" };
 
-function useSyncRun(dirs: string[], refresh: () => Promise<void>) {
+/** What the sync needs from the open book: reading it again, and writing over its open scene. */
+export interface SyncedBook {
+  refresh: () => Promise<void>;
+  guard: WriteGuard;
+}
+
+function useSyncRun(dirs: string[], { refresh, guard }: SyncedBook) {
   const [status, setStatus] = useState<DriveStatus>(OFF);
   const isRunning = useRef(false);
   // "|" cannot appear in a path, so the folders make one stable key for the callback.
@@ -50,7 +57,7 @@ function useSyncRun(dirs: string[], refresh: () => Promise<void>) {
     isRunning.current = true;
     setStatus({ kind: "syncing" });
     try {
-      const hasChanged = await syncFolders(dirsKey.split("|"));
+      const hasChanged = await syncFolders(dirsKey.split("|"), guard);
       setStatus({ kind: "done", doneAt: Date.now() });
       if (hasChanged) await refresh();
     } catch (error) {
@@ -59,7 +66,7 @@ function useSyncRun(dirs: string[], refresh: () => Promise<void>) {
     } finally {
       isRunning.current = false;
     }
-  }, [dirsKey, refresh]);
+  }, [dirsKey, refresh, guard]);
   return { status, setStatus, syncNow };
 }
 
@@ -87,11 +94,11 @@ export function useDriveSync(
   dirs: string[],
   preferences: AppPreferences,
   updatePreferences: (change: PreferenceChange) => void,
-  refresh: () => Promise<void>,
+  book: SyncedBook,
 ) {
   const isAvailable = platform.googleSignIn !== undefined;
   const isOn = preferences.isDriveSyncOn && isAvailable;
-  const { status, setStatus, syncNow } = useSyncRun(dirs, refresh);
+  const { status, setStatus, syncNow } = useSyncRun(dirs, book);
   useEffect(() => {
     if (!isOn) return setStatus(OFF);
     void syncNow();

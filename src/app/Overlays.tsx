@@ -1,15 +1,17 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useAutoBackup } from "./useAutoBackup.js";
 import { ConflictDialog } from "./ConflictDialog.js";
 import { CommandPalette } from "./palette/CommandPalette.js";
 import type { usePalette } from "./palette/usePalette.js";
 import {
   resolveConflict,
+  writeOverScene,
   type DiskConflict,
   type OpenScene,
   type SceneSession,
 } from "./sceneSession.js";
 import type { Snapshot } from "../project/snapshots.js";
+import type { WriteGuard } from "../sync/localSide.js";
 import type { Beside } from "./beside/BesidePane.js";
 import { SnapshotsLayer } from "./snapshots/SnapshotsDialog.js";
 import type { useSnapshots } from "./snapshots/useSnapshots.js";
@@ -121,7 +123,13 @@ function SettingsAndSync({ app }: { app: OverlayParts }) {
     async () => void (await Promise.all([refreshBook(), refreshSeries()])),
     [refreshBook, refreshSeries],
   );
-  const drive = useDriveSync(dirs, preferences, updatePreferences, refresh);
+  const { session } = app;
+  const guard = useCallback<WriteGuard>(
+    (path, write) => writeOverScene(session, path, write),
+    [session],
+  );
+  const synced = useMemo(() => ({ refresh, guard }), [refresh, guard]);
+  const drive = useDriveSync(dirs, preferences, updatePreferences, synced);
   useAutoBackup(dirs, app.project);
   return (
     <SettingsLayer

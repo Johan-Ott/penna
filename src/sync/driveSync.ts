@@ -1,7 +1,17 @@
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import type { Drive, RemoteFile } from "./drive.js";
 import { filesIn } from "../storage/folderFiles.js";
-import { keepVersion, moveToTrash, writeLocal, type LocalBook } from "./localSide.js";
+import {
+  DOWNLOAD_SUFFIX,
+  hashOf,
+  keepVersion,
+  moveToTrash,
+  readLocal,
+  replaceLocal,
+  writeLocal,
+  type LocalBook,
+  type WriteGuard,
+} from "./localSide.js";
 import { mergeProjectText } from "./mergeProject.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
@@ -30,12 +40,10 @@ const MERGED = "project.json";
 // A conflict copy stays on the device where it was made, so resolving it is not undone by a sync.
 const CONFLICT_COPY = / \(Drive \d{4}-\d\d-\d\d\)/;
 const isLeftOut = (path: string) =>
-  path === STATE_FILE || path.endsWith(".penna-tmp") || CONFLICT_COPY.test(path);
-
-async function hashOf(bytes: Uint8Array) {
-  const digest = await crypto.subtle.digest("SHA-1", bytes as BufferSource);
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
+  path === STATE_FILE ||
+  path.endsWith(".penna-tmp") ||
+  path.endsWith(DOWNLOAD_SUFFIX) ||
+  CONFLICT_COPY.test(path);
 
 async function readState(fileSystem: FileSystem, dir: string): Promise<SyncState> {
   try {
@@ -116,20 +124,21 @@ async function send(run: Run, path: string, bytes: Uint8Array, remote: RemoteFil
   run.result.uploaded.push(path);
 }
 
-async function fetchFile(run: Run, path: string, remote: RemoteFile, bytes?: Uint8Array) {
-  const content = bytes ?? (await run.drive.download(remote.id));
-  await writeLocal(run.book, path, content);
+async function fetchFile(run: Run, path: string, drive: DriveSide, local?: Uint8Array) {
+  const { remote, remoteBytes } = drive;
+  const content = remoteBytes ?? (await run.drive.download(remote.id));
+  if (!(await replaceLocal(run.book, path, local, content))) return;
   await remember(run, path, remote, content);
   run.result.downloaded.push(path);
 }
 
 interface DriveSide {
   remote: RemoteFile;
-  remoteBytes: Uint8Array;
+  remoteBytes?: Uint8Array;
 }
 
 // project.json is merged; any other file keeps this device's text and Drive's goes beside it.
-async function keepBoth(run: Run, path: string, local: Uint8Array, drive: DriveSide) {
+async function keepBoth(run: Run, path: string, local: Uint8Array, drive: Required<DriveSide>) {
   const { remote, remoteBytes } = drive;
   if (path !== MERGED) {
     await writeLocal(run.book, conflictCopyPath(path, run.now), remoteBytes);
@@ -141,7 +150,7 @@ async function keepBoth(run: Run, path: string, local: Uint8Array, drive: DriveS
   const merged = new TextEncoder().encode(
     mergeProjectText(base, decode(local), decode(remoteBytes)),
   );
-  await writeLocal(run.book, MERGED, merged);
+  if (!(await replaceLocal(run.book, MERGED, local, merged))) return;
   run.result.downloaded.push(MERGED);
   return send(run, MERGED, merged, remote);
 }
@@ -156,7 +165,7 @@ async function settle(run: Run, path: string, local: Uint8Array, remote: RemoteF
   if ((await hashOf(remoteBytes)) === localHash) return remember(run, path, remote, local);
   if (base && !isLocalChanged) {
     await keepVersion(run.book, path, local, run.now);
-    return fetchFile(run, path, remote, remoteBytes);
+    return fetchFile(run, path, { remote, remoteBytes }, local);
   }
   return keepBoth(run, path, local, { remote, remoteBytes });
 }
@@ -184,21 +193,29 @@ async function syncFile(run: Run, path: string, local: Uint8Array | undefined) {
   if (await trashRemoved(run, path, local)) return;
   const remote = run.remote.files.get(path);
   if (!remote) return local && send(run, path, local, undefined);
-  if (!local) return fetchFile(run, path, remote);
+  if (!local) return fetchFile(run, path, { remote });
   if (!(await isInStep(run, path, local, remote))) await settle(run, path, local, remote);
 }
 
-export async function syncProject(fileSystem: FileSystem, drive: Drive, dir: string, now: number) {
+/** The guard wraps each write over a file here, so the app can keep the open scene safe. */
+export async function syncProject(
+  fileSystem: FileSystem,
+  drive: Drive,
+  dir: string,
+  options: { now: number; guard?: WriteGuard },
+) {
+  const { now, guard = (_path, write) => write() } = options;
   const state = await readState(fileSystem, dir);
   const rootId = await bookFolder(drive, dir, state);
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
-  const book = { fileSystem, dir };
+  const book = { fileSystem, dir, guard };
   const local = await filesIn(fileSystem, dir);
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const run: Run = { book, drive, now, rootId, remote, state, result };
+  // Each file is read again just before its turn, so text saved during the sync is what counts.
   for (const path of new Set([...local.keys(), ...remote.files.keys()])) {
-    if (!isLeftOut(path)) await syncFile(run, path, local.get(path));
+    if (!isLeftOut(path)) await syncFile(run, path, await readLocal(book, path));
   }
   await fileSystem.makeDir(dir);
   const saved: SyncState = { folderId: rootId, files: state.files };

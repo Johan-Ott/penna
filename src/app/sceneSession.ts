@@ -121,6 +121,27 @@ export async function checkDisk(session: SceneSession) {
   session.hooks.onConflict({ diskText, editorText });
 }
 
+/** A sync writing over the open scene: its text is saved first, and the editor reads it after. */
+export async function writeOverScene(
+  session: SceneSession,
+  path: string,
+  write: () => Promise<void>,
+) {
+  const scene = session.scene;
+  if (!scene || path !== scenePath(scene.dir, scene.id)) return write();
+  await session.autosave.flush();
+  session.autosave.pause(true);
+  try {
+    await write();
+    await checkDisk(session);
+  } finally {
+    // What was typed meanwhile is saved as usual.
+    session.autosave.pause(false);
+    const doc = session.hooks.editor.currentDoc();
+    if (doc) sceneEdited(session, doc);
+  }
+}
+
 export async function createScene(fileSystem: FileSystem, dir: string, title: string, body = "") {
   const id = newSceneId();
   await fileSystem.makeDir(joinPath(dir, "scenes"));
