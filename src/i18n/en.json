@@ -704,5 +704,8 @@
   "← Tillbaka": "← Back",
   "Meny för {name}": "Menu for {name}",
   "Gör om": "Redo",
-  "Verktyg": "Tools"
+  "Verktyg": "Tools",
+  "Flytta upp": "Move up",
+  "Flytta ned": "Move down",
+  "+ Lägg till": "+ Add"
 }

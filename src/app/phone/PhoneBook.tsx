@@ -100,7 +100,9 @@ function phoneMenu(app: AppState, dialogs: ReturnType<typeof useMenuDialogs>): M
           },
         ]
       : []),
-    { label: t("Exportera allt som zip"), onSelect: app.zip.backup },
+    { label: t("Läs in redaktörens Word-fil…"), onSelect: dialogs.revision.open },
+    { label: t("Serie…"), onSelect: dialogs.series.open },
+    { label: t("Exportera allt som zip"), separatorBefore: true, onSelect: app.zip.backup },
     ...(dialogs.backups.open
       ? [{ label: t("Säkerhetskopior…"), onSelect: dialogs.backups.open }]
       : []),

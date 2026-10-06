@@ -106,6 +106,15 @@ function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   }));
 }
 
+// Up and down among its siblings, where dragging is no way to move it, as on a phone.
+function moveItems(move: ((step: 1 | -1) => void) | undefined): MenuItem[] {
+  if (!move) return [];
+  return [
+    { label: t("Flytta upp"), shortcut: "Alt+↑", separatorBefore: true, onSelect: () => move(-1) },
+    { label: t("Flytta ned"), shortcut: "Alt+↓", onSelect: () => move(1) },
+  ];
+}
+
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return [
     {
@@ -122,7 +131,12 @@ function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   ];
 }
 
-export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuActions): MenuItem[] {
+export function rowMenu(
+  node: TreeNode,
+  isInTrash: boolean,
+  actions: TreeMenuActions,
+  move?: (step: 1 | -1) => void,
+): MenuItem[] {
   if (node.id === TRASH_ID) return [];
   if (isInTrash)
     return [{ label: t("Lägg tillbaka i manuset"), onSelect: () => actions.restore(node) }];
@@ -144,5 +158,6 @@ export function rowMenu(node: TreeNode, isInTrash: boolean, actions: TreeMenuAct
     firstAdded && open.length > 0
       ? [{ ...firstAdded, separatorBefore: true }, ...restAdded]
       : added;
-  return [...open, ...separatedAdd, ...statusItems(node, actions), ...editItems(node, actions)];
+  const status = statusItems(node, actions);
+  return [...open, ...separatedAdd, ...status, ...moveItems(move), ...editItems(node, actions)];
 }

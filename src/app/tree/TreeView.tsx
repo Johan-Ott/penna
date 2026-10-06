@@ -17,6 +17,14 @@ import { t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
 
+function menuOf(row: Row, tree: Tree, menuFor: ReturnType<typeof menuActions>) {
+  const { actions } = tree;
+  const isInTrash = actions.isInTrash(row.node.id);
+  const canMove = actions.canEdit(row.node) && !isInTrash;
+  const move = canMove ? (step: 1 | -1) => actions.moveBy(row, step) : undefined;
+  return rowMenu(row.node, isInTrash, menuFor, move);
+}
+
 function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
   const { view, actions, drag, openMenu } = tree;
   const menuFor = menuActions(actions, props);
@@ -29,9 +37,7 @@ function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: 
       dragProps={drag.rowDragProps(row, actions.canEdit(row.node))}
       {...rowHandlers(row, actions, view)}
       {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
-      onContextMenu={(event) =>
-        openMenu(event, rowMenu(row.node, actions.isInTrash(row.node.id), menuFor))
-      }
+      onContextMenu={(event) => openMenu(event, menuOf(row, tree, menuFor))}
     />
   ));
 }
@@ -89,6 +95,21 @@ function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tre
   );
 }
 
+// On a phone: adding is a button, not a right click, and the trash stays in reach.
+function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
+  const menuFor = menuActions(tree.actions, props);
+  return (
+    <>
+      <button className="tree-add" onClick={(event) => tree.openMenu(event, addMenu(menuFor))}>
+        {t("+ Lägg till")}
+      </button>
+      <div className="tree-bottom">
+        <Rows rows={tree.sections.trash} props={props} tree={tree} />
+      </div>
+    </>
+  );
+}
+
 /** One tree, so the arrow keys walk through all of it. */
 export function TreeView(props: TreeViewProps & BookExtras) {
   const tree = useTreeView(props);
@@ -103,7 +124,11 @@ export function TreeView(props: TreeViewProps & BookExtras) {
     >
       <SectionHeading label={t("Boken")} onDrop={tree.dropAtBookEnd} />
       <Rows rows={sections.book} props={props} tree={tree} />
-      {!props.isBookOnly && <NotesAndTrash props={props} tree={tree} />}
+      {props.isBookOnly ? (
+        <BookOnlyEnd props={props} tree={tree} />
+      ) : (
+        <NotesAndTrash props={props} tree={tree} />
+      )}
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
     </div>
   );

@@ -109,3 +109,25 @@ test("the tools over the keyboard undo, and put in a scene break", async ({ page
 
   await expect(editor(page).locator("hr, .scene-break").first()).toBeVisible();
 });
+
+test("Boken adds with a button, moves a scene down, and keeps the trash in reach", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "+ Lägg till" }).click();
+  await expect(page.getByRole("menuitem", { name: /Nytt kapitel/ })).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Meny för Köket" }).click();
+  await page.getByRole("menuitem", { name: "Flytta ned" }).click();
+
+  const scenes = page.locator(".tree-row").filter({ hasText: /^(Köket|Isen)/ });
+  await expect(scenes.first()).toContainText("Isen");
+  await expect(page.locator(".tree")).toContainText("Papperskorg");
+});
+
+test("the phone's menu has Serie… and the editor's Word file", async ({ page }) => {
+  await page.getByRole("button", { name: "Meny" }).first().click();
+
+  await expect(page.getByRole("menuitem", { name: "Serie…" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: /redaktörens Word-fil/ })).toBeVisible();
+});
