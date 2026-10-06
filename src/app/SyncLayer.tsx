@@ -1,64 +1,9 @@
-import { useState } from "react";
-import { insertAfter, type TreeNode } from "../project/tree.js";
-import type { SceneFileRef } from "../storage/syncFiles.js";
-import { ConflictDialog } from "./ConflictDialog.js";
 import { platform } from "./platform.js";
-import type { ConflictChoice, DiskConflict, SceneSession } from "./sceneSession.js";
-import {
-  copyDevice,
-  crashSceneId,
-  keepVersion,
-  readSyncCopy,
-  restoreCrashText,
-  setAsideCrashText,
-} from "./syncRepairs.js";
+import { crashSceneId, restoreCrashText, setAsideCrashText } from "./syncRepairs.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 
-interface SyncCopy {
-  copy: SceneFileRef;
-  versions: DiskConflict;
-}
-
 const titleOf = (project: Project, id: string) => project.summaries[id]?.title ?? t("Namnlös scen");
-
-export function useSyncCopy(
-  project: Project | null,
-  session: SceneSession,
-  updateTree: (tree: TreeNode[]) => Promise<void>,
-  refresh: () => Promise<void>,
-) {
-  const [syncCopy, setSyncCopy] = useState<SyncCopy | null>(null);
-  const showSyncCopy = async (copy: SceneFileRef) => {
-    if (!project) return;
-    setSyncCopy({ copy, versions: await readSyncCopy(platform.fileSystem, project.dir, copy) });
-  };
-  const chooseSyncCopy = async (choice: ConflictChoice) => {
-    if (!project || !syncCopy) return;
-    const { copy } = syncCopy;
-    setSyncCopy(null);
-    const newId = await keepVersion(session, project.dir, copy, choice);
-    if (newId)
-      await updateTree(insertAfter(project.tree, { id: newId, kind: "scene" }, copy.sceneId));
-    await refresh();
-  };
-  return { syncCopy, showSyncCopy, chooseSyncCopy, closeSyncCopy: () => setSyncCopy(null) };
-}
-
-export function SyncCopyDialog(props: { project: Project } & ReturnType<typeof useSyncCopy>) {
-  const { syncCopy } = props;
-  if (!syncCopy) return null;
-  return (
-    <ConflictDialog
-      sceneTitle={titleOf(props.project, syncCopy.copy.sceneId)}
-      conflict={syncCopy.versions}
-      otherLabel={copyDevice(syncCopy.copy.fileName) ?? undefined}
-      text={t("Scenen ändrades på två enheter innan molnet hann synka. Inget har raderats.")}
-      onChoose={(choice) => void props.chooseSyncCopy(choice)}
-      onLater={props.closeSyncCopy}
-    />
-  );
-}
 
 async function settleCrashText(project: Project, restore: boolean) {
   for (const temp of project.recoverable) {
@@ -123,7 +68,8 @@ function notDownloadedNotice(count: number) {
 
 export function SyncNotices(props: {
   project: Project;
-  onShowSyncCopy: (copy: SceneFileRef) => void;
+  reviewCount: number;
+  onShowReview: () => void;
 }) {
   const { project } = props;
   const repair = project.repairCopy
@@ -134,16 +80,16 @@ export function SyncNotices(props: {
       ]
     : [];
   const notices = [...repair, ...notDownloadedNotice(project.notDownloaded.length)];
-  if (notices.length === 0 && project.conflicts.length === 0) return null;
+  if (notices.length === 0 && props.reviewCount === 0) return null;
   return (
     <ul className="sidebar-notices" aria-label={t("Att se över")}>
-      {project.conflicts.map((copy) => (
-        <li key={copy.fileName}>
-          <button className="link-button" onClick={() => props.onShowSyncCopy(copy)}>
-            {t("Två versioner av ”{title}”", { title: titleOf(project, copy.sceneId) })}
+      {props.reviewCount > 0 && (
+        <li>
+          <button className="link-button" onClick={props.onShowReview}>
+            {t("Från synken: {count} att se över", { count: props.reviewCount })}
           </button>
         </li>
-      ))}
+      )}
       {notices.map((notice) => (
         <li key={notice}>{notice}</li>
       ))}

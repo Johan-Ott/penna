@@ -4,7 +4,7 @@ import { mergeProjectText } from "../src/sync/mergeProject";
 const scene = (id: string) => ({ id, kind: "scene" });
 const file = (fields: Record<string, unknown>, tree: unknown[]) =>
   JSON.stringify({ ...fields, tree });
-const parsed = (text: string) => JSON.parse(text) as Record<string, unknown>;
+const parsed = (merged: { text: string }) => JSON.parse(merged.text) as Record<string, unknown>;
 
 describe("mergeProjectText", () => {
   it("takes each setting from the side that changed it", () => {
@@ -36,12 +36,16 @@ describe("mergeProjectText", () => {
     expect(merged["tree"]).toEqual([scene("S1"), scene("S2")]);
   });
 
-  it("keeps this device's structure when both changed it", () => {
+  it("merges the structure scene by scene when both changed it", () => {
     const base = file({}, [scene("S1")]);
     const here = file({}, [scene("S1"), scene("S3")]);
     const drive = file({}, [scene("S1"), scene("S2")]);
 
-    expect(parsed(mergeProjectText(base, here, drive))["tree"]).toEqual([scene("S1"), scene("S3")]);
+    expect(parsed(mergeProjectText(base, here, drive))["tree"]).toEqual([
+      scene("S1"),
+      scene("S2"),
+      scene("S3"),
+    ]);
   });
 
   it("treats a first sync with no earlier version as both sides changed", () => {
@@ -65,6 +69,6 @@ describe("mergeProjectText", () => {
   it("keeps this device's file when the other side cannot be read", () => {
     const here = file({ title: "Isen" }, []);
 
-    expect(mergeProjectText(null, here, "{trasig")).toBe(here);
+    expect(mergeProjectText(null, here, "{trasig").text).toBe(here);
   });
 });

@@ -1340,6 +1340,104 @@ button.book-cover:hover {
   align-self: flex-start;
 }
 
+/* Från synken: the list on the left, both versions side by side on the right. */
+.sync-review {
+  width: min(1000px, 94vw);
+}
+
+.sync-body {
+  display: flex;
+  height: 480px;
+  max-height: 70vh;
+  overflow: hidden;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-dialog);
+}
+
+.sync-list {
+  flex-shrink: 0;
+  width: 260px;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  list-style: none;
+}
+
+.sync-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.sync-item:hover,
+.sync-item.chosen {
+  background: var(--surface-hover);
+}
+
+.sync-badge {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.sync-badge.copy,
+.sync-badge.conflict {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.sync-pane {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.sync-pane > .button {
+  align-self: flex-start;
+}
+
+.sync-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.sync-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.sync-text {
+  width: 100%;
+  font: 14px/1.7 var(--font-prose);
+  white-space: pre-wrap;
+}
+
+.sync-text del {
+  background: var(--surface-hover);
+  color: var(--text-muted);
+}
+
+.sync-text ins {
+  background: var(--selection);
+  text-decoration: none;
+}
+
 /* Inställningar: tabs on the left, one setting per row. */
 .settings-dialog {
   display: flex;

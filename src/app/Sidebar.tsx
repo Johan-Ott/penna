@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import { SeriesDialog } from "./notes/SeriesDialog.js";
-import type { SceneFileRef } from "../storage/syncFiles.js";
 import { useMenuButton } from "./Menu.js";
 import { ChevronDownIcon } from "./shell/icons.js";
 import { SyncNotices } from "./SyncLayer.js";
@@ -15,7 +14,8 @@ interface SidebarProps extends TreeViewProps {
   isContentsShown: boolean;
   onShowContents: () => void;
   onShowShelf: () => void;
-  onShowSyncCopy: (copy: SceneFileRef) => void;
+  syncReviewCount: number;
+  onShowSyncReview: () => void;
 }
 
 function useSeriesDialog(props: SidebarProps) {
@@ -62,7 +62,11 @@ export function Sidebar(props: SidebarProps) {
     <nav className="sidebar" aria-label={t("Boken")}>
       <BookTitle {...props} />
       <TreeView {...props} />
-      <SyncNotices project={props.project} onShowSyncCopy={props.onShowSyncCopy} />
+      <SyncNotices
+        project={props.project}
+        reviewCount={props.syncReviewCount}
+        onShowReview={props.onShowSyncReview}
+      />
     </nav>
   );
 }

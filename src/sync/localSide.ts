@@ -59,6 +59,7 @@ export async function moveToTrash(book: LocalBook, path: string) {
   let free = name;
   for (let number = 2; taken.includes(free); number++) free = `${stem} ${number}${extension}`;
   await fileSystem.rename(joinPath(dir, path), joinPath(dir, `trash/${free}`));
+  return `trash/${free}`;
 }
 
 const SCENE_PATH = /^scenes\/([^/]+)\.md$/;
@@ -68,4 +69,16 @@ export async function keepVersion(book: LocalBook, path: string, bytes: Uint8Arr
   if (!id) return;
   const text = new TextDecoder().decode(bytes);
   await takeSnapshot(book.fileSystem, { dir: book.dir, id }, text, { time: now });
+}
+
+/** Drive's side of a conflict: "scenes/S1.md" becomes "scenes/S1 (Drive 2026-10-04).md",
+ * or "... 2.md" when that day already has one. */
+export async function conflictCopyPath(book: LocalBook, path: string, now: number) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  const dot = path.lastIndexOf(".");
+  const cut = dot > path.lastIndexOf("/") ? dot : path.length;
+  const named = (extra: string) => `${path.slice(0, cut)} (Drive ${day})${extra}${path.slice(cut)}`;
+  let free = named("");
+  for (let number = 2; await readLocal(book, free); number++) free = named(` ${number}`);
+  return free;
 }

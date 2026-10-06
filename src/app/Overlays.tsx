@@ -15,7 +15,9 @@ import type { WriteGuard } from "../sync/localSide.js";
 import type { Beside } from "./beside/BesidePane.js";
 import { SnapshotsLayer } from "./snapshots/SnapshotsDialog.js";
 import type { useSnapshots } from "./snapshots/useSnapshots.js";
-import { CrashDialog, SyncCopyDialog, type useSyncCopy } from "./SyncLayer.js";
+import { CrashDialog } from "./SyncLayer.js";
+import { SyncReviewDialog } from "./sync/SyncReview.js";
+import type { SyncReview } from "./sync/useSyncReview.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import type { Project } from "./useProject.js";
 import { MentionCard } from "./notes/MentionCard.js";
@@ -43,7 +45,7 @@ interface OverlayParts {
   series: Project | null;
   seriesState: { refreshSeries: () => Promise<void> };
   updateFields: (fields: Record<string, unknown>) => Promise<void>;
-  syncCopy: ReturnType<typeof useSyncCopy>;
+  syncReview: SyncReview;
   snapshots: ReturnType<typeof useSnapshots>;
   palette: ReturnType<typeof usePalette>;
   notes: Notes;
@@ -153,7 +155,7 @@ export function Overlays({ app }: { app: OverlayParts }) {
   return (
     <>
       <ConflictLayer {...app} />
-      {app.project && <SyncCopyDialog project={app.project} {...app.syncCopy} />}
+      {app.project && <SyncReviewDialog project={app.project} review={app.syncReview} />}
       {app.project && <CrashDialog project={app.project} refresh={app.refresh} />}
       <SnapshotsLayer
         state={app.snapshots}

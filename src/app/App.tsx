@@ -22,7 +22,7 @@ import { useWritingMode } from "./useWritingMode.js";
 import { useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
 import { StartScreen } from "./StartScreen.js";
-import { useSyncCopy } from "./SyncLayer.js";
+import { useSyncReview } from "./sync/useSyncReview.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
 import { snapshotOnSave } from "../project/snapshots.js";
@@ -166,7 +166,7 @@ function useAppState() {
   const seriesTreeHandlers = useTreeHandlers(core.actions.series);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
-  const syncCopy = useSyncCopy(project, session, updateTree, refresh);
+  const syncReview = useSyncReview({ project, session, updateTree, refresh });
   const { stats, today, recordSave } = useWritingStats(project);
   useReminder(startup.preferences.reminderHour, today.words);
   const isSearchOpen = writingMode.isSearchOpen;
@@ -179,7 +179,7 @@ function useAppState() {
   const newProjectAsked = useRef(false);
   const app = {
     ...parts,
-    ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncCopy, stats, today },
+    ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncReview, stats, today },
     ...{ search, zip, newProjectAsked, sceneSplit },
   };
   return { ...app, palette: usePalette(paletteContextOf(app)) };

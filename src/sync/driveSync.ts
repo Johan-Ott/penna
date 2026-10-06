@@ -2,6 +2,7 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import type { Drive, RemoteFile } from "./drive.js";
 import { filesIn } from "../storage/folderFiles.js";
 import {
+  conflictCopyPath,
   DOWNLOAD_SUFFIX,
   hashOf,
   keepVersion,
@@ -13,6 +14,7 @@ import {
   type WriteGuard,
 } from "./localSide.js";
 import { mergeProjectText } from "./mergeProject.js";
+import { addToSyncLog, SYNC_LOG, syncLogger, type SyncLogger } from "./syncLog.js";
 import { t } from "../i18n/i18n.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
@@ -42,6 +44,7 @@ const MERGED = "project.json";
 const CONFLICT_COPY = / \(Drive \d{4}-\d\d-\d\d\)/;
 const isLeftOut = (path: string) =>
   path === STATE_FILE ||
+  path === SYNC_LOG ||
   path.endsWith(".penna-tmp") ||
   path.endsWith(DOWNLOAD_SUFFIX) ||
   CONFLICT_COPY.test(path);
@@ -80,18 +83,6 @@ async function bookFolder(drive: Drive, dir: string, state: SyncState) {
   return (await drive.findFolder(name, penna)) ?? (await drive.createFolder(name, penna));
 }
 
-/** Drive's side of a conflict: "scenes/S1.md" becomes "scenes/S1 (Drive 2026-10-04).md",
- * or "... 2.md" when that day already has one. */
-async function conflictCopyPath(book: LocalBook, path: string, now: number) {
-  const day = new Date(now).toISOString().slice(0, 10);
-  const dot = path.lastIndexOf(".");
-  const cut = dot > path.lastIndexOf("/") ? dot : path.length;
-  const named = (extra: string) => `${path.slice(0, cut)} (Drive ${day})${extra}${path.slice(cut)}`;
-  let free = named("");
-  for (let number = 2; await readLocal(book, free); number++) free = named(` ${number}`);
-  return free;
-}
-
 interface Run {
   book: LocalBook;
   drive: Drive;
@@ -100,6 +91,7 @@ interface Run {
   remote: RemoteTree;
   state: SyncState;
   result: SyncResult;
+  logger: SyncLogger;
 }
 
 // Made one level at a time where missing.
@@ -133,6 +125,7 @@ async function fetchFile(run: Run, path: string, drive: DriveSide, local?: Uint8
   const { remote, remoteBytes } = drive;
   const content = remoteBytes ?? (await run.drive.download(remote.id));
   if (!(await replaceLocal(run.book, path, local, content))) return;
+  run.logger.written(path, local, content);
   await remember(run, path, remote, content);
   run.result.downloaded.push(path);
 }
@@ -152,10 +145,10 @@ async function keepBoth(run: Run, path: string, local: Uint8Array, drive: Requir
   }
   const decode = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
   const base = run.state.files[MERGED]?.text ?? null;
-  const merged = new TextEncoder().encode(
-    mergeProjectText(base, decode(local), decode(remoteBytes)),
-  );
+  const { text, conflicts } = mergeProjectText(base, decode(local), decode(remoteBytes));
+  const merged = new TextEncoder().encode(text);
   if (!(await replaceLocal(run.book, MERGED, local, merged))) return;
+  run.logger.written(MERGED, local, merged, conflicts);
   run.result.downloaded.push(MERGED);
   return send(run, MERGED, merged, remote);
 }
@@ -186,7 +179,8 @@ async function trashRemoved(run: Run, path: string, local: Uint8Array | undefine
   const base = run.state.files[path];
   if (!base || (local && remote)) return false;
   if (remote && base.version === remote.version) await run.drive.trash(remote.id);
-  else if (local && base.hash === (await hashOf(local))) await moveToTrash(run.book, path);
+  else if (local && base.hash === (await hashOf(local)))
+    run.logger.trashed(path, local, await moveToTrash(run.book, path));
   else return false;
   const kept = Object.entries(run.state.files).filter(([known]) => known !== path);
   run.state.files = Object.fromEntries(kept);
@@ -222,7 +216,8 @@ export async function syncProject(
   const book = { fileSystem, dir, guard };
   const local = await filesIn(fileSystem, dir);
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
-  const run: Run = { book, drive, now, rootId, remote, state, result };
+  const logger = syncLogger();
+  const run: Run = { book, drive, now, rootId, remote, state, result, logger };
   // Each file is read again just before its turn, so text saved during the sync is what counts.
   for (const path of new Set([...local.keys(), ...remote.files.keys()])) {
     if (!isLeftOut(path)) await syncFile(run, path, await readLocal(book, path));
@@ -230,5 +225,6 @@ export async function syncProject(
   await fileSystem.makeDir(dir);
   const saved: SyncState = { folderId: rootId, files: state.files };
   await fileSystem.writeText(joinPath(dir, STATE_FILE), `${JSON.stringify(saved, null, 2)}\n`);
+  await addToSyncLog(fileSystem, dir, logger.log);
   return result;
 }

@@ -1,7 +1,6 @@
 import { BesidePane } from "./beside/BesidePane.js";
 import type { TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
-import type { SceneFileRef } from "../storage/syncFiles.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf } from "./notes/NotePage.js";
 import { ReplaceToast } from "./SaveToast.js";
@@ -68,7 +67,8 @@ export function sidebarProps(app: AppState, project: Project) {
     onOpenScene: openText(app),
     isContentsShown: writingMode.view === "innehall",
     onShowContents: () => writingMode.setView("innehall"),
-    onShowSyncCopy: (copy: SceneFileRef) => void app.syncCopy.showSyncCopy(copy),
+    syncReviewCount: app.syncReview.items.length,
+    onShowSyncReview: app.syncReview.open,
     onShowSnapshots: app.snapshots.show,
     onOpenBeside: (id: string) =>
       app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),

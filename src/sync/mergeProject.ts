@@ -1,3 +1,6 @@
+import type { TreeNode } from "../project/tree.js";
+import { mergeTrees, type TreeConflict } from "./mergeTree.js";
+
 // Merged rather than kept twice: a copy of project.json would show nowhere.
 
 type Json = Record<string, unknown>;
@@ -22,13 +25,24 @@ function pick(base: Json | null, here: Json, drive: Json, key: string) {
   return same(here[key], base[key]) ? drive[key] : here[key];
 }
 
-export function mergeProjectText(base: string | null, here: string, drive: string): string {
+const treeOf = (json: Json | null) =>
+  (Array.isArray(json?.["tree"]) ? json["tree"] : []) as TreeNode[];
+
+/** The structure, changed on both devices, is merged node by node; the rest key by key. */
+export function mergeProjectText(base: string | null, here: string, drive: string) {
   const [baseJson, hereJson, driveJson] = [parse(base), parse(here), parse(drive)];
-  if (!hereJson || !driveJson) return here;
+  const conflicts: TreeConflict[] = [];
+  if (!hereJson || !driveJson) return { text: here, conflicts };
   const merged: Json = {};
   for (const key of new Set([...Object.keys(hereJson), ...Object.keys(driveJson)])) {
     const value = pick(baseJson, hereJson, driveJson, key);
     if (value !== undefined) merged[key] = value;
   }
-  return `${JSON.stringify(merged, null, 2)}\n`;
+  const trees = [treeOf(baseJson), treeOf(hereJson), treeOf(driveJson)] as const;
+  if (baseJson && !same(trees[1], trees[0]) && !same(trees[2], trees[0])) {
+    const tree = mergeTrees(...trees);
+    merged["tree"] = tree.tree;
+    conflicts.push(...tree.conflicts);
+  }
+  return { text: `${JSON.stringify(merged, null, 2)}\n`, conflicts };
 }
