@@ -188,12 +188,16 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
 
 ## Running
 
-- `npm run dev` starts the Tauri window. Johan runs it; Claude does not start windows.
+- `npm run dev` starts the Tauri window. Johan runs it; Claude starts only Penna Test (below),
+  never the real app.
 - `npm run app:test` starts Penna Test: the real app with identifier `se.penna.test`
   (`src-tauri/tauri.test.conf.json`), so its books, backups, settings and Google sign-in are its
   own, under `%APPDATA%\se.penna.test`. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
   answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
+- `e2e/roller/`: whole sessions as the people Penna is for (a novelist on her phone, a planner,
+  the editor's round in Word, the print, a move from Word). They go through the screen as a
+  person would and run with `npm run test:ui`; a step that fails is often a real finding.
 - `npm run test:ui`: Playwright flows in `e2e/` against `dev:web` (the example project in memory):
   writing, footnotes, palette, search, focus mode, export, the tree and the phone screens. Not part
   of `npm run check`; run it before a release or after changing the interface.
