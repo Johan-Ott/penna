@@ -1,6 +1,7 @@
 {
   "bundle": {
     "active": true,
+    "targets": ["nsis", "app", "dmg"],
     "createUpdaterArtifacts": true
   }
 }
