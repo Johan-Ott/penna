@@ -95,9 +95,6 @@ export function isMarkActive(state: EditorState, markName: "bold" | "italic"): b
   return state.doc.rangeHasMark(from, to, markType);
 }
 
-export const toggleQuote: Command = (state, dispatch) =>
-  setStyle(currentStyle(state) === "citat" ? "brodtext" : "citat")(state, dispatch);
-
 /** Styles say what the text is, so they stay. */
 export const clearFormatting: Command = (state, dispatch) => {
   const { from, to } = state.selection;

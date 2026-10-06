@@ -4,7 +4,6 @@ import {
   daysBetween,
   deadlinePlan,
   heatmap,
-  longestStreak,
   projectGoals,
   shortDay,
 } from "../src/project/progress";
@@ -52,20 +51,6 @@ describe("days and streaks", () => {
     const days = [daysBetween("2026-10-02", "2027-01-15"), daysBetween("2026-03-28", "2026-03-30")];
 
     expect(days).toEqual([105, 2]);
-  });
-
-  it("finds the longest run of days with words", () => {
-    const stats = {
-      "2026-09-01": 5,
-      "2026-09-02": 5,
-      "2026-09-03": 5,
-      "2026-09-10": 5,
-      "2026-09-11": 5,
-    };
-
-    const longest = longestStreak(stats);
-
-    expect(longest).toBe(3);
   });
 
   it("averages the last 30 days, days without words included", () => {

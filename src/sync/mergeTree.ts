@@ -25,7 +25,7 @@ export interface TreeConflict {
 }
 
 const TOP = "";
-const same = (one: unknown, other: unknown) => JSON.stringify(one) === JSON.stringify(other);
+export const same = (one: unknown, other: unknown) => JSON.stringify(one) === JSON.stringify(other);
 
 export function flatten(
   tree: TreeNode[],

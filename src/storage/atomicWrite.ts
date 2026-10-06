@@ -37,10 +37,6 @@ export async function findRecoverableTemps(fileSystem: FileSystem, dir: string) 
   return found;
 }
 
-export async function recoverTemp(fileSystem: FileSystem, temp: RecoverableTemp) {
-  await fileSystem.rename(temp.tempPath, temp.targetPath);
-}
-
 async function isNewerThanTarget(fileSystem: FileSystem, tempPath: string, targetPath: string) {
   const targetTime = await fileSystem.modifiedAt(targetPath);
   if (targetTime === null) return true;

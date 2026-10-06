@@ -1,12 +1,7 @@
 import { mkdtemp, readdir, readFile, rm, utimes, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  findRecoverableTemps,
-  recoverTemp,
-  tempPathFor,
-  writeAtomic,
-} from "../src/storage/atomicWrite";
+import { findRecoverableTemps, tempPathFor, writeAtomic } from "../src/storage/atomicWrite";
 import { joinPath } from "../src/storage/fileSystem";
 import { nodeFileSystem } from "../src/storage/nodeFileSystem";
 
@@ -82,18 +77,5 @@ describe("findRecoverableTemps", () => {
     const found = await findRecoverableTemps(nodeFileSystem, joinPath(dir, "saknas"));
 
     expect(found).toEqual([]);
-  });
-});
-
-describe("recoverTemp", () => {
-  it("puts the temp text in place of the scene", async () => {
-    await writeFile(scenePath(), "sparad");
-    await writeFile(tempPathFor(scenePath()), "osparad");
-    const recoverable = { tempPath: tempPathFor(scenePath()), targetPath: scenePath() };
-
-    await recoverTemp(nodeFileSystem, recoverable);
-
-    expect(await readFile(scenePath(), "utf8")).toBe("osparad");
-    expect(await readdir(dir)).toEqual(["01J9Z4K2QX.md"]);
   });
 });

@@ -1,7 +1,7 @@
 import type { TreeNode } from "../project/tree.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
-import { flatten, type TreeConflict } from "./mergeTree.js";
+import { flatten, same, type TreeConflict } from "./mergeTree.js";
 
 // What the syncs brought here from Drive, kept in the book until the writer has looked:
 // texts that came, changed or went, the structure's changes, and its conflicts to choose.
@@ -40,7 +40,7 @@ export interface SyncLog {
 }
 
 export const emptyLog = (): SyncLog => ({ files: [], nodes: [], conflicts: [] });
-export const isEmptyLog = (log: SyncLog) =>
+const isEmptyLog = (log: SyncLog) =>
   log.files.length + log.nodes.length + log.conflicts.length === 0;
 
 const isLogged = (path: string) => /^(scenes|bilder)\//.test(path);
@@ -72,7 +72,7 @@ export function treeChanges(before: TreeNode[], after: TreeNode[]): NodeChange[]
     const read = (fields: NodeFields, field: string) => (fields as Record<string, unknown>)[field];
     for (const field of new Set([...Object.keys(earlier.fields), ...Object.keys(placed.fields)])) {
       const [old, fresh] = [read(earlier.fields, field), read(placed.fields, field)];
-      if (JSON.stringify(old) === JSON.stringify(fresh)) continue;
+      if (same(old, fresh)) continue;
       changes.push({ kind: "changed", node: placed.fields, field, before: old, after: fresh });
     }
   }

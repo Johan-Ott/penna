@@ -96,16 +96,6 @@ button {
   min-height: 0;
 }
 
-.toolbar {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  height: 48px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--border-soft);
-}
-
 .icon-button {
   min-width: 30px;
   height: 30px;
@@ -324,28 +314,6 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  height: 100vh;
-  padding: 24px;
-  text-align: center;
-}
-
-.welcome h1 {
-  margin: 0;
-  font: 600 28px var(--font-prose);
-}
-
-.welcome p {
-  max-width: 360px;
-  margin: 0 0 8px;
-  color: var(--text-muted);
 }
 
 /* Tree */
@@ -675,7 +643,7 @@ button {
   color: var(--text-muted);
 }
 
-/* Toolbar details */
+/* The style picker, in the selection bar and the phone's tools */
 .style-picker {
   display: flex;
   align-items: center;
@@ -695,10 +663,6 @@ button {
 .style-picker:hover,
 .style-picker[aria-expanded="true"] {
   background: var(--surface-hover);
-}
-
-.toolbar .button.secondary {
-  font-weight: 400;
 }
 
 ::selection {

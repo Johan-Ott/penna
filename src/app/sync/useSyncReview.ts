@@ -23,7 +23,7 @@ export type ReviewItem =
   | { key: string; kind: "file"; change: FileChange }
   | { key: string; kind: "node"; change: NodeChange };
 
-export function reviewItems(project: Project, log: SyncLog): ReviewItem[] {
+function reviewItems(project: Project, log: SyncLog): ReviewItem[] {
   return [
     ...project.conflicts.map((copy) => ({ key: copy.fileName, kind: "copy" as const, copy })),
     ...log.conflicts.map((conflict) => ({

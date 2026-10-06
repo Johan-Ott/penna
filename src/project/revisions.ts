@@ -25,9 +25,3 @@ export async function writeRevision(
 /** Done with: moved to trash/ like everything Penna stops using, never deleted. */
 export const finishRevision = (fileSystem: FileSystem, dir: string, sceneId: string) =>
   setAside(fileSystem, dir, revisionPath(dir, sceneId), `redigering-${sceneId}.txt`);
-
-/** The scenes with an editor's version waiting. */
-export async function scenesWithRevision(fileSystem: FileSystem, dir: string) {
-  const names = await fileSystem.list(joinPath(dir, REVISIONS_DIR));
-  return names.filter((name) => name.endsWith(".txt")).map((name) => name.slice(0, -4));
-}

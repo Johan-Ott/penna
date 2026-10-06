@@ -45,20 +45,6 @@ export function deadlinePlan(
   return { daysLeft, wordsPerDay, isOnTrack: wordsLeft === 0 || averagePerDay >= wordsPerDay };
 }
 
-export function longestStreak(stats: Stats): number {
-  const days = Object.keys(stats)
-    .filter((day) => (stats[day] ?? 0) > 0)
-    .sort();
-  let longest = 0;
-  let current = 0;
-  days.forEach((day, index) => {
-    const previous = days[index - 1];
-    current = previous !== undefined && daysBetween(previous, day) === 1 ? current + 1 : 1;
-    longest = Math.max(longest, current);
-  });
-  return longest;
-}
-
 /** Over the last 30 days, today included, counting days without words too. */
 export function averagePerDay(stats: Stats, today: string): number {
   let sum = 0;

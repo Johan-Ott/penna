@@ -1,5 +1,5 @@
 import type { TreeNode } from "../project/tree.js";
-import { mergeTrees, type TreeConflict } from "./mergeTree.js";
+import { mergeTrees, same, type TreeConflict } from "./mergeTree.js";
 
 // Merged rather than kept twice: a copy of project.json would show nowhere.
 
@@ -16,8 +16,6 @@ function parse(text: string | null): Json | null {
     return null;
   }
 }
-
-const same = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.stringify(right);
 
 // A value this device left unchanged comes from Drive. Before the first sync this device wins.
 function pick(base: Json | null, here: Json, drive: Json, key: string) {

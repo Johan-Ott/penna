@@ -33,9 +33,8 @@ export const KINDS: Record<string, string> = {
 export const fileName = (path: string) => path.slice(path.lastIndexOf("/") + 1);
 export const titleIn = (text: string | null) =>
   text ? sceneTitle(splitSceneFile(text).frontMatter) : null;
-export const bodyOf = (text: string | null) =>
-  text ? plainText(splitSceneFile(text).body, "\n\n") : "";
-export const shown = (value: unknown) => {
+const bodyOf = (text: string | null) => (text ? plainText(splitSceneFile(text).body, "\n\n") : "");
+const shown = (value: unknown) => {
   if (value === undefined) return "";
   return typeof value === "string" ? value : JSON.stringify(value);
 };

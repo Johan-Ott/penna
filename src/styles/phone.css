@@ -123,8 +123,7 @@
   font-weight: 400;
 }
 
-.phone-card .tree .tree-row,
-.phone-row {
+.phone-card .tree .tree-row {
   min-height: 44px;
   border-bottom: 1px solid var(--border-soft);
   border-radius: 0;
@@ -133,16 +132,6 @@
 
 .phone-card .tree .tree-row.active {
   background: transparent;
-}
-
-.phone-row {
-  width: 100%;
-  padding: 0;
-  border-top: 0;
-  border-right: 0;
-  border-left: 0;
-  background: transparent;
-  text-align: left;
 }
 
 .phone-card .sidebar-heading {

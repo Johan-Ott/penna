@@ -9,7 +9,6 @@ import {
   setStyle,
   toggleBold,
   toggleItalic,
-  toggleQuote,
 } from "../src/editor/commands";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 import { serializeMarkdown } from "../src/manuscript/serializeMarkdown";
@@ -110,18 +109,6 @@ describe("isMarkActive", () => {
 
     expect(bold).toBe(true);
     expect(italic).toBe(false);
-  });
-});
-
-describe("toggleQuote", () => {
-  it("turns a paragraph into a quote and back", () => {
-    const state = stateAt("Kära Elin.\n", 3);
-
-    const quoted = run(state, toggleQuote);
-    const unquoted = run(quoted, toggleQuote);
-
-    expect(markdownOf(quoted)).toBe("::: citat\nKära Elin.\n:::\n");
-    expect(markdownOf(unquoted)).toBe("Kära Elin.\n");
   });
 });
 
