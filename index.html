@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Penna</title>
     <link rel="icon" type="image/png" href="/src/assets/penna-logo.png" />
+    <script src="/theme.js"></script>
+    <style>
+      /* The page's colour from the first frame, before the app's styles arrive. */
+      html {
+        background: #f5f5f5;
+      }
+      html[data-theme="dark"] {
+        background: #1b1b1b;
+      }
+      @keyframes penna-in {
+        from {
+          opacity: 0;
+        }
+      }
+      #root {
+        animation: penna-in 180ms ease-out;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #root {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

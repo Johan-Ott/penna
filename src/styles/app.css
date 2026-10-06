@@ -8,6 +8,18 @@
   scrollbar-color: var(--border-control) transparent;
 }
 
+/* A reload for a new language fades the page out first, see UiLanguageChoice. */
+.leaving #root {
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaving #root {
+    transition: none;
+  }
+}
+
 body {
   margin: 0;
   background: var(--bg);
