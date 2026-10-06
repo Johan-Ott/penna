@@ -1,6 +1,6 @@
 import type { Node } from "prosemirror-model";
 import { useEffect, useMemo, useState } from "react";
-import { sceneRepetitions } from "../../editor/repetitionMarks.js";
+import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { nameSuspects } from "../../manuscript/review.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
@@ -45,15 +45,28 @@ function useChapterTexts(project: Project, sceneId: string) {
   return texts;
 }
 
-export function useReview({ project, scene, doc, cards, repeatWindow }: ReviewInput) {
+// The text as it was at the writer's last pause, so Granska does not count on every key.
+function useSettled(doc: Node) {
+  const [settled, setSettled] = useState(doc);
+  useEffect(() => {
+    const timer = setTimeout(() => setSettled(doc), PAUSE_MS);
+    return () => clearTimeout(timer);
+  }, [doc]);
+  return settled;
+}
+
+export function useReview({ project, scene, doc: current, cards, repeatWindow }: ReviewInput) {
+  const doc = useSettled(current);
   const chapterTexts = useChapterTexts(project, scene.id);
   const sceneText = doc.textBetween(0, doc.content.size, "\n");
   const inChapter = useMemo(() => {
     const text = [sceneText, ...chapterTexts].join("\n");
     return cards.filter((card) => card.id !== scene.id && mentionPattern(card.name)?.test(text));
   }, [cards, sceneText, chapterTexts, scene.id]);
-  const names = cards.map((card) => card.name);
-  const suspects = nameSuspects({ [scene.id]: sceneText }, names, ignoredNames(project));
-  const repeats = sceneRepetitions(doc, repeatWindow);
+  const suspects = useMemo(() => {
+    const names = cards.map((card) => card.name);
+    return nameSuspects({ [scene.id]: sceneText }, names, ignoredNames(project));
+  }, [cards, sceneText, scene.id, project]);
+  const repeats = useMemo(() => sceneRepetitions(doc, repeatWindow), [doc, repeatWindow]);
   return { inChapter, suspects, repeats, ignored: ignoredNames(project) };
 }

@@ -146,17 +146,33 @@ export function rowHandlers(row: Row, actions: Actions, view: View) {
   };
 }
 
+// Labels and word counts change with the book, not with each key typed, so they are kept per
+// version of the project; a long book has hundreds of rows to name.
+const labelCache = new WeakMap<Project, Map<string, { label: string; meta: string }>>();
+
+function labelsOf(project: Project, node: TreeNode) {
+  const labels = labelCache.get(project) ?? new Map<string, { label: string; meta: string }>();
+  labelCache.set(project, labels);
+  const known = labels.get(node.id);
+  if (known) return known;
+  const made = {
+    label: nodeLabel(node, project.tree, project.summaries),
+    meta: nodeMeta(node, project.summaries),
+  };
+  labels.set(node.id, made);
+  return made;
+}
+
 export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;
   const summary = props.project.summaries[node.id];
   const isInCloud = props.project.notDownloaded.some((file) => file.sceneId === node.id);
+  const { label, meta } = labelsOf(props.project, node);
   return {
     row,
-    label: isInCloud
-      ? t("Hämtar från molnet…")
-      : nodeLabel(node, props.project.tree, props.project.summaries),
+    label: isInCloud ? t("Hämtar från molnet…") : label,
     title: node.kind === "scene" ? (summary?.title ?? "") : (node.title ?? ""),
-    meta: nodeMeta(node, props.project.summaries),
+    meta,
     isActive: node.id === props.openSceneId,
     isExpanded: node.kind === "scene" ? null : !collapsed.has(node.id),
     isMissing: node.kind === "scene" && !summary,

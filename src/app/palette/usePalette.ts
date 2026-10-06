@@ -10,11 +10,11 @@ export function usePalette(context: PaletteContext | null) {
   useShortcut("k", () => setOpen((current) => !current));
   return {
     isOpen: isOpen && context !== null,
-    entries: context
-      ? paletteEntries(
-          isPhone ? { ...context, read: null, chooseFolder: null, showView: null } : context,
-        )
-      : [],
+    // Made only while open: a long book has hundreds of entries, and the app draws on every key.
+    entries:
+      isOpen && context
+        ? paletteEntries(isPhone ? { ...context, chooseFolder: null } : context)
+        : [],
     open: () => setOpen(true),
     close: () => setOpen(false),
   };

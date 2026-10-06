@@ -1,5 +1,5 @@
 import type { Node } from "prosemirror-model";
-import { Plugin, PluginKey, type Command } from "prosemirror-state";
+import { Plugin, PluginKey, type Command, type PluginView } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import { repetitions, wordsWithSentences } from "../manuscript/review.js";
 import { documentText } from "./documentText.js";
@@ -32,7 +32,23 @@ export const refreshRepetitions: Command = (state, dispatch) => {
   return true;
 };
 
-/** `window` is asked on each change; null turns the marks off. */
+/** How long the writer pauses before the marks are counted again over the whole scene. */
+export const PAUSE_MS = 300;
+
+// While typing the marks only move along with the text; a pause counts them again.
+function recountAfterPause(): PluginView {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return {
+    update: (view, previous) => {
+      if (view.state.doc === previous.doc) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => refreshRepetitions(view.state, view.dispatch), PAUSE_MS);
+    },
+    destroy: () => clearTimeout(timer),
+  };
+}
+
+/** `window` is asked on each count; null turns the marks off. */
 export function repetitionsPlugin(window: () => number | null) {
   const decorate = (doc: Node) => {
     const sentences = window();
@@ -42,9 +58,12 @@ export function repetitionsPlugin(window: () => number | null) {
     key: repetitionsKey,
     state: {
       init: (_config, state) => decorate(state.doc),
-      apply: (transaction, old, _oldState, state) =>
-        transaction.docChanged || transaction.getMeta(repetitionsKey) ? decorate(state.doc) : old,
+      apply: (transaction, old, _oldState, state) => {
+        if (transaction.getMeta(repetitionsKey)) return decorate(state.doc);
+        return transaction.docChanged ? old.map(transaction.mapping, transaction.doc) : old;
+      },
     },
+    view: recountAfterPause,
     props: { decorations: (state) => repetitionsKey.getState(state) },
   });
 }
