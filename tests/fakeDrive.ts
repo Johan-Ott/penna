@@ -1,4 +1,7 @@
 import type { Drive, RemoteFile } from "../src/sync/drive";
+import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+
+export const BOOK = "/Penna/Isen.penna";
 
 interface Stored {
   file: RemoteFile;
@@ -59,4 +62,15 @@ export function createFakeDrive() {
   const isInTrash = (path: string) =>
     [...items.values()].some((item) => item.isTrashed && pathOf(item) === path);
   return { drive, textAt, writeAt, isInTrash };
+}
+
+/** A computer with a book of one scene, a phone without it, and the Drive between them. */
+export function twoDevices() {
+  const cloud = createFakeDrive();
+  const computer = createMemoryFileSystem({
+    [`${BOOK}/project.json`]: '{"title":"Isen"}',
+    [`${BOOK}/scenes/S1.md`]: "Brevet låg där.",
+  });
+  const phone = createMemoryFileSystem({});
+  return { cloud, computer, phone };
 }

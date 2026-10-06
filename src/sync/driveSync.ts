@@ -13,6 +13,7 @@ import {
   type WriteGuard,
 } from "./localSide.js";
 import { mergeProjectText } from "./mergeProject.js";
+import { t } from "../i18n/i18n.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
 interface SyncResult {
@@ -79,12 +80,16 @@ async function bookFolder(drive: Drive, dir: string, state: SyncState) {
   return (await drive.findFolder(name, penna)) ?? (await drive.createFolder(name, penna));
 }
 
-/** Drive's side of a conflict: "scenes/S1.md" becomes "scenes/S1 (Drive 2026-10-04).md". */
-function conflictCopyPath(path: string, now: number) {
+/** Drive's side of a conflict: "scenes/S1.md" becomes "scenes/S1 (Drive 2026-10-04).md",
+ * or "... 2.md" when that day already has one. */
+async function conflictCopyPath(book: LocalBook, path: string, now: number) {
   const day = new Date(now).toISOString().slice(0, 10);
   const dot = path.lastIndexOf(".");
   const cut = dot > path.lastIndexOf("/") ? dot : path.length;
-  return `${path.slice(0, cut)} (Drive ${day})${path.slice(cut)}`;
+  const named = (extra: string) => `${path.slice(0, cut)} (Drive ${day})${extra}${path.slice(cut)}`;
+  let free = named("");
+  for (let number = 2; await readLocal(book, free); number++) free = named(` ${number}`);
+  return free;
 }
 
 interface Run {
@@ -141,7 +146,7 @@ interface DriveSide {
 async function keepBoth(run: Run, path: string, local: Uint8Array, drive: Required<DriveSide>) {
   const { remote, remoteBytes } = drive;
   if (path !== MERGED) {
-    await writeLocal(run.book, conflictCopyPath(path, run.now), remoteBytes);
+    await writeLocal(run.book, await conflictCopyPath(run.book, path, run.now), remoteBytes);
     run.result.conflicts.push(path);
     return send(run, path, local, remote);
   }
@@ -209,6 +214,11 @@ export async function syncProject(
   const rootId = await bookFolder(drive, dir, state);
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
+  // An empty folder after files were synced means it was removed or moved in Drive, not that
+  // every file was; trashing them all here would empty the book.
+  if (remote.files.size === 0 && Object.keys(state.files).length > 0) {
+    throw new Error(t("Bokens mapp i Drive är tom eller borta. Inget har ändrats här."));
+  }
   const book = { fileSystem, dir, guard };
   const local = await filesIn(fileSystem, dir);
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };

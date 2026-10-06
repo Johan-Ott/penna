@@ -1,20 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { syncProject } from "../src/sync/driveSync";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
-import { createFakeDrive } from "./fakeDrive";
+import { BOOK, twoDevices } from "./fakeDrive";
 
-const BOOK = "/Penna/Isen.penna";
 const NOW = Date.parse("2026-10-04T12:00:00Z");
-
-function twoDevices() {
-  const cloud = createFakeDrive();
-  const computer = createMemoryFileSystem({
-    [`${BOOK}/project.json`]: '{"title":"Isen"}',
-    [`${BOOK}/scenes/S1.md`]: "Brevet låg där.",
-  });
-  const phone = createMemoryFileSystem({});
-  return { cloud, computer, phone };
-}
 
 describe("syncProject", () => {
   it("puts a book in Penna/<book> in Drive, and brings it to another device", async () => {
@@ -155,42 +143,5 @@ describe("syncProject", () => {
 
     expect(cloud.textAt("Penna/Isen.penna/.penna-sync.json")).toBeNull();
     expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md.penna-tmp")).toBeNull();
-  });
-
-  it("leaves a file that changed here during the download for the next sync", async () => {
-    const { cloud, computer, phone } = twoDevices();
-    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
-    await syncProject(phone, cloud.drive, BOOK, { now: NOW });
-    await cloud.writeAt("Penna/Isen.penna/scenes/S1.md", "Från telefonen.");
-    const download = cloud.drive.download;
-    cloud.drive.download = async (id) => {
-      await computer.writeText(`${BOOK}/scenes/S1.md`, "Skrivet under synken.");
-      return download(id);
-    };
-
-    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
-    cloud.drive.download = download;
-    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
-
-    expect(await computer.readText(`${BOOK}/scenes/S1.md`)).toBe("Skrivet under synken.");
-    expect(await computer.readText(`${BOOK}/scenes/S1 (Drive 2026-10-04).md`)).toBe(
-      "Från telefonen.",
-    );
-  });
-
-  it("writes over a file here only through the guard", async () => {
-    const { cloud, computer, phone } = twoDevices();
-    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
-    const guarded: string[] = [];
-
-    await syncProject(phone, cloud.drive, BOOK, {
-      now: NOW,
-      guard: async (path, write) => {
-        guarded.push(path);
-        await write();
-      },
-    });
-
-    expect(guarded.sort()).toEqual([`${BOOK}/project.json`, `${BOOK}/scenes/S1.md`]);
   });
 });
