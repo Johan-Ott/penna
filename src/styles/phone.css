@@ -514,3 +514,10 @@
   max-height: 60vh;
   overflow-y: auto;
 }
+
+.phone-text .search-panel {
+  top: 8px;
+  right: 8px;
+  left: 8px;
+  width: auto;
+}

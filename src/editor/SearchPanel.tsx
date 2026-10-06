@@ -75,6 +75,28 @@ function searchActions(props: SearchPanelProps, query: SearchQuery) {
 
 type SearchActions = ReturnType<typeof searchActions>;
 
+// Enter and Shift+Enter step too; a phone's keyboard has no Shift+Enter.
+function StepButtons({ actions }: { actions: SearchActions }) {
+  return (
+    <>
+      <button
+        className="icon-button"
+        aria-label={t("Föregående träff")}
+        onClick={() => actions.step(true)}
+      >
+        ↑
+      </button>
+      <button
+        className="icon-button"
+        aria-label={t("Nästa träff")}
+        onClick={() => actions.step(false)}
+      >
+        ↓
+      </button>
+    </>
+  );
+}
+
 function FindRow(props: {
   query: SearchQueryState;
   actions: SearchActions;
@@ -92,8 +114,11 @@ function FindRow(props: {
         onKeyDown={props.onKey}
       />
       <span className="search-count">
-        {total === 0 ? t("Inga träffar") : `${current || "–"} av ${total}`}
+        {total === 0
+          ? t("Inga träffar")
+          : t("{current} av {total}", { current: current || "–", total })}
       </span>
+      <StepButtons actions={props.actions} />
     </div>
   );
 }
