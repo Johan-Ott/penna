@@ -149,12 +149,14 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
   const { app, project, screens } = props;
   const { authorName } = app.startup.preferences;
   const pageMap = usePageMap(project, authorName, app.writingMode.settings.showPages);
+  const isShown = isTextShown(screens.screen, app.writingMode.view);
+  // A new scene asks for the cursor while Boken still shows; it gets it when the text does.
+  const { focusIfRequested } = app.editor;
+  useEffect(() => {
+    if (isShown) focusIfRequested();
+  }, [isShown, focusIfRequested]);
   return (
-    <div
-      className={
-        isTextShown(screens.screen, app.writingMode.view) ? "phone-text" : "phone-text hidden"
-      }
-    >
+    <div className={isShown ? "phone-text" : "phone-text hidden"}>
       <TextBar app={app} project={project} onBack={screens.back} />
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       <PhoneToolbar app={app} project={project} />
