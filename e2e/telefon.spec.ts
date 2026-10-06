@@ -41,7 +41,7 @@ test("selecting a word shows the bar with Fotnot", async ({ page }) => {
   await selectFirstWord(page);
 
   await expect(page.getByRole("toolbar", { name: "Markering" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Fotnot" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Fotnot", exact: true })).toBeVisible();
 });
 
 test("the tabs go to Innehåll and Publicera, and back to Boken", async ({ page }) => {
@@ -94,4 +94,18 @@ test("Läs kapitlet reads the chapter on the phone", async ({ page }) => {
   await page.getByRole("button", { name: "Läs kapitlet" }).click();
 
   await expect(page.locator(".read-view")).toContainText("Brevet låg på köksbordet");
+});
+
+test("the tools over the keyboard undo, and put in a scene break", async ({ page }) => {
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+  await editor(page).click();
+  await page.keyboard.press("End");
+  await page.keyboard.type(" Snön föll.");
+  await expect(editor(page)).toContainText("Snön föll.");
+
+  await page.getByRole("button", { name: "Ångra" }).click();
+  await expect(editor(page)).not.toContainText("Snön föll.");
+  await page.getByRole("button", { name: "Scenbrytning" }).click();
+
+  await expect(editor(page).locator("hr, .scene-break").first()).toBeVisible();
 });

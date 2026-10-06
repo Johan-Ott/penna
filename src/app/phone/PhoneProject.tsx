@@ -13,6 +13,7 @@ import type { Project } from "../useProject.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
+import { PhoneToolbar } from "./PhoneToolbar.js";
 import type { View } from "../useWritingMode.js";
 import { TabBar, tabOf, ViewScreen, type Tab } from "./PhoneTabs.js";
 import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
@@ -146,6 +147,7 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
     >
       <TextBar app={app} project={project} onBack={screens.back} />
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
+      <PhoneToolbar app={app} project={project} />
     </div>
   );
 }

@@ -476,3 +476,41 @@
   min-height: 480px;
   margin: 16px;
 }
+
+/* The tools over the keyboard while writing. */
+.phone-toolbar {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  align-items: center;
+  padding: 4px 8px calc(4px + env(safe-area-inset-bottom));
+  overflow-x: auto;
+  border-top: 1px solid var(--border-soft);
+  background: var(--bg);
+}
+
+.phone-tool {
+  flex-shrink: 0;
+  min-width: 44px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 18px;
+}
+
+.phone-tool:active {
+  background: var(--surface-hover);
+}
+
+.phone-text .settings-panel {
+  top: auto;
+  right: 8px;
+  bottom: 56px;
+  left: 8px;
+  width: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+}

@@ -16,7 +16,7 @@ type SceneParts = {
 };
 
 // The picture is copied into the book first, then placed where the cursor is.
-async function insertChosenPicture(dir: string, run: (command: Command) => void) {
+export async function insertChosenPicture(dir: string, run: (command: Command) => void) {
   const name = await choosePicture(dir).catch(recordFailure("Bild"));
   if (name) run(insertPicture(name));
 }
