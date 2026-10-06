@@ -1,6 +1,6 @@
 [package]
 name = "penna"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 
 # Android and iOS start Penna from the library; the desktop starts it from main.rs.
