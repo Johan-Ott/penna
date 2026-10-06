@@ -60,6 +60,10 @@ describe("days and streaks", () => {
 
     expect(average).toBe(30);
   });
+
+  it("averages a book begun today over today only", () => {
+    expect(averagePerDay({ "2026-10-02": 940 }, "2026-10-02")).toBe(940);
+  });
 });
 
 describe("heatmap", () => {

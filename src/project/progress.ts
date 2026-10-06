@@ -47,9 +47,15 @@ export function deadlinePlan(
 
 /** Over the last 30 days, today included, counting days without words too. */
 export function averagePerDay(stats: Stats, today: string): number {
+  // A book begun this week is averaged over this week, not over a month it did not exist.
+  const first = Object.keys(stats)
+    .filter((day) => (stats[day] ?? 0) > 0)
+    .sort()[0];
+  if (!first) return 0;
+  const days = Math.min(AVERAGE_DAYS, Math.max(1, daysBetween(first, today) + 1));
   let sum = 0;
-  for (let back = 0; back < AVERAGE_DAYS; back++) sum += stats[dayAfter(today, -back)] ?? 0;
-  return Math.round(sum / AVERAGE_DAYS);
+  for (let back = 0; back < days; back++) sum += stats[dayAfter(today, -back)] ?? 0;
+  return Math.round(sum / days);
 }
 
 export interface HeatmapCell {
