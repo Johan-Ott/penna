@@ -15,6 +15,7 @@ import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
 import type { FileKind, PickKind, Platform } from "./platform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
+import { isTestBuild, testAsk, testPath } from "./testMode.js";
 import { t } from "../i18n/i18n.js";
 
 // On a phone the books live in the app's own folder and updates come from the app store.
@@ -25,6 +26,10 @@ function googleSignInHere() {
   return isPhone ? {} : { googleSignIn: computerSignIn };
 }
 
+// The system's question, unless a test has answered it already.
+const confirm = async (...question: Parameters<typeof ask>) =>
+  (await testAsk()) ?? ask(...question);
+
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
 
 // A computer puts the book in its trash; a phone has none, so the question says so.
@@ -32,7 +37,7 @@ async function removeBook(dir: string, title: string) {
   const message = isPhone
     ? t("”{title}” raderas från telefonen. En kopia i Google Drive finns kvar.", { title })
     : t("”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.", { title });
-  const isSure = await ask(message, {
+  const isSure = await confirm(message, {
     title: t("Ta bort boken"),
     kind: "warning",
     okLabel: t("Ta bort"),
@@ -43,7 +48,7 @@ async function removeBook(dir: string, title: string) {
 }
 
 const askToCloseAnyway = () =>
-  ask(
+  confirm(
     t("Scenen kunde inte sparas. Stänger du nu försvinner det du skrivit sedan senaste sparning."),
     {
       title: t("Osparad text"),
@@ -56,10 +61,14 @@ const askToCloseAnyway = () =>
 // Written beside the target and renamed, so a crash never leaves half a file. The dialog only
 // grants the chosen path, so outside the home folder the file is written directly, still whole.
 async function saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind) {
-  const path = await save({
-    defaultPath: suggestedName,
-    filters: [{ name: kind.name, extensions: [kind.extension] }],
-  });
+  const answer = await testPath();
+  const path =
+    answer !== undefined
+      ? answer
+      : await save({
+          defaultPath: suggestedName,
+          filters: [{ name: kind.name, extensions: [kind.extension] }],
+        });
   if (!path) return null;
   const temp = `${path}.penna-tmp`;
   try {
@@ -90,15 +99,23 @@ async function checkForUpdate() {
 
 // The dialog grants Penna the picked file, wherever it lies.
 async function pickFile(kind: PickKind) {
-  const picked = await open({ filters: [kind] });
+  const answer = await testPath();
+  const picked = answer !== undefined ? answer : await open({ filters: [kind] });
   if (typeof picked !== "string") return null;
   return { path: withForwardSlashes(picked), bytes: await readFile(picked) };
 }
 
-const computerFolders = async () => ({
-  home: withForwardSlashes(await homeDir()),
-  documents: withForwardSlashes(await documentDir()),
-});
+// The test build's books live in its own app data, away from the real Documents folder.
+const computerFolders = async () => {
+  if (await isTestBuild) {
+    const own = withForwardSlashes(await appDataDir());
+    return { home: own, documents: `${own}/Dokument` };
+  }
+  return {
+    home: withForwardSlashes(await homeDir()),
+    documents: withForwardSlashes(await documentDir()),
+  };
+};
 
 const phoneFolders = async () => {
   const own = withForwardSlashes(await appDataDir());
@@ -128,7 +145,8 @@ export const tauriPlatform: Platform = {
 
   async pickFolder() {
     if (isPhone) return null;
-    const picked = await open({ directory: true });
+    const answer = await testPath();
+    const picked = answer !== undefined ? answer : await open({ directory: true });
     return typeof picked === "string" ? withForwardSlashes(picked) : null;
   },
 

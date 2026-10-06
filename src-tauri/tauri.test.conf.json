@@ -1,0 +1,17 @@
+{
+  "identifier": "se.penna.test",
+  "productName": "Penna Test",
+  "app": {
+    "windows": [
+      {
+        "title": "Penna Test",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 360,
+        "minHeight": 500,
+        "dragDropEnabled": false,
+        "create": false
+      }
+    ]
+  }
+}

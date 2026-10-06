@@ -9,7 +9,6 @@ mod desktop {
     use tauri::{AppHandle, Manager};
     use tauri_plugin_opener::OpenerExt;
 
-    const KEYRING_SERVICE: &str = "se.penna.app";
     const KEYRING_USER: &str = "google-drive";
     const WAIT: Duration = Duration::from_secs(300);
     const DONE_PAGE: &str = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n\
@@ -84,19 +83,21 @@ mod desktop {
         Ok(BrowserAnswer { redirect, query })
     }
 
-    fn entry() -> Result<keyring::Entry, String> {
-        keyring::Entry::new(KEYRING_SERVICE, KEYRING_USER).map_err(|error| error.to_string())
+    // Kept under the app's identifier, so the test build never sees the real sign-in.
+    fn entry(app: &AppHandle) -> Result<keyring::Entry, String> {
+        keyring::Entry::new(&app.config().identifier, KEYRING_USER)
+            .map_err(|error| error.to_string())
     }
 
     #[tauri::command]
-    pub fn saved_google_key() -> Option<String> {
-        entry().ok()?.get_password().ok()
+    pub fn saved_google_key(app: AppHandle) -> Option<String> {
+        entry(&app).ok()?.get_password().ok()
     }
 
     /// `None` forgets the key.
     #[tauri::command]
-    pub fn save_google_key(key: Option<String>) -> Result<(), String> {
-        let entry = entry()?;
+    pub fn save_google_key(app: AppHandle, key: Option<String>) -> Result<(), String> {
+        let entry = entry(&app)?;
         match key {
             Some(key) => entry.set_password(&key).map_err(|error| error.to_string()),
             None => match entry.delete_credential() {

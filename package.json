@@ -20,7 +20,8 @@
     "build:windows": "node scripts/build-windows.mjs",
     "build:android": "node scripts/build-android.mjs",
     "build:check": "npm run check && tauri build --no-bundle",
-    "test:ui": "playwright test"
+    "test:ui": "playwright test",
+    "app:test": "node scripts/app-test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
