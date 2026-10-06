@@ -8,6 +8,7 @@ const found = (doc: Node, window: number) => {
   const { text, toDoc } = documentText(doc);
   return repetitions(wordsWithSentences(text), window).map((repetition) => ({
     word: repetition.word,
+    most: repetition.most,
     ranges: repetition.ranges.map((range) => ({ from: toDoc(range.from), to: toDoc(range.to) })),
   }));
 };
@@ -15,7 +16,7 @@ const found = (doc: Node, window: number) => {
 export const sceneRepetitions = (doc: Node, window: number) =>
   found(doc, window).map((repetition) => ({
     word: repetition.word,
-    count: repetition.ranges.length,
+    count: repetition.most,
   }));
 
 export function repetitionDecorations(doc: Node, window: number): DecorationSet {

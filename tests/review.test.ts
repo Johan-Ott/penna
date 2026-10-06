@@ -74,4 +74,22 @@ describe("repeated names", () => {
 
     expect(found.map((group) => group.word)).toEqual(["log"]);
   });
+
+  it("are not counted where a name begins a sentence either", () => {
+    const text = "Han ringde Karin. Karin svarade inte. Karin hade gått.";
+
+    expect(repetitions(wordsWithSentences(text), 3)).toEqual([]);
+  });
+});
+
+describe("how often a word repeats", () => {
+  it("is the most times within one window, not every time in the scene", () => {
+    const text =
+      "Han hade gått. Hon hade sovit. Vi åt. Vi drack. Vi gick. Det hade regnat. Det hade blåst.";
+
+    const [found] = repetitions(wordsWithSentences(text), 3);
+
+    expect(found?.ranges).toHaveLength(4);
+    expect(found?.most).toBe(2);
+  });
 });

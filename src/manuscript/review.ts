@@ -101,12 +101,28 @@ const COMMON = new Set(
 export interface Repetition {
   word: string;
   ranges: { from: number; to: number }[];
+  /** The most times it comes within one window of sentences, which is what Granska says. */
+  most: number;
+}
+
+// How many of these places fall within `window` sentences of each other at most.
+function mostWithin(places: PlacedWord[], window: number) {
+  return Math.max(
+    ...places.map(
+      (place) =>
+        places.filter(
+          (other) => other.sentence >= place.sentence && other.sentence - place.sentence < window,
+        ).length,
+    ),
+  );
 }
 
 export function repetitions(words: PlacedWord[], window: number): Repetition[] {
+  // A name is a name also where it begins a sentence, so "Karin" is never a repetition.
+  const names = new Set(words.filter((placed) => placed.isName).map((placed) => placed.word));
   const byWord = new Map<string, PlacedWord[]>();
   for (const placed of words) {
-    if (placed.isName || placed.word.length < 3 || COMMON.has(placed.word)) continue;
+    if (names.has(placed.word) || placed.word.length < 3 || COMMON.has(placed.word)) continue;
     byWord.set(placed.word, [...(byWord.get(placed.word) ?? []), placed]);
   }
   const found: Repetition[] = [];
@@ -117,7 +133,9 @@ export function repetitions(words: PlacedWord[], window: number): Repetition[] {
           otherIndex !== index && Math.abs(other.sentence - place.sentence) < window,
       ),
     );
-    if (close.length > 1) found.push({ word, ranges: close.map(({ from, to }) => ({ from, to })) });
+    if (close.length < 2) continue;
+    const ranges = close.map(({ from, to }) => ({ from, to }));
+    found.push({ word, ranges, most: mostWithin(close, window) });
   }
   return found.sort(
     (first, second) => (first.ranges[0]?.from ?? 0) - (second.ranges[0]?.from ?? 0),
