@@ -44,6 +44,8 @@ export function addMenu(actions: Pick<TreeMenuActions, "add">): MenuItem[] {
 }
 
 function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
+  // A note is a scene on disk, but a new scene or chapter after it makes no sense.
+  if (actions.linkOf(node) !== null) return [];
   const inside = { inside: node.id };
   const after = { after: node.id };
   const item = (label: string, kind: NodeKind, placement: Placement): MenuItem => ({

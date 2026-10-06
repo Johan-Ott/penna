@@ -17,12 +17,12 @@ test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page
 
 test("a person opens from the Personer tile, and back returns to the list", async ({ page }) => {
   await page.getByRole("button", { name: /Personer/ }).click();
-  await page.getByRole("button", { name: "Elin", exact: true }).click();
+  await page.getByRole("treeitem").filter({ hasText: "Elin" }).click();
   await expect(editor(page)).toContainText("Trettioåtta");
 
   await page.evaluate(() => history.back());
 
-  await expect(page.getByRole("button", { name: "Arvid", exact: true })).toBeVisible();
+  await expect(page.getByRole("treeitem").filter({ hasText: "Arvid" })).toBeVisible();
 });
 
 test("Granska opens over the whole text and closes again", async ({ page }) => {
@@ -63,4 +63,18 @@ test("the shelf on the phone has a menu with Inställningar, and no folder to pi
   await page.getByRole("menuitem", { name: "Inställningar" }).click();
 
   await expect(page.getByRole("dialog")).toBeVisible();
+});
+
+test("a note is renamed from its menu in the list of its sort", async ({ page }) => {
+  await page.getByRole("button", { name: /Personer/ }).click();
+  await page.getByRole("button", { name: "Meny för Elin" }).click();
+
+  await expect(page.getByRole("menuitem", { name: "Byt namn" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: /papperskorg/i })).toBeVisible();
+});
+
+test("a scene in Boken has its menu behind ⋯", async ({ page }) => {
+  await page.getByRole("button", { name: "Meny för Köket" }).click();
+
+  await expect(page.getByRole("menuitem", { name: /Ny scen efter/ })).toBeVisible();
 });

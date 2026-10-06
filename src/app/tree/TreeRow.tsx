@@ -74,6 +74,17 @@ const treeItemAttributes = (props: TreeRowProps) => ({
   "aria-current": props.isActive ? ("page" as const) : undefined,
 });
 
+// The row's menu for a tap, where there is no right click.
+const MoreButton = (props: { label: string; onOpen: (event: MouseEvent<HTMLElement>) => void }) => (
+  <button
+    className="tree-more"
+    aria-label={t("Meny för {name}", { name: props.label })}
+    onClick={(event) => (event.stopPropagation(), props.onOpen(event))}
+  >
+    ⋯
+  </button>
+);
+
 export function TreeRow(props: TreeRowProps) {
   return (
     <div
@@ -98,6 +109,7 @@ export function TreeRow(props: TreeRowProps) {
         <span className="tree-label">{props.label}</span>
       )}
       <span className="tree-meta">{props.meta}</span>
+      <MoreButton label={props.label} onOpen={props.onContextMenu} />
     </div>
   );
 }

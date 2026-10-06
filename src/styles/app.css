@@ -375,6 +375,20 @@ button {
   white-space: nowrap;
 }
 
+.tree-more {
+  display: none;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font: inherit;
+}
+
+.tree .tree-row:hover .tree-more,
+.phone-app .tree-more {
+  display: inline-flex;
+}
+
 .tree .tree-row:hover,
 .tree .tree-row.active {
   background: var(--surface-hover);
@@ -459,6 +473,12 @@ button {
 .menu-check {
   width: 14px;
   color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .menu kbd {
+    display: none;
+  }
 }
 
 .menu kbd {

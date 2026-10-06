@@ -1,5 +1,6 @@
 import type { DragEvent, ReactNode } from "react";
-import { withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
+import { findNode, type TreeNode } from "../../project/tree.js";
+import { visibleRows, withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
 import { Menu } from "../Menu.js";
 import { addMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
@@ -119,6 +120,28 @@ export function SeriesNotes(props: TreeViewProps & { name: string }) {
       <SectionHeading label={t("Anteckningar · {name}", { name: props.name })} />
       <Rows rows={sections.notes} props={props} tree={tree} />
       <Rows rows={trash} props={props} tree={tree} />
+      {view.menu && <Menu {...view.menu} label={props.name} onClose={() => view.setMenu(null)} />}
+    </div>
+  );
+}
+
+// The notes inside one sort, even when the sort is folded up in the sidebar.
+function rowsUnder(tree: TreeNode[], sortId: string, collapsed: ReadonlySet<string>) {
+  const sort = findNode(tree, sortId)?.node;
+  return sort ? visibleRows(sort.children ?? [], collapsed, 0, sortId) : [];
+}
+
+/** One sort's notes with their menus, as on a phone's screen for that sort. */
+export function SortNotes(props: TreeViewProps & { sortId: string; name: string }) {
+  const tree = useTreeView(props);
+  const { view } = tree;
+  return (
+    <div role="tree" aria-label={props.name} className="tree">
+      <Rows
+        rows={rowsUnder(props.project.tree, props.sortId, view.collapsed)}
+        props={props}
+        tree={tree}
+      />
       {view.menu && <Menu {...view.menu} label={props.name} onClose={() => view.setMenu(null)} />}
     </div>
   );
