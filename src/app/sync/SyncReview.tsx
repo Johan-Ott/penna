@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { FileChange, NodeChange, NodeFields } from "../../sync/syncLog.js";
-import { Dialog } from "../controls.js";
 import type { Project } from "../useProject.js";
 import { FIELDS, fileName, KINDS, Pane, titleIn, type PaneProps } from "./reviewPanes.js";
 import type { ReviewItem } from "./useSyncReview.js";
@@ -65,15 +64,29 @@ function ReviewList(props: {
   );
 }
 
-/** Like source control: the list on the left, both versions side by side on the right. */
-export function SyncReviewDialog({ project, review }: PaneProps) {
+function SyncHeader(props: { onBack: () => void; onDone: () => void }) {
+  return (
+    <header className="sync-header">
+      <button className="link-button quiet" onClick={props.onBack}>
+        {t("← Tillbaka till texten")}
+      </button>
+      <h2>{t("Från synken")}</h2>
+      <button className="button primary small" onClick={props.onDone}>
+        {t("Klart")}
+      </button>
+    </header>
+  );
+}
+
+/** Like source control, in the writing area: the list on the left, both versions on the right. */
+export function SyncView({ project, review, onBack }: PaneProps & { onBack: () => void }) {
   const [chosen, setChosen] = useState("");
-  if (!review.isOpen) return null;
   const item = review.items.find((candidate) => candidate.key === chosen) ?? review.items[0];
   return (
-    <Dialog label={t("Från synken")} className="sync-review" onClose={review.close}>
+    <main className="sync-view">
+      <SyncHeader onBack={onBack} onDone={() => void review.done().then(onBack)} />
       {review.items.length === 0 ? (
-        <p>{t("Inget nytt från synken.")}</p>
+        <p className="contents-empty">{t("Inget nytt från synken.")}</p>
       ) : (
         <div className="sync-body">
           <ReviewList
@@ -87,11 +100,6 @@ export function SyncReviewDialog({ project, review }: PaneProps) {
           </div>
         </div>
       )}
-      <div className="dialog-actions">
-        <button className="button primary" onClick={() => void review.done()}>
-          {t("Klart")}
-        </button>
-      </div>
-    </Dialog>
+    </main>
   );
 }

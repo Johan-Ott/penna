@@ -68,7 +68,7 @@ export function sidebarProps(app: AppState, project: Project) {
     isContentsShown: writingMode.view === "innehall",
     onShowContents: () => writingMode.setView("innehall"),
     syncReviewCount: app.syncReview.items.length,
-    onShowSyncReview: app.syncReview.open,
+    onShowSyncReview: () => writingMode.setView("synk"),
     onShowSnapshots: app.snapshots.show,
     onOpenBeside: (id: string) =>
       app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),

@@ -82,7 +82,6 @@ function useLog(project: Project | null) {
 
 /** The sync's changes and conflicts, and the choices made in the review. */
 export function useSyncReview({ project, session, updateTree, refresh }: ReviewParts) {
-  const [isOpen, setOpen] = useState(false);
   const { log, save } = useLog(project);
   const chooseNode = async (conflict: NodeConflict, isDrives: boolean) => {
     if (!project) return;
@@ -104,13 +103,10 @@ export function useSyncReview({ project, session, updateTree, refresh }: ReviewP
     await refresh();
   };
   // Seen: only the conflicts stay until they are chosen.
-  const done = async () => {
-    await save({ ...emptyLog(), conflicts: log.conflicts });
-    setOpen(false);
-  };
+  const done = () => save({ ...emptyLog(), conflicts: log.conflicts });
   const items = project ? reviewItems(project, log) : [];
   const actions = { chooseNode, chooseCopy, putBack, done };
-  return { items, isOpen, open: () => setOpen(true), close: () => setOpen(false), ...actions };
+  return { items, ...actions };
 }
 
 export type SyncReview = ReturnType<typeof useSyncReview>;

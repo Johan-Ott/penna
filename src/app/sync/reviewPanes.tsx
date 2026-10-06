@@ -62,7 +62,8 @@ function SideBySide(props: {
       );
     });
   return (
-    <div className="sync-columns">
+    // Two versions to choose between: neither is struck out, only the difference is marked.
+    <div className={props.actions ? "sync-columns choice" : "sync-columns"}>
       {(["removed", "added"] as const).map((keep, index) => (
         <section key={keep} className="sync-column">
           <span className="design-section">{props.labels[index]}</span>

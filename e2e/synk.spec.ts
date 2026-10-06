@@ -44,13 +44,14 @@ test("what the sync brought is shown side by side, and a conflict is chosen", as
   await page.getByText("Vintervägen").first().click();
 
   await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
-  const dialog = page.getByRole("dialog", { name: "Från synken" });
-  await dialog.getByRole("button", { name: /Köket/ }).click();
-  await expect(dialog.locator("ins")).toContainText("snön");
-  await dialog.getByRole("button", { name: /Smältningen: titeln/ }).click();
-  await dialog.getByRole("button", { name: "Behåll den här" }).last().click();
+  const view = page.locator(".sync-view");
+  await view.getByRole("button", { name: /Köket/ }).click();
+  await expect(view.locator("ins")).toContainText("snön");
+  await view.getByRole("button", { name: /Smältningen: titeln/ }).click();
+  await view.getByRole("button", { name: "Behåll den här" }).last().click();
 
   await expect(page.locator(".sidebar")).toContainText("Islossningen");
-  await dialog.getByRole("button", { name: "Klart" }).click();
+  await view.getByRole("button", { name: "Klart" }).click();
   await expect(page.getByRole("button", { name: /Från synken/ })).toBeHidden();
+  await expect(page.locator(".ProseMirror")).toBeVisible();
 });

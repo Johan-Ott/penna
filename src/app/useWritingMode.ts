@@ -5,8 +5,9 @@ import { useGoKeys, useShortcut } from "./useShortcut.js";
 import { useWritingSettings } from "./useWritingSettings.js";
 import { t } from "../i18n/i18n.js";
 
-/** Skriv: the open text. Innehåll: the book. Läs: a chapter or the whole book. Publicera: the export. */
-export type View = "skriv" | "innehall" | "las" | "publicera";
+/** Skriv: the open text. Innehåll: the book. Läs: a chapter or the whole book. Publicera: the export.
+ * Synk: what the sync brought, side by side. */
+export type View = "skriv" | "innehall" | "las" | "publicera" | "synk";
 export const VIEWS: [View, string, string][] = [
   ["skriv", t("Skriv"), "G S"],
   ["innehall", t("Innehåll"), "G I"],

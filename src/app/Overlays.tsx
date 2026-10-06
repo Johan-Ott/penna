@@ -16,7 +16,6 @@ import type { Beside } from "./beside/BesidePane.js";
 import { SnapshotsLayer } from "./snapshots/SnapshotsDialog.js";
 import type { useSnapshots } from "./snapshots/useSnapshots.js";
 import { CrashDialog } from "./SyncLayer.js";
-import { SyncReviewDialog } from "./sync/SyncReview.js";
 import type { SyncReview } from "./sync/useSyncReview.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import type { Project } from "./useProject.js";
@@ -155,7 +154,6 @@ export function Overlays({ app }: { app: OverlayParts }) {
   return (
     <>
       <ConflictLayer {...app} />
-      {app.project && <SyncReviewDialog project={app.project} review={app.syncReview} />}
       {app.project && <CrashDialog project={app.project} refresh={app.refresh} />}
       <SnapshotsLayer
         state={app.snapshots}

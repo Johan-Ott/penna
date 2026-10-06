@@ -20,6 +20,7 @@ import { useNavigation, type Place } from "./useNavigation.js";
 import type { PageMap } from "../../project/pageMap.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { t } from "../../i18n/i18n.js";
+import { SyncView } from "../sync/SyncReview.js";
 
 type ScreenProps = { app: AppState; project: Project };
 
@@ -96,6 +97,13 @@ function MainCard({ app, project }: ScreenProps) {
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       {writingMode.view === "innehall" && (
         <Contents app={app} project={project} pageMap={pageMap} />
+      )}
+      {writingMode.view === "synk" && (
+        <SyncView
+          project={project}
+          review={app.syncReview}
+          onBack={() => writingMode.setView("skriv")}
+        />
       )}
       {writingMode.view === "las" && (
         <ReadView

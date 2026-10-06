@@ -1341,17 +1341,33 @@ button.book-cover:hover {
 }
 
 /* Från synken: the list on the left, both versions side by side on the right. */
-.sync-review {
-  width: min(1000px, 94vw);
+.sync-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 32px;
+  background: var(--bg);
+}
+
+.sync-header {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.sync-header h2 {
+  flex-grow: 1;
+  margin: 0;
+  font: 600 22px/1.2 var(--font-prose);
 }
 
 .sync-body {
   display: flex;
-  height: 480px;
-  max-height: 70vh;
-  overflow: hidden;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-dialog);
+  flex-grow: 1;
+  min-height: 0;
+  border-top: 1px solid var(--border);
 }
 
 .sync-list {
@@ -1431,6 +1447,10 @@ button.book-cover:hover {
 .sync-text del {
   background: var(--surface-hover);
   color: var(--text-muted);
+}
+
+.sync-columns.choice del {
+  text-decoration: none;
 }
 
 .sync-text ins {
