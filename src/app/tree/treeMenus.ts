@@ -3,21 +3,6 @@ import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js"
 import type { MenuItem } from "../Menu.js";
 import { t } from "../../i18n/i18n.js";
 
-export const STATUS_LABELS: Record<SceneStatus, string> = {
-  idé: t("Idé"),
-  utkast: t("Utkast"),
-  redigering: t("Redigering"),
-  klar: t("Klar"),
-};
-
-/** Each step's colour in the tree; an idea is only an outline. */
-export const STATUS_COLORS: Record<SceneStatus, string> = {
-  idé: "",
-  utkast: "#e08a1e",
-  redigering: "#2f86c9",
-  klar: "#3f9a4f",
-};
-
 /** Null leaves the place to the app. */
 export type Placement = { inside: string } | { after: string } | null;
 
@@ -29,6 +14,8 @@ export interface TreeMenuActions {
   restore: (node: TreeNode) => void;
   setStatus: (node: TreeNode, status: SceneStatus) => void;
   statusOf: (node: TreeNode) => SceneStatus | null;
+  /** The step's name in this book. */
+  statusName: (status: SceneStatus) => string;
   showSnapshots: (node: TreeNode) => void;
   /** Shows the text beside the one being written. */
   openBeside: (node: TreeNode) => void;
@@ -40,6 +27,8 @@ export interface TreeMenuActions {
   moveToSeries: ((node: TreeNode) => void) | null;
   canMerge: (node: TreeNode) => boolean;
   mergeWithNext: () => void;
+  /** Opens the dialog of the book's steps and labels; null where they cannot be changed. */
+  editLabels: ((node: TreeNode) => void) | null;
   /** The book's labels to tick on the node; null where they cannot be changed. */
   labelItems: ((node: TreeNode) => MenuItem[]) | null;
 }
@@ -116,11 +105,15 @@ function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   if (forNote) return forNote;
   const current = actions.statusOf(node);
   const steps = SCENE_STATUSES.map((status) => ({
-    label: STATUS_LABELS[status],
+    label: actions.statusName(status),
     isChecked: status === current,
     onSelect: () => actions.setStatus(node, status),
   }));
-  return [{ label: t("Status"), separatorBefore: true, submenu: steps }];
+  const { editLabels } = actions;
+  const edit = editLabels
+    ? [{ label: t("Ändra stegen…"), separatorBefore: true, onSelect: () => editLabels(node) }]
+    : [];
+  return [{ label: t("Status"), separatorBefore: true, submenu: [...steps, ...edit] }];
 }
 
 // Up and down among its siblings, where dragging is no way to move it, as on a phone.

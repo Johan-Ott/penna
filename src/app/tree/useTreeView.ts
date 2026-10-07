@@ -20,6 +20,7 @@ import { useFollowOpenScene, useRenameRequest } from "./treeEffects.js";
 import type { ProjectChange } from "../labels/LabelsDialog.js";
 import { labelMenu } from "../labels/LabelsInTree.js";
 import { filteredTree, labelsOn } from "../../project/labels.js";
+import { statusSteps } from "../../project/statusSteps.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TreeViewProps {
@@ -89,6 +90,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
     restore: (node) => actions.restore(node),
     setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
     statusOf: (node) => summaries[node.id]?.status ?? null,
+    statusName: (status) => statusSteps(props.project.fields)[status].name,
     showSnapshots: (node) => props.onShowSnapshots(node.id),
     openBeside: (node) => props.onOpenBeside(node.id),
     linkOf: (node) => noteLinkOf(props.project, node.id),
@@ -101,6 +103,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
       noteLinkOf(props.project, node.id) === null,
     mergeWithNext: () => props.onMergeWithNext?.(),
     labelItems: labelMenu(props, view),
+    editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
   };
 }
 
@@ -176,8 +179,10 @@ function labelsOf(project: Project, node: TreeNode) {
 }
 
 // Only a scene of the book has a status; a note has none.
-const sceneStatusOf = (project: Project, node: TreeNode) =>
-  noteLinkOf(project, node.id) === null ? (project.summaries[node.id]?.status ?? null) : null;
+function sceneStatusOf(project: Project, node: TreeNode) {
+  const status = noteLinkOf(project, node.id) === null ? project.summaries[node.id]?.status : null;
+  return status ? { id: status, ...statusSteps(project.fields)[status] } : null;
+}
 
 export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;

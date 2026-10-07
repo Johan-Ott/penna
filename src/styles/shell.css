@@ -1149,6 +1149,6 @@
 }
 
 /* An idea has no colour yet, only its outline. */
-.tree-dot.status-idé {
+.tree-dot.outlined {
   box-shadow: inset 0 0 0 1px var(--text-label);
 }

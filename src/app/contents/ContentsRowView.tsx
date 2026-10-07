@@ -4,7 +4,7 @@ import { withNodeText, type ContentsRow } from "../../project/contents.js";
 import { findNode, type TreeNode } from "../../project/tree.js";
 import { ChapterHeadingDialog } from "./ChapterHeadingDialog.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
-import { STATUS_LABELS } from "../tree/treeMenus.js";
+import { statusSteps } from "../../project/statusSteps.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -45,7 +45,7 @@ function InlineText(props: {
 function StatusButton(props: RowProps) {
   const { row } = props;
   const items: MenuItem[] = SCENE_STATUSES.map((status) => ({
-    label: STATUS_LABELS[status],
+    label: statusSteps(props.project.fields)[status].name,
     isChecked: status === row.status,
     onSelect: () => props.onSetStatus(row.sceneIds, status),
   }));
@@ -53,7 +53,7 @@ function StatusButton(props: RowProps) {
   return (
     <>
       <button className="contents-status" onClick={menu.open}>
-        {STATUS_LABELS[row.status]}
+        {statusSteps(props.project.fields)[row.status].name}
       </button>
       {menu.menu}
     </>

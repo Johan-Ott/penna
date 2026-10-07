@@ -3,7 +3,7 @@ import type { DropPosition, TreeRow as Row } from "../../project/treeRows.js";
 import type { Label } from "../../project/labels.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { Chevron } from "./Chevron.js";
-import { STATUS_COLORS, STATUS_LABELS } from "./treeMenus.js";
+import type { StatusStep } from "../../project/statusSteps.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TreeRowProps {
@@ -15,7 +15,7 @@ export interface TreeRowProps {
   /** The row's labels, shown as dots in their colours. */
   dots: Label[];
   /** A scene's step, as a dot before its labels; null for anything else. */
-  status: SceneStatus | null;
+  status: (StatusStep & { id: SceneStatus }) | null;
   isActive: boolean;
   isExpanded: boolean | null;
   isRenaming: boolean;
@@ -94,16 +94,16 @@ const MoreButton = (props: { label: string; onOpen: (event: MouseEvent<HTMLEleme
   </button>
 );
 
-function LabelDots({ dots, status }: { dots: Label[]; status: SceneStatus | null }) {
+function LabelDots({ dots, status }: { dots: Label[]; status: TreeRowProps["status"] }) {
   if (dots.length === 0 && !status) return null;
-  const names = [status && STATUS_LABELS[status], ...dots.map((dot) => dot.name)];
+  const names = [status?.name, ...dots.map((dot) => dot.name)];
   return (
     <span className="tree-dots" aria-label={names.filter(Boolean).join(", ")}>
       {status && (
         <span
-          className={`tree-dot status-${status}`}
-          title={STATUS_LABELS[status]}
-          style={{ background: STATUS_COLORS[status] }}
+          className={`tree-dot${status.color ? "" : " outlined"}`}
+          title={status.name}
+          style={{ background: status.color }}
         />
       )}
       {dots.map((dot) => (

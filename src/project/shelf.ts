@@ -1,3 +1,4 @@
+import { ownStepName } from "./statusSteps.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
@@ -36,13 +37,16 @@ export const KIND_LABELS: Record<string, string> = {
 const DAY = 24 * 60 * 60 * 1000;
 
 /** On a tie the earlier stage. */
-export function bookStatus(scenes: Pick<SceneSummary, "words" | "status">[]): string {
+export function bookStatus(
+  scenes: Pick<SceneSummary, "words" | "status">[],
+  fields: Record<string, unknown> = {},
+): string {
   const wordsIn = (status: SceneStatus) =>
     scenes.filter((scene) => scene.status === status).reduce((sum, scene) => sum + scene.words, 0);
   const largest = SCENE_STATUSES.reduce((best, status) =>
     wordsIn(status) > wordsIn(best) ? status : best,
   );
-  return STATUS_LABELS[largest];
+  return ownStepName(fields, largest) ?? STATUS_LABELS[largest];
 }
 
 export function bookProgress(scenes: Pick<SceneSummary, "words" | "status">[]): number {
@@ -125,7 +129,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
     title: typeof fields.title === "string" ? fields.title : title,
     kind: (typeof fields.type === "string" && KIND_LABELS[fields.type]) || t("Projekt"),
     words: scenes.reduce((sum, scene) => sum + scene.words, 0),
-    status: bookStatus(scenes),
+    status: bookStatus(scenes, fields),
     progress: bookProgress(scenes),
     updatedAt: await lastChange(fileSystem, dir, sceneIds),
     isMissing: false,

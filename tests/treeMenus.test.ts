@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { addMenu, rowMenu, type TreeMenuActions } from "../src/app/tree/treeMenus";
+import { DEFAULT_STEPS } from "../src/project/statusSteps";
 import { CHARACTERS_ID, TRASH_ID, type TreeNode } from "../src/project/tree";
 
 const noop = () => undefined;
@@ -12,6 +13,7 @@ const actions: TreeMenuActions = {
   openBeside: noop,
   setStatus: noop,
   statusOf: () => "utkast",
+  statusName: (status) => DEFAULT_STEPS[status].name,
   showSnapshots: () => undefined,
   linkOf: () => null,
   setLink: noop,
@@ -20,6 +22,7 @@ const actions: TreeMenuActions = {
   canMerge: () => false,
   mergeWithNext: noop,
   labelItems: null,
+  editLabels: null,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));

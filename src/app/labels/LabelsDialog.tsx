@@ -10,6 +10,7 @@ import {
 import type { TreeNode } from "../../project/tree.js";
 import { newSceneId } from "../../storage/sceneId.js";
 import { Dialog } from "../controls.js";
+import { StatusStepsEditor } from "./StatusStepsEditor.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -107,7 +108,10 @@ function NewLabel(props: LabelsDialogProps & { labels: Label[] }) {
 export function LabelsDialog(props: LabelsDialogProps) {
   const labels = labelsOf(props.project.fields);
   return (
-    <Dialog label={t("Labels")} className="labels-dialog" onClose={props.onClose}>
+    <Dialog label={t("Status och labels")} className="labels-dialog" onClose={props.onClose}>
+      <span className="field-label">{t("Status")}</span>
+      <StatusStepsEditor project={props.project} onUpdate={props.onUpdate} />
+      <span className="field-label labels-heading">{t("Labels")}</span>
       {labels.length === 0 && <p className="dialog-text">{t("Boken har inga labels än.")}</p>}
       <ul className="label-list">
         {labels.map((label) => (
