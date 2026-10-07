@@ -16,6 +16,7 @@ import { joinPath } from "../storage/fileSystem.js";
 import { replaceInScenes, undoReplace, type SceneChange } from "./manuscriptReplace.js";
 import { platform } from "./platform.js";
 import { sceneHits } from "./searchHits.js";
+import { isKept, searchChips } from "./searchFilter.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 
@@ -32,11 +33,15 @@ interface SearchParts {
   editor: ReturnType<typeof useEditorView>;
   refresh: () => Promise<void>;
   isSearchOpen: boolean;
+  /** The chips chosen under the search; none is the whole manuscript. */
+  only?: string[];
 }
 
 // Scenes still in the cloud have no text here.
-const manuscriptIds = (project: Project) =>
-  manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
+const manuscriptIds = (project: Project, only: string[] = []) =>
+  manuscriptSceneIds(project.tree).filter(
+    (id) => project.scenes.includes(id) && isKept(project, id, only),
+  );
 
 async function loadScenes(project: Project) {
   const scenes = new Map<string, EditorState>();
@@ -77,7 +82,7 @@ function positionAcross(parts: StepParts, query: SearchQuery, open: EditorState 
   if (!project) return { current: 0, total: 0 };
   let total = 0;
   let current = 0;
-  for (const id of manuscriptIds(project)) {
+  for (const id of manuscriptIds(project, parts.only)) {
     const state = parts.stateOf(id, open);
     if (!state) continue;
     const index = id === session.scene?.id && open ? matchIndex(open, query) : 0;
@@ -95,23 +100,38 @@ function findingActions(parts: StepParts) {
     step: (query: SearchQuery, isBackwards: boolean) => void stepAcross(parts, query, isBackwards),
     hits: (query: SearchQuery, open: EditorState | null) =>
       project
-        ? sceneHits(project, manuscriptIds(project), (id) => parts.stateOf(id, open), query)
+        ? sceneHits(
+            project,
+            manuscriptIds(project, parts.only),
+            (id) => parts.stateOf(id, open),
+            query,
+          )
         : [],
     openHit: (id: string, query: SearchQuery) => void showMatchIn(parts, id, query, false),
   };
 }
 
-export function useManuscriptSearch(parts: SearchParts) {
+export function useManuscriptSearch(searchParts: SearchParts) {
   const [isOn, setOn] = useState(false);
+  const [only, setOnly] = useState<string[]>([]);
+  const parts = { ...searchParts, only };
   const [replaceDone, setReplaceDone] = useState<ReplaceDone | null>(null);
   const stateOf = useSceneStates(parts, isOn);
   const replaceAll = (query: SearchQuery) =>
     void replaceEverywhere(parts, query).then((done) => done && setReplaceDone(done));
+  const chips = (parts.project ? searchChips(parts.project) : []).map((chip) => ({
+    ...chip,
+    isOn: only.includes(chip.id),
+  }));
+  const toggleChip = (id: string) =>
+    setOnly(only.includes(id) ? only.filter((each) => each !== id) : [...only, id]);
 
   const replacedInScene = (count: number, search: string) =>
     count > 0 && setReplaceDone({ count, search, changes: null });
   const finding = findingActions({ ...parts, stateOf });
-  const scope: ManuscriptScope = { isOn, setOn, ...finding, replaceAll, replacedInScene };
+  const scope: ManuscriptScope = {
+    ...{ isOn, setOn, ...finding, replaceAll, replacedInScene, chips, toggleChip },
+  };
   const undo = () => {
     if (replaceDone?.changes) void undoEverywhere(parts, replaceDone.changes);
     else if (replaceDone) parts.editor.run(undoCommand);
@@ -132,10 +152,15 @@ function sceneToStepTo(
 ) {
   const { project, session } = parts;
   if (!project) return null;
-  return nextSceneWith(manuscriptIds(project), session.scene?.id ?? null, isBackwards, (id) => {
-    const state = parts.stateOf(id, open);
-    return state !== null && countMatches(state, query) > 0;
-  });
+  return nextSceneWith(
+    manuscriptIds(project, parts.only),
+    session.scene?.id ?? null,
+    isBackwards,
+    (id) => {
+      const state = parts.stateOf(id, open);
+      return state !== null && countMatches(state, query) > 0;
+    },
+  );
 }
 
 async function stepAcross(parts: StepParts, query: SearchQuery, isBackwards: boolean) {
@@ -163,7 +188,7 @@ async function replaceEverywhere(parts: SearchParts, query: SearchQuery) {
   const { changes, count } = await replaceInScenes(
     platform.fileSystem,
     project.dir,
-    manuscriptIds(project),
+    manuscriptIds(project, parts.only),
     query,
   );
   await reloadOpenScene(parts, changes);

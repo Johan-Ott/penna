@@ -11,7 +11,7 @@ import {
 import type { Command, EditorState } from "prosemirror-state";
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { applyQuery, type ManuscriptScope } from "./manuscriptSearch.js";
-import { countText, SearchResults } from "./SearchResults.js";
+import { countText, SearchFilters, SearchResults } from "./SearchResults.js";
 import { t } from "../i18n/i18n.js";
 
 interface SearchPanelProps {
@@ -205,6 +205,7 @@ export function SearchPanel(props: SearchPanelProps) {
       <FindRow query={query} actions={actions} onKey={onSearchKey} onClose={props.onClose} />
       <ReplaceRow query={query} actions={actions} onClose={props.onClose} />
       <SearchOptions query={query} manuscript={props.manuscript} />
+      <SearchFilters scope={props.manuscript} />
       <SearchResults scope={props.manuscript} query={query.query} editorState={props.editorState} />
     </div>
   );

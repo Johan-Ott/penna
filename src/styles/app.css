@@ -2779,3 +2779,13 @@ button.book-cover:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.search-options {
+  flex-wrap: wrap;
+}
+
+.search-options .chip {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}

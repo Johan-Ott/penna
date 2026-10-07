@@ -53,6 +53,9 @@ export interface ManuscriptScope {
   hits: (query: SearchQuery, open: EditorState | null) => SceneHit[];
   /** Opens the scene at its first match. */
   openHit: (id: string, query: SearchQuery) => void;
+  /** Status steps and labels that narrow the search to some scenes. */
+  chips: { id: string; label: string; color: string; isOn: boolean }[];
+  toggleChip: (id: string) => void;
 }
 
 export interface SceneHit {

@@ -41,3 +41,26 @@ export function SearchResults(props: {
     </div>
   );
 }
+
+/** Under Hela manuset: a status step or label chosen narrows the search to those scenes. */
+export function SearchFilters({ scope }: { scope: ManuscriptScope | undefined }) {
+  if (!scope?.isOn || scope.chips.length === 0) return null;
+  return (
+    <div className="search-options" role="group" aria-label={t("Bara scener med")}>
+      {scope.chips.map((chip) => (
+        <button
+          key={chip.id}
+          className="chip"
+          aria-pressed={chip.isOn}
+          onClick={() => scope.toggleChip(chip.id)}
+        >
+          <span
+            className={`tree-dot${chip.color ? "" : " outlined"}`}
+            style={{ background: chip.color }}
+          />{" "}
+          {chip.label}
+        </button>
+      ))}
+    </div>
+  );
+}
