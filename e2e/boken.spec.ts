@@ -115,6 +115,24 @@ test("a label is ticked on another scene straight from the row menu's Labels", a
   await expect(sidebar(page).locator('.tree-dot[title="Elin"]')).toHaveCount(2);
 });
 
+test("the palette's label chip finds only what has the label", async ({ page }) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Ny label…" }).click();
+  await page.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
+  await page
+    .getByRole("dialog", { name: "Labels" })
+    .getByRole("button", { name: "Lägg till" })
+    .click();
+  await page.keyboard.press("Escape");
+
+  await page.keyboard.press("Control+k");
+  const palette = page.getByRole("dialog", { name: "Kommandopalett" });
+  await palette.getByRole("button", { name: "Skriv om" }).click();
+
+  await expect(palette.getByRole("option")).toHaveText([/^Isen/]);
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

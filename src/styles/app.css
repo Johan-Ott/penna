@@ -2726,3 +2726,9 @@ button.book-cover:hover {
 .menu-more {
   color: var(--text-label);
 }
+
+.palette-filters .chip {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}

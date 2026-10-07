@@ -1,5 +1,5 @@
 import type { PaletteEntry } from "./paletteSearch.js";
-import { command, type PaletteContext } from "./paletteEntries.js";
+import { command, labelled, type PaletteContext } from "./paletteEntries.js";
 import { t } from "../../i18n/i18n.js";
 
 export function sceneEntries(context: PaletteContext): PaletteEntry[] {
@@ -12,7 +12,7 @@ export function sceneEntries(context: PaletteContext): PaletteEntry[] {
   ];
 }
 
-export function cardEntries({ cards, describe, openCard }: PaletteContext) {
+export function cardEntries({ cards, describe, openCard, project }: PaletteContext) {
   return cards.map((card): PaletteEntry => {
     const hint = describe(card.id);
     return {
@@ -21,6 +21,7 @@ export function cardEntries({ cards, describe, openCard }: PaletteContext) {
       group: card.sortLabel,
       run: () => openCard(card.id),
       ...(hint ? { hint } : {}),
+      ...labelled(project.tree, card.id),
     };
   });
 }

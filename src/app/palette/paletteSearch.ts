@@ -5,6 +5,8 @@ export interface PaletteEntry {
   shortcut?: string;
   /** Grey text on the right, such as the scene's chapter. */
   hint?: string;
+  /** The ids of the book's labels on the scene, chapter or note. */
+  labels?: string[];
   run: () => void;
 }
 

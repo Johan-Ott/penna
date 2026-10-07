@@ -19,7 +19,13 @@ import {
   type ProseFont,
   type WritingSettings,
 } from "../../editor/writingSettings.js";
-import { manuscriptSceneIds, numberNodes, findNode, type NodeKind } from "../../project/tree.js";
+import {
+  manuscriptSceneIds,
+  numberNodes,
+  findNode,
+  type NodeKind,
+  type TreeNode,
+} from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
@@ -70,6 +76,12 @@ export const command = (label: string, run: () => void, shortcut?: string): Pale
   ...(shortcut ? { shortcut } : {}),
 });
 
+/** The node's labels, for the palette's label chips. */
+export function labelled(tree: TreeNode[], id: string) {
+  const labels = findNode(tree, id)?.node.labels;
+  return labels?.length ? { labels } : {};
+}
+
 function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
   const scenes = manuscriptSceneIds(project.tree).map((id): PaletteEntry => {
     const chapter = chapterOf(project.tree, id);
@@ -79,6 +91,7 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
       group: "Scener",
       run: () => openScene(id),
       ...(chapter ? { hint: t("Kapitel {number}", { number: chapter.number }) } : {}),
+      ...labelled(project.tree, id),
     };
   });
   const chapters = [...numberNodes(project.tree, "chapter")].flatMap(
@@ -92,6 +105,7 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
           label: `${number}. ${chapter.title ?? ""}`,
           group: "Kapitel",
           run: () => openScene(firstScene.id),
+          ...labelled(project.tree, id),
         },
       ];
     },

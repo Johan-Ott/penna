@@ -1,3 +1,4 @@
+import { labelsOf } from "../project/labels.js";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { useCallback, useMemo } from "react";
 import { useAutoBackup } from "./useAutoBackup.js";
@@ -107,7 +108,12 @@ function PaletteLayer({ app }: { app: OverlayParts }) {
     app.writingMode.openSearchWith(text);
   };
   return (
-    <CommandPalette entries={app.palette.entries} onClose={app.palette.close} onSearch={search} />
+    <CommandPalette
+      entries={app.palette.entries}
+      labels={app.project ? labelsOf(app.project.fields) : []}
+      onClose={app.palette.close}
+      onSearch={search}
+    />
   );
 }
 

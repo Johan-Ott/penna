@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
 import { usePhone } from "../phone/usePhone.js";
+import type { Label } from "../../project/labels.js";
+import { PaletteFilters, usePaletteFilter } from "./PaletteFilters.js";
 import { t } from "../../i18n/i18n.js";
 
 // A command's group is a search key; a note's group is its sort's name, already translated.
-const groupLabel = (group: string) =>
+export const groupLabel = (group: string) =>
   ({
     Scener: t("Scener"),
     Kapitel: t("Kapitel"),
@@ -13,6 +15,8 @@ const groupLabel = (group: string) =>
 
 interface CommandPaletteProps {
   entries: PaletteEntry[];
+  /** The book's labels, each a chip as the kinds are. */
+  labels: Label[];
   onClose: () => void;
   onSearch: (text: string) => void;
 }
@@ -137,40 +141,9 @@ function searchEntry(query: string, onSearch: (text: string) => void): PaletteEn
   ];
 }
 
-// One chip per kind; with none chosen everything is searched.
-function PaletteFilters(props: ReturnType<typeof useGroupFilter> & { onPicked: () => void }) {
-  return (
-    <div className="palette-filters" role="group" aria-label={t("Visa bara")}>
-      {props.groups.map((group) => (
-        <button
-          key={group}
-          className="chip"
-          aria-pressed={props.shown.includes(group)}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => (props.toggle(group), props.onPicked())}
-        >
-          {groupLabel(group)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function useGroupFilter(entries: PaletteEntry[]) {
-  const [shown, setShown] = useState<string[]>([]);
-  const groups = inGroups([...new Map(entries.map((entry) => [entry.group, entry])).values()]);
-  const toggle = (group: string) =>
-    setShown((current) =>
-      current.includes(group) ? current.filter((each) => each !== group) : [...current, group],
-    );
-  const kept =
-    shown.length === 0 ? entries : entries.filter((entry) => shown.includes(entry.group));
-  return { groups: groups.map((entry) => entry.group), shown, toggle, kept };
-}
-
-export function CommandPalette({ entries, onClose, onSearch }: CommandPaletteProps) {
+export function CommandPalette({ entries, labels, onClose, onSearch }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
-  const filter = useGroupFilter(entries);
+  const filter = usePaletteFilter(entries, labels);
   const matches = searchPalette(filter.kept, query).slice(0, MAX_RESULTS);
   const found = inGroups([...matches, ...searchEntry(query, onSearch)]);
   const selection = usePaletteSelection(found, onClose);
