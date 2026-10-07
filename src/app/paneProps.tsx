@@ -130,6 +130,7 @@ export function writingAreaProps(app: AppState, project: Project) {
       </>
     ),
     onRetrySave: () => void app.session.autosave.flush(),
+    onSaveNow: app.session.autosave.flush,
     onNewScene: () => void app.actions.newItem("scene"),
   };
 }

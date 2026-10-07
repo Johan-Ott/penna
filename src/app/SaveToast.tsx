@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 import { t, numberLocale } from "../i18n/i18n.js";
+import { useShortcut } from "./useShortcut.js";
 
 const FAILURE_MESSAGES: Record<SaveFailure, string> = {
   blocked: t("Filen används av ett annat program, ofta molnsynken, eller är skrivskyddad."),
@@ -77,6 +78,26 @@ export function ReplaceToast(props: {
       <button className="link-button" onClick={props.onUndo}>
         {t("Ångra")}
       </button>
+    </div>
+  );
+}
+
+const SAVED_MS = 2500;
+
+/** Ctrl+S saves what was just typed and says that Penna saves by itself. */
+export function SavedNowToast({ onSave }: { onSave: () => Promise<boolean> }) {
+  const [isShown, setShown] = useState(false);
+  useShortcut("s", () => void onSave().then((isSaved) => isSaved && setShown(true)));
+  useEffect(() => {
+    if (!isShown) return;
+    const timer = setTimeout(() => setShown(false), SAVED_MS);
+    return () => clearTimeout(timer);
+  }, [isShown]);
+  if (!isShown) return null;
+  return (
+    <div className="toast inverted" role="status">
+      <span>{t("Sparat")}</span>
+      <span className="toast-meta">{t("Penna sparar av sig själv medan du skriver")}</span>
     </div>
   );
 }

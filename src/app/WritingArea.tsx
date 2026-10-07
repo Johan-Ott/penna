@@ -15,7 +15,7 @@ import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 import { FocusHeader } from "./FocusHeader.js";
 import type { Today } from "./useWritingStats.js";
-import { ReadOnlyNotice, SaveToast, TreeFailureToast } from "./SaveToast.js";
+import { ReadOnlyNotice, SaveToast, TreeFailureToast, SavedNowToast } from "./SaveToast.js";
 import { useEscape, useShortcut } from "./useShortcut.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
@@ -50,6 +50,7 @@ interface WritingAreaProps {
   onChangeSettings: (change: SettingsChange) => void;
   onToggleFocus: () => void;
   onRetrySave: () => void;
+  onSaveNow: () => Promise<boolean>;
   onNewScene: () => void;
 }
 
@@ -133,6 +134,7 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
       )}
       {props.selectionBar}
       <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
+      <SavedNowToast onSave={props.onSaveNow} />
       <TreeFailureToast failure={props.treeFailure} />
       <ReadOnlyNotice isReadOnly={props.isReadOnly} />
       {props.replaceToast}

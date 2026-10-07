@@ -21,6 +21,15 @@ test("writing adds words to today's count", async ({ page }) => {
   await expect(page.getByText(/^2 \/ /)).toBeVisible();
 });
 
+test("Ctrl+S saves at once and says that Penna saves by itself", async ({ page }) => {
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.type(" Spara nu.");
+
+  await page.keyboard.press("Control+s");
+
+  await expect(page.getByRole("status").filter({ hasText: "Sparat" })).toBeVisible();
+});
+
 test("undo takes back what was just typed", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Ångra mig.");
