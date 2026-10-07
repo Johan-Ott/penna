@@ -30,6 +30,8 @@ interface MenuProps {
 
 const EDGE = 8;
 const NARROW = 600;
+// On a phone a submenu opens by a tap only, and in the menu's place.
+const isWide = () => window.innerWidth > NARROW;
 
 function useDismiss(onClose: () => void) {
   useEffect(() => {
@@ -83,8 +85,7 @@ export function Menu({ x, y, items, label, onClose }: MenuProps) {
   const [submenu, setSubmenu] = useState<Submenu>(null);
   const hasChecks = items.some((item) => item.isChecked !== undefined);
   // A phone has no room beside the menu, so the submenu takes its place.
-  if (submenu && window.innerWidth <= NARROW)
-    return <Menu {...submenu} x={x} y={y} onClose={onClose} />;
+  if (submenu && !isWide()) return <Menu {...submenu} x={x} y={y} onClose={onClose} />;
   return createPortal(
     <div
       ref={ref}
@@ -138,7 +139,7 @@ function MenuRow(props: RowProps) {
         aria-checked={item.isChecked}
         aria-haspopup={item.submenu ? "menu" : undefined}
         autoFocus={props.isFocused}
-        onPointerEnter={(event) => onSubmenu(submenuOf(item, event.currentTarget))}
+        onPointerEnter={(event) => isWide() && onSubmenu(submenuOf(item, event.currentTarget))}
         onKeyDown={(event) => event.key === "ArrowRight" && choose(event.currentTarget)}
         onClick={(event) => choose(event.currentTarget)}
       >

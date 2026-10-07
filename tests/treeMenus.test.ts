@@ -43,10 +43,7 @@ describe("tree menus", () => {
       "Versioner…",
       "| Ny scen efter",
       "Nytt kapitel efter",
-      "| Status: Idé",
-      "Status: Utkast",
-      "Status: Redigering",
-      "Status: Klar",
+      "| Status",
       "| Byt namn",
       "Flytta till papperskorg",
     ]);
@@ -54,10 +51,9 @@ describe("tree menus", () => {
 
   it("checks the status the scene has", () => {
     const items = rowMenu(node("scene"), false, actions);
+    const steps = items.find((item) => item.label === "Status")?.submenu ?? [];
 
-    expect(items.filter((item) => item.isChecked).map((item) => item.label)).toEqual([
-      "Status: Utkast",
-    ]);
+    expect(steps.filter((item) => item.isChecked).map((item) => item.label)).toEqual(["Utkast"]);
   });
 
   it("adds new things inside a chapter, a part and a folder", () => {
@@ -107,7 +103,7 @@ describe("tree menus", () => {
     const items = rowMenu(node("scene", "arvid"), false, forNote);
     items.find((item) => item.label === "Koppla namnet i texten")?.onSelect?.();
 
-    expect(labels(items)).not.toContain("Status: Utkast");
+    expect(labels(items)).not.toContain("| Status");
     expect(items.find((item) => item.label === "Koppla namnet i texten")?.isChecked).toBe(true);
     expect(changes).toEqual([false]);
   });

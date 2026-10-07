@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import {
-  ancestorIds,
   findNode,
   moveNode,
   sortsOf,
@@ -17,6 +16,7 @@ import type { Project } from "../useProject.js";
 import type { Placement, TreeMenuActions } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
+import { useFollowOpenScene, useRenameRequest } from "./treeEffects.js";
 import type { ProjectChange } from "../labels/LabelsDialog.js";
 import { labelMenu } from "../labels/LabelsInTree.js";
 import { filteredTree, labelsOn } from "../../project/labels.js";
@@ -46,20 +46,6 @@ export interface TreeViewProps {
 export type Actions = ReturnType<typeof useTreeActions>;
 type MenuState = { items: MenuItem[]; x: number; y: number } | null;
 export type View = ReturnType<typeof useTreeViewState>;
-
-function useRenameRequest(props: TreeViewProps, view: View) {
-  const { renameRequestId, project } = props;
-  const { expand, setRenamingId } = view;
-  const handledId = useRef<string | null>(null);
-  useEffect(() => {
-    if (!renameRequestId || handledId.current === renameRequestId) return;
-    // The tree may not hold the new node yet; the effect runs again when it does.
-    if (!findNode(project.tree, renameRequestId)) return;
-    handledId.current = renameRequestId;
-    expand(ancestorIds(project.tree, renameRequestId));
-    setRenamingId(renameRequestId);
-  }, [renameRequestId, project.tree, expand, setRenamingId]);
-}
 
 // The sorts and Papperskorg start folded; the book starts open.
 function useCollapsed(tree: TreeNode[]) {
@@ -92,23 +78,6 @@ function useTreeViewState(tree: TreeNode[]) {
 
 const foldableIds = (nodes: TreeNode[]): string[] =>
   nodes.flatMap((node) => (node.children?.length ? [node.id, ...foldableIds(node.children)] : []));
-
-// Wherever a scene was opened from, the tree unfolds to it and shows it.
-function useFollowOpenScene(props: TreeViewProps, view: View) {
-  const { openSceneId, project } = props;
-  const { expand } = view;
-  const treeRef = useRef(project.tree);
-  treeRef.current = project.tree;
-  useEffect(() => {
-    if (!openSceneId) return;
-    expand(ancestorIds(treeRef.current, openSceneId));
-    requestAnimationFrame(() =>
-      document
-        .querySelectorAll(".tree-row.active")
-        .forEach((row) => row.scrollIntoView({ block: "nearest" })),
-    );
-  }, [openSceneId, expand]);
-}
 
 export function menuActions(actions: Actions, props: TreeViewProps, view: View): TreeMenuActions {
   const { summaries } = props.project;
@@ -206,6 +175,10 @@ function labelsOf(project: Project, node: TreeNode) {
   return made;
 }
 
+// Only a scene of the book has a status; a note has none.
+const sceneStatusOf = (project: Project, node: TreeNode) =>
+  noteLinkOf(project, node.id) === null ? (project.summaries[node.id]?.status ?? null) : null;
+
 export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;
   const summary = props.project.summaries[node.id];
@@ -217,6 +190,7 @@ export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<s
     title: node.kind === "scene" ? (summary?.title ?? "") : (node.title ?? ""),
     meta,
     dots: labelsOn(props.project.fields, node),
+    status: sceneStatusOf(props.project, node),
     isActive: node.id === props.openSceneId,
     isExpanded: node.kind === "scene" ? null : !collapsed.has(node.id),
     isMissing: node.kind === "scene" && !summary,

@@ -10,6 +10,14 @@ export const STATUS_LABELS: Record<SceneStatus, string> = {
   klar: t("Klar"),
 };
 
+/** Each step's colour in the tree; an idea is only an outline. */
+export const STATUS_COLORS: Record<SceneStatus, string> = {
+  idé: "",
+  utkast: "#e08a1e",
+  redigering: "#2f86c9",
+  klar: "#3f9a4f",
+};
+
 /** Null leaves the place to the app. */
 export type Placement = { inside: string } | { after: string } | null;
 
@@ -107,12 +115,12 @@ function statusItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   const forNote = noteItems(node, actions);
   if (forNote) return forNote;
   const current = actions.statusOf(node);
-  return SCENE_STATUSES.map((status, index) => ({
-    label: t("Status: {status}", { status: STATUS_LABELS[status] }),
+  const steps = SCENE_STATUSES.map((status) => ({
+    label: STATUS_LABELS[status],
     isChecked: status === current,
-    separatorBefore: index === 0,
     onSelect: () => actions.setStatus(node, status),
   }));
+  return [{ label: t("Status"), separatorBefore: true, submenu: steps }];
 }
 
 // Up and down among its siblings, where dragging is no way to move it, as on a phone.
