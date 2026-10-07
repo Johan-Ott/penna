@@ -45,7 +45,7 @@ async function openingBackup(dirs: string[]) {
   if (!newest || Date.now() - newest.time > FRESH) await backupNow(dirs);
 }
 
-/** A copy when the book opens, and every half hour while something in it changes. */
+/** A copy when the book opens, every half hour while something in it changes, and on leaving it. */
 export function useAutoBackup(dirs: string[], project: unknown) {
   const current = useRef(dirs);
   const hasChanged = useRef(false);
@@ -58,11 +58,13 @@ export function useAutoBackup(dirs: string[], project: unknown) {
     if (!key) return;
     void automatically(openingBackup(current.current));
     hasChanged.current = false;
-    const timer = setInterval(() => {
+    const dirsNow = current.current;
+    const copyIfChanged = () => {
       if (!hasChanged.current) return;
       hasChanged.current = false;
-      void automatically(backupNow(current.current));
-    }, EVERY);
-    return () => clearInterval(timer);
+      void automatically(backupNow(dirsNow));
+    };
+    const timer = setInterval(copyIfChanged, EVERY);
+    return () => (clearInterval(timer), copyIfChanged());
   }, [key]);
 }
