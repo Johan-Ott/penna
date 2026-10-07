@@ -37,7 +37,7 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   const dialog = page.getByRole("dialog", { name: "Ny anteckning" });
   await dialog.getByRole("textbox", { name: "Namn" }).fill("Sigrid");
   await dialog.getByRole("button", { name: "Skapa" }).click();
-  await sidebar(page).getByRole("treeitem").filter({ hasText: "Personer" }).click();
+  // The new note opens, and the tree unfolds Personer to show it.
   await expect(sidebar(page)).toContainText("Sigrid");
 
   await sidebar(page).getByRole("treeitem").filter({ hasText: "Första scenen" }).first().click();
