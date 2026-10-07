@@ -32,6 +32,7 @@ function sceneHeader(app: AppState, project: Project, sceneId: string) {
       sceneId={sceneId}
       onChangeTree={(tree: TreeNode[]) => void app.updateTree(tree)}
       onReadChapter={(chapterId) => app.writingMode.read(chapterId)}
+      onShowVersions={app.snapshots.show}
     />
   );
 }

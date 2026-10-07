@@ -195,6 +195,12 @@ test("versions of the open scene can be opened", async ({ page }) => {
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
+test("the text's own header opens its versions, beside Läs kapitlet", async ({ page }) => {
+  await page.locator(".text-header").getByRole("button", { name: "Versioner" }).click();
+
+  await expect(page.getByRole("dialog")).toBeVisible();
+});
+
 test("the standard manuscript is exported as a Word file", async ({ page }) => {
   await editor(page).click();
   await runCommand(page, "Gå till Publicera");

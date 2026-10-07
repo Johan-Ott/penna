@@ -9,6 +9,8 @@ interface TextHeaderProps {
   sceneId: string;
   onChangeTree: (tree: TreeNode[]) => void;
   onReadChapter: (chapterId: string) => void;
+  /** The scene's saved versions, at hand where the text begins. */
+  onShowVersions: (sceneId: string) => void;
 }
 
 function WhenField(props: { when: string; onSave: (text: string) => void }) {
@@ -38,7 +40,8 @@ function headingOf(project: Project, sceneId: string) {
   return { chapter, place, whenId, when: findNode(project.tree, whenId)?.node.when ?? "" };
 }
 
-export function TextHeader({ project, sceneId, onChangeTree, onReadChapter }: TextHeaderProps) {
+export function TextHeader(props: TextHeaderProps) {
+  const { project, sceneId, onChangeTree, onReadChapter } = props;
   const { chapter, place, whenId, when } = headingOf(project, sceneId);
   return (
     <header className="text-header">
@@ -50,6 +53,9 @@ export function TextHeader({ project, sceneId, onChangeTree, onReadChapter }: Te
               {t("Läs kapitlet")}
             </button>
           )}
+          <button className="read-link" onClick={() => props.onShowVersions(sceneId)}>
+            {t("Versioner")}
+          </button>
         </span>
         <WhenField
           when={when}
