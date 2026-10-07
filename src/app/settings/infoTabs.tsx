@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { errorLog } from "../errorLog.js";
 import { Row } from "../controls.js";
-import { t } from "../../i18n/i18n.js";
+import { numberLocale, t } from "../../i18n/i18n.js";
 
 const SHORTCUTS: [string, string][] = [
   [t("Kommandopalett"), "Ctrl K"],
@@ -44,6 +44,25 @@ function ErrorReportButton() {
   );
 }
 
+// What went wrong since Penna started, shown here instead of only in the copied report.
+function RecentErrors() {
+  const [latest] = useState(() => errorLog.latest());
+  if (latest.length === 0)
+    return <p className="error-list-empty">{t("Inga fel sedan starten.")}</p>;
+  return (
+    <ul className="error-list" aria-label={t("Fel sedan starten")}>
+      {latest.map(({ time, message }) => (
+        <li key={`${time} ${message}`}>
+          <span className="error-time">
+            {new Date(time).toLocaleTimeString(numberLocale(), { timeStyle: "short" })}
+          </span>{" "}
+          {message}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 // What Penna is built with, as their licences ask.
 function Credits() {
   return (
@@ -75,6 +94,7 @@ export function AboutTab() {
       >
         <ErrorReportButton />
       </Row>
+      <RecentErrors />
       <Row
         label={t("Integritet")}
         hint={t(

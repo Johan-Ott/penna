@@ -169,6 +169,15 @@ test("settings open with Ctrl+comma and show the sync tab", async ({ page }) => 
   await expect(page.getByText("Synk finns inte på den här enheten än.")).toBeVisible();
 });
 
+test("Om Penna shows the errors since the start, here none", async ({ page }) => {
+  await editor(page).click();
+
+  await page.keyboard.press("Control+,");
+  await page.getByRole("button", { name: "Om Penna" }).click();
+
+  await expect(page.getByText("Inga fel sedan starten.")).toBeVisible();
+});
+
 test("Innehåll lists the chapters", async ({ page }) => {
   await editor(page).click();
 

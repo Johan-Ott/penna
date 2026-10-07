@@ -2,14 +2,19 @@ const KEPT = 20;
 
 /** The latest errors in this session, for a report the writer copies and sends. Never sent. */
 export function createErrorLog(now: () => number) {
-  const entries: string[] = [];
+  const entries: { time: number; message: string }[] = [];
   return {
     record(message: string) {
-      entries.push(`${new Date(now()).toISOString()}  ${message}`);
+      entries.push({ time: now(), message });
       if (entries.length > KEPT) entries.shift();
     },
+    /** Newest first. */
+    latest: () => [...entries].reverse(),
     report({ version, device }: { version: string; device: string }) {
-      const errors = entries.length > 0 ? entries.join("\n") : "Inga fel sedan starten.";
+      const lines = entries.map(
+        ({ time, message }) => `${new Date(time).toISOString()}  ${message}`,
+      );
+      const errors = lines.length > 0 ? lines.join("\n") : "Inga fel sedan starten.";
       return `Penna ${version}\n${device}\n\n${errors}\n`;
     },
   };

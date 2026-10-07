@@ -2805,3 +2805,21 @@ button.book-cover:hover {
   color: var(--text-muted);
   font-size: 12px;
 }
+
+.error-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  margin: 0 0 12px;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  font-size: 12px;
+}
+
+.error-time,
+.error-list-empty {
+  color: var(--text-muted);
+  font-size: 12px;
+}

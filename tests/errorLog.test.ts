@@ -15,6 +15,17 @@ describe("errorLog", () => {
     expect(report).toContain("2026-10-05T10:00:00");
   });
 
+  it("shows the errors newest first, each with its time", () => {
+    const log = createErrorLog(() => 5);
+    log.record("Först");
+    log.record("Sedan");
+
+    expect(log.latest()).toEqual([
+      { time: 5, message: "Sedan" },
+      { time: 5, message: "Först" },
+    ]);
+  });
+
   it("keeps only the latest twenty errors", () => {
     const log = createErrorLog(() => 0);
 

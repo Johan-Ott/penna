@@ -452,6 +452,8 @@
   "{days} dagar till deadline": "{days} days to the deadline",
   "1 dag i rad": "1 day in a row",
   "Sparat": "Saved",
+  "Inga fel sedan starten.": "No errors since the start.",
+  "Fel sedan starten": "Errors since the start",
   "Ord per steg": "Words per step",
   "Ord per label": "Words per label",
   "Bara scener med": "Only scenes with",
