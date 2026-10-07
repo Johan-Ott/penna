@@ -7,6 +7,9 @@ import { documentText } from "./documentText.js";
 export interface SpellingSwitch {
   language: string;
   misspelled: (language: string, words: string[]) => Promise<string[]>;
+  suggestions: (language: string, word: string) => Promise<string[]>;
+  /** Puts the word in the book's own list, so it is never marked again. */
+  addWord: (word: string) => void;
   /** The book's names and own words, never marked. */
   isKnown: (word: string) => boolean;
 }

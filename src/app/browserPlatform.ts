@@ -23,6 +23,7 @@ export const browserPlatform: Platform = {
   guardClose: () => () => undefined,
   // The browser always runs the version it was served.
   checkForUpdate: async () => null,
+  readClipboard: () => navigator.clipboard.readText(),
   notify: async (title, body) => {
     if (!("Notification" in window)) return;
     const permission = await Notification.requestPermission();

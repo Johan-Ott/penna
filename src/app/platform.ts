@@ -33,6 +33,8 @@ export interface Platform {
   webFetch: typeof fetch;
   /** Copies of every book in Penna's own folder. Missing in the browser version. */
   backups?: Backups;
+  /** For the text's own menu; missing on a phone, where the system's menu is kept. */
+  readClipboard?: () => Promise<string>;
   /** Penna's own spelling check; missing in the browser, which checks the spelling itself. */
   spelling?: Spelling;
 }

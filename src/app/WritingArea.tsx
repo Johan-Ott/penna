@@ -20,6 +20,7 @@ import { useEscape, useShortcut } from "./useShortcut.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { t } from "../i18n/i18n.js";
+import { useTextMenu } from "./spelling/useTextMenu.js";
 
 interface WritingAreaProps {
   /** The printed page of each block of the open scene, when page breaks are shown. */
@@ -99,6 +100,7 @@ function EmptyScene({ onNewScene }: { onNewScene: () => void }) {
 // The editor stays mounted in both modes, so undo history and cursor survive the switch.
 function Page(props: WritingAreaProps) {
   const { editor, settings, isFocusMode, hasScene } = props;
+  const textMenu = useTextMenu(editor);
   return (
     <div className="page" style={proseStyle(settings) as CSSProperties}>
       {!hasScene && <EmptyScene onNewScene={props.onNewScene} />}
@@ -106,8 +108,10 @@ function Page(props: WritingAreaProps) {
       <div
         className={manuscriptClass(settings, isFocusMode) + (hasScene ? "" : " hidden")}
         ref={editor.mount}
+        onContextMenu={textMenu.onContextMenu}
       />
       {hasScene && !isFocusMode && props.footer}
+      {textMenu.layer}
     </div>
   );
 }

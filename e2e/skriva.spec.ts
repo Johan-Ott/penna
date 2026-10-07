@@ -30,6 +30,21 @@ test("Ctrl+S saves at once and says that Penna saves by itself", async ({ page }
   await expect(page.getByRole("status").filter({ hasText: "Sparat" })).toBeVisible();
 });
 
+test("a right-click in the text opens Penna's own menu, and Markera allt selects it all", async ({
+  page,
+}) => {
+  await selectFirstWord(page);
+  await editor(page).locator("p").first().click({ button: "right" });
+
+  const menu = page.getByRole("menu", { name: "Text" });
+  await expect(menu.getByRole("menuitem", { name: "Kopiera" })).toBeVisible();
+  await menu.getByRole("menuitem", { name: "Markera allt" }).click();
+
+  const selected = await page.evaluate(() => String(getSelection()));
+  expect(selected).toContain("Brevet låg på köksbordet");
+  expect(selected).toContain("Din Henrik");
+});
+
 test("undo takes back what was just typed", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Ångra mig.");

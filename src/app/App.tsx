@@ -107,7 +107,10 @@ function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const isNoteOpen = noteId !== null && homes.some((home) => noteSortOf(home, noteId) !== null);
   const notes = useNotes(homes, project, isNoteOpen);
   useMentionLinks(sceneState.editor, notes);
-  useSpelling(sceneState.editor, project, notes, writingMode.settings.spellcheck);
+  useSpelling(sceneState.editor, project, notes, {
+    isOn: writingMode.settings.spellcheck,
+    updateFields: (fields) => void projectState.updateFields(fields),
+  });
   const [newNoteSort, setNewNoteSort] = useState<string | null | false>(false);
   const cards = cardActions({ homes, session: sceneState.session, setView: writingMode.setView });
   const seriesChoice = useSeriesActions({

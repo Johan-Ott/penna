@@ -1,11 +1,12 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "desktop",
-  "description": "On a computer the Penna library lives in the home or Documents folder, or in any folder picked in the dialog; its automatic copies in backups/ in Penna's own folder; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases.",
+  "description": "On a computer the Penna library lives in the home or Documents folder, or in any folder picked in the dialog; its automatic copies in backups/ in Penna's own folder; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases. The text's own menu reads the clipboard for Klistra in.",
   "platforms": ["windows", "macOS", "linux"],
   "windows": ["main"],
   "permissions": [
     "updater:default",
+    "clipboard-manager:allow-read-text",
     "core:window:allow-destroy",
     {
       "identifier": "fs:scope",

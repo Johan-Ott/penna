@@ -1,3 +1,4 @@
+import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
@@ -148,6 +149,7 @@ export const tauriPlatform: Platform = {
   pickFile,
   fileSystem: tauriFileSystem,
   spelling,
+  ...(isPhone ? {} : { readClipboard: readText }),
   checkForUpdate: isPhone ? async () => null : checkForUpdate,
   notify,
   ...(isPhone ? {} : { showInFolder: (path: string) => revealItemInDir(path) }),

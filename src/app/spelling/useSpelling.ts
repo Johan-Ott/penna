@@ -25,16 +25,19 @@ export function useSpelling(
   editor: ReturnType<typeof useEditorView>,
   project: Project | null,
   notes: Notes,
-  isOn: boolean,
+  options: { isOn: boolean; updateFields: (fields: Record<string, unknown>) => void },
 ) {
+  const { isOn, updateFields } = options;
   const spelling = platform.spelling;
   const language = project ? bookLanguage(project.fields) : null;
   // As text, so a new notes object with the same names asks nothing again.
   const names = notes.cards.map((card) => card.name).join("\n");
   const own = project ? ownWords(project.fields).join("\n") : "";
   const isKnown = useMemo(() => knownWords(names.split("\n"), own.split("\n")), [names, own]);
+  const addWord = (word: string) =>
+    project && updateFields({ words: [...new Set([...ownWords(project.fields), word])] });
   const current: SpellingSwitch | null =
-    spelling && isOn && language ? { language, misspelled: spelling.misspelled, isKnown } : null;
+    spelling && isOn && language ? { language, ...spelling, isKnown, addWord } : null;
   editor.modes.current.spelling = current;
   const { viewRef } = editor;
   useEffect(() => {
