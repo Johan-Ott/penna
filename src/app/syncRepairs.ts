@@ -65,7 +65,7 @@ export async function keepVersion(
       fileSystem,
       dir,
       scenePath,
-      t("{id} (den här datorns).md", { id: copy.sceneId }),
+      t("{id} (den här enhetens).md", { id: copy.sceneId }),
     );
     await fileSystem.rename(copyPath, scenePath);
     if (isOpen(session, dir, copy.sceneId)) await openScene(session, dir, copy.sceneId);

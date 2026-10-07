@@ -87,7 +87,7 @@ export async function readBookScenes(
   for (const id of sceneIds) {
     const text = await fileSystem.readText(joinPath(dir, `scenes/${id}.md`)).catch(() => null);
     if (text === null) {
-      throw new ExportError(titles[id] ?? id, t("Scenen finns inte på den här datorn än."));
+      throw new ExportError(titles[id] ?? id, t("Scenen finns inte på den här enheten än."));
     }
     scenes.set(id, parseMarkdown(splitSceneFile(text).body));
   }

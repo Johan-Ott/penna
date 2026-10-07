@@ -46,7 +46,7 @@ function ConflictActions({ onChoose, onLater }: Pick<ConflictDialogProps, "onCho
         {t("Behåll båda")}
       </button>
       <button className="button primary" onClick={() => onChoose("mine")} autoFocus>
-        {t("Behåll den här datorns")}
+        {t("Behåll den här enhetens")}
       </button>
     </div>
   );
@@ -67,7 +67,7 @@ export function ConflictDialog(props: ConflictDialogProps) {
           <span className="dialog-text">{props.text ?? EDITED_ELSEWHERE}</span>
         </div>
         <div className="version-grid">
-          <VersionCard label={t("Den här datorn")} body={mine} excerpt={excerpts.mine} isChosen />
+          <VersionCard label={t("Den här enheten")} body={mine} excerpt={excerpts.mine} isChosen />
           <VersionCard
             label={props.otherLabel ?? t("Den andra versionen")}
             body={theirs}
