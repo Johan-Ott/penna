@@ -9,6 +9,7 @@ import {
   withSpecialFolders,
   CHARACTERS_ID,
   NOTES_ID,
+  SECRETS_ID,
   PLACES_ID,
   THINGS_ID,
   TRASH_ID,
@@ -48,6 +49,7 @@ describe("visibleRows", () => {
       `0:${PLACES_ID}`,
       `0:${THINGS_ID}`,
       `0:${NOTES_ID}`,
+      `0:${SECRETS_ID}`,
       `0:${TRASH_ID}`,
     ]);
   });
@@ -138,6 +140,7 @@ describe("sidebarSections", () => {
       PLACES_ID,
       THINGS_ID,
       NOTES_ID,
+      SECRETS_ID,
     ]);
     expect(sections.trash.map((row) => row.node.id)).toEqual([TRASH_ID]);
   });

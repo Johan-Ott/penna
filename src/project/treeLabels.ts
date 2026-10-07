@@ -8,6 +8,7 @@ import {
   NOTES_ID,
   numberNodes,
   PLACES_ID,
+  SECRETS_ID,
   sceneIdsIn,
   THINGS_ID,
   TRASH_ID,
@@ -24,6 +25,7 @@ const specialFolderLabel = (id: string) =>
     [PLACES_ID]: t("Platser"),
     [THINGS_ID]: t("Saker"),
     [NOTES_ID]: t("Övrigt"),
+    [SECRETS_ID]: t("Hemligheter"),
     [TRASH_ID]: t("Papperskorg"),
   })[id] ?? "";
 

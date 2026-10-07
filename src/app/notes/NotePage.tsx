@@ -1,5 +1,12 @@
 import { chapterRuns } from "../../project/cards.js";
-import { CHARACTERS_ID, findNode, NOTES_ID, PLACES_ID, THINGS_ID } from "../../project/tree.js";
+import {
+  CHARACTERS_ID,
+  findNode,
+  NOTES_ID,
+  PLACES_ID,
+  SECRETS_ID,
+  THINGS_ID,
+} from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import { mentionedChapters } from "./cardFormat.js";
@@ -24,6 +31,7 @@ function kindLabel(project: Project, sortId: string) {
     [CHARACTERS_ID]: t("Person"),
     [PLACES_ID]: t("Plats"),
     [THINGS_ID]: t("Sak"),
+    [SECRETS_ID]: t("Hemlighet"),
     [NOTES_ID]: t("Övrigt"),
   };
   return fixed[sortId] ?? findNode(project.tree, sortId)?.node.title ?? "";

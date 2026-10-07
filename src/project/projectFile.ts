@@ -32,10 +32,10 @@ function isTreeNode(value: unknown): value is TreeNode {
   if (typeof value !== "object" || value === null) return false;
   const node = value as Record<string, unknown>;
   const hasIdAndKind = typeof node["id"] === "string" && KINDS.includes(node["kind"] as NodeKind);
-  const texts = ["title", "summary", "when", "opening", ...HEADING_FIELDS].every((key) =>
+  const texts = ["title", "summary", "when", "opening", "reveal", ...HEADING_FIELDS].every((key) =>
     isOptionalString(node[key]),
   );
-  const records = isOptionalTextRecord(node["pictures"]) && isOptionalTextRecord(node["labels"]);
+  const records = ["pictures", "labels", "knownBy"].every((key) => isOptionalTextRecord(node[key]));
   return hasIdAndKind && texts && records && isOptionalNodeList(node["children"]);
 }
 

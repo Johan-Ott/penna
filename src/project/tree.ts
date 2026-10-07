@@ -19,6 +19,10 @@ export interface TreeNode {
   pictures?: Record<string, string>;
   /** The ids of the book's own labels on it, from project.json's `labels`. */
   labels?: string[];
+  /** A secret: the scene where the reader learns it. */
+  reveal?: string;
+  /** A secret: who learns it, by their note's id, and in which scene. */
+  knownBy?: Record<string, string>;
   children?: TreeNode[];
 }
 
@@ -31,6 +35,8 @@ export const PLACES_ID = "platser";
 export const THINGS_ID = "saker";
 /** Övrigt: notes whose names are not linked in the text unless the writer asks. */
 export const NOTES_ID = "anteckningar";
+/** Hemligheter: what the reader and the people learn, and when. */
+export const SECRETS_ID = "hemligheter";
 export const TRASH_ID = "trash";
 
 // Notes are scene files kept in sorts, so they are written, moved and trashed like any scene.
@@ -39,6 +45,7 @@ const FIXED_SORTS: { id: string; kind: "sort"; title: string }[] = [
   { id: PLACES_ID, kind: "sort", title: "Platser" },
   { id: THINGS_ID, kind: "sort", title: "Saker" },
   { id: NOTES_ID, kind: "sort", title: "Övrigt" },
+  { id: SECRETS_ID, kind: "sort", title: "Hemligheter" },
 ];
 const TRASH: TreeNode = { id: TRASH_ID, kind: "folder", title: "Papperskorg" };
 

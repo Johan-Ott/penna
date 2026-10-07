@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { readProjectFile, writeProjectFile } from "../src/project/projectFile";
-import { CHARACTERS_ID, NOTES_ID, PLACES_ID, THINGS_ID, TRASH_ID } from "../src/project/tree";
+import {
+  CHARACTERS_ID,
+  NOTES_ID,
+  SECRETS_ID,
+  PLACES_ID,
+  THINGS_ID,
+  TRASH_ID,
+} from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const PROJECT_PATH = "/bok/project.json";
@@ -46,6 +53,7 @@ describe("readProjectFile", () => {
       PLACES_ID,
       THINGS_ID,
       NOTES_ID,
+      SECRETS_ID,
       TRASH_ID,
     ]);
   });
@@ -61,11 +69,12 @@ describe("readProjectFile", () => {
       PLACES_ID,
       THINGS_ID,
       NOTES_ID,
+      SECRETS_ID,
       TRASH_ID,
     ]);
     expect(project.repairCopy).toMatch(/^project\.json\.trasig-/);
     expect(await files.readText(`/bok/${project.repairCopy ?? ""}`)).toBe('{ "tree": [ trasig');
-    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(6);
+    expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(7);
   });
 
   it("treats a tree with invalid nodes as broken", async () => {
