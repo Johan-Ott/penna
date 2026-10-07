@@ -34,6 +34,13 @@ export interface TreeMenuActions {
   mergeWithNext: () => void;
 }
 
+export function foldMenu(view: { foldAll: () => void; unfoldAll: () => void }): MenuItem[] {
+  return [
+    { label: t("Fäll ihop alla"), onSelect: view.foldAll, separatorBefore: true },
+    { label: t("Fäll ut alla"), onSelect: view.unfoldAll },
+  ];
+}
+
 export function addMenu(actions: Pick<TreeMenuActions, "add">): MenuItem[] {
   return [
     { label: t("Ny scen"), shortcut: "Ctrl+Alt+N", onSelect: () => actions.add("scene", null) },

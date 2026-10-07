@@ -73,7 +73,31 @@ function useTreeViewState(tree: TreeNode[]) {
     () => (ids: string[]) =>
       setCollapsed((current) => new Set([...current].filter((id) => !ids.includes(id)))),
   );
-  return { collapsed, toggle, expand, renamingId, setRenamingId, menu, setMenu };
+  const fold = {
+    foldAll: () => setCollapsed(new Set([...foldableIds(tree), TRASH_ID])),
+    unfoldAll: () => setCollapsed(new Set([TRASH_ID])),
+  };
+  return { collapsed, toggle, expand, ...fold, renamingId, setRenamingId, menu, setMenu };
+}
+
+const foldableIds = (nodes: TreeNode[]): string[] =>
+  nodes.flatMap((node) => (node.children?.length ? [node.id, ...foldableIds(node.children)] : []));
+
+// Wherever a scene was opened from, the tree unfolds to it and shows it.
+function useFollowOpenScene(props: TreeViewProps, view: View) {
+  const { openSceneId, project } = props;
+  const { expand } = view;
+  const treeRef = useRef(project.tree);
+  treeRef.current = project.tree;
+  useEffect(() => {
+    if (!openSceneId) return;
+    expand(ancestorIds(treeRef.current, openSceneId));
+    requestAnimationFrame(() =>
+      document
+        .querySelectorAll(".tree-row.active")
+        .forEach((row) => row.scrollIntoView({ block: "nearest" })),
+    );
+  }, [openSceneId, expand]);
 }
 
 export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
@@ -111,6 +135,7 @@ export function useTreeView(props: TreeViewProps) {
   const { project } = props;
   const view = useTreeViewState(project.tree);
   useRenameRequest(props, view);
+  useFollowOpenScene(props, view);
   const actions = useTreeActions({
     ...props,
     tree: project.tree,

@@ -35,6 +35,27 @@ test("the book's heading in the tree shows all its words", async ({ page }) => {
   await expect(sidebar(page).getByLabel("Ord i boken")).toHaveText("239");
 });
 
+test("the tree folds and unfolds all, and unfolds to a scene opened from the palette", async ({
+  page,
+}) => {
+  await sidebar(page)
+    .locator(".tree")
+    .click({ button: "right", position: { x: 100, y: 5 } });
+  await page.getByRole("menuitem", { name: "Fäll ihop alla" }).click();
+  await expect(treeRow(page, "Isen")).toBeHidden();
+
+  await page.keyboard.press("Control+k");
+  await page.keyboard.type("Isen");
+  await page.keyboard.press("Enter");
+  await expect(treeRow(page, "Isen")).toBeVisible();
+
+  await sidebar(page)
+    .locator(".tree")
+    .click({ button: "right", position: { x: 100, y: 5 } });
+  await page.getByRole("menuitem", { name: "Fäll ut alla" }).click();
+  await expect(treeRow(page, "Regnet")).toBeVisible();
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

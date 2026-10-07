@@ -2,7 +2,7 @@ import type { DragEvent, ReactNode } from "react";
 import { findNode, type TreeNode } from "../../project/tree.js";
 import { visibleRows, withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
 import { Menu } from "../Menu.js";
-import { addMenu, rowMenu } from "./treeMenus.js";
+import { addMenu, foldMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
 import {
   isEmptySort,
@@ -126,7 +126,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       role="tree"
       aria-label={t("Boken")}
       className="tree"
-      onContextMenu={(event) => tree.openMenu(event, addMenu(menuFor))}
+      onContextMenu={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(view)])}
     >
       <SectionHeading
         label={t("Boken")}
