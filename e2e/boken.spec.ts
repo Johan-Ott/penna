@@ -31,6 +31,10 @@ test("a scene is renamed from its menu in the tree", async ({ page }) => {
   await expect(treeRow(page, "Isen bär")).toBeVisible();
 });
 
+test("the book's heading in the tree shows all its words", async ({ page }) => {
+  await expect(sidebar(page).getByLabel("Ord i boken")).toHaveText("239");
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

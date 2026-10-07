@@ -601,3 +601,8 @@
     font-size: 15px;
   }
 }
+
+/* In line with the rows' word counts, left of their ⋯. */
+.phone-app .sidebar-heading-words {
+  margin-right: 50px;
+}

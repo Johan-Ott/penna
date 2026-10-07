@@ -13,7 +13,8 @@ import {
   type Tree,
   type TreeViewProps,
 } from "./useTreeView.js";
-import { t } from "../../i18n/i18n.js";
+import { manuscriptWords } from "../../project/treeLabels.js";
+import { numberLocale, t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
 
@@ -42,7 +43,7 @@ function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: 
   ));
 }
 
-function SectionHeading(props: { label: string; onDrop?: () => void }) {
+function SectionHeading(props: { label: string; onDrop?: () => void; words?: number }) {
   return (
     <div
       role="none"
@@ -51,6 +52,11 @@ function SectionHeading(props: { label: string; onDrop?: () => void }) {
       onDrop={(event: DragEvent) => (event.preventDefault(), props.onDrop?.())}
     >
       {props.label}
+      {props.words !== undefined && (
+        <span className="sidebar-heading-words" aria-label={t("Ord i boken")}>
+          {props.words.toLocaleString(numberLocale())}
+        </span>
+      )}
     </div>
   );
 }
@@ -122,7 +128,11 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       className="tree"
       onContextMenu={(event) => tree.openMenu(event, addMenu(menuFor))}
     >
-      <SectionHeading label={t("Boken")} onDrop={tree.dropAtBookEnd} />
+      <SectionHeading
+        label={t("Boken")}
+        onDrop={tree.dropAtBookEnd}
+        words={manuscriptWords(props.project.tree, props.project.summaries)}
+      />
       <Rows rows={sections.book} props={props} tree={tree} />
       {props.isBookOnly ? (
         <BookOnlyEnd props={props} tree={tree} />
