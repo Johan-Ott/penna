@@ -1,5 +1,6 @@
 import { useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import type { DropPosition, TreeRow as Row } from "../../project/treeRows.js";
+import type { Label } from "../../project/labels.js";
 import { Chevron } from "./Chevron.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -9,6 +10,8 @@ export interface TreeRowProps {
   /** Without numbering. */
   title: string;
   meta: string;
+  /** The row's labels, shown as dots in their colours. */
+  dots: Label[];
   isActive: boolean;
   isExpanded: boolean | null;
   isRenaming: boolean;
@@ -87,6 +90,22 @@ const MoreButton = (props: { label: string; onOpen: (event: MouseEvent<HTMLEleme
   </button>
 );
 
+function LabelDots({ dots }: { dots: Label[] }) {
+  if (dots.length === 0) return null;
+  return (
+    <span className="tree-dots" aria-label={dots.map((dot) => dot.name).join(", ")}>
+      {dots.map((dot) => (
+        <span
+          key={dot.id}
+          className="tree-dot"
+          title={dot.name}
+          style={{ background: dot.color }}
+        />
+      ))}
+    </span>
+  );
+}
+
 export function TreeRow(props: TreeRowProps) {
   return (
     <div
@@ -110,6 +129,7 @@ export function TreeRow(props: TreeRowProps) {
       ) : (
         <span className="tree-label">{props.label}</span>
       )}
+      <LabelDots dots={props.dots} />
       <span className="tree-meta">{props.meta}</span>
       <MoreButton label={props.label} onOpen={props.onContextMenu} />
     </div>

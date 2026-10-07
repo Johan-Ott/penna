@@ -14,7 +14,7 @@ import {
   type TreeViewProps,
 } from "./useTreeView.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
-import { LabelsDialog } from "../labels/LabelsDialog.js";
+import { FilterButton, LabelsLayer } from "../labels/LabelsInTree.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
@@ -36,7 +36,7 @@ function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: 
       {...rowView(row, props, view.collapsed)}
       isRenaming={view.renamingId === row.node.id}
       dropHint={drag.dropHintFor(row.node.id)}
-      dragProps={drag.rowDragProps(row, actions.canEdit(row.node))}
+      dragProps={drag.rowDragProps(row, actions.canEdit(row.node) && !tree.isFiltered)}
       {...rowHandlers(row, actions, view)}
       {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
       onContextMenu={(event) => openMenu(event, menuOf(row, tree, menuFor))}
@@ -44,7 +44,12 @@ function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: 
   ));
 }
 
-function SectionHeading(props: { label: string; onDrop?: () => void; words?: number }) {
+function SectionHeading(props: {
+  label: string;
+  onDrop?: () => void;
+  words?: number;
+  filter?: ReactNode;
+}) {
   return (
     <div
       role="none"
@@ -53,6 +58,7 @@ function SectionHeading(props: { label: string; onDrop?: () => void; words?: num
       onDrop={(event: DragEvent) => (event.preventDefault(), props.onDrop?.())}
     >
       {props.label}
+      {props.filter}
       {props.words !== undefined && (
         <span className="sidebar-heading-words" aria-label={t("Ord i boken")}>
           {props.words.toLocaleString(numberLocale())}
@@ -133,6 +139,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
         label={t("Boken")}
         onDrop={tree.dropAtBookEnd}
         words={manuscriptWords(props.project.tree, props.project.summaries)}
+        filter={<FilterButton props={props} view={view} />}
       />
       <Rows rows={sections.book} props={props} tree={tree} />
       {props.isBookOnly ? (
@@ -143,19 +150,6 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
       <LabelsLayer props={props} view={view} />
     </div>
-  );
-}
-
-function LabelsLayer({ props, view }: { props: TreeViewProps; view: Tree["view"] }) {
-  const { labelsFor, setLabelsFor } = view;
-  if (!labelsFor || !props.onUpdateProject) return null;
-  return (
-    <LabelsDialog
-      project={props.project}
-      nodeId={labelsFor}
-      onUpdate={props.onUpdateProject}
-      onClose={() => setLabelsFor(null)}
-    />
   );
 }
 

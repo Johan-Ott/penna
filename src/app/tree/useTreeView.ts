@@ -18,6 +18,7 @@ import type { Placement, TreeMenuActions } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
 import type { ProjectChange } from "../labels/LabelsDialog.js";
+import { filteredTree, labelsOn } from "../../project/labels.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TreeViewProps {
@@ -83,8 +84,9 @@ function useTreeViewState(tree: TreeNode[]) {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [menu, setMenu] = useState<MenuState>(null);
   const [labelsFor, setLabelsFor] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string[]>([]);
   const editing = { renamingId, setRenamingId, menu, setMenu, labelsFor, setLabelsFor };
-  return { ...useCollapsed(tree), ...editing };
+  return { ...useCollapsed(tree), ...editing, filter, setFilter };
 }
 
 const foldableIds = (nodes: TreeNode[]): string[] =>
@@ -160,8 +162,12 @@ export function useTreeView(props: TreeViewProps) {
     event.stopPropagation();
     if (items.length > 0) view.setMenu({ items, x: event.clientX, y: event.clientY });
   };
-  const sections = sidebarSections(visibleRows(project.tree, view.collapsed));
-  return { view, actions, drag, sections, dropAtBookEnd, openMenu };
+  const isFiltered = view.filter.length > 0;
+  const rows = isFiltered
+    ? visibleRows(filteredTree(project.tree, view.filter), new Set())
+    : visibleRows(project.tree, view.collapsed);
+  const sections = sidebarSections(rows);
+  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered };
 }
 
 export type Tree = ReturnType<typeof useTreeView>;
@@ -209,6 +215,7 @@ export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<s
     label: isInCloud ? t("Hämtar från molnet…") : label,
     title: node.kind === "scene" ? (summary?.title ?? "") : (node.title ?? ""),
     meta,
+    dots: labelsOn(props.project.fields, node),
     isActive: node.id === props.openSceneId,
     isExpanded: node.kind === "scene" ? null : !collapsed.has(node.id),
     isMissing: node.kind === "scene" && !summary,

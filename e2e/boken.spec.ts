@@ -73,6 +73,26 @@ test("a label is made on one scene and ticked only there, and can be removed", a
   await expect(dialog.getByText("Boken har inga labels än.")).toBeVisible();
 });
 
+test("a labelled scene shows its dot, and the filter keeps only it and its chapter", async ({
+  page,
+}) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Labels" });
+  await dialog.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+  await page.keyboard.press("Escape");
+  await expect(sidebar(page).getByLabel("Skriv om", { exact: true })).toHaveCount(1);
+
+  await sidebar(page).getByRole("button", { name: "Filtrera" }).click();
+  await page.getByRole("menuitemradio", { name: "Skriv om" }).click();
+
+  await expect(treeRow(page, "Isen")).toBeVisible();
+  await expect(treeRow(page, "1. Brevet")).toBeVisible();
+  await expect(treeRow(page, "Köket")).toBeHidden();
+  await expect(treeRow(page, "Regnet")).toBeHidden();
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

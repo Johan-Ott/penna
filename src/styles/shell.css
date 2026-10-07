@@ -249,10 +249,12 @@
 
 .sidebar-heading:has(.sidebar-heading-words) {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
 }
 
 .sidebar-heading-words {
+  margin-left: auto;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
@@ -1111,4 +1113,37 @@
   display: block;
   color: var(--text-label);
   font-size: 11px;
+}
+
+.tree-dots {
+  display: flex;
+  flex-shrink: 0;
+  gap: 3px;
+  margin-right: 6px;
+}
+
+.tree-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.tree-filter {
+  padding: 1px 6px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-label);
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.tree-filter:hover {
+  border-color: var(--border-control);
+}
+
+.tree-filter[aria-pressed="true"] {
+  border-color: var(--primary);
+  color: var(--text);
 }

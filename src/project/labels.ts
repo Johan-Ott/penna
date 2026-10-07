@@ -32,6 +32,10 @@ export function labelsOf(fields: Record<string, unknown>): Label[] {
   return Array.isArray(stored) ? stored.filter(isLabel) : [];
 }
 
+/** The labels on a node, in the book's order of labels. */
+export const labelsOn = (fields: Record<string, unknown>, node: TreeNode) =>
+  node.labels?.length ? labelsOf(fields).filter((label) => node.labels?.includes(label.id)) : [];
+
 const mapNode = (tree: TreeNode[], id: string, change: (node: TreeNode) => TreeNode): TreeNode[] =>
   tree.map((node) => {
     if (node.id === id) return change(node);
@@ -72,4 +76,14 @@ export const hasLabel = (tree: TreeNode[], nodeId: string, labelId: string) =>
 export function mergeLabelIds(base: string[] = [], here: string[] = [], drive: string[] = []) {
   const removed = new Set(base.filter((id) => !here.includes(id) || !drive.includes(id)));
   return [...new Set([...here, ...drive])].filter((id) => !removed.has(id));
+}
+
+/** Only the nodes with one of the labels, and what they lie in, so the book's shape still shows. */
+export function filteredTree(tree: TreeNode[], labelIds: string[]): TreeNode[] {
+  return tree.flatMap((node) => {
+    const children = node.children && filteredTree(node.children, labelIds);
+    const isLabelled = node.labels?.some((id) => labelIds.includes(id)) ?? false;
+    if (!isLabelled && !children?.length) return [];
+    return [children ? { ...node, children } : node];
+  });
 }

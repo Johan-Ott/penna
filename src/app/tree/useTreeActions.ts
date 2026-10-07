@@ -1,5 +1,6 @@
 import type { KeyboardEvent } from "react";
 import {
+  findNode,
   isInTrash,
   isSpecialFolder,
   moveNode,
@@ -44,8 +45,11 @@ export function useTreeActions(handlers: TreeActionHandlers) {
     },
     restore: (node: TreeNode) =>
       onChangeTree(moveNode(tree, node.id, null, Number.MAX_SAFE_INTEGER)),
-    moveBy: (row: TreeRow, step: 1 | -1) =>
-      onChangeTree(moveNode(tree, row.node.id, row.parentId, Math.max(0, row.index + step))),
+    // The place in the book itself, which a filtered tree's rows do not show.
+    moveBy: (row: TreeRow, step: 1 | -1) => {
+      const index = findNode(tree, row.node.id)?.index ?? row.index;
+      onChangeTree(moveNode(tree, row.node.id, row.parentId, Math.max(0, index + step)));
+    },
     startRename: (node: TreeNode) => canEdit(node) && handlers.startRename(node.id),
   };
   return { ...actions, onKeyDown: treeKeyHandler(actions) };
