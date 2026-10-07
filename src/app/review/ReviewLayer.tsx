@@ -9,6 +9,8 @@ import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
 import { documentText } from "../../editor/documentText.js";
 import { CommentsSection } from "./CommentsSection.js";
+import { BookTasks } from "./BookTasks.js";
+import { sidebarProps } from "../paneProps.js";
 import { RevisionSection } from "./RevisionSection.js";
 import type { useComments } from "./useComments.js";
 
@@ -31,6 +33,21 @@ type ShownProps = {
   comments: Comments;
 };
 
+// The open scene's comments, then what is still open elsewhere in the book.
+function CommentsAndTasks(props: ShownProps) {
+  return (
+    <>
+      <CommentsSection comments={props.comments} text={documentText(props.doc).text} />
+      <BookTasks
+        project={props.project}
+        openSceneId={props.scene.id}
+        comments={props.comments.comments}
+        onOpen={sidebarProps(props.app, props.project).onOpenScene}
+      />
+    </>
+  );
+}
+
 function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
@@ -46,9 +63,7 @@ function ShownReview(props: ShownProps) {
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}
-      commentsSection={
-        <CommentsSection comments={props.comments} text={documentText(props.doc).text} />
-      }
+      commentsSection={<CommentsAndTasks {...props} />}
       revisionSection={<RevisionSection revision={app.revision} />}
       revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}
