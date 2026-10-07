@@ -59,7 +59,11 @@ function searchActions(props: SearchPanelProps, query: SearchQuery) {
       position: () => matchPosition(editorState),
       step: (isBackwards: boolean) => run(isBackwards ? findPrev : findNext, false),
       replaceOne: () => run(replaceNext, false),
-      replaceEvery: () => run(replaceAll, false),
+      replaceEvery: () => {
+        const { total } = matchPosition(editorState);
+        run(replaceAll, false);
+        props.manuscript?.replacedInScene(total, query.search);
+      },
     };
   }
   return {
@@ -140,11 +144,7 @@ function ReplaceRow(props: {
         placeholder={t("Ersätt med")}
         value={props.query.replace}
         onChange={(event) => props.query.setReplace(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key !== "Escape") return;
-          event.preventDefault();
-          props.onClose();
-        }}
+        onKeyDown={(event) => event.key === "Escape" && (event.preventDefault(), props.onClose())}
       />
       <button className="button secondary small" onClick={props.actions.replaceOne}>
         {t("Ersätt")}
@@ -177,7 +177,7 @@ function SearchOptions(props: {
   return (
     <div className="search-options">
       {manuscript && (
-        <Chip isOn={manuscript.isOn} onToggle={manuscript.toggle}>
+        <Chip isOn={manuscript.isOn} onToggle={() => manuscript.setOn(!manuscript.isOn)}>
           {t("Hela manuset")}
         </Chip>
       )}

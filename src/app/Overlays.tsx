@@ -1,3 +1,4 @@
+import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { useCallback, useMemo } from "react";
 import { useAutoBackup } from "./useAutoBackup.js";
 import { ConflictDialog } from "./ConflictDialog.js";
@@ -40,6 +41,7 @@ interface OverlayParts {
   session: SceneSession;
   conflict: DiskConflict | null;
   editor: ReturnType<typeof useEditorView>;
+  search: { scope: ManuscriptScope };
   refresh: () => Promise<void>;
   series: Project | null;
   seriesState: { refreshSeries: () => Promise<void> };
@@ -106,6 +108,7 @@ function PaletteLayer({ app }: { app: OverlayParts }) {
   if (!app.palette.isOpen) return null;
   const search = (text: string) => {
     app.writingMode.setView("skriv");
+    app.search.scope.setOn(true);
     app.writingMode.openSearchWith(text);
   };
   return (

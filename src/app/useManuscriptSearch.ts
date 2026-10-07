@@ -1,5 +1,6 @@
 import type { SearchQuery } from "prosemirror-search";
 import { findNext, findNextNoWrap, findPrev, findPrevNoWrap } from "prosemirror-search";
+import { undo as undoCommand } from "prosemirror-history";
 import type { EditorState } from "prosemirror-state";
 import { useEffect, useState } from "react";
 import type { useEditorView } from "../editor/useEditorView.js";
@@ -20,7 +21,8 @@ import type { Project } from "./useProject.js";
 export interface ReplaceDone {
   count: number;
   search: string;
-  changes: SceneChange[];
+  /** Null when only the open scene changed: then the editor's own undo takes it back. */
+  changes: SceneChange[] | null;
 }
 
 interface SearchParts {
@@ -68,25 +70,28 @@ function matchIndex(state: EditorState, query: SearchQuery) {
   return 0;
 }
 
+// Where the open scene's match is counted among all the manuscript's matches.
+function positionAcross(parts: StepParts, query: SearchQuery, open: EditorState | null) {
+  const { project, session } = parts;
+  if (!project) return { current: 0, total: 0 };
+  let total = 0;
+  let current = 0;
+  for (const id of manuscriptIds(project)) {
+    const state = parts.stateOf(id, open);
+    if (!state) continue;
+    const index = id === session.scene?.id && open ? matchIndex(open, query) : 0;
+    if (index > 0) current = total + index;
+    total += countMatches(state, query);
+  }
+  return { current, total };
+}
+
 export function useManuscriptSearch(parts: SearchParts) {
-  const [isOn, setOn] = useState(true);
+  const [isOn, setOn] = useState(false);
   const [replaceDone, setReplaceDone] = useState<ReplaceDone | null>(null);
   const stateOf = useSceneStates(parts, isOn);
-  const { project, session } = parts;
-
-  const position = (query: SearchQuery, open: EditorState | null) => {
-    if (!project) return { current: 0, total: 0 };
-    let total = 0;
-    let current = 0;
-    for (const id of manuscriptIds(project)) {
-      const state = stateOf(id, open);
-      if (!state) continue;
-      const index = id === session.scene?.id && open ? matchIndex(open, query) : 0;
-      if (index > 0) current = total + index;
-      total += countMatches(state, query);
-    }
-    return { current, total };
-  };
+  const position = (query: SearchQuery, open: EditorState | null) =>
+    positionAcross({ ...parts, stateOf }, query, open);
 
   const step = (query: SearchQuery, isBackwards: boolean) =>
     void stepAcross({ ...parts, stateOf }, query, isBackwards);
@@ -94,9 +99,12 @@ export function useManuscriptSearch(parts: SearchParts) {
   const replaceAll = (query: SearchQuery) =>
     void replaceEverywhere(parts, query).then((done) => done && setReplaceDone(done));
 
-  const scope: ManuscriptScope = { isOn, toggle: () => setOn(!isOn), position, step, replaceAll };
+  const replacedInScene = (count: number, search: string) =>
+    count > 0 && setReplaceDone({ count, search, changes: null });
+  const scope: ManuscriptScope = { isOn, setOn, position, step, replaceAll, replacedInScene };
   const undo = () => {
-    if (replaceDone) void undoEverywhere(parts, replaceDone.changes);
+    if (replaceDone?.changes) void undoEverywhere(parts, replaceDone.changes);
+    else if (replaceDone) parts.editor.run(undoCommand);
     setReplaceDone(null);
   };
   return { scope, done: replaceDone, onUndo: undo, onDismiss: () => setReplaceDone(null) };

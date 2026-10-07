@@ -43,10 +43,12 @@ export function replaceAllInText(sceneText: string, query: SearchQuery) {
 
 export interface ManuscriptScope {
   isOn: boolean;
-  toggle: () => void;
+  setOn: (isOn: boolean) => void;
   position: (query: SearchQuery, open: EditorState | null) => { current: number; total: number };
   step: (query: SearchQuery, isBackwards: boolean) => void;
   replaceAll: (query: SearchQuery) => void;
+  /** Replace all within the open scene, so it is said and can be undone like across the book. */
+  replacedInScene: (count: number, search: string) => void;
 }
 
 /** Goes round the manuscript; the scene itself comes last. */
