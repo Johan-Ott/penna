@@ -31,6 +31,12 @@ test("a scene is renamed from its menu in the tree", async ({ page }) => {
   await expect(treeRow(page, "Isen bär")).toBeVisible();
 });
 
+test("a chapter clicked opens its first scene", async ({ page }) => {
+  await treeRow(page, "2. Fyren").click();
+
+  await expect(editor(page)).toContainText("Arvid hade inte varit uppe i fyren");
+});
+
 test("a scene thrown away can be put back in the manuscript", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
   await page.getByRole("menuitem", { name: "Flytta till papperskorg" }).click();

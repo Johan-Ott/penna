@@ -5,6 +5,7 @@ import {
   moveNode,
   moveToTrash,
   renameNode,
+  sceneIdsIn,
   type TreeNode,
 } from "../../project/tree.js";
 import type { TreeRow } from "../../project/treeRows.js";
@@ -15,6 +16,7 @@ export interface TreeActionHandlers {
   onOpenScene: (id: string) => void;
   onRenameScene: (id: string, title: string) => void;
   toggle: (id: string) => void;
+  expand: (ids: string[]) => void;
   startRename: (id: string) => void;
 }
 
@@ -25,8 +27,14 @@ export function useTreeActions(handlers: TreeActionHandlers) {
   const actions = {
     canEdit,
     isInTrash: (id: string) => isInTrash(tree, id),
-    activate: (node: TreeNode) =>
-      node.kind === "scene" ? handlers.onOpenScene(node.id) : handlers.toggle(node.id),
+    activate: (node: TreeNode) => {
+      // A chapter opens at its first scene; its arrow folds it.
+      const first = node.kind === "chapter" ? sceneIdsIn(tree, node.id)[0] : undefined;
+      if (!first)
+        return node.kind === "scene" ? handlers.onOpenScene(node.id) : handlers.toggle(node.id);
+      handlers.expand([node.id]);
+      handlers.onOpenScene(first);
+    },
     rename: (node: TreeNode, title: string) =>
       node.kind === "scene"
         ? handlers.onRenameScene(node.id, title)
