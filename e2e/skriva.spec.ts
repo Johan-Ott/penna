@@ -223,6 +223,18 @@ test("Skicka till redaktör in the menu makes the Word manuscript at once", asyn
   expect((await download).suggestedFilename()).toMatch(/\.docx$/);
 });
 
+test("selected words are shared as a picture, saved as a PNG", async ({ page }) => {
+  await selectFirstWord(page);
+  await page.getByRole("button", { name: "Dela som bild" }).click();
+  const dialog = page.getByRole("dialog", { name: "Dela som bild" });
+  await dialog.getByRole("radio", { name: "Kvadrat" }).click();
+
+  const download = page.waitForEvent("download");
+  await dialog.getByRole("button", { name: "Spara bild" }).click();
+
+  expect((await download).suggestedFilename()).toMatch(/png$/);
+});
+
 test("the focus mode button keeps the cursor in the text, so nothing typed is lost", async ({
   page,
 }) => {

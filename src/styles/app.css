@@ -2892,3 +2892,22 @@ button.book-cover:hover {
 .draft-row .link-button {
   white-space: nowrap;
 }
+
+.share-dialog {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.excerpt-preview {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: min(52vh, 480px);
+  margin: 12px auto 0;
+  border-radius: 8px;
+  box-shadow: var(--shadow-dialog);
+}
+
+.excerpt-preview.kvadrat {
+  height: auto;
+  width: min(100%, 340px);
+}

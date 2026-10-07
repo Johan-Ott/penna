@@ -4,6 +4,7 @@ import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { findNode } from "../project/tree.js";
 import type { AppState } from "./App.js";
 import { ReplaceToast } from "./SaveToast.js";
+import { ShareImageDialog } from "./share/ShareImageDialog.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 
@@ -63,6 +64,7 @@ export function BookToasts({ app }: { app: AppState }) {
     <div className="app-toasts">
       <ReplaceToast {...app.search} />
       <RenameOfferToast {...app.renameOffer} />
+      <ShareImageDialog project={app.project} author={app.startup.preferences.authorName} />
     </div>
   );
 }

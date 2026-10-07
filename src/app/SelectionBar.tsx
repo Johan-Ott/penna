@@ -4,6 +4,7 @@ import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
+import { openExcerpt, useShownExcerpt } from "./share/shareExcerpt.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
 import { numberLocale, t } from "../i18n/i18n.js";
@@ -43,8 +44,10 @@ function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   );
 }
 
-// Focus moving in or out of the text makes no transaction, so it is followed here.
-function useEditorFocus(editor: Editor) {
+// Focus moving in or out of the text makes no transaction, so it is followed here. The picture's
+// dialog leaves the text focused, so the bar steps aside for it.
+function useIsBarWanted(editor: Editor) {
+  const isSharing = useShownExcerpt() !== null;
   const [hasFocus, setFocus] = useState(false);
   const element = editor.viewRef.current?.dom;
   useEffect(() => {
@@ -58,7 +61,7 @@ function useEditorFocus(editor: Editor) {
       element.removeEventListener("blur", onBlur);
     };
   }, [element]);
-  return hasFocus;
+  return hasFocus && !isSharing;
 }
 
 // On a phone the bar goes below the selection: Android's own menu takes the place above.
@@ -72,11 +75,16 @@ function barPosition(editor: Editor, isPhone: boolean) {
   return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };
 }
 
-/** Right-click keeps the system menu, whose spelling suggestions the page cannot read. */
+const selectedText = (editor: Editor) => {
+  const state = editor.editorState;
+  return state ? state.doc.textBetween(state.selection.from, state.selection.to, "\n") : "";
+};
+
+/** Marks, a comment or a footnote for the selected words, and the words as a picture to share. */
 export function SelectionBar({ editor, onComment }: { editor: Editor; onComment: () => void }) {
-  const hasFocus = useEditorFocus(editor);
+  const isWanted = useIsBarWanted(editor);
   const isPhone = usePhone();
-  const position = hasFocus ? barPosition(editor, isPhone) : null;
+  const position = isWanted ? barPosition(editor, isPhone) : null;
   if (!position) return null;
   const marks = { editorState: editor.editorState, run: editor.run };
   return (
@@ -95,6 +103,9 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
       </button>
       <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
         {t("Fotnot")}
+      </button>
+      <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
+        {t("Dela som bild")}
       </button>
       <SelectedWords editorState={editor.editorState} />
     </div>
