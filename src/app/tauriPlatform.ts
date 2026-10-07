@@ -13,7 +13,7 @@ import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
 import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
-import type { FileKind, PickKind, Platform } from "./platform.js";
+import type { FileKind, PickKind, Platform, Spelling } from "./platform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { isTestBuild, testAsk, testPath } from "./testMode.js";
 import { t } from "../i18n/i18n.js";
@@ -133,6 +133,12 @@ const backups = {
   remove: (path: string) => invoke("remove_backup", { path }).then(() => undefined),
 };
 
+const spelling: Spelling = {
+  misspelled: (language, words) => invoke("misspelled_words", { language, words }),
+  suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
+  addDictionary: (language, aff, dic) => invoke("add_dictionary", { language, aff, dic }),
+};
+
 export const tauriPlatform: Platform = {
   isPhone,
   webFetch: appFetch as typeof fetch,
@@ -141,7 +147,7 @@ export const tauriPlatform: Platform = {
   saveFile,
   pickFile,
   fileSystem: tauriFileSystem,
-  setSpellLanguage: (language) => invoke("set_spell_language", { language }),
+  spelling,
   checkForUpdate: isPhone ? async () => null : checkForUpdate,
   notify,
   ...(isPhone ? {} : { showInFolder: (path: string) => revealItemInDir(path) }),

@@ -11,6 +11,7 @@ import { focusPlugin, typewriterPlugin } from "./focus.js";
 import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
 import { repetitionsPlugin } from "./repetitionMarks.js";
+import { spellingPlugin, type SpellingSwitch } from "./spellingMarks.js";
 import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
 import { insertFootnote, uniqueFootnoteLabels } from "./footnoteEditing.js";
 import { pageMarksPlugin } from "./pageMarks.js";
@@ -51,6 +52,8 @@ export interface EditorSwitches {
   pageMarks: () => (number | undefined)[] | null;
   /** The editor's changes to the open text that are not yet accepted or rejected. */
   revisionChanges: () => RevisionChange[];
+  /** Null where Penna does not check the spelling itself. */
+  spelling: () => SpellingSwitch | null;
 }
 
 export const DEFAULT_SWITCHES: EditorSwitches = {
@@ -63,6 +66,7 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   onComment: () => undefined,
   pageMarks: () => null,
   revisionChanges: () => [],
+  spelling: () => null,
 };
 
 // Each new paragraph starts its own undo, so Ctrl+Z takes back the last paragraph, not
@@ -103,6 +107,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       typewriterPlugin(switches.isTypewriterOn),
       mentionsPlugin(switches.mentionMatchers, switches.onMention),
       repetitionsPlugin(switches.repeatWindow),
+      spellingPlugin(switches.spelling),
       commentsPlugin(switches.commentAnchors, switches.onComment),
       pageMarksPlugin(switches.pageMarks),
       revisionPlugin(switches.revisionChanges),

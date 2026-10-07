@@ -1907,6 +1907,13 @@ button.book-cover:hover {
   border-bottom: 2px dotted var(--text-label);
 }
 
+/* A wavy line as in other writing programs; it stays under a repeat's dots. */
+.manuscript .misspelled {
+  text-decoration: underline wavy #d4483b;
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+}
+
 .review-panel {
   display: flex;
   flex-direction: column;

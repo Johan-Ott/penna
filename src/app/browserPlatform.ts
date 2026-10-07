@@ -28,10 +28,6 @@ export const browserPlatform: Platform = {
     const permission = await Notification.requestPermission();
     if (permission === "granted") new Notification(title, { body });
   },
-  // The browser picks its own dictionary; the page's lang is the only hint it takes.
-  setSpellLanguage: async (language) => {
-    document.documentElement.lang = language;
-  },
   pickFile: (kind) =>
     new Promise((resolve) => {
       const input = document.createElement("input");

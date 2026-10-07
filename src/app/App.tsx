@@ -9,7 +9,6 @@ import { noteSortOf } from "./notes/NotePage.js";
 import { useReviewParts } from "./review/useReviewParts.js";
 import { UpdateNotice } from "./UpdateNotice.js";
 import { useReminder } from "./reminder.js";
-import { useSpellLanguage } from "./useSpellLanguage.js";
 import { useMentionLinks } from "./notes/useMentionLinks.js";
 import { cardActions } from "./notes/cardActions.js";
 import { useProject, type Project } from "./useProject.js";
@@ -17,6 +16,7 @@ import { useSeries } from "./useSeries.js";
 import { useSeriesActions } from "./notes/useSeriesActions.js";
 import { homesOf } from "./notes/noteHomes.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
+import { useSpelling } from "./spelling/useSpelling.js";
 import { BookToasts, useRenameOffer } from "./renameOffer.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
@@ -86,7 +86,6 @@ function useCoreState() {
   const { seriesState, seriesActions } = useSeriesParts(project, session, onFolderChange);
   const seriesDir = seriesState.series?.dir ?? null;
   useOpenFirstScene(project, session, editor.requestFocus, seriesDir);
-  useSpellLanguage(project, session);
   const input = { project, session, updateTree, refresh, focusEditor: editor.requestFocus };
   const actions = {
     ...useProjectActions(input),
@@ -108,6 +107,7 @@ function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const isNoteOpen = noteId !== null && homes.some((home) => noteSortOf(home, noteId) !== null);
   const notes = useNotes(homes, project, isNoteOpen);
   useMentionLinks(sceneState.editor, notes);
+  useSpelling(sceneState.editor, project, notes, writingMode.settings.spellcheck);
   const [newNoteSort, setNewNoteSort] = useState<string | null | false>(false);
   const cards = cardActions({ homes, session: sceneState.session, setView: writingMode.setView });
   const seriesChoice = useSeriesActions({

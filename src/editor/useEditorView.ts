@@ -8,6 +8,7 @@ import type { MentionMatcher } from "./mentions.js";
 import type { CommentAnchor } from "./commentMarks.js";
 import { pictureNodeView, type PictureUrl } from "./pictureView.js";
 import type { RevisionChange } from "../manuscript/revision.js";
+import type { SpellingSwitch } from "./spellingMarks.js";
 
 function createView(
   element: HTMLElement,
@@ -17,7 +18,10 @@ function createView(
   const view: EditorView = new EditorView(element, {
     state: createEditorState(schema.node("doc"), switches),
     editable: switches.isEditable,
-    attributes: () => ({ spellcheck: switches.isSpellcheckOn() ? "true" : "false" }),
+    // Penna's own check, where there is one, instead of the browser's.
+    attributes: () => ({
+      spellcheck: switches.isSpellcheckOn() && !switches.spelling() ? "true" : "false",
+    }),
     nodeViews: { picture: pictureNodeView((name) => switches.pictureUrl(name)) },
     dispatchTransaction(transaction) {
       const next = view.state.apply(transaction);
@@ -48,6 +52,7 @@ interface EditorModes {
   /** Reads a picture in the open book's bilder/ folder. */
   pictureUrl: PictureUrl;
   revisionChanges: RevisionChange[];
+  spelling: SpellingSwitch | null;
 }
 
 const START_MODES: EditorModes = {
@@ -63,6 +68,7 @@ const START_MODES: EditorModes = {
   onComment: () => undefined,
   pictureUrl: async () => null,
   revisionChanges: [],
+  spelling: null,
 };
 
 // ProseMirror asks these on every update, so the app can switch them without a new state.
@@ -81,6 +87,7 @@ function useModeSwitches() {
     onComment: (id) => modes.current.onComment(id),
     pictureUrl: (name) => modes.current.pictureUrl(name),
     revisionChanges: () => modes.current.revisionChanges,
+    spelling: () => modes.current.spelling,
   }));
   return { switches, modes };
 }

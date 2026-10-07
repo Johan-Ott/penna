@@ -54,7 +54,7 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     t("Typewriter-läge"),
     t("Raden du skriver på stannar mitt på skärmen i fokusläget."),
   ],
-  ["spellcheck", t("Stavningskontroll"), t("Systemets ordlista stryker under felstavade ord.")],
+  ["spellcheck", t("Stavningskontroll"), t("Penna stryker under felstavade ord i bokens språk.")],
   [
     "typography",
     t("Svensk typografi medan du skriver"),

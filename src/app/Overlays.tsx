@@ -29,7 +29,6 @@ import type { useExport } from "./exporting/useExport.js";
 import type { WritingSettings } from "../editor/writingSettings.js";
 import { SettingsLayer, type useSettingsDialog } from "./settings/SettingsDialog.js";
 import { bookLanguage } from "../project/bookLanguage.js";
-import { applySpellLanguage } from "./useSpellLanguage.js";
 import type { useStartup } from "./useStartup.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 import { useDriveSync, type DriveSync } from "./useDriveSync.js";
@@ -90,15 +89,11 @@ function MentionLayer({ app }: { app: OverlayParts }) {
   return <MentionCard notes={notes} homes={app.homes} onOpenNote={openNote} />;
 }
 
-// The language is saved before the window may restart for its spelling dictionary.
 function bookSettings(app: OverlayParts, drive: DriveSync) {
   if (!app.project) return null;
   return {
     language: bookLanguage(app.project.fields),
-    onChangeLanguage: async (language: string) => {
-      await app.updateFields({ language });
-      await applySpellLanguage(app.session, language);
-    },
+    onChangeLanguage: (language: string) => void app.updateFields({ language }),
     onExportZip: app.zip.backup,
     drive,
   };

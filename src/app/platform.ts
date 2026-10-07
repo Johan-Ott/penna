@@ -19,8 +19,6 @@ export interface Platform {
   saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind): Promise<string | null>;
   /** Its path and bytes, or null if cancelled. */
   pickFile(kind: PickKind): Promise<PickedFile | null>;
-  /** In the app the window restarts when the language changes. */
-  setSpellLanguage(language: string): Promise<void>;
   /** Null when this is the newest, or when nothing could be asked. */
   checkForUpdate(): Promise<AppUpdate | null>;
   /** Missing where there is no file manager. */
@@ -35,6 +33,16 @@ export interface Platform {
   webFetch: typeof fetch;
   /** Copies of every book in Penna's own folder. Missing in the browser version. */
   backups?: Backups;
+  /** Penna's own spelling check; missing in the browser, which checks the spelling itself. */
+  spelling?: Spelling;
+}
+
+export interface Spelling {
+  /** The words the language's dictionary does not know; fails when there is no dictionary. */
+  misspelled(language: string, words: string[]): Promise<string[]>;
+  suggestions(language: string, word: string): Promise<string[]>;
+  /** A language fetched from the web, as its Hunspell files. */
+  addDictionary(language: string, aff: string, dic: string): Promise<void>;
 }
 
 export interface Backups {

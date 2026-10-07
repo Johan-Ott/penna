@@ -21,6 +21,7 @@ tauri-plugin-opener = "2.7.0"
 tauri-plugin-notification = "2.5.1"
 tauri-plugin-http = "2.8.0"
 serde = { version = "1.0.229", features = ["derive"] }
+spellbook = "0.4"
 
 # Updates come from GitHub Releases on the desktop; a phone gets them from its app store.
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
@@ -36,3 +37,7 @@ lto = true
 opt-level = "s"
 panic = "abort"
 strip = true
+
+# The spelling check is slow unoptimised, so Penna Test spells as fast as the real app.
+[profile.dev.package.spellbook]
+opt-level = 3

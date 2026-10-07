@@ -44,6 +44,27 @@ function ErrorReportButton() {
   );
 }
 
+// What Penna is built with, as their licences ask.
+function Credits() {
+  return (
+    <>
+      <Row
+        label={t("Typsnitt")}
+        hint={t(
+          "Literata, EB Garamond, Crimson Pro, Libre Baskerville, Source Serif 4 och Geist, under SIL Open Font License.",
+        )}
+      />
+      <Row label={t("Boksättning")} hint={t("Typst, under Apache License 2.0.")} />
+      <Row
+        label={t("Stavning")}
+        hint={t(
+          "Spellbook, under MPL 2.0. Svensk ordlista av Göran Andersson, under LGPL 3. Brittisk engelsk ordlista ur SCOWL, under MIT och BSD.",
+        )}
+      />
+    </>
+  );
+}
+
 export function AboutTab() {
   return (
     <>
@@ -60,13 +81,7 @@ export function AboutTab() {
           "Penna samlar inte in någon data. Text lämnar enheten bara om du kopplar din egen Google Drive.",
         )}
       />
-      <Row
-        label={t("Typsnitt")}
-        hint={t(
-          "Literata, EB Garamond, Crimson Pro, Libre Baskerville, Source Serif 4 och Geist, under SIL Open Font License.",
-        )}
-      />
-      <Row label={t("Boksättning")} hint={t("Typst, under Apache License 2.0.")} />
+      <Credits />
     </>
   );
 }
