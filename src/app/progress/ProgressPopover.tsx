@@ -10,6 +10,7 @@ import { dayKey, streak, type Stats } from "../../project/stats.js";
 import { chapterWords, manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import { useEscape } from "../useShortcut.js";
+import { WordsByLabel, WordsByStatus } from "./BookSplit.js";
 import { GoalsDialog } from "./GoalsDialog.js";
 import { Heatmap } from "./Heatmap.js";
 import { NoStats } from "./NoStats.js";
@@ -121,6 +122,8 @@ function ProgressBody(props: { project: Project; stats: Stats; onWrite: () => vo
       <TowardsGoal numbers={numbers} />
       <Heatmap stats={stats} today={today} dailyGoal={numbers.goals.dailyGoal} />
       <Chapters project={project} />
+      <WordsByStatus project={project} />
+      <WordsByLabel project={project} />
     </>
   );
 }

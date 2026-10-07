@@ -139,6 +139,17 @@ test("a status chip narrows the manuscript's matches to scenes in that step", as
   await expect(hits).toContainText("Köket");
 });
 
+test("Framsteg shows the book's words per step", async ({ page }) => {
+  await page
+    .getByText(/^0 \/ 500 ord$/)
+    .first()
+    .click();
+
+  const progress = page.getByRole("dialog", { name: "Framsteg" });
+  await expect(progress.getByText("Ord per steg")).toBeVisible();
+  await expect(progress.getByText("Utkast 145")).toBeVisible();
+});
+
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 
