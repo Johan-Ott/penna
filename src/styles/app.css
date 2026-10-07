@@ -562,6 +562,17 @@ button {
   color: var(--text-muted);
 }
 
+/* Four choices or more do not fit a narrow column on one row, so they take two. */
+.segmented:has(> :nth-child(4)) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.segmented button {
+  white-space: nowrap;
+}
+
 .segmented button[aria-checked="true"] {
   background: var(--bg);
   color: var(--text);
