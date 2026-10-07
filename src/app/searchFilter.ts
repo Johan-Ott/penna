@@ -3,6 +3,7 @@ import { labelsOf } from "../project/labels.js";
 import { statusSteps } from "../project/statusSteps.js";
 import { findNode } from "../project/tree.js";
 import type { Project } from "./useProject.js";
+import { t } from "../i18n/i18n.js";
 
 /** A chip under the search: a status step or one of the book's labels. */
 export interface SearchChip {
@@ -11,9 +12,13 @@ export interface SearchChip {
   color: string;
 }
 
+/** Not a narrowing like the others: the notes' text is searched too. */
+export const WITH_NOTES = "anteckningar";
+
 export function searchChips(project: Project): SearchChip[] {
   const steps = statusSteps(project.fields);
   return [
+    { id: WITH_NOTES, label: t("Med anteckningar"), color: "" },
     ...SCENE_STATUSES.map((status) => ({
       id: `status:${status}`,
       label: steps[status].name,

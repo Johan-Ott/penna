@@ -150,6 +150,23 @@ test("Framsteg shows the book's words per step", async ({ page }) => {
   await expect(progress.getByText("Utkast 145")).toBeVisible();
 });
 
+test("Med anteckningar searches the notes' text too", async ({ page }) => {
+  await editor(page).click();
+  await page.keyboard.press("Control+f");
+  await page.keyboard.type("Trettioåtta");
+  await page.getByRole("button", { name: "Hela manuset" }).click();
+  await expect(page.getByText("Inga träffar")).toBeVisible();
+
+  await page
+    .getByRole("group", { name: "Bara scener med" })
+    .getByRole("button", { name: "Med anteckningar" })
+    .click();
+
+  const hits = page.getByRole("list", { name: "Träffar i manuset" }).getByRole("listitem");
+  await expect(hits).toHaveCount(1);
+  await expect(hits).toContainText("Elin");
+});
+
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 

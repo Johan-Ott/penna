@@ -11,12 +11,12 @@ import {
   searchableScene,
   type ManuscriptScope,
 } from "../editor/manuscriptSearch.js";
-import { manuscriptSceneIds } from "../project/tree.js";
+import { manuscriptSceneIds, sceneIdsIn, sortsOf } from "../project/tree.js";
 import { joinPath } from "../storage/fileSystem.js";
 import { replaceInScenes, undoReplace, type SceneChange } from "./manuscriptReplace.js";
 import { platform } from "./platform.js";
 import { sceneHits } from "./searchHits.js";
-import { isKept, searchChips } from "./searchFilter.js";
+import { isKept, searchChips, WITH_NOTES } from "./searchFilter.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 
@@ -37,15 +37,20 @@ interface SearchParts {
   only?: string[];
 }
 
-// Scenes still in the cloud have no text here.
-const manuscriptIds = (project: Project, only: string[] = []) =>
-  manuscriptSceneIds(project.tree).filter(
+const noteIds = (project: Project) =>
+  sortsOf(project.tree).flatMap((sort) => sceneIdsIn(project.tree, sort.id));
+
+// Scenes still in the cloud have no text here; the notes come after the book when asked for.
+function manuscriptIds(project: Project, only: string[] = []) {
+  const notes = only.includes(WITH_NOTES) ? noteIds(project) : [];
+  return [...manuscriptSceneIds(project.tree), ...notes].filter(
     (id) => project.scenes.includes(id) && isKept(project, id, only),
   );
+}
 
 async function loadScenes(project: Project) {
   const scenes = new Map<string, EditorState>();
-  for (const id of manuscriptIds(project)) {
+  for (const id of manuscriptIds(project, [WITH_NOTES])) {
     const path = joinPath(project.dir, `scenes/${id}.md`);
     const text = await platform.fileSystem.readText(path).catch(() => null);
     if (text !== null) scenes.set(id, searchableScene(text));
