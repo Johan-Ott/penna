@@ -35,7 +35,6 @@ interface WritingAreaProps {
   /** Hidden, not removed, so the editor keeps its scene and undo history. */
   isHidden: boolean;
   manuscriptSearch: ManuscriptScope;
-  replaceToast: ReactNode;
   today: Today;
   editor: ReturnType<typeof useEditorView>;
   focusLocation: string;
@@ -137,7 +136,6 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
       <SavedNowToast onSave={props.onSaveNow} />
       <TreeFailureToast failure={props.treeFailure} />
       <ReadOnlyNotice isReadOnly={props.isReadOnly} />
-      {props.replaceToast}
     </>
   );
 }

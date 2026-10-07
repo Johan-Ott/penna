@@ -108,11 +108,17 @@ export function useProjectActions(input: ProjectActionsInput) {
   return { newItem, ...useSceneFileActions({ project, session, refresh }) };
 }
 
-export function useTreeHandlers(actions: ReturnType<typeof useProjectActions>) {
+export function useTreeHandlers(
+  actions: ReturnType<typeof useProjectActions>,
+  onRenamed?: (id: string, title: string) => void,
+) {
   const [renameRequestId, setRenameRequestId] = useState<string | null>(null);
   return {
     renameRequestId,
-    onRenameScene: (id: string, title: string) => void actions.renameSceneTitle(id, title),
+    onRenameScene: (id: string, title: string) => {
+      onRenamed?.(id, title);
+      void actions.renameSceneTitle(id, title);
+    },
     onSetSceneStatus: (id: string, status: SceneStatus) => void actions.setStatus(id, status),
     onAdd: (kind: NodeKind, placement: Placement) =>
       void actions.newItem(kind, placement).then((id) => {

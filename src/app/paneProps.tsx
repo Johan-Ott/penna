@@ -3,7 +3,6 @@ import type { TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf } from "./notes/NotePage.js";
-import { ReplaceToast } from "./SaveToast.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
 import { FootnotePopover } from "./FootnotePopover.js";
 import { SelectionBar } from "./SelectionBar.js";
@@ -120,7 +119,6 @@ export function writingAreaProps(app: AppState, project: Project) {
     today: app.today,
     treeFailure: app.treeFailure,
     manuscriptSearch: app.search.scope,
-    replaceToast: <ReplaceToast {...app.search} />,
     aside: <ReviewLayer app={app} project={project} />,
     beside: <BesidePane app={app} project={project} />,
     selectionBar: (

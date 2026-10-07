@@ -98,6 +98,29 @@ test("a note is renamed from its menu in the list of its sort", async ({ page })
   await expect(page.getByRole("menuitem", { name: /papperskorg/i })).toBeVisible();
 });
 
+test("a person renamed is renamed in the manuscript too, and Ångra takes it back", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: /Personer/ }).click();
+  await page.getByRole("button", { name: "Meny för Elin" }).click();
+  await page.getByRole("menuitem", { name: "Byt namn" }).click();
+  await page.keyboard.press("Control+a");
+  await page.keyboard.type("Ella");
+  await page.keyboard.press("Enter");
+
+  await page.getByRole("button", { name: "Byt", exact: true }).click();
+  await expect(page.getByText(/^Ändrade \d+ förekomster av ”Elin”$/)).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Läge" })
+    .getByRole("button", { name: "Boken" })
+    .click();
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+  await expect(editor(page)).toContainText("när Ella kom in");
+
+  await page.getByRole("button", { name: "Ångra", exact: true }).last().click();
+  await expect(editor(page)).toContainText("när Elin kom in");
+});
+
 test("a scene in Boken has its menu behind ⋯", async ({ page }) => {
   await page.getByRole("button", { name: "Meny för Köket" }).click();
 

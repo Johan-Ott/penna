@@ -17,6 +17,7 @@ import { useSeries } from "./useSeries.js";
 import { useSeriesActions } from "./notes/useSeriesActions.js";
 import { homesOf } from "./notes/noteHomes.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
+import { BookToasts, useRenameOffer } from "./renameOffer.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
 import { useWritingStats } from "./useWritingStats.js";
@@ -162,7 +163,6 @@ function useAppState() {
   const { sceneState, projectState, startup, writingMode } = core;
   const { session } = sceneState;
   const { project, refresh, updateTree } = projectState;
-  const treeHandlers = useTreeHandlers(core.actions);
   const seriesTreeHandlers = useTreeHandlers(core.actions.series);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
@@ -171,6 +171,8 @@ function useAppState() {
   useReminder(startup.preferences.reminderHour, today.words);
   const isSearchOpen = writingMode.isSearchOpen;
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
+  const renameOffer = useRenameOffer(search.scope, project);
+  const treeHandlers = useTreeHandlers(core.actions, renameOffer.noteRenamed);
   listenToSaves(sceneState.savedRef, recordSave, startup.preferences.isAutoSnapshotOn);
   const input = { project, session, editor: sceneState.editor, updateTree, refresh };
   const sceneSplit = sceneSplitActions(input);
@@ -180,7 +182,7 @@ function useAppState() {
   const app = {
     ...parts,
     ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncReview, stats, today },
-    ...{ search, zip, newProjectAsked, sceneSplit },
+    ...{ search, renameOffer, zip, newProjectAsked, sceneSplit },
   };
   return { ...app, palette: usePalette(paletteContextOf(app)) };
 }
@@ -197,6 +199,7 @@ export function App() {
     <>
       {project && !isPhone && <ProjectScreen app={app} project={project} />}
       {project && isPhone && <PhoneProject app={app} project={project} />}
+      {project && <BookToasts app={app} />}
       {!project && <StartScreen app={app} />}
       <UpdateNotice session={app.session} />
     </>
