@@ -52,6 +52,7 @@ export function ContentsScreen(
         ids.forEach((id) => app.treeHandlers.onSetSceneStatus(id, status))
       }
       onReadBook={() => app.writingMode.read(null)}
+      onShowDrafts={() => app.drafts.show(null)}
     />
   );
 }

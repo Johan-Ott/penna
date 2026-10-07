@@ -176,6 +176,25 @@ test("a new person gets a name from the suggestions", async ({ page }) => {
   await expect(dialog.getByRole("textbox", { name: "Namn" })).toHaveValue(name);
 });
 
+test("a chapter saved as a draft is put back after the text changed", async ({ page }) => {
+  await treeRow(page, "1. Brevet").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Utkast…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Utkast" });
+  await dialog.getByRole("textbox", { name: "Utkastets namn" }).fill("Första");
+  await dialog.getByRole("button", { name: "Spara utkast" }).click();
+  await expect(dialog.getByText("Första", { exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.type(" Helt nytt.");
+  await expect(editor(page)).toContainText("Helt nytt.");
+  await treeRow(page, "1. Brevet").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Utkast…" }).click();
+  await dialog.getByRole("button", { name: "Återställ" }).click();
+
+  await expect(editor(page)).not.toContainText("Helt nytt.");
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

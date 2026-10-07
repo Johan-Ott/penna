@@ -19,18 +19,12 @@ import {
   type ProseFont,
   type WritingSettings,
 } from "../../editor/writingSettings.js";
-import {
-  manuscriptSceneIds,
-  numberNodes,
-  findNode,
-  type NodeKind,
-  type TreeNode,
-} from "../../project/tree.js";
+import { manuscriptSceneIds, numberNodes, findNode, type NodeKind } from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import type { PaletteEntry } from "./paletteSearch.js";
-import { cardEntries, sceneEntries } from "./bookEntries.js";
+import { cardEntries, labelled, sceneEntries } from "./bookEntries.js";
 import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
 import { insertFootnote } from "../../editor/footnoteEditing.js";
@@ -50,6 +44,8 @@ export interface PaletteContext {
   showShelf: () => void;
   /** Null when no scene is open. */
   showSnapshots: (() => void) | null;
+  /** For the open text's chapter, or the whole book. */
+  showDrafts: () => void;
   openSettings: () => void;
   /** Null on a phone, which has its own screens instead of the views. */
   showView: ((view: View) => void) | null;
@@ -75,12 +71,6 @@ export const command = (label: string, run: () => void, shortcut?: string): Pale
   run,
   ...(shortcut ? { shortcut } : {}),
 });
-
-/** The node's labels, for the palette's label chips. */
-export function labelled(tree: TreeNode[], id: string) {
-  const labels = findNode(tree, id)?.node.labels;
-  return labels?.length ? { labels } : {};
-}
 
 function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
   const scenes = manuscriptSceneIds(project.tree).map((id): PaletteEntry => {
@@ -130,6 +120,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     ...(context.showSnapshots
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
       : []),
+    command(t("Utkast…"), context.showDrafts),
     command(t("Inställningar"), context.openSettings, "Ctrl+,"),
     ...viewEntries(context.showView),
     command(t("Fetstil"), () => run(toggleBold), "Ctrl+B"),

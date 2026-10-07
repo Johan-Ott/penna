@@ -70,7 +70,7 @@ export function sidebarProps(app: AppState, project: Project) {
     onShowContents: () => writingMode.setView("innehall"),
     syncReviewCount: app.syncReview.items.length,
     onShowSyncReview: () => writingMode.setView("synk"),
-    onShowSnapshots: app.snapshots.show,
+    ...{ onShowSnapshots: app.snapshots.show, onShowDrafts: app.drafts.show },
     onOpenBeside: (id: string) =>
       app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),
     onChangeTree: (tree: TreeNode[]) => void app.updateTree(tree),

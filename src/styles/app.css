@@ -2844,3 +2844,51 @@ button.book-cover:hover {
   font: inherit;
   font-size: 12px;
 }
+
+.draft-save {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.draft-save input {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.draft-save .button {
+  align-self: flex-end;
+}
+
+.draft-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.draft-text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.draft-meta {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.contents-links {
+  display: flex;
+  gap: 16px;
+}
+
+.draft-row .link-button {
+  white-space: nowrap;
+}

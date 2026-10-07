@@ -11,6 +11,7 @@ type SceneParts = {
   project: { dir: string; tree: TreeNode[] };
   editor: { run: (command: Command) => void };
   snapshots: { show: (id: string) => void };
+  drafts: { show: (chapterId: string | null) => void };
   sceneSplit: { split: () => void; merge: () => void; canMerge: boolean };
   writingMode: { read: PaletteContext["read"] };
 };
@@ -26,6 +27,8 @@ export function sceneContext(app: SceneParts) {
   const { scene, project } = app;
   return {
     showSnapshots: scene ? () => app.snapshots.show(scene.id) : null,
+    showDrafts: () =>
+      app.drafts.show(scene ? (chapterOf(project.tree, scene.id)?.id ?? null) : null),
     splitScene: scene ? app.sceneSplit.split : null,
     mergeScene: app.sceneSplit.canMerge ? app.sceneSplit.merge : null,
     read: app.writingMode.read,

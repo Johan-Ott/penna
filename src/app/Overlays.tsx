@@ -16,6 +16,9 @@ import type { Snapshot } from "../project/snapshots.js";
 import type { WriteGuard } from "../sync/localSide.js";
 import type { Beside } from "./beside/BesidePane.js";
 import { SnapshotsLayer } from "./snapshots/SnapshotsDialog.js";
+import { draftBeside, DraftsLayer } from "./drafts/DraftsDialog.js";
+import type { Drafts } from "./drafts/useDrafts.js";
+import type { Draft } from "../project/drafts.js";
 import type { useSnapshots } from "./snapshots/useSnapshots.js";
 import { CrashDialog } from "./SyncLayer.js";
 import type { SyncReview } from "./sync/useSyncReview.js";
@@ -48,6 +51,7 @@ interface OverlayParts {
   updateFields: (fields: Record<string, unknown>) => Promise<void>;
   syncReview: SyncReview;
   snapshots: ReturnType<typeof useSnapshots>;
+  drafts: Drafts;
   palette: ReturnType<typeof usePalette>;
   notes: Notes;
   cards: CardActions;
@@ -154,6 +158,13 @@ function compareBeside(app: OverlayParts, snapshot: Snapshot) {
   app.snapshots.close();
 }
 
+// As a version is: beside the open text, with the dialog closed.
+function readDraftBeside(app: OverlayParts, draft: Draft) {
+  const beside = app.project && draftBeside(app.project, draft);
+  if (beside) app.writingMode.setBeside(beside);
+  app.drafts.close();
+}
+
 export function Overlays({ app }: { app: OverlayParts }) {
   return (
     <>
@@ -164,6 +175,11 @@ export function Overlays({ app }: { app: OverlayParts }) {
         sceneTitle={app.scene?.title ?? ""}
         doc={app.editor.editorState?.doc ?? null}
         onBeside={(snapshot) => compareBeside(app, snapshot)}
+      />
+      <DraftsLayer
+        drafts={app.drafts}
+        project={app.project}
+        onBeside={(draft) => readDraftBeside(app, draft)}
       />
       <SettingsAndSync app={app} />
       <MentionLayer app={app} />

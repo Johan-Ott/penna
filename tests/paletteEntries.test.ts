@@ -23,6 +23,7 @@ function context() {
     toggleFocusMode: () => undefined,
     openSearch: () => undefined,
     showSnapshots: null,
+    showDrafts: () => undefined,
     openSettings: () => undefined,
     showView: () => undefined,
     cards: [],

@@ -23,6 +23,7 @@ const actions: TreeMenuActions = {
   mergeWithNext: noop,
   labelItems: null,
   editLabels: null,
+  showDrafts: null,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));

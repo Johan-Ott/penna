@@ -1,5 +1,6 @@
 import type { PaletteEntry } from "./paletteSearch.js";
-import { command, labelled, type PaletteContext } from "./paletteEntries.js";
+import { findNode, type TreeNode } from "../../project/tree.js";
+import { command, type PaletteContext } from "./paletteEntries.js";
 import { t } from "../../i18n/i18n.js";
 
 export function sceneEntries(context: PaletteContext): PaletteEntry[] {
@@ -24,4 +25,10 @@ export function cardEntries({ cards, describe, openCard, project }: PaletteConte
       ...labelled(project.tree, card.id),
     };
   });
+}
+
+/** The node's labels, for the palette's label chips. */
+export function labelled(tree: TreeNode[], id: string) {
+  const labels = findNode(tree, id)?.node.labels;
+  return labels?.length ? { labels } : {};
 }

@@ -40,6 +40,7 @@ export interface TreeViewProps {
   onMoveToSeries?: (id: string) => void;
   canMergeOpenScene?: boolean;
   onMergeWithNext?: () => void;
+  onShowDrafts?: (chapterId: string) => void;
   /** The tree and project.json's fields changed together, as labels do. */
   onUpdateProject?: (change: ProjectChange) => void;
 }
@@ -103,6 +104,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
       noteLinkOf(props.project, node.id) === null,
     mergeWithNext: () => props.onMergeWithNext?.(),
     labelItems: labelMenu(props, view),
+    showDrafts: props.onShowDrafts ? (node) => props.onShowDrafts?.(node.id) : null,
     editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
   };
 }

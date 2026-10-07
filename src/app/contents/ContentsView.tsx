@@ -23,6 +23,8 @@ interface ContentsProps {
   onSaveFields: (fields: Record<string, unknown>) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
   onReadBook: () => void;
+  /** The drafts of the whole book. */
+  onShowDrafts: () => void;
   /** The printed book's pages, once they are counted; null while they are not shown. */
   pageMap: PageMap | null;
 }
@@ -92,9 +94,14 @@ function ContentsHeader(props: ContentsProps) {
     <header className="contents-header">
       <h1>{props.project.name}</h1>
       <span className="contents-meta">{metaLine(props.project, props.pageMap)}</span>
-      <button className="link-button quiet contents-read" onClick={props.onReadBook}>
-        {t("Läs hela boken")}
-      </button>
+      <span className="contents-links">
+        <button className="link-button quiet contents-read" onClick={props.onReadBook}>
+          {t("Läs hela boken")}
+        </button>
+        <button className="link-button quiet contents-read" onClick={props.onShowDrafts}>
+          {t("Utkast")}
+        </button>
+      </span>
     </header>
   );
 }

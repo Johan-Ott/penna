@@ -27,6 +27,8 @@ export interface TreeMenuActions {
   moveToSeries: ((node: TreeNode) => void) | null;
   canMerge: (node: TreeNode) => boolean;
   mergeWithNext: () => void;
+  /** A chapter's drafts; null where there are none to keep. */
+  showDrafts: ((node: TreeNode) => void) | null;
   /** Opens the dialog of the book's steps and labels; null where they cannot be changed. */
   editLabels: ((node: TreeNode) => void) | null;
   /** The book's labels to tick on the node; null where they cannot be changed. */
@@ -125,6 +127,12 @@ function moveItems(move: ((step: 1 | -1) => void) | undefined): MenuItem[] {
   ];
 }
 
+// A chapter can be kept as it is now under a name, and put back later.
+function draftItems(node: TreeNode, { showDrafts }: TreeMenuActions): MenuItem[] {
+  if (node.kind !== "chapter" || !showDrafts) return [];
+  return [{ label: t("Utkast…"), separatorBefore: true, onSelect: () => showDrafts(node) }];
+}
+
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   const { labelItems } = actions;
   return [
@@ -172,6 +180,6 @@ export function rowMenu(
     firstAdded && open.length > 0
       ? [{ ...firstAdded, separatorBefore: true }, ...restAdded]
       : added;
-  const status = statusItems(node, actions);
+  const status = [...statusItems(node, actions), ...draftItems(node, actions)];
   return [...open, ...separatedAdd, ...status, ...moveItems(move), ...editItems(node, actions)];
 }

@@ -18,6 +18,7 @@ import { homesOf } from "./notes/noteHomes.js";
 import { useProjectActions, useTreeHandlers } from "./useProjectActions.js";
 import { useSpelling } from "./spelling/useSpelling.js";
 import { BookToasts, useRenameOffer } from "./renameOffer.js";
+import { useDrafts, type Drafts } from "./drafts/useDrafts.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
 import { useWritingStats } from "./useWritingStats.js";
@@ -131,6 +132,7 @@ type PaletteParts = ReturnType<typeof useCoreState> &
     treeHandlers: ReturnType<typeof useTreeHandlers>;
     showShelf: () => Promise<void>;
     snapshots: ReturnType<typeof useSnapshots>;
+    drafts: Drafts;
     sceneSplit: ReturnType<typeof sceneSplitActions>;
   };
 
@@ -169,6 +171,7 @@ function useAppState() {
   const seriesTreeHandlers = useTreeHandlers(core.actions.series);
   const showShelf = useShowShelf(session, projectState.close, startup.updatePreferences);
   const snapshots = useSnapshots(project, session);
+  const drafts = useDrafts(project, session, refresh);
   const syncReview = useSyncReview({ project, session, updateTree, refresh });
   const { stats, today, recordSave } = useWritingStats(project);
   useReminder(startup.preferences.reminderHour, today.words);
@@ -185,7 +188,7 @@ function useAppState() {
   const app = {
     ...parts,
     ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncReview, stats, today },
-    ...{ search, renameOffer, zip, newProjectAsked, sceneSplit },
+    ...{ search, renameOffer, zip, newProjectAsked, sceneSplit, drafts },
   };
   return { ...app, palette: usePalette(paletteContextOf(app)) };
 }
