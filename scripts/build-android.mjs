@@ -71,7 +71,13 @@ if (process.argv.includes("--emulator")) {
   ]);
   const debug = "src-tauri/gen/android/app/build/outputs/apk/universal/debug";
   const apk = readdirSync(debug).find((name) => name.endsWith(".apk")) ?? "";
-  step("Installeras i emulatorn", adb, [`install -r -d ${join(debug, apk)}`]);
+  // Replacing needs room for both versions; a full test phone loses its test books instead.
+  try {
+    step("Installeras i emulatorn", adb, [`install -r -d ${join(debug, apk)}`]);
+  } catch {
+    step("Fullt i emulatorn: Penna avinstalleras först", adb, ["uninstall se.penna.app"]);
+    step("Installeras i emulatorn", adb, [`install ${join(debug, apk)}`]);
+  }
   step("Startas", adb, ["shell monkey -p se.penna.app 1"]);
   say("Klart: node scripts/drive-app.mjs --android steg.mjs");
   process.exit(0);

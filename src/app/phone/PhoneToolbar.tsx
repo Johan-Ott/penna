@@ -5,6 +5,7 @@ import { insertFootnote } from "../../editor/footnoteEditing.js";
 import type { AppState } from "../App.js";
 import { insertChosenPicture } from "../palette/sceneContext.js";
 import { StylePicker } from "../StylePicker.js";
+import { CorrectionsBar, useCaretCorrections } from "../spelling/Corrections.js";
 import type { Project } from "../useProject.js";
 import { WritingSettingsPanel } from "../WritingSettingsPanel.js";
 import { t } from "../../i18n/i18n.js";
@@ -26,9 +27,24 @@ function tools(app: AppState, project: Project, toggleSettings: () => void): Too
   ];
 }
 
+function Tools(props: { app: AppState; project: Project; onSettings: () => void }) {
+  const { editor } = props.app;
+  return (
+    <>
+      <StylePicker editorState={editor.editorState} run={editor.run} />
+      {tools(props.app, props.project, props.onSettings).map(([label, symbol, onPress]) => (
+        <button key={label} className="phone-tool" aria-label={label} onClick={onPress}>
+          {symbol}
+        </button>
+      ))}
+    </>
+  );
+}
+
 export function PhoneToolbar({ app, project }: { app: AppState; project: Project }) {
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const { editor, writingMode } = app;
+  const corrections = useCaretCorrections(editor);
   if (!app.scene) return null;
   const toggleSettings = () => setSettingsOpen(!isSettingsOpen);
   return (
@@ -46,12 +62,11 @@ export function PhoneToolbar({ app, project }: { app: AppState; project: Project
         aria-label={t("Verktyg")}
         onMouseDown={(event) => event.preventDefault()}
       >
-        <StylePicker editorState={editor.editorState} run={editor.run} />
-        {tools(app, project, toggleSettings).map(([label, symbol, onPress]) => (
-          <button key={label} className="phone-tool" aria-label={label} onClick={onPress}>
-            {symbol}
-          </button>
-        ))}
+        {corrections ? (
+          <CorrectionsBar editor={editor} corrections={corrections} />
+        ) : (
+          <Tools app={app} project={project} onSettings={toggleSettings} />
+        )}
       </div>
     </>
   );

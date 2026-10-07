@@ -606,3 +606,29 @@
 .phone-app .sidebar-heading-words {
   margin-right: 50px;
 }
+
+/* The corrections of the word the cursor is in take the tools' place over the keyboard. */
+.phone-corrections {
+  display: flex;
+  flex-grow: 1;
+  gap: 6px;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.phone-correction {
+  flex-shrink: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-control);
+  border-radius: 18px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+}
+
+.phone-correction.quiet {
+  border-color: transparent;
+  color: var(--text-muted);
+}
