@@ -13,8 +13,12 @@ export interface MenuItem {
   shortcut?: string;
   separatorBefore?: boolean;
   isChecked?: boolean;
-  onSelect: () => void;
+  onSelect?: () => void;
+  /** Opens beside the row, on hover, a click or →, instead of choosing. */
+  submenu?: MenuItem[];
 }
+
+type Submenu = { label: string; items: MenuItem[]; x: number; y: number } | null;
 
 interface MenuProps {
   x: number;
@@ -25,6 +29,7 @@ interface MenuProps {
 }
 
 const EDGE = 8;
+const NARROW = 600;
 
 function useDismiss(onClose: () => void) {
   useEffect(() => {
@@ -75,8 +80,11 @@ function focusIndexOf(items: MenuItem[]) {
 export function Menu({ x, y, items, label, onClose }: MenuProps) {
   useDismiss(onClose);
   const { ref, position } = useFittedPosition(x, y);
+  const [submenu, setSubmenu] = useState<Submenu>(null);
   const hasChecks = items.some((item) => item.isChecked !== undefined);
-  const focusIndex = focusIndexOf(items);
+  // A phone has no room beside the menu, so the submenu takes its place.
+  if (submenu && window.innerWidth <= NARROW)
+    return <Menu {...submenu} x={x} y={y} onClose={onClose} />;
   return createPortal(
     <div
       ref={ref}
@@ -90,39 +98,54 @@ export function Menu({ x, y, items, label, onClose }: MenuProps) {
       {items.map((item, index) => (
         <MenuRow
           key={item.label}
-          item={item}
-          hasChecks={hasChecks}
-          isFocused={index === focusIndex}
-          onClose={onClose}
+          {...{ item, hasChecks, onClose }}
+          isFocused={index === focusIndexOf(items)}
+          onSubmenu={setSubmenu}
         />
       ))}
+      {submenu && <Menu {...submenu} onClose={onClose} />}
     </div>,
     document.body,
   );
 }
 
-function MenuRow(props: {
+const submenuOf = (item: MenuItem, row: HTMLElement): Submenu => {
+  if (!item.submenu) return null;
+  const box = row.getBoundingClientRect();
+  return { label: item.label, items: item.submenu, x: box.right - 4, y: box.top - 4 };
+};
+
+interface RowProps {
   item: MenuItem;
   hasChecks: boolean;
   isFocused: boolean;
   onClose: () => void;
-}) {
-  const { item } = props;
+  onSubmenu: (submenu: Submenu) => void;
+}
+
+function MenuRow(props: RowProps) {
+  const { item, onSubmenu } = props;
+  const choose = (row: HTMLElement) => {
+    if (item.submenu) return onSubmenu(submenuOf(item, row));
+    props.onClose();
+    item.onSelect?.();
+  };
   return (
     <>
       {item.separatorBefore && <div className="menu-separator" role="separator" />}
       <button
         role={item.isChecked === undefined ? "menuitem" : "menuitemradio"}
         aria-checked={item.isChecked}
+        aria-haspopup={item.submenu ? "menu" : undefined}
         autoFocus={props.isFocused}
-        onClick={() => {
-          props.onClose();
-          item.onSelect();
-        }}
+        onPointerEnter={(event) => onSubmenu(submenuOf(item, event.currentTarget))}
+        onKeyDown={(event) => event.key === "ArrowRight" && choose(event.currentTarget)}
+        onClick={(event) => choose(event.currentTarget)}
       >
         {props.hasChecks && <span className="menu-check">{item.isChecked ? "✓" : ""}</span>}
         <span className="menu-label">{item.label}</span>
         {item.shortcut && <kbd>{item.shortcut}</kbd>}
+        {item.submenu && <span className="menu-more">›</span>}
       </button>
     </>
   );

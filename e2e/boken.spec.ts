@@ -58,7 +58,8 @@ test("the tree folds and unfolds all, and unfolds to a scene opened from the pal
 
 test("a label is made on one scene and ticked only there, and can be removed", async ({ page }) => {
   await treeRow(page, "Köket").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Ny label…" }).click();
   const dialog = page.getByRole("dialog", { name: "Labels" });
   await dialog.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
   await dialog.getByRole("button", { name: "Lägg till" }).click();
@@ -66,7 +67,9 @@ test("a label is made on one scene and ticked only there, and can be removed", a
   await page.keyboard.press("Escape");
 
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await expect(page.getByRole("menuitemradio", { name: "Skriv om" })).not.toBeChecked();
+  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
   await expect(dialog.getByRole("checkbox", { name: "Sätt Skriv om på raden" })).not.toBeChecked();
   await dialog.getByRole("button", { name: "Ta bort Skriv om" }).click();
 
@@ -77,7 +80,8 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
   page,
 }) => {
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Ny label…" }).click();
   const dialog = page.getByRole("dialog", { name: "Labels" });
   await dialog.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
   await dialog.getByRole("button", { name: "Lägg till" }).click();
@@ -91,6 +95,24 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
   await expect(treeRow(page, "1. Brevet")).toBeVisible();
   await expect(treeRow(page, "Köket")).toBeHidden();
   await expect(treeRow(page, "Regnet")).toBeHidden();
+});
+
+test("a label is ticked on another scene straight from the row menu's Labels", async ({ page }) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Ny label…" }).click();
+  await page.getByRole("textbox", { name: "Ny label" }).fill("Elin");
+  await page
+    .getByRole("dialog", { name: "Labels" })
+    .getByRole("button", { name: "Lägg till" })
+    .click();
+  await page.keyboard.press("Escape");
+
+  await treeRow(page, "Köket").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels" }).hover();
+  await page.getByRole("menuitemradio", { name: "Elin" }).click();
+
+  await expect(sidebar(page).getByLabel("Elin", { exact: true })).toHaveCount(2);
 });
 
 test("a chapter clicked opens its first scene", async ({ page }) => {

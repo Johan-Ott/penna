@@ -1,4 +1,5 @@
-import { labelsOf, type Label } from "../../project/labels.js";
+import { hasLabel, labelsOf, withLabel, type Label } from "../../project/labels.js";
+import type { TreeNode } from "../../project/tree.js";
 import type { MenuItem } from "../Menu.js";
 import type { Tree, TreeViewProps } from "../tree/useTreeView.js";
 import { LabelsDialog } from "./LabelsDialog.js";
@@ -50,4 +51,25 @@ export function LabelsLayer({ props, view }: { props: TreeViewProps; view: Tree[
       onClose={() => setLabelsFor(null)}
     />
   );
+}
+
+/** The row menu's Labels: each label ticked on or off at once, and the dialog for new ones. */
+export function labelMenu(props: TreeViewProps, view: Tree["view"]) {
+  const { project, onUpdateProject } = props;
+  if (!onUpdateProject) return null;
+  return (node: TreeNode): MenuItem[] => {
+    const labels = labelsOf(project.fields);
+    const ticks = labels.map((label) => {
+      const isOn = hasLabel(project.tree, node.id, label.id);
+      const tree = () => withLabel(project.tree, node.id, label.id, !isOn);
+      return {
+        label: label.name,
+        isChecked: isOn,
+        onSelect: () => onUpdateProject({ tree: tree() }),
+      };
+    });
+    const dialog = labels.length > 0 ? t("Hantera labels…") : t("Ny label…");
+    const open = () => view.setLabelsFor(node.id);
+    return [...ticks, { label: dialog, separatorBefore: labels.length > 0, onSelect: open }];
+  };
 }

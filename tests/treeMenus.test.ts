@@ -19,7 +19,7 @@ const actions: TreeMenuActions = {
   moveToSeries: null,
   canMerge: () => false,
   mergeWithNext: noop,
-  editLabels: null,
+  labelItems: null,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));
@@ -91,7 +91,7 @@ describe("tree menus", () => {
     const asked: string[] = [];
     const withDialog: TreeMenuActions = { ...actions, newNote: (sortId) => asked.push(sortId) };
 
-    rowMenu(node("sort", "fordon"), false, withDialog)[0]?.onSelect();
+    rowMenu(node("sort", "fordon"), false, withDialog)[0]?.onSelect?.();
 
     expect(asked).toEqual(["fordon"]);
   });
@@ -105,7 +105,7 @@ describe("tree menus", () => {
     };
 
     const items = rowMenu(node("scene", "arvid"), false, forNote);
-    items.find((item) => item.label === "Koppla namnet i texten")?.onSelect();
+    items.find((item) => item.label === "Koppla namnet i texten")?.onSelect?.();
 
     expect(labels(items)).not.toContain("Status: Utkast");
     expect(items.find((item) => item.label === "Koppla namnet i texten")?.isChecked).toBe(true);
@@ -122,7 +122,7 @@ describe("tree menus", () => {
 
     rowMenu(node("scene", "arvid"), false, inSeries)
       .find((item) => item.label === "Flytta till serien")
-      ?.onSelect();
+      ?.onSelect?.();
 
     expect(moved).toEqual(["arvid"]);
   });
@@ -137,7 +137,7 @@ describe("tree menus", () => {
 
     rowMenu(node("scene", "s1"), false, withNext)
       .find((item) => item.label === "Slå ihop med nästa scen")
-      ?.onSelect();
+      ?.onSelect?.();
 
     expect(merged).toEqual(["s1"]);
     expect(labels(rowMenu(node("scene", "s2"), false, withNext))).not.toContain(

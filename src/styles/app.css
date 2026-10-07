@@ -2715,3 +2715,7 @@ button.book-cover:hover {
 .label-new {
   margin-top: 12px;
 }
+
+.menu-more {
+  color: var(--text-label);
+}

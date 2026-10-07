@@ -18,6 +18,7 @@ import type { Placement, TreeMenuActions } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
 import type { ProjectChange } from "../labels/LabelsDialog.js";
+import { labelMenu } from "../labels/LabelsInTree.js";
 import { filteredTree, labelsOn } from "../../project/labels.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -130,7 +131,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
       node.id === props.openSceneId &&
       noteLinkOf(props.project, node.id) === null,
     mergeWithNext: () => props.onMergeWithNext?.(),
-    editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
+    labelItems: labelMenu(props, view),
   };
 }
 
