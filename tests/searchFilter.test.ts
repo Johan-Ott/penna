@@ -7,7 +7,7 @@ const project = {
     { id: "S1", kind: "scene", labels: ["elin"] },
     { id: "S2", kind: "scene" },
   ],
-  summaries: { S1: { status: "utkast" }, S2: { status: "klar" } },
+  summaries: { ["S1"]: { status: "utkast" }, ["S2"]: { status: "klar" } },
 } as unknown as Project;
 
 describe("search chips", () => {
