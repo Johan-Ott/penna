@@ -4,7 +4,7 @@ import { designOf } from "../../export/bookDesign.js";
 import { TypstError } from "../../export/typstError.js";
 import { typstFiles, typstSource } from "../../export/typstBook.js";
 import { seriesDirOf } from "../../project/series.js";
-import { bookLanguage } from "../../project/bookLanguage.js";
+import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { findCover } from "../../project/cover.js";
 import { recordFailure } from "../errorLog.js";
 import { platform, type FileKind } from "../platform.js";
@@ -33,6 +33,18 @@ export interface ExportChoices {
 }
 
 type SaveFields = (fields: Record<string, unknown>) => void;
+
+// The quotes follow the book's language until the writer picks the other kind.
+export const startChoices = (project: Project): ExportChoices => ({
+  format: "ebok",
+  typography: quoteStyleFor(bookLanguage(project.fields)),
+  hasTitlePage: true,
+  hasCopyrightPage: true,
+  hasContents: true,
+  hasDedication: false,
+  hasThanks: false,
+  hasAbout: true,
+});
 
 const FILE_KINDS: Record<ExportFormat, FileKind> = {
   manus: { name: "Word-dokument", extension: "docx" },

@@ -214,6 +214,15 @@ test("the standard manuscript is exported as a Word file", async ({ page }) => {
   expect((await download).suggestedFilename()).toMatch(/\.docx$/);
 });
 
+test("Skicka till redaktör in the menu makes the Word manuscript at once", async ({ page }) => {
+  await page.getByRole("button", { name: "Meny" }).first().click();
+
+  const download = page.waitForEvent("download");
+  await page.getByRole("menuitem", { name: "Skicka till redaktör…" }).click();
+
+  expect((await download).suggestedFilename()).toMatch(/\.docx$/);
+});
+
 test("the focus mode button keeps the cursor in the text, so nothing typed is lost", async ({
   page,
 }) => {

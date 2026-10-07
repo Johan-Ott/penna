@@ -1,3 +1,4 @@
+import { collaborationItems } from "../exporting/collaboration.js";
 import { useState } from "react";
 import type { AppState } from "../App.js";
 import { SeriesDialog } from "../notes/SeriesDialog.js";
@@ -61,6 +62,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     showVersions: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
     exportZip: app.zip.backup,
     importRevision: revision.open,
+    sharing: collaborationItems(project, app.zip.run),
     showBackups: backups.open,
     sendFeedback: feedback.open,
     openSettings: () => app.writingMode.settingsDialog.open(),

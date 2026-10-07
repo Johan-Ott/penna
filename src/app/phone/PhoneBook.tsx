@@ -8,6 +8,7 @@ import { sidebarProps } from "../paneProps.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
 import { SyncNotices } from "../SyncLayer.js";
+import { collaborationItems } from "../exporting/collaboration.js";
 import { TreeView } from "../tree/TreeView.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -111,6 +112,7 @@ function phoneMenu(app: AppState, dialogs: ReturnType<typeof useMenuDialogs>): M
           },
         ]
       : []),
+    ...(app.project ? collaborationItems(app.project, app.zip.run) : []),
     { label: t("Läs in redaktörens Word-fil…"), onSelect: dialogs.revision.open },
     { label: t("Serie…"), onSelect: dialogs.series.open },
     { label: t("Exportera allt som zip"), separatorBefore: true, onSelect: app.zip.backup },

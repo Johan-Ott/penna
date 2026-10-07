@@ -2,13 +2,17 @@ import { CoverFields } from "./CoverFields.js";
 import { useState, type ReactNode } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
-import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
 import { DesignControls } from "../bookdesign/DesignControls.js";
 import { PrintPreview } from "../bookdesign/PrintPreview.js";
 import { BookFields } from "../exporting/BookFields.js";
 import { ExportStatus, Preview } from "../exporting/ExportPanels.js";
 import { useCover } from "../exporting/useCover.js";
-import { useExport, type ExportChoices, type ExportFormat } from "../exporting/useExport.js";
+import {
+  startChoices,
+  useExport,
+  type ExportChoices,
+  type ExportFormat,
+} from "../exporting/useExport.js";
 import { Choice } from "../controls.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
@@ -54,18 +58,6 @@ const TYPOGRAPHY: [Typography, string][] = [
   ["svensk", t("Svensk")],
   ["engelsk", t("Engelsk")],
 ];
-
-// The quotes follow the book's language until the writer picks the other kind.
-const startChoices = (project: Project): ExportChoices => ({
-  format: "ebok",
-  typography: quoteStyleFor(bookLanguage(project.fields)),
-  hasTitlePage: true,
-  hasCopyrightPage: true,
-  hasContents: true,
-  hasDedication: false,
-  hasThanks: false,
-  hasAbout: true,
-});
 
 function ExportStep(
   props: PublishProps & { choices: ExportChoices; setChoices: (next: ExportChoices) => void },

@@ -11,6 +11,8 @@ export interface AppMenuActions {
   exportZip: (() => void) | null;
   /** Null on the bookshelf, where there is no book to read changes into. */
   importRevision: (() => void) | null;
+  /** Skicka till redaktör and Läsarexemplar; empty on the bookshelf. */
+  sharing: MenuItem[];
   /** Null where Penna keeps no copies, as in the browser. */
   showBackups: (() => void) | null;
   openSettings: () => void;
@@ -19,7 +21,8 @@ export interface AppMenuActions {
 }
 
 // What only a book has, shown when there is one.
-const BOOK_ITEMS: [keyof AppMenuActions, string][] = [
+type BookAction = "showVersions" | "exportZip" | "importRevision" | "showBackups";
+const BOOK_ITEMS: [BookAction, string][] = [
   ["showVersions", t("Versioner av den här texten")],
   ["exportZip", t("Exportera allt som zip")],
   ["importRevision", t("Läs in redaktörens Word-fil…")],
@@ -38,6 +41,7 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
     { label: t("Öppna mapp…"), onSelect: actions.openFolder },
     { label: t("Importera manus…"), onSelect: actions.newProject },
     ...(firstBookItem ? [{ ...firstBookItem, separatorBefore: true }, ...restBookItems] : []),
+    ...actions.sharing,
     {
       label: t("Inställningar"),
       shortcut: "Ctrl+,",
