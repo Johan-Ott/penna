@@ -42,12 +42,12 @@ interface ResultProps {
   found: PaletteEntry[];
   selected: number;
   onHover: (index: number) => void;
-  isPhone: boolean;
   onChoose: (entry: PaletteEntry) => void;
 }
 
 function ResultRow({ index, ...props }: ResultProps & { index: number }) {
   const entry = props.found[index];
+  const isPhone = usePhone();
   if (!entry) return null;
   const startsGroup = entry.group !== props.found[index - 1]?.group;
   return (
@@ -62,7 +62,7 @@ function ResultRow({ index, ...props }: ResultProps & { index: number }) {
       >
         <span>{entry.label}</span>
         <span className="palette-hint">
-          {props.isPhone ? entry.hint : (entry.shortcut ?? entry.hint)}
+          {isPhone ? entry.hint : (entry.shortcut ?? entry.hint)}
         </span>
       </div>
     </>
@@ -137,10 +137,41 @@ function searchEntry(query: string, onSearch: (text: string) => void): PaletteEn
   ];
 }
 
+// One chip per kind; with none chosen everything is searched.
+function PaletteFilters(props: ReturnType<typeof useGroupFilter> & { onPicked: () => void }) {
+  return (
+    <div className="palette-filters" role="group" aria-label={t("Visa bara")}>
+      {props.groups.map((group) => (
+        <button
+          key={group}
+          className="chip"
+          aria-pressed={props.shown.includes(group)}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => (props.toggle(group), props.onPicked())}
+        >
+          {groupLabel(group)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function useGroupFilter(entries: PaletteEntry[]) {
+  const [shown, setShown] = useState<string[]>([]);
+  const groups = inGroups([...new Map(entries.map((entry) => [entry.group, entry])).values()]);
+  const toggle = (group: string) =>
+    setShown((current) =>
+      current.includes(group) ? current.filter((each) => each !== group) : [...current, group],
+    );
+  const kept =
+    shown.length === 0 ? entries : entries.filter((entry) => shown.includes(entry.group));
+  return { groups: groups.map((entry) => entry.group), shown, toggle, kept };
+}
+
 export function CommandPalette({ entries, onClose, onSearch }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
-  const isPhone = usePhone();
-  const matches = searchPalette(entries, query).slice(0, MAX_RESULTS);
+  const filter = useGroupFilter(entries);
+  const matches = searchPalette(filter.kept, query).slice(0, MAX_RESULTS);
   const found = inGroups([...matches, ...searchEntry(query, onSearch)]);
   const selection = usePaletteSelection(found, onClose);
   return (
@@ -156,8 +187,8 @@ export function CommandPalette({ entries, onClose, onSearch }: CommandPalettePro
           onQuery={(next) => (setQuery(next), selection.setSelected(0))}
           onKeyDown={selection.onKeyDown}
         />
+        <PaletteFilters {...filter} onPicked={() => selection.setSelected(0)} />
         <ResultList
-          isPhone={isPhone}
           found={found}
           selected={selection.selected}
           onHover={selection.setSelected}

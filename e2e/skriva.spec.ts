@@ -82,6 +82,17 @@ test("search finds a name across the scene", async ({ page }) => {
   await expect(page.getByRole("search")).toBeHidden();
 });
 
+test("the palette's chips narrow the search to the kinds chosen", async ({ page }) => {
+  await page.keyboard.press("Control+k");
+  const palette = page.getByRole("dialog", { name: "Kommandopalett" });
+
+  await palette.getByRole("button", { name: "Kapitel", exact: true }).click();
+  await page.keyboard.type("fyren");
+
+  await expect(palette.getByRole("option", { name: /Fyren/ })).toHaveCount(1);
+  await expect(palette.locator(".palette-group")).toHaveText(["Kapitel", "Kommandon"]);
+});
+
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 

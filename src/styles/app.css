@@ -2663,3 +2663,11 @@ button.book-cover:hover {
     bottom: calc(76px + env(safe-area-inset-bottom));
   }
 }
+
+.palette-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--border-soft);
+}
