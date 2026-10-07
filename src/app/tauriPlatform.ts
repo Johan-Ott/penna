@@ -137,7 +137,6 @@ const backups = {
 const spelling: Spelling = {
   misspelled: (language, words) => invoke("misspelled_words", { language, words }),
   suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
-  addDictionary: (language, aff, dic) => invoke("add_dictionary", { language, aff, dic }),
 };
 
 export const tauriPlatform: Platform = {

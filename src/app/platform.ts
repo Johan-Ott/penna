@@ -42,9 +42,8 @@ export interface Platform {
 export interface Spelling {
   /** The words the language's dictionary does not know; fails when there is no dictionary. */
   misspelled(language: string, words: string[]): Promise<string[]>;
+  /** A language that is not built in is fetched the first time, then kept. */
   suggestions(language: string, word: string): Promise<string[]>;
-  /** A language fetched from the web, as its Hunspell files. */
-  addDictionary(language: string, aff: string, dic: string): Promise<void>;
 }
 
 export interface Backups {

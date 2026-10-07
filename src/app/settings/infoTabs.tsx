@@ -58,7 +58,7 @@ function Credits() {
       <Row
         label={t("Stavning")}
         hint={t(
-          "Spellbook, under MPL 2.0. Svensk ordlista av Göran Andersson, under LGPL 3. Brittisk engelsk ordlista ur SCOWL, under MIT och BSD.",
+          "Spellbook, under MPL 2.0. Svensk ordlista av Göran Andersson, under LGPL 3. Brittisk engelsk ordlista ur SCOWL, under MIT och BSD. Danska, norska och tyska ordlistor hämtas första gången en bok behöver dem, under sina egna licenser.",
         )}
       />
     </>

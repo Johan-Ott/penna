@@ -38,7 +38,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             spelling::misspelled_words,
             spelling::spelling_suggestions,
-            spelling::add_dictionary,
             books::remove_book,
             backups::remove_backup,
             google::sign_in_in_browser,
@@ -51,7 +50,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             spelling::misspelled_words,
             spelling::spelling_suggestions,
-            spelling::add_dictionary,
             books::remove_book,
             backups::remove_backup,
             google::google_access_token
