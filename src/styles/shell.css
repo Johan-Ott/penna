@@ -1152,3 +1152,23 @@
 .tree-dot.outlined {
   box-shadow: inset 0 0 0 1px var(--text-label);
 }
+
+.contents-status {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.contents-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.contents-label {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}

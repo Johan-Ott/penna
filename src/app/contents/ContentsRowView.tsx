@@ -5,6 +5,7 @@ import { findNode, type TreeNode } from "../../project/tree.js";
 import { ChapterHeadingDialog } from "./ChapterHeadingDialog.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
 import { statusSteps } from "../../project/statusSteps.js";
+import { labelsWithin } from "../../project/labels.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -42,6 +43,26 @@ function InlineText(props: {
   );
 }
 
+const StatusDot = ({ step }: { step: { color: string } }) => (
+  <span className={`tree-dot${step.color ? "" : " outlined"}`} style={{ background: step.color }} />
+);
+
+// The chapter's own labels and its scenes', so the plan shows what each chapter holds.
+function RowLabels({ project, row }: RowProps) {
+  const node = findNode(project.tree, row.id)?.node;
+  const labels = node ? labelsWithin(project.fields, node) : [];
+  if (labels.length === 0) return null;
+  return (
+    <span className="contents-labels">
+      {labels.map((label) => (
+        <span key={label.id} className="contents-label">
+          <StatusDot step={label} /> {label.name}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function StatusButton(props: RowProps) {
   const { row } = props;
   const items: MenuItem[] = SCENE_STATUSES.map((status) => ({
@@ -53,6 +74,7 @@ function StatusButton(props: RowProps) {
   return (
     <>
       <button className="contents-status" onClick={menu.open}>
+        <StatusDot step={statusSteps(props.project.fields)[row.status]} />
         {statusSteps(props.project.fields)[row.status].name}
       </button>
       {menu.menu}
@@ -128,6 +150,7 @@ export function Row(props: RowProps) {
           className="contents-summary"
           onSave={save("summary")}
         />
+        <RowLabels {...props} />
       </div>
       <InlineText
         value={row.when}

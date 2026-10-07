@@ -87,3 +87,14 @@ export function filteredTree(tree: TreeNode[], labelIds: string[]): TreeNode[] {
     return [children ? { ...node, children } : node];
   });
 }
+
+/** The labels on a node and on everything in it, in the book's order of labels. */
+export function labelsWithin(fields: Record<string, unknown>, node: TreeNode): Label[] {
+  const ids = new Set<string>();
+  const walk = (each: TreeNode) => {
+    each.labels?.forEach((id) => ids.add(id));
+    each.children?.forEach(walk);
+  };
+  walk(node);
+  return labelsOf(fields).filter((label) => ids.has(label.id));
+}

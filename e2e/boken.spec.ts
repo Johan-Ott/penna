@@ -148,6 +148,20 @@ test("a status step gets the book's own name, shown in the row menu", async ({ p
   await expect(page.getByRole("menuitemradio", { name: "Hos redaktören" })).toBeVisible();
 });
 
+test("Innehåll shows each chapter's labels, its scenes' too", async ({ page }) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Ny label…" }).click();
+  await page.getByRole("textbox", { name: "Ny label" }).fill("Elin");
+  const dialog = page.getByRole("dialog", { name: "Status och labels" });
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Vintervägen" }).first().click();
+
+  await expect(page.locator(".contents-row").first().locator(".contents-label")).toHaveText("Elin");
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 
