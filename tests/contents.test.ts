@@ -71,6 +71,17 @@ describe("time order", () => {
     expect(ordered.map((row) => row.id)).toEqual(["kap2", "kap1", "lös"]);
   });
 
+  it("sorts by När until anything is dragged, days by number and rows without När last", () => {
+    const rows = contentsRows(tree, summaries).map((row, index) => ({
+      ...row,
+      when: ["Dag 10", "", "dag 2"][index] ?? "",
+    }));
+
+    const ordered = inTimeOrder(rows, []);
+
+    expect(ordered.map((row) => row.when)).toEqual(["dag 2", "Dag 10", ""]);
+  });
+
   it("moves a dropped row to its new place among the shown rows", () => {
     const rows = contentsRows(tree, summaries);
 

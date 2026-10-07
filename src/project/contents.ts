@@ -55,8 +55,14 @@ export function contentsRows(tree: TreeNode[], summaries: Summaries): ContentsRo
   return walk(book, numberNodes(tree, "chapter"), summaries);
 }
 
-/** New rows keep reading order. */
+const byWhen = (first: ContentsRow, second: ContentsRow) =>
+  !first.when || !second.when
+    ? Number(!first.when) - Number(!second.when)
+    : first.when.localeCompare(second.when, undefined, { numeric: true, sensitivity: "base" });
+
+/** By När until a row is dragged, then as dragged; rows without När, or new ones, keep reading order. */
 export function inTimeOrder(rows: ContentsRow[], order: string[]): ContentsRow[] {
+  if (order.length === 0) return [...rows].sort(byWhen);
   const rank = (row: ContentsRow) => {
     const index = order.indexOf(row.id);
     return index === -1 ? order.length + rows.indexOf(row) : index;
