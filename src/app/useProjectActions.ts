@@ -83,7 +83,17 @@ function useSceneFileActions({
   return { renameSceneTitle, setStatus };
 }
 
+// A chapter starts with a scene, so there is somewhere to write at once.
 async function newNode(project: Project, kind: NodeKind, placement: Placement): Promise<TreeNode> {
+  if (kind === "chapter") {
+    const scene = await createScene(platform.fileSystem, project.dir, NEW_TITLES.scene);
+    return {
+      id: newSceneId(),
+      kind,
+      title: NEW_TITLES.chapter,
+      children: [{ id: scene, kind: "scene" }],
+    };
+  }
   if (kind !== "scene") return { id: newSceneId(), kind, title: NEW_TITLES[kind], children: [] };
   const title = newSceneTitle(project.tree, placement);
   return { id: await createScene(platform.fileSystem, project.dir, title), kind };
@@ -96,8 +106,8 @@ export function useProjectActions(input: ProjectActionsInput) {
       if (!project || project.isReadOnly) return null;
       const node = await newNode(project, kind, placement);
       await updateTree(place(project.tree, node, placement, session.scene?.id ?? null));
+      await refresh();
       if (kind === "scene") {
-        await refresh();
         await openScene(session, project.dir, node.id);
         focusEditor?.();
       }

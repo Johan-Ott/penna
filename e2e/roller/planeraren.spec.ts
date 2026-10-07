@@ -31,6 +31,8 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   await add(page, "Ny del");
   await page.keyboard.press("Escape");
   await expect(sidebar(page)).toContainText("Ankomsten");
+  // A new chapter has a scene to write in from the start.
+  await expect(sidebar(page).getByRole("treeitem", { name: /Ny scen/ })).toHaveCount(1);
 
   // A character, linked in the text: her name becomes something to click.
   await page.getByRole("button", { name: "+ Ny anteckning" }).click();
