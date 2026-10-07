@@ -56,6 +56,23 @@ test("the tree folds and unfolds all, and unfolds to a scene opened from the pal
   await expect(treeRow(page, "Regnet")).toBeVisible();
 });
 
+test("a label is made on one scene and ticked only there, and can be removed", async ({ page }) => {
+  await treeRow(page, "Köket").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Labels" });
+  await dialog.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+  await expect(dialog.getByRole("checkbox", { name: "Sätt Skriv om på raden" })).toBeChecked();
+  await page.keyboard.press("Escape");
+
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Labels…" }).click();
+  await expect(dialog.getByRole("checkbox", { name: "Sätt Skriv om på raden" })).not.toBeChecked();
+  await dialog.getByRole("button", { name: "Ta bort Skriv om" }).click();
+
+  await expect(dialog.getByText("Boken har inga labels än.")).toBeVisible();
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

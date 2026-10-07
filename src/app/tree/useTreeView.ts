@@ -17,6 +17,7 @@ import type { Project } from "../useProject.js";
 import type { Placement, TreeMenuActions } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
+import type { ProjectChange } from "../labels/LabelsDialog.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TreeViewProps {
@@ -36,6 +37,8 @@ export interface TreeViewProps {
   onMoveToSeries?: (id: string) => void;
   canMergeOpenScene?: boolean;
   onMergeWithNext?: () => void;
+  /** The tree and project.json's fields changed together, as labels do. */
+  onUpdateProject?: (change: ProjectChange) => void;
 }
 
 export type Actions = ReturnType<typeof useTreeActions>;
@@ -57,12 +60,10 @@ function useRenameRequest(props: TreeViewProps, view: View) {
 }
 
 // The sorts and Papperskorg start folded; the book starts open.
-function useTreeViewState(tree: TreeNode[]) {
+function useCollapsed(tree: TreeNode[]) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(
     () => new Set([...sortsOf(tree).map((sort) => sort.id), TRASH_ID]),
   );
-  const [renamingId, setRenamingId] = useState<string | null>(null);
-  const [menu, setMenu] = useState<MenuState>(null);
   const toggle = (id: string) =>
     setCollapsed((current) => {
       const next = new Set(current);
@@ -73,11 +74,17 @@ function useTreeViewState(tree: TreeNode[]) {
     () => (ids: string[]) =>
       setCollapsed((current) => new Set([...current].filter((id) => !ids.includes(id)))),
   );
-  const fold = {
-    foldAll: () => setCollapsed(new Set([...foldableIds(tree), TRASH_ID])),
-    unfoldAll: () => setCollapsed(new Set([TRASH_ID])),
-  };
-  return { collapsed, toggle, expand, ...fold, renamingId, setRenamingId, menu, setMenu };
+  const foldAll = () => setCollapsed(new Set([...foldableIds(tree), TRASH_ID]));
+  const unfoldAll = () => setCollapsed(new Set([TRASH_ID]));
+  return { collapsed, toggle, expand, foldAll, unfoldAll };
+}
+
+function useTreeViewState(tree: TreeNode[]) {
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [menu, setMenu] = useState<MenuState>(null);
+  const [labelsFor, setLabelsFor] = useState<string | null>(null);
+  const editing = { renamingId, setRenamingId, menu, setMenu, labelsFor, setLabelsFor };
+  return { ...useCollapsed(tree), ...editing };
 }
 
 const foldableIds = (nodes: TreeNode[]): string[] =>
@@ -100,7 +107,7 @@ function useFollowOpenScene(props: TreeViewProps, view: View) {
   }, [openSceneId, expand]);
 }
 
-export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuActions {
+export function menuActions(actions: Actions, props: TreeViewProps, view: View): TreeMenuActions {
   const { summaries } = props.project;
   return {
     open: (node) => actions.activate(node),
@@ -121,6 +128,7 @@ export function menuActions(actions: Actions, props: TreeViewProps): TreeMenuAct
       node.id === props.openSceneId &&
       noteLinkOf(props.project, node.id) === null,
     mergeWithNext: () => props.onMergeWithNext?.(),
+    editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
   };
 }
 

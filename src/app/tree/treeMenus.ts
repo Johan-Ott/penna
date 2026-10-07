@@ -32,6 +32,8 @@ export interface TreeMenuActions {
   moveToSeries: ((node: TreeNode) => void) | null;
   canMerge: (node: TreeNode) => boolean;
   mergeWithNext: () => void;
+  /** Null where the book's labels cannot be changed. */
+  editLabels: ((node: TreeNode) => void) | null;
 }
 
 export function foldMenu(view: { foldAll: () => void; unfoldAll: () => void }): MenuItem[] {
@@ -123,11 +125,15 @@ function moveItems(move: ((step: 1 | -1) => void) | undefined): MenuItem[] {
 }
 
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
+  const { editLabels } = actions;
   return [
+    ...(editLabels
+      ? [{ label: t("Labels…"), separatorBefore: true, onSelect: () => editLabels(node) }]
+      : []),
     {
       label: t("Byt namn"),
       shortcut: "F2",
-      separatorBefore: true,
+      separatorBefore: !editLabels,
       onSelect: () => actions.rename(node),
     },
     {

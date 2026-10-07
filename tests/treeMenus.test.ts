@@ -19,6 +19,7 @@ const actions: TreeMenuActions = {
   moveToSeries: null,
   canMerge: () => false,
   mergeWithNext: noop,
+  editLabels: null,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));

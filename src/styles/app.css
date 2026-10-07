@@ -2671,3 +2671,47 @@ button.book-cover:hover {
   padding: 0 12px 10px;
   border-bottom: 1px solid var(--border-soft);
 }
+
+.labels-dialog {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.label-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.label-row,
+.label-new {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.label-color {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+}
+
+.label-name,
+.label-new input {
+  flex-grow: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.label-new {
+  margin-top: 12px;
+}

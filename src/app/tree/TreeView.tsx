@@ -14,6 +14,7 @@ import {
   type TreeViewProps,
 } from "./useTreeView.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
+import { LabelsDialog } from "../labels/LabelsDialog.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
@@ -28,7 +29,7 @@ function menuOf(row: Row, tree: Tree, menuFor: ReturnType<typeof menuActions>) {
 
 function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
   const { view, actions, drag, openMenu } = tree;
-  const menuFor = menuActions(actions, props);
+  const menuFor = menuActions(actions, props, view);
   return rows.map((row) => (
     <TreeRow
       key={row.node.id}
@@ -103,7 +104,7 @@ function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tre
 
 // On a phone: adding is a button, not a right click, and the trash stays in reach.
 function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
-  const menuFor = menuActions(tree.actions, props);
+  const menuFor = menuActions(tree.actions, props, tree.view);
   return (
     <>
       <button className="tree-add" onClick={(event) => tree.openMenu(event, addMenu(menuFor))}>
@@ -120,7 +121,7 @@ function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
 export function TreeView(props: TreeViewProps & BookExtras) {
   const tree = useTreeView(props);
   const { sections, view } = tree;
-  const menuFor = menuActions(tree.actions, props);
+  const menuFor = menuActions(tree.actions, props, tree.view);
   return (
     <div
       role="tree"
@@ -140,7 +141,21 @@ export function TreeView(props: TreeViewProps & BookExtras) {
         <NotesAndTrash props={props} tree={tree} />
       )}
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
+      <LabelsLayer props={props} view={view} />
     </div>
+  );
+}
+
+function LabelsLayer({ props, view }: { props: TreeViewProps; view: Tree["view"] }) {
+  const { labelsFor, setLabelsFor } = view;
+  if (!labelsFor || !props.onUpdateProject) return null;
+  return (
+    <LabelsDialog
+      project={props.project}
+      nodeId={labelsFor}
+      onUpdate={props.onUpdateProject}
+      onClose={() => setLabelsFor(null)}
+    />
   );
 }
 

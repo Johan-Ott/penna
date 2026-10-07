@@ -1,3 +1,4 @@
+import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
 import type { TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
@@ -72,6 +73,7 @@ export function sidebarProps(app: AppState, project: Project) {
     onOpenBeside: (id: string) =>
       app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),
     onChangeTree: (tree: TreeNode[]) => void app.updateTree(tree),
+    onUpdateProject: (change: ProjectChange) => void app.updateProject(change),
     onShowShelf: () => void app.showShelf(),
     onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
     ...app.treeHandlers,
