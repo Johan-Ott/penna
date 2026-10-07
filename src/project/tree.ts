@@ -17,6 +17,8 @@ export interface TreeNode {
   opening?: string;
   /** The chapter's own picture in bilder/ for an area of its template, by the area's id. */
   pictures?: Record<string, string>;
+  /** The ids of the book's own labels on it, from project.json's `labels`. */
+  labels?: string[];
   children?: TreeNode[];
 }
 

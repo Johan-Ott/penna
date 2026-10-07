@@ -25,6 +25,9 @@ const isTextRecord = (value: unknown) =>
   value !== null &&
   Object.values(value).every((text) => typeof text === "string");
 
+// Pictures by area, and label ids as a list.
+const isOptionalTextRecord = (value: unknown) => value === undefined || isTextRecord(value);
+
 function isTreeNode(value: unknown): value is TreeNode {
   if (typeof value !== "object" || value === null) return false;
   const node = value as Record<string, unknown>;
@@ -32,8 +35,8 @@ function isTreeNode(value: unknown): value is TreeNode {
   const texts = ["title", "summary", "when", "opening", ...HEADING_FIELDS].every((key) =>
     isOptionalString(node[key]),
   );
-  const pictures = node["pictures"] === undefined || isTextRecord(node["pictures"]);
-  return hasIdAndKind && texts && pictures && isOptionalNodeList(node["children"]);
+  const records = isOptionalTextRecord(node["pictures"]) && isOptionalTextRecord(node["labels"]);
+  return hasIdAndKind && texts && records && isOptionalNodeList(node["children"]);
 }
 
 function parseProject(text: string): { fields: Record<string, unknown>; tree: TreeNode[] } | null {

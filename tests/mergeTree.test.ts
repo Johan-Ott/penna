@@ -19,6 +19,17 @@ const FYREN = chapter("K2", "Fyren", [scene("S3")]);
 const BASE = [BREVET, FYREN];
 
 describe("mergeTrees", () => {
+  it("keeps a label added on each device to the same scene, and drops one taken off", () => {
+    const base = [chapter("K1", "Brevet", [scene("S1", { labels: ["gammal"] })])];
+    const here = [chapter("K1", "Brevet", [scene("S1", { labels: ["gammal", "elin"] })])];
+    const drive = [chapter("K1", "Brevet", [scene("S1", { labels: ["vinter"] })])];
+
+    const { tree, conflicts } = mergeTrees(base, here, drive);
+
+    expect(tree[0]?.children?.[0]?.labels).toEqual(["elin", "vinter"]);
+    expect(conflicts).toEqual([]);
+  });
+
   it("takes a renamed chapter from one device and a new scene from the other", () => {
     const here = [chapter("K1", "Brevet", [scene("S1"), scene("S2"), scene("S4")]), FYREN];
     const drive = [BREVET, chapter("K2", "Fyrvaktaren", [scene("S3")])];

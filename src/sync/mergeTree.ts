@@ -1,3 +1,4 @@
+import { mergeLabelIds } from "../project/labels.js";
 import type { TreeNode } from "../project/tree.js";
 
 // Each part, chapter and scene is merged on its own, by id, against the last sync. The same
@@ -50,6 +51,17 @@ function pick<T>(base: T | undefined, here: T, drive: T) {
   return { value: here, isConflict: true };
 }
 
+// Labels merge as sets: one device's new label never pushes out the other's.
+function mergedLabels(base: unknown, here: unknown, drive: unknown) {
+  const ids = mergeLabelIds(base as string[], here as string[], drive as string[]);
+  return ids.length > 0 ? ids : undefined;
+}
+
+const pickField = (field: string, base: unknown, here: unknown, drive: unknown) =>
+  field === "labels"
+    ? { value: mergedLabels(base, here, drive), isConflict: false }
+    : pick(base, here, drive);
+
 function mergeFields(id: string, sides: (Fields | undefined)[], conflicts: TreeConflict[]) {
   const [base, here, drive] = sides;
   if (!here || !drive) return here ?? drive;
@@ -58,7 +70,7 @@ function mergeFields(id: string, sides: (Fields | undefined)[], conflicts: TreeC
   for (const field of keys) {
     const read = (fields: Fields | undefined) =>
       (fields as Record<string, unknown> | undefined)?.[field];
-    const { value, isConflict } = pick(read(base), read(here), read(drive));
+    const { value, isConflict } = pickField(field, read(base), read(here), read(drive));
     if (isConflict) conflicts.push({ id, field, here: read(here), drive: read(drive) });
     if (value !== undefined) merged[field] = value;
   }
