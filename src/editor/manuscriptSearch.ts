@@ -49,6 +49,18 @@ export interface ManuscriptScope {
   replaceAll: (query: SearchQuery) => void;
   /** Replace all within the open scene, so it is said and can be undone like across the book. */
   replacedInScene: (count: number, search: string) => void;
+  /** Every scene with a match, for the list under the search. */
+  hits: (query: SearchQuery, open: EditorState | null) => SceneHit[];
+  /** Opens the scene at its first match. */
+  openHit: (id: string, query: SearchQuery) => void;
+}
+
+export interface SceneHit {
+  id: string;
+  /** The chapter and the scene. */
+  place: string;
+  count: number;
+  snippet: string;
 }
 
 /** Goes round the manuscript; the scene itself comes last. */

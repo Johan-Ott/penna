@@ -15,6 +15,7 @@ import { manuscriptSceneIds } from "../project/tree.js";
 import { joinPath } from "../storage/fileSystem.js";
 import { replaceInScenes, undoReplace, type SceneChange } from "./manuscriptReplace.js";
 import { platform } from "./platform.js";
+import { sceneHits } from "./searchHits.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 
@@ -86,22 +87,31 @@ function positionAcross(parts: StepParts, query: SearchQuery, open: EditorState 
   return { current, total };
 }
 
+// Finding, as against replacing: where a match is, the next one, and every scene with one.
+function findingActions(parts: StepParts) {
+  const { project } = parts;
+  return {
+    position: (query: SearchQuery, open: EditorState | null) => positionAcross(parts, query, open),
+    step: (query: SearchQuery, isBackwards: boolean) => void stepAcross(parts, query, isBackwards),
+    hits: (query: SearchQuery, open: EditorState | null) =>
+      project
+        ? sceneHits(project, manuscriptIds(project), (id) => parts.stateOf(id, open), query)
+        : [],
+    openHit: (id: string, query: SearchQuery) => void showMatchIn(parts, id, query, false),
+  };
+}
+
 export function useManuscriptSearch(parts: SearchParts) {
   const [isOn, setOn] = useState(false);
   const [replaceDone, setReplaceDone] = useState<ReplaceDone | null>(null);
   const stateOf = useSceneStates(parts, isOn);
-  const position = (query: SearchQuery, open: EditorState | null) =>
-    positionAcross({ ...parts, stateOf }, query, open);
-
-  const step = (query: SearchQuery, isBackwards: boolean) =>
-    void stepAcross({ ...parts, stateOf }, query, isBackwards);
-
   const replaceAll = (query: SearchQuery) =>
     void replaceEverywhere(parts, query).then((done) => done && setReplaceDone(done));
 
   const replacedInScene = (count: number, search: string) =>
     count > 0 && setReplaceDone({ count, search, changes: null });
-  const scope: ManuscriptScope = { isOn, setOn, position, step, replaceAll, replacedInScene };
+  const finding = findingActions({ ...parts, stateOf });
+  const scope: ManuscriptScope = { isOn, setOn, ...finding, replaceAll, replacedInScene };
   const undo = () => {
     if (replaceDone?.changes) void undoEverywhere(parts, replaceDone.changes);
     else if (replaceDone) parts.editor.run(undoCommand);

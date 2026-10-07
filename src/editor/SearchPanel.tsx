@@ -11,6 +11,7 @@ import {
 import type { Command, EditorState } from "prosemirror-state";
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { applyQuery, type ManuscriptScope } from "./manuscriptSearch.js";
+import { countText, SearchResults } from "./SearchResults.js";
 import { t } from "../i18n/i18n.js";
 
 interface SearchPanelProps {
@@ -99,12 +100,6 @@ function StepButtons({ actions }: { actions: SearchActions }) {
       </button>
     </>
   );
-}
-
-function countText({ total, current }: { total: number; current: number }) {
-  if (total === 0) return t("Inga träffar");
-  if (current > 0) return t("{current} av {total}", { current, total });
-  return total === 1 ? t("1 träff") : t("{total} träffar", { total });
 }
 
 function FindRow(props: {
@@ -210,6 +205,7 @@ export function SearchPanel(props: SearchPanelProps) {
       <FindRow query={query} actions={actions} onKey={onSearchKey} onClose={props.onClose} />
       <ReplaceRow query={query} actions={actions} onClose={props.onClose} />
       <SearchOptions query={query} manuscript={props.manuscript} />
+      <SearchResults scope={props.manuscript} query={query.query} editorState={props.editorState} />
     </div>
   );
 }

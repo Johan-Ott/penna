@@ -108,6 +108,21 @@ test("the palette's chips narrow the search to the kinds chosen", async ({ page 
   await expect(palette.locator(".palette-group")).toHaveText(["Kapitel", "Kommandon"]);
 });
 
+test("across the manuscript the matches are listed by scene, and one opens its scene", async ({
+  page,
+}) => {
+  await editor(page).click();
+  await page.keyboard.press("Control+f");
+  await page.keyboard.type("Elin");
+  await page.getByRole("button", { name: "Hela manuset" }).click();
+
+  const hits = page.getByRole("list", { name: "Träffar i manuset" }).getByRole("listitem");
+  await expect(hits).not.toHaveCount(0);
+  await hits.filter({ hasText: "· Isen" }).click();
+
+  await expect(editor(page)).toContainText("Isen bar.");
+});
+
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 
