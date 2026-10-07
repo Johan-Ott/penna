@@ -2823,3 +2823,24 @@ button.book-cover:hover {
   color: var(--text-muted);
   font-size: 12px;
 }
+
+.name-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: -6px;
+}
+
+.chip.quiet {
+  border-color: transparent;
+}
+
+.name-set {
+  height: 26px;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 12px;
+}

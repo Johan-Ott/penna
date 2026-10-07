@@ -2,6 +2,8 @@ import { useState } from "react";
 import { isLinkedByDefault } from "../../project/cards.js";
 import { CHARACTERS_ID, findNode, sortsOf } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
+import { bookLanguage } from "../../project/bookLanguage.js";
+import { NameSuggestions } from "./NameSuggestions.js";
 import { Choice, Switch } from "../controls.js";
 import { useEscape } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
@@ -94,6 +96,9 @@ function NoteFields({ form, project }: { form: Form; project: Project }) {
           onChange={(event) => form.setName(event.target.value)}
         />
       </label>
+      {form.sortId === CHARACTERS_ID && form.newSort === null && (
+        <NameSuggestions language={bookLanguage(project.fields)} onPick={form.setName} />
+      )}
       <div className="field">
         <span className="field-label">{t("Sort")}</span>
         <SortChips project={project} {...form} onPick={form.pick} onNewSort={form.setNewSort} />

@@ -162,6 +162,20 @@ test("Innehåll shows each chapter's labels, its scenes' too", async ({ page }) 
   await expect(page.locator(".contents-row").first().locator(".contents-label")).toHaveText("Elin");
 });
 
+test("a new person gets a name from the suggestions", async ({ page }) => {
+  await page.getByRole("button", { name: "+ Ny anteckning" }).click();
+  const dialog = page.getByRole("dialog", { name: "Ny anteckning" });
+  await dialog
+    .getByRole("combobox", { name: "Namn från" })
+    .selectOption({ label: "Svenska, runt 1900" });
+
+  const first = dialog.getByRole("group", { name: "Namnförslag" }).getByRole("button").first();
+  const name = await first.innerText();
+  await first.click();
+
+  await expect(dialog.getByRole("textbox", { name: "Namn" })).toHaveValue(name);
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 
