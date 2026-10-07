@@ -97,12 +97,18 @@ function StepButtons({ actions }: { actions: SearchActions }) {
   );
 }
 
+function countText({ total, current }: { total: number; current: number }) {
+  if (total === 0) return t("Inga träffar");
+  if (current > 0) return t("{current} av {total}", { current, total });
+  return total === 1 ? t("1 träff") : t("{total} träffar", { total });
+}
+
 function FindRow(props: {
   query: SearchQueryState;
   actions: SearchActions;
   onKey: (event: KeyboardEvent) => void;
+  onClose: () => void;
 }) {
-  const { total, current } = props.actions.position();
   return (
     <div className="search-row">
       <input
@@ -113,12 +119,11 @@ function FindRow(props: {
         onChange={(event) => props.query.setSearch(event.target.value)}
         onKeyDown={props.onKey}
       />
-      <span className="search-count">
-        {total === 0
-          ? t("Inga träffar")
-          : t("{current} av {total}", { current: current || "–", total })}
-      </span>
+      <span className="search-count">{countText(props.actions.position())}</span>
       <StepButtons actions={props.actions} />
+      <button className="icon-button" aria-label={t("Stäng sökning")} onClick={props.onClose}>
+        ×
+      </button>
     </div>
   );
 }
@@ -164,14 +169,11 @@ function Chip(props: { isOn: boolean; onToggle: () => void; label?: string; chil
   );
 }
 
-function SearchOptions({
-  query,
-  manuscript,
-}: {
+function SearchOptions(props: {
   query: SearchQueryState;
   manuscript?: ManuscriptScope | undefined;
-  initialSearch?: string | undefined;
 }) {
+  const { query, manuscript } = props;
   return (
     <div className="search-options">
       {manuscript && (
@@ -205,7 +207,7 @@ export function SearchPanel(props: SearchPanelProps) {
   };
   return (
     <div className="search-panel" role="search">
-      <FindRow query={query} actions={actions} onKey={onSearchKey} />
+      <FindRow query={query} actions={actions} onKey={onSearchKey} onClose={props.onClose} />
       <ReplaceRow query={query} actions={actions} onClose={props.onClose} />
       <SearchOptions query={query} manuscript={props.manuscript} />
     </div>

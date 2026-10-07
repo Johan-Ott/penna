@@ -75,7 +75,11 @@ test("search finds a name across the scene", async ({ page }) => {
   await page.keyboard.press("Control+f");
   await page.keyboard.type("Elin");
 
-  await expect(page.getByText(/av \d+/).first()).toBeVisible();
+  await expect(page.getByText(/^\d+ träffar$/)).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText(/^1 av \d+$/)).toBeVisible();
+  await page.getByRole("button", { name: "Stäng sökning" }).click();
+  await expect(page.getByRole("search")).toBeHidden();
 });
 
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
