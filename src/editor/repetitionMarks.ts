@@ -3,6 +3,7 @@ import { Plugin, PluginKey, type Command, type PluginView } from "prosemirror-st
 import { Decoration, DecorationSet } from "prosemirror-view";
 import { repetitions, wordsWithSentences } from "../manuscript/review.js";
 import { documentText } from "./documentText.js";
+import { t } from "../i18n/i18n.js";
 
 const found = (doc: Node, window: number) => {
   const { text, toDoc } = documentText(doc);
@@ -19,9 +20,22 @@ export const sceneRepetitions = (doc: Node, window: number) =>
     count: repetition.most,
   }));
 
+// Shown on hover, so a line under a word is never left unexplained.
+const whyMarked = (repetition: { word: string; most: number }, window: number) =>
+  t("Upprepning: ”{word}” står {count} gånger inom {window} meningar", {
+    word: repetition.word,
+    count: repetition.most,
+    window,
+  });
+
 export function repetitionDecorations(doc: Node, window: number): DecorationSet {
   const decorations = found(doc, window).flatMap((repetition) =>
-    repetition.ranges.map((range) => Decoration.inline(range.from, range.to, { class: "repeat" })),
+    repetition.ranges.map((range) =>
+      Decoration.inline(range.from, range.to, {
+        class: "repeat",
+        title: whyMarked(repetition, window),
+      }),
+    ),
   );
   return DecorationSet.create(doc, decorations);
 }

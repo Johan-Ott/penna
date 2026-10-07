@@ -452,6 +452,7 @@
   "{days} dagar till deadline": "{days} days to the deadline",
   "1 dag i rad": "1 day in a row",
   "Sparat": "Saved",
+  "Upprepning: ”{word}” står {count} gånger inom {window} meningar": "Repetition: “{word}” appears {count} times within {window} sentences",
   "Visa allt": "Show all",
   "Filter · {count}": "Filter · {count}",
   "Filtrera": "Filter",

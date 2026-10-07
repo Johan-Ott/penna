@@ -86,7 +86,7 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
   await dialog.getByRole("textbox", { name: "Ny label" }).fill("Skriv om");
   await dialog.getByRole("button", { name: "Lägg till" }).click();
   await page.keyboard.press("Escape");
-  await expect(sidebar(page).locator(".tree-dot[title=\"Skriv om\"]")).toHaveCount(1);
+  await expect(sidebar(page).locator('.tree-dot[title="Skriv om"]')).toHaveCount(1);
 
   await sidebar(page).getByRole("button", { name: "Filtrera" }).click();
   await page.getByRole("menuitemradio", { name: "Skriv om" }).click();
@@ -112,7 +112,7 @@ test("a label is ticked on another scene straight from the row menu's Labels", a
   await page.getByRole("menuitem", { name: "Labels" }).hover();
   await page.getByRole("menuitemradio", { name: "Elin" }).click();
 
-  await expect(sidebar(page).locator(".tree-dot[title=\"Elin\"]")).toHaveCount(2);
+  await expect(sidebar(page).locator('.tree-dot[title="Elin"]')).toHaveCount(2);
 });
 
 test("a chapter clicked opens its first scene", async ({ page }) => {
