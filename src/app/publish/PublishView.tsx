@@ -23,6 +23,7 @@ interface PublishProps {
   onSaveFields: (fields: Record<string, unknown>) => void;
   onOpenScene: (title: string) => void;
   onBack: () => void;
+  onStudio: () => void;
 }
 
 type Step = "design" | "details" | "export";
@@ -164,6 +165,10 @@ export function PublishView(props: PublishProps) {
       <aside className="publish-steps" aria-label={t("Publicera")}>
         <button className="link-button quiet publish-back" onClick={props.onBack}>
           {t("← Tillbaka till texten")}
+        </button>
+        <button className="studio-link" onClick={props.onStudio}>
+          <span className="studio-item-name">{t("Studio")}</span>
+          <span className="insight-muted">{t("Bilder att dela och kapitel till nyhetsbrev")}</span>
         </button>
         <Steps props={props} publishing={publishing} />
         <button

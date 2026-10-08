@@ -4,6 +4,8 @@ import { ReadView } from "../contents/ReadView.js";
 import { cursorAtBlock } from "../../editor/commands.js";
 import { sidebarProps } from "../paneProps.js";
 import { PublishView } from "../publish/PublishView.js";
+import { StudioView } from "../studio/StudioView.js";
+import { useState } from "react";
 import { openScene, writeOverScene } from "../sceneSession.js";
 import { SyncView } from "../sync/SyncReview.js";
 import { openIfOnDisk } from "../useSceneSession.js";
@@ -89,13 +91,27 @@ export function ReadScreen({ app, project, onBack }: ViewProps) {
 }
 
 export function PublishScreen({ app, project, onBack }: ViewProps) {
+  const [isStudio, setStudio] = useState(false);
+  const saveFields = (fields: Record<string, unknown>) => void app.updateFields(fields);
+  if (isStudio)
+    return (
+      <StudioView
+        project={project}
+        stats={app.stats}
+        journey={app.journey.journey}
+        link={app.profile.profile.link}
+        onSaveFields={saveFields}
+        onBack={() => setStudio(false)}
+      />
+    );
   return (
     <PublishView
       project={project}
       generalAuthor={app.startup.preferences.authorName}
-      onSaveFields={(fields) => void app.updateFields(fields)}
+      onSaveFields={saveFields}
       onOpenScene={(title) => openSceneTitled(app, project, title)}
       onBack={onBack}
+      onStudio={() => setStudio(true)}
     />
   );
 }

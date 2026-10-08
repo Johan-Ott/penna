@@ -1,0 +1,104 @@
+import type { weekFigures, yearFigures } from "../../project/studio.js";
+import { MONTHS } from "../../project/snapshots.js";
+import { GREEN, PROSE, bar, lines, text, type Card } from "./studioCanvas.js";
+import { numberLocale, t } from "../../i18n/i18n.js";
+
+const format = (count: number) => count.toLocaleString(numberLocale());
+const KICKER = { size: 11, spacing: 0.24, upper: true, alpha: 0.6 };
+const dayName = (day: string, weekday: "narrow" | "long") =>
+  new Date(`${day}T00:00:00Z`).toLocaleDateString(numberLocale(), { weekday, timeZone: "UTC" });
+
+type Week = ReturnType<typeof weekFigures>;
+
+function barColour(card: Card, words: number, most: number) {
+  if (words === most) return GREEN;
+  return words > 0 ? card.ink : "rgba(128,128,128,0.25)";
+}
+
+function weekBars(card: Card, figures: Week, bottom: number) {
+  const most = Math.max(1, ...figures.days.map((day) => day.words));
+  const step = 412 / 7;
+  figures.days.forEach((day, index) => {
+    const height = Math.max(3, Math.round((day.words / most) * 70));
+    const x = 44 + index * step;
+    bar(
+      card,
+      { x, y: bottom - 16 - height, width: step - 10, height },
+      barColour(card, day.words, most),
+    );
+    const label = { x: x + (step - 10) / 2, y: bottom };
+    text(card, dayName(day.day, "narrow"), label, { size: 10, alpha: 0.55, align: "center" });
+  });
+}
+
+function weekFooter(card: Card, figures: Week, streak: number) {
+  const y = card.height - 44;
+  const days = figures.writingDays;
+  const writing = days === 1 ? t("1 skrivdag") : t("{count} skrivdagar", { count: days });
+  text(card, writing, { x: 44, y }, { size: 13 });
+  const inRow = streak === 1 ? t("1 dag i rad") : t("{count} dagar i rad", { count: streak });
+  text(card, inRow, { x: 250, y }, { size: 13, align: "center" });
+  const best = t("bäst: {day}, {count}", {
+    day: dayName(figures.best.day, "long"),
+    count: format(figures.best.words),
+  });
+  text(card, best, { x: 456, y }, { size: 13, colour: GREEN, align: "right" });
+}
+
+export function drawWeek(card: Card, figures: Week, book: string, streak: number) {
+  text(card, t("Veckan i siffror · v. {week}", { week: figures.week }), { x: 44, y: 56 }, KICKER);
+  const middle = (card.height - 150) / 2;
+  text(
+    card,
+    format(figures.words),
+    { x: 44, y: middle },
+    { size: 72, weight: 500, spacing: -0.04 },
+  );
+  const words = t("ord på {book}", { book });
+  text(card, words, { x: 44, y: middle + 32 }, { size: 18, font: PROSE, alpha: 0.75 });
+  weekBars(card, figures, card.height - 78);
+  weekFooter(card, figures, streak);
+}
+
+function yearFacts(figures: ReturnType<typeof yearFigures>): [string, string][] {
+  const month = figures.bestMonth ? (MONTHS[figures.bestMonth - 1] ?? "") : "–";
+  return [
+    [format(figures.words), t("ord")],
+    [String(figures.writingDays), t("skrivdagar")],
+    [String(figures.record), t("dagar i rad, rekord")],
+    [month, t("bästa månad")],
+  ];
+}
+
+export function drawYear(card: Card, figures: ReturnType<typeof yearFigures>) {
+  text(card, t("Ditt skrivår"), { x: 44, y: 56 }, KICKER);
+  text(card, figures.year, { x: 44, y: 128 }, { size: 56, weight: 600, font: PROSE });
+  yearFacts(figures).forEach(([value, label], index) => {
+    const x = 44 + (index % 2) * 218;
+    const y = 200 + Math.floor(index / 2) * 70;
+    text(card, value, { x, y }, { size: 30, weight: 500, spacing: -0.02 });
+    text(card, label, { x, y: y + 20 }, { size: 12, alpha: 0.65 });
+  });
+  const level = t("I år är du en {level}.", { level: figures.level });
+  text(card, level, { x: 44, y: card.height - 44 }, { size: 20, font: PROSE });
+}
+
+export function drawCountdown(card: Card, days: number, book: string, release: string) {
+  const middle = card.height / 2;
+  const big = { size: 160, weight: 500, spacing: -0.06, align: "center" as const };
+  text(card, String(days), { x: 250, y: middle - 10 }, big);
+  const left = { ...KICKER, size: 13, alpha: 0.65, align: "center" as const };
+  text(card, t("dagar kvar"), { x: 250, y: middle + 26 }, left);
+  const title = { size: 26, weight: 600, font: PROSE, align: "center" as const };
+  text(card, book, { x: 250, y: middle + 84 }, title);
+  text(card, release, { x: 250, y: middle + 108 }, { size: 13, alpha: 0.7, align: "center" });
+}
+
+export function drawRelease(card: Card, book: string, quote: string, link: string) {
+  text(card, t("Nu i handeln"), { x: 44, y: 56 }, KICKER);
+  const title = { size: 52, weight: 600, font: PROSE };
+  const end = lines(card, book, { x: 44, y: card.height / 2 - 40 }, title);
+  const said = { size: 18, italic: true, font: PROSE, alpha: 0.8 };
+  if (quote) lines(card, `”${quote}”`, { x: 44, y: end + 44 }, said);
+  if (link) text(card, link, { x: 44, y: card.height - 44 }, { size: 13, alpha: 0.7 });
+}
