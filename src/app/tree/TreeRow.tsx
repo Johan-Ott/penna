@@ -69,6 +69,7 @@ const rowClass = (props: TreeRowProps) =>
     "tree-row",
     props.row.depth === 0 ? "top-level" : "",
     props.isActive ? "active" : "",
+    props.status?.id === "idé" ? "planned" : "",
     props.isMissing ? "missing" : "",
     props.dropHint ? `drop-${props.dropHint}` : "",
   ]
@@ -94,18 +95,23 @@ const MoreButton = (props: { label: string; onOpen: (event: MouseEvent<HTMLEleme
   </button>
 );
 
-function LabelDots({ dots, status }: { dots: Label[]; status: TreeRowProps["status"] }) {
-  if (dots.length === 0 && !status) return null;
-  const names = [status?.name, ...dots.map((dot) => dot.name)];
+// A scene's step stands before its name, as the design draws it; an idea is only an outline.
+function StatusDot({ status }: { status: TreeRowProps["status"] }) {
+  if (!status) return null;
   return (
-    <span className="tree-dots" aria-label={names.filter(Boolean).join(", ")}>
-      {status && (
-        <span
-          className={`tree-dot${status.color ? "" : " outlined"}`}
-          title={status.name}
-          style={{ background: status.color }}
-        />
-      )}
+    <span
+      className={`tree-dot tree-status${status.color ? "" : " outlined"}`}
+      title={status.name}
+      aria-label={status.name}
+      style={{ background: status.color }}
+    />
+  );
+}
+
+function LabelDots({ dots }: { dots: Label[] }) {
+  if (dots.length === 0) return null;
+  return (
+    <span className="tree-dots" aria-label={dots.map((dot) => dot.name).join(", ")}>
       {dots.map((dot) => (
         <span
           key={dot.id}
@@ -136,12 +142,13 @@ export function TreeRow(props: TreeRowProps) {
       >
         {props.isExpanded !== null && <Chevron isOpen={props.isExpanded} />}
       </span>
+      <StatusDot status={props.status} />
       {props.isRenaming ? (
         <RenameInput initial={props.title} onRename={props.onRename} />
       ) : (
         <span className="tree-label">{props.label}</span>
       )}
-      <LabelDots dots={props.dots} status={props.status} />
+      <LabelDots dots={props.dots} />
       <span className="tree-meta">{props.meta}</span>
       <MoreButton label={props.label} onOpen={props.onContextMenu} />
     </div>

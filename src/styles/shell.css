@@ -1209,3 +1209,24 @@
   color: var(--on-primary);
   font-size: 11px;
 }
+
+/* As the design: a row's words show where the writer is, or where the pointer rests. */
+.sidebar .tree .tree-meta {
+  visibility: hidden;
+}
+
+.sidebar .tree .tree-row.active .tree-meta,
+.sidebar .tree .tree-row:hover .tree-meta {
+  visibility: visible;
+}
+
+/* A scene that is still an idea reads as planned. */
+.tree .tree-row.planned .tree-label {
+  color: var(--text-label);
+  font-style: italic;
+}
+
+.tree-status {
+  flex-shrink: 0;
+  margin-right: 8px;
+}
