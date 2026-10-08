@@ -70,10 +70,11 @@ function levelOf(words: number, goal: number): number {
   return Math.min(4, 1 + Math.floor((2 * words) / goal));
 }
 
+const mondayOf = (day: string) => dayAfter(day, -((new Date(utcOf(day)).getUTCDay() + 6) % 7));
+
 /** A column per week, starting on Monday. */
 export function heatmap(stats: Stats, today: string, dailyGoal: number | null): HeatmapCell[] {
-  const weekday = (new Date(utcOf(today)).getUTCDay() + 6) % 7;
-  const start = dayAfter(today, -weekday - 7 * (HEATMAP_WEEKS - 1));
+  const start = dayAfter(mondayOf(today), -7 * (HEATMAP_WEEKS - 1));
   const goal = dailyGoal ?? Math.max(1, ...Object.values(stats));
   return Array.from({ length: HEATMAP_WEEKS * 7 }, (_unused, index) => {
     const day = dayAfter(start, index);
@@ -81,6 +82,13 @@ export function heatmap(stats: Stats, today: string, dailyGoal: number | null): 
     return { day, words, level: day > today ? null : levelOf(words, goal) };
   });
 }
+
+/** Monday to Sunday of the week `today` is in, with the words written each day. */
+export const weekOf = (stats: Stats, today: string) =>
+  Array.from({ length: 7 }, (_unused, index) => {
+    const day = dayAfter(mondayOf(today), index);
+    return { day, words: stats[day] ?? 0 };
+  });
 
 /** "15 jan" for 2027-01-15. */
 export function shortDay(day: string): string {

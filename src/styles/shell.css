@@ -657,78 +657,173 @@
 }
 
 /* Framsteg, opened from the day's words */
-.popover-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
+/* Insikter: a panel of cards beside the text; the text card makes room for it. */
+.app.insights-open > .main-card {
+  margin-right: 356px;
 }
 
-.progress-popover {
+.insights-panel {
   position: fixed;
-  top: 48px;
-  left: 50%;
-  z-index: 41;
+  top: 44px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 500px;
-  max-width: calc(100vw - 32px);
-  max-height: calc(100vh - 64px);
-  padding: 20px;
+  gap: 10px;
+  width: 340px;
+  box-sizing: border-box;
+  padding: 16px;
   overflow-y: auto;
   border: 1px solid var(--border);
-  border-radius: var(--radius-dialog);
-  background: var(--bg);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
-  transform: translateX(-50%);
+  border-radius: var(--radius-card);
+  background: var(--bg-panel);
 }
 
-.progress-figures {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+.insights-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px 4px;
 }
 
-.progress-figure,
-.progress-section {
+.insights-title {
+  font: 600 18px var(--font-prose);
+}
+
+.insight-card,
+.insights-panel .progress-section,
+.insights-panel .progress-card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  color: var(--text);
+  font: 13px var(--font-ui);
+  text-align: left;
 }
 
-.progress-section {
+.insight-day {
+  align-items: center;
+  gap: 8px;
+  padding: 18px 16px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.insight-day:hover {
+  border-color: var(--border-control);
+}
+
+.insight-day .ring-track,
+.insight-day .ring-done {
+  fill: none;
+  stroke-width: 6;
+}
+
+.insight-day .ring-track {
+  stroke: var(--surface-hover);
+}
+
+.insight-day .ring-done {
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+
+.insight-day .ring-drop {
+  fill: var(--text);
+}
+
+.insight-heading {
+  font: 600 17px var(--font-prose);
+}
+
+.insight-title {
+  font-weight: 600;
+}
+
+.insight-text {
+  color: var(--text-tree);
+}
+
+.insight-muted {
+  color: var(--text-label);
+}
+
+.insight-row {
+  display: flex;
+  justify-content: space-between;
   gap: 8px;
 }
 
-.progress-value {
-  font-size: 22px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+.insight-card .progress-bar,
+.insight-card .progress-bar > div {
+  height: 8px;
+  border-radius: 4px;
 }
 
-.progress-label {
-  color: var(--text-label);
-  font-size: 12px;
+.insight-card .progress-bar > div {
+  background: var(--accent);
 }
 
-.progress-popover .progress-row {
+.insight-ticks {
   display: flex;
   justify-content: space-between;
+  color: var(--text-label);
+  font-size: 11px;
 }
 
-.progress-popover .heatmap {
+.insight-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.insight-day-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-tree);
+  font-size: 11px;
+}
+
+.insight-day-bar .bar-room {
+  display: flex;
+  align-items: flex-end;
+  height: 56px;
+}
+
+.insight-day-bar .bar {
+  width: 10px;
+  border-radius: 3px;
+  background: var(--text-tree);
+}
+
+.insight-day-bar .bar.best {
+  background: var(--accent);
+}
+
+.insight-day-bar .bar.empty {
+  background: var(--border-control);
+}
+
+.insights-panel .heatmap {
   grid-template-rows: repeat(7, 11px);
   grid-auto-columns: 11px;
   gap: 4px;
 }
 
-.progress-popover .heat {
+.insights-panel .heat {
   width: 11px;
   height: 11px;
   border-radius: 2px;
 }
 
-.progress-popover .chapter-bar {
+.insights-panel .chapter-bar {
   display: grid;
   grid-template-columns: 110px 1fr 44px;
   align-items: center;
@@ -736,8 +831,19 @@
   font-size: 12px;
 }
 
-.progress-popover .chapter-bar .progress-label {
+.insights-panel .chapter-bar .progress-label {
   text-align: right;
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-label {
+  color: var(--text-label);
+  font-size: 12px;
 }
 
 .progress-bar.thin,
@@ -745,7 +851,7 @@
   height: 4px;
 }
 
-.progress-popover .link-button {
+.insights-panel > .link-button {
   align-self: flex-start;
 }
 

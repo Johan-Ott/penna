@@ -33,7 +33,7 @@
 .settings-panel,
 .footnote-popover,
 .mention-card,
-.progress-popover,
+.insights-panel,
 .selection-bar,
 .search-panel {
   animation: arrive var(--quick) var(--ease-out);

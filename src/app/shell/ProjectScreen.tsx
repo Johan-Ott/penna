@@ -2,7 +2,7 @@ import type { MouseEvent } from "react";
 import type { AppState } from "../App.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
-import { ProgressPopover } from "../progress/ProgressPopover.js";
+import { InsightsPanel } from "../progress/InsightsPanel.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -80,7 +80,7 @@ function Floating({ app, project }: ScreenProps) {
   return (
     <>
       {writingMode.isProgressOpen && (
-        <ProgressPopover
+        <InsightsPanel
           project={project}
           stats={app.stats}
           onSaveGoals={saveFields}
@@ -113,6 +113,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   const classes = [
     "app",
     writingMode.isFocusMode && "focus-mode",
+    writingMode.isProgressOpen && "insights-open",
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
   ];
   return (

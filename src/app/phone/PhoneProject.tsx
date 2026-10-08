@@ -6,7 +6,7 @@ import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { openInHome } from "../notes/noteHomes.js";
 import { Overlays } from "../Overlays.js";
 import { writingAreaProps } from "../paneProps.js";
-import { ProgressPopover } from "../progress/ProgressPopover.js";
+import { InsightsPanel } from "../progress/InsightsPanel.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
@@ -55,7 +55,7 @@ function Floating({ app, project }: Props) {
   return (
     <>
       {writingMode.isProgressOpen && (
-        <ProgressPopover
+        <InsightsPanel
           project={project}
           stats={app.stats}
           onSaveGoals={(fields) => void app.updateFields(fields)}

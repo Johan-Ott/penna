@@ -7,6 +7,7 @@ import {
   heatmap,
   projectGoals,
   shortDay,
+  weekOf,
 } from "../src/project/progress";
 
 describe("deadlinePlan", () => {
@@ -84,6 +85,22 @@ describe("heatmap", () => {
       .map((cell) => cell.level);
 
     expect(levels).toEqual([1, 2, 3, 4, 0, null, null]);
+  });
+});
+
+describe("weekOf", () => {
+  it("gives the current week from Monday to Sunday with each day's words", () => {
+    const week = weekOf({ "2026-10-06": 610, "2026-10-08": 980 }, "2026-10-08");
+
+    expect(week.map((day) => [day.day, day.words])).toEqual([
+      ["2026-10-05", 0],
+      ["2026-10-06", 610],
+      ["2026-10-07", 0],
+      ["2026-10-08", 980],
+      ["2026-10-09", 0],
+      ["2026-10-10", 0],
+      ["2026-10-11", 0],
+    ]);
   });
 });
 
