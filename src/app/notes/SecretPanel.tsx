@@ -182,3 +182,33 @@ export function PersonSecrets(props: SecretProps) {
     </section>
   );
 }
+
+/** In Granska: the secrets this scene names before the reader is meant to learn them. */
+export function SceneSecretWarnings(
+  props: Pick<SecretProps, "book" | "notes" | "onOpen"> & { sceneId: string },
+) {
+  const { book, notes } = props;
+  const early = secretsOf(book.tree, book.summaries).filter((secret) =>
+    earlyMentions(book.tree, secret, notes.mentions.get(secret.id)?.sceneIds ?? []).includes(
+      props.sceneId,
+    ),
+  );
+  if (early.length === 0) return null;
+  return (
+    <section className="review-section" aria-label={t("Hemligheter före avslöjandet")}>
+      <span className="review-heading">{t("Hemligheter före avslöjandet")}</span>
+      {early.map((secret) => (
+        <button
+          key={secret.id}
+          className="review-item book-task"
+          onClick={() => props.onOpen(secret.id)}
+        >
+          <span>{secret.name}</span>
+          <span className="kpi-sub">
+            {t("Läsaren får veta först i {scene}", { scene: sceneName(book, secret.reveal ?? "") })}
+          </span>
+        </button>
+      ))}
+    </section>
+  );
+}

@@ -452,6 +452,8 @@
   "{days} dagar till deadline": "{days} days to the deadline",
   "1 dag i rad": "1 day in a row",
   "Sparat": "Saved",
+  "Hemligheter före avslöjandet": "Secrets before their reveal",
+  "Läsaren får veta först i {scene}": "The reader learns it only in {scene}",
   "Inte bestämt": "Not decided",
   "När {name} får veta": "When {name} learns it",
   "Lägg till en person som får veta": "Add a person who learns it",

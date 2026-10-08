@@ -32,3 +32,22 @@ test("a secret named before its reveal is flagged, and the person who learns it 
 
   await expect(page.getByRole("region", { name: "Vet om" })).toContainText("Henrik");
 });
+
+test("Granska warns in a scene that names a secret before its reveal", async ({ page }) => {
+  await page.getByRole("button", { name: "+ Ny anteckning" }).click();
+  const dialog = page.getByRole("dialog", { name: "Ny anteckning" });
+  await dialog.getByRole("textbox", { name: "Namn" }).fill("Henrik");
+  await dialog.getByRole("radio", { name: "Hemligheter" }).click();
+  await dialog.getByRole("button", { name: "Skapa" }).click();
+  const panel = page.getByRole("region", { name: "Vem vet vad" });
+  await panel
+    .getByRole("combobox", { name: "Läsaren får veta i" })
+    .selectOption({ label: "3. Smältningen · Regnet" });
+
+  await page.locator(".sidebar").getByText("Köket", { exact: true }).click();
+  await page.getByRole("button", { name: /^Granska/ }).click();
+
+  await expect(page.getByRole("region", { name: "Hemligheter före avslöjandet" })).toContainText(
+    "Henrik",
+  );
+});

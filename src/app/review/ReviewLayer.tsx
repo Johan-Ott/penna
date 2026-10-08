@@ -10,6 +10,7 @@ import { useReview } from "./useReview.js";
 import { documentText } from "../../editor/documentText.js";
 import { CommentsSection } from "./CommentsSection.js";
 import { BookTasks } from "./BookTasks.js";
+import { SceneSecretWarnings } from "../notes/SecretPanel.js";
 import { sidebarProps } from "../paneProps.js";
 import { RevisionSection } from "./RevisionSection.js";
 import type { useComments } from "./useComments.js";
@@ -38,6 +39,12 @@ function CommentsAndTasks(props: ShownProps) {
   return (
     <>
       <CommentsSection comments={props.comments} text={documentText(props.doc).text} />
+      <SceneSecretWarnings
+        book={props.project}
+        sceneId={props.scene.id}
+        notes={props.app.notes}
+        onOpen={sidebarProps(props.app, props.project).onOpenScene}
+      />
       <BookTasks
         project={props.project}
         openSceneId={props.scene.id}
