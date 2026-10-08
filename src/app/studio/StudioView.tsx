@@ -27,6 +27,7 @@ function groups(): [string, [CardId, string, string][]][] {
       [
         ["vecka", t("Veckan i siffror"), t("Ord, dagar och streak")],
         ["skrivar", t("Ditt skrivår"), t("Hela året, i alla böcker")],
+        ["milstolpe", t("Milstolpe"), t("Första utkastet, eller det du vill fira")],
       ],
     ],
     [
@@ -76,6 +77,14 @@ function cardExtra(card: CardId, props: StudioProps) {
         type="date"
         value={bookField(props.project, "releaseDate")}
         onSave={save("releaseDate")}
+      />
+    );
+  if (card === "milstolpe")
+    return (
+      <BookField
+        label={t("Milstolpe")}
+        value={bookField(props.project, "milestone") || t("Första utkastet")}
+        onSave={save("milestone")}
       />
     );
   if (card === "handeln")

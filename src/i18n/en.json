@@ -964,5 +964,16 @@
   "← Publicera": "← Publish",
   "Utgivningsdag": "Release day",
   "Citat ur boken": "Quote from the book",
-  "Ämne: {title}": "Subject: {title}"
+  "Ämne: {title}": "Subject: {title}",
+  "Dela uppslag": "Share spread",
+  "{count} sidor hittills": "{count} pages so far",
+  "Uppslag": "Spread",
+  "Liggande": "Landscape",
+  "Vad": "What",
+  "Dela": "Share",
+  "Bara det du ser delas. Bilden skapas på din dator.": "Only what you see is shared. The picture is made on your computer.",
+  "Första utkastet": "First draft",
+  "{words} ord · {pages} sidor · {days} skrivdagar": "{words} words · {pages} pages · {days} writing days",
+  "Milstolpe": "Milestone",
+  "Första utkastet, eller det du vill fira": "The first draft, or what you want to celebrate"
 }

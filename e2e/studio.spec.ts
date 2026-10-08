@@ -28,3 +28,13 @@ test("a chapter is shown as the newsletter mail it becomes", async ({ page }) =>
   await expect(page.locator(".studio-mail")).toContainText("Brevet låg på köksbordet");
   await expect(page.locator(".studio-mail-subject")).toContainText("Vintervägen: Brevet");
 });
+
+test("a milestone is named and kept with the book", async ({ page }) => {
+  await page.getByRole("button", { name: /Milstolpe/ }).click();
+  await page.getByLabel("Milstolpe").fill("Halvvägs");
+  await page.getByLabel("Milstolpe").blur();
+
+  await page.getByRole("button", { name: /Veckan i siffror/ }).click();
+  await page.getByRole("button", { name: /Milstolpe/ }).click();
+  await expect(page.getByLabel("Milstolpe")).toHaveValue("Halvvägs");
+});

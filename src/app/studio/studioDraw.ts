@@ -6,10 +6,13 @@ import { daysToRelease, weekFigures, yearFigures } from "../../project/studio.js
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import { penMark, startCard, type Card, type CardFormat, type Look } from "./studioCanvas.js";
-import { drawCountdown, drawRelease, drawWeek, drawYear } from "./studioCards.js";
-import { t } from "../../i18n/i18n.js";
+import { drawCountdown, drawMilestone, drawRelease, drawWeek, drawYear } from "./studioCards.js";
+import { bookOutline, estimatedPages } from "../../export/book.js";
+import { KIND_LABELS } from "../../project/shelf.js";
+import { manuscriptWords } from "../../project/treeLabels.js";
+import { numberLocale, t } from "../../i18n/i18n.js";
 
-export type ImageCardId = "vecka" | "skrivar" | "nedrakning" | "handeln";
+export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "nedrakning" | "handeln";
 
 export interface StudioData {
   project: Project;
@@ -30,6 +33,24 @@ function countdown(card: Card, { project }: StudioData, today: string) {
   drawCountdown(card, daysToRelease(release, today) ?? 0, project.name, when);
 }
 
+function milestone(card: Card, { project, stats }: StudioData, today: string) {
+  const words = manuscriptWords(project.tree, project.summaries);
+  const pages = estimatedPages(words, bookOutline(project.tree));
+  const days = Object.values(stats).filter((count) => count > 0).length;
+  const kind = project.fields["type"];
+  drawMilestone(card, {
+    name: bookField(project, "milestone") || t("Första utkastet"),
+    book: project.name,
+    kind: (typeof kind === "string" && KIND_LABELS[kind]) || "",
+    date: new Date(`${today}T12:00:00`).toLocaleDateString(numberLocale(), { dateStyle: "long" }),
+    facts: t("{words} ord · {pages} sidor · {days} skrivdagar", {
+      words: words.toLocaleString(numberLocale()),
+      pages,
+      days,
+    }),
+  });
+}
+
 const DRAWERS: Record<ImageCardId, (card: Card, data: StudioData, today: string) => void> = {
   vecka: (card, data, today) =>
     drawWeek(
@@ -39,6 +60,7 @@ const DRAWERS: Record<ImageCardId, (card: Card, data: StudioData, today: string)
       journeySummary(data.journey, today).days,
     ),
   skrivar: (card, data, today) => drawYear(card, yearFigures(data.journey, today)),
+  milstolpe: milestone,
   nedrakning: countdown,
   handeln: (card, data) =>
     drawRelease(card, data.project.name, bookField(data.project, "quote"), data.link),

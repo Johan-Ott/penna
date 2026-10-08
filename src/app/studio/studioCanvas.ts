@@ -1,7 +1,9 @@
 import { wrapLines } from "../share/excerptImage.js";
 
 export type Look = "papper" | "ljus" | "mork";
-export type CardFormat = "kvadrat" | "story";
+export type CardFormat = "kvadrat" | "story" | "liggande";
+
+const HEIGHTS: Record<CardFormat, number> = { kvadrat: 500, story: 889, liggande: 309 };
 
 const LOOKS: Record<Look, { paper: string; ink: string; grain: string }> = {
   papper: { paper: "#fbfaf7", ink: "#111111", grain: "rgba(0,0,0,0.035)" },
@@ -15,7 +17,7 @@ export const SANS = '"Geist Sans", system-ui, sans-serif';
 /** Drawn in the design's units, 500 wide, and scaled to 1080 pixels. */
 export interface Card {
   context: CanvasRenderingContext2D;
-  /** The card's height in design units: 500 for a square, 889 for a story. */
+  /** The card's height in design units: 500 for a square, 889 for a story, 309 lying down. */
   height: number;
   ink: string;
 }
@@ -90,7 +92,7 @@ function paper(context: CanvasRenderingContext2D, look: Look, width: number, hei
 
 /** Readies the canvas place 1080 pixels wide and hands a card to draw on in design units. */
 export function startCard(canvas: HTMLCanvasElement, look: Look, format: CardFormat): Card | null {
-  const height = format === "story" ? 889 : 500;
+  const height = HEIGHTS[format];
   const scale = 1080 / 500;
   canvas.width = 1080;
   canvas.height = Math.round(height * scale);

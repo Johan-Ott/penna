@@ -102,3 +102,28 @@ export function drawRelease(card: Card, book: string, quote: string, link: strin
   if (quote) lines(card, `”${quote}”`, { x: 44, y: end + 44 }, said);
   if (link) text(card, link, { x: 44, y: card.height - 44 }, { size: 13, alpha: 0.7 });
 }
+
+export interface Milestone {
+  name: string;
+  book: string;
+  kind: string;
+  date: string;
+  facts: string;
+}
+
+/** Milstolpe: the moment written out like a title page, centred on the card. */
+export function drawMilestone(card: Card, milestone: Milestone) {
+  const middle = card.height / 2;
+  const centred = { align: "center" as const, font: PROSE };
+  text(card, milestone.name, { x: 250, y: middle - 100 }, { ...KICKER, ...centred, spacing: 0.3 });
+  text(card, milestone.book, { x: 250, y: middle - 44 }, { ...centred, size: 40, weight: 600 });
+  text(
+    card,
+    milestone.kind,
+    { x: 250, y: middle - 16 },
+    { ...centred, size: 13, italic: true, alpha: 0.75 },
+  );
+  bar(card, { x: 230, y: middle + 14, width: 40, height: 1 }, card.ink);
+  text(card, milestone.date, { x: 250, y: middle + 56 }, { ...centred, size: 15 });
+  text(card, milestone.facts, { x: 250, y: middle + 78 }, { ...centred, size: 13, alpha: 0.65 });
+}

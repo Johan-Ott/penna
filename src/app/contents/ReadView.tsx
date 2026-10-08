@@ -1,11 +1,12 @@
 import type { Node } from "prosemirror-model";
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { readingScenes, type ReadingScene } from "../../project/reading.js";
 import { usePhone } from "../phone/usePhone.js";
 import type { Project } from "../useProject.js";
 import { useEscape } from "../useShortcut.js";
 import { useBookPages, type PageLayout } from "./bookPages.js";
 import { ReadSelection, type ReadSaving } from "./ReadSelection.js";
+import { ShareSpreadButton } from "./ShareSpreadButton.js";
 import { SceneText, useSceneDocs, type Docs } from "./sceneDocs.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -124,16 +125,19 @@ function ReadFoot(props: {
   );
 }
 
-function ReadHead(props: ReadViewProps & { place: string }) {
+function ReadHead(props: ReadViewProps & { place: string; share: ReactNode }) {
   return (
     <header className="read-head">
       <button className="read-back" onClick={props.onBack}>
         {t("← Tillbaka till texten")} <span className="read-key">Esc</span>
       </button>
       <span className="read-place">{props.place}</span>
-      <button className="link-button quiet read-design" onClick={props.onDesign}>
-        {t("Ändra utseende")}
-      </button>
+      <span className="read-head-end">
+        <button className="link-button quiet" onClick={props.onDesign}>
+          {t("Ändra utseende")}
+        </button>
+        {props.share}
+      </span>
     </header>
   );
 }
@@ -162,20 +166,18 @@ function BookFlow(props: {
 export function ReadView(props: ReadViewProps) {
   const { project } = props;
   const scenes = readingScenes(project.tree);
-  const docs = useSceneDocs(
-    project,
-    scenes.map((scene) => scene.sceneId),
-    props.beforeRead,
-  );
+  const ids = scenes.map((scene) => scene.sceneId);
+  const docs = useSceneDocs(project, ids, props.beforeRead);
   const flow = useRef<HTMLDivElement>(null);
   const perSpread = usePhone() ? 1 : 2;
   const { layout, first, goTo, turn } = useBookPages(flow, perSpread, docs, props.startScene);
   const pages = Array.from({ length: perSpread }, (_unused, index) => first + index);
+  const share = <ShareSpreadButton {...{ flow, project, first, perSpread, count: layout.count }} />;
   useEscape(props.onBack);
   useTurnKeys(turn);
   return (
     <main className="read-view">
-      <ReadHead {...props} place={placeText(scenes, layout, pages)} />
+      <ReadHead {...props} place={placeText(scenes, layout, pages)} share={share} />
       <div className="read-stage">
         <TurnButton step={-1} onTurn={turn} />
         <div className={perSpread === 1 ? "read-spread single" : "read-spread"}>
