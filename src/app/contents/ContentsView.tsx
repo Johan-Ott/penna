@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { designOf, trimSize } from "../../export/bookDesign.js";
 import type { PageMap } from "../../project/pageMap.js";
 import { Row } from "./ContentsRowView.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
@@ -9,12 +8,11 @@ import {
   movedInTime,
   type ContentsRow,
 } from "../../project/contents.js";
-import { projectGoals, shortDay } from "../../project/progress.js";
-import { KIND_LABELS } from "../../project/shelf.js";
 import type { TreeNode } from "../../project/tree.js";
-import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import type { Stats } from "../../project/stats.js";
+import { BookMeta, PageGrid } from "./BookOverview.js";
+import { t } from "../../i18n/i18n.js";
 
 interface ContentsProps {
   project: Project;
@@ -27,24 +25,8 @@ interface ContentsProps {
   onShowDrafts: () => void;
   /** The printed book's pages, once they are counted; null while they are not shown. */
   pageMap: PageMap | null;
-}
-
-const format = (words: number) => words.toLocaleString(numberLocale());
-
-function metaLine(project: Project, pageMap: PageMap | null) {
-  const words = manuscriptWords(project.tree, project.summaries);
-  const goals = projectGoals(project.fields);
-  const type = project.fields["type"];
-  const kind = typeof type === "string" ? KIND_LABELS[type] : undefined;
-  const count = goals.totalGoal
-    ? t("{words} av {goal} ord", { words: format(words), goal: format(goals.totalGoal) })
-    : t("{count} ord", { count: format(words) });
-  const deadline = goals.deadline ? t("deadline {day}", { day: shortDay(goals.deadline) }) : null;
-  const { width, height } = trimSize(designOf(project.fields).trim);
-  const pages = pageMap
-    ? t("{pages} sidor i {width} × {height} mm", { pages: format(pageMap.pages), width, height })
-    : null;
-  return [kind, count, pages, deadline].filter(Boolean).join(" · ");
+  /** The words of each day, for when the first draft is done at this pace. */
+  stats: Stats;
 }
 
 const timeOrderOf = (fields: Record<string, unknown>) => {
@@ -93,7 +75,7 @@ function ContentsHeader(props: ContentsProps) {
   return (
     <header className="contents-header">
       <h1>{props.project.name}</h1>
-      <span className="contents-meta">{metaLine(props.project, props.pageMap)}</span>
+      <BookMeta project={props.project} pageMap={props.pageMap} stats={props.stats} />
       <span className="contents-links">
         <button className="link-button quiet contents-read" onClick={props.onReadBook}>
           {t("Läs hela boken")}
@@ -102,6 +84,9 @@ function ContentsHeader(props: ContentsProps) {
           {t("Utkast")}
         </button>
       </span>
+      {props.pageMap && (
+        <PageGrid project={props.project} pageMap={props.pageMap} onOpenScene={props.onOpenScene} />
+      )}
     </header>
   );
 }

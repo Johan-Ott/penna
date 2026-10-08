@@ -202,6 +202,11 @@ test("Innehåll lists the chapters", async ({ page }) => {
 
   await expect(page.getByText("Fyren").first()).toBeVisible();
   await expect(page.getByText("Brevet").first()).toBeVisible();
+  // The page map waits for the book to be set, which takes a moment.
+  const pages = page.getByRole("list", { name: "Bokens sidor" });
+  await expect(pages.getByRole("button", { name: /^Sida \d+, Brevet$/ }).first()).toBeVisible({
+    timeout: 30_000,
+  });
 });
 
 test("versions of the open scene can be opened", async ({ page }) => {

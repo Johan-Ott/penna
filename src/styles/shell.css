@@ -1230,3 +1230,44 @@
   flex-shrink: 0;
   margin-right: 8px;
 }
+
+/* Innehåll's page map: one mark per printed page, coloured by its chapter's step. */
+.page-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 4px 0 8px;
+}
+
+.page-grid-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.page-grid-label {
+  flex-shrink: 0;
+  width: 34px;
+  color: var(--text-label);
+  font-size: 10px;
+  text-align: right;
+}
+
+.page-grid-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.page-mark {
+  width: 8px;
+  height: 11px;
+  padding: 0;
+  border: 0;
+  border-radius: 1px;
+}
+
+.page-mark.planned {
+  border: 1px dashed var(--text-dim);
+  background: transparent;
+}

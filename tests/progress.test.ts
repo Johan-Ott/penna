@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   averagePerDay,
+  finishDay,
   daysBetween,
   deadlinePlan,
   heatmap,
@@ -105,5 +106,16 @@ describe("shortDay", () => {
     const days = [shortDay("2027-01-15"), shortDay("2026-10-02")];
 
     expect(days).toEqual(["15 jan", "2 okt"]);
+  });
+});
+
+describe("finishDay", () => {
+  it("is when the goal is reached at the writer's pace", () => {
+    expect(finishDay(1000, 3000, 500, "2026-10-01")).toBe("2026-10-05");
+  });
+
+  it("is unknown without a goal or with no pace yet", () => {
+    expect(finishDay(1000, null, 500, "2026-10-01")).toBeNull();
+    expect(finishDay(1000, 3000, 0, "2026-10-01")).toBeNull();
   });
 });

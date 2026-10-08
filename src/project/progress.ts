@@ -87,3 +87,9 @@ export function shortDay(day: string): string {
   const [, month = 1, date = 1] = day.split("-").map(Number);
   return `${date} ${MONTHS[month - 1] ?? ""}`;
 }
+
+/** The day the first draft reaches its goal at the writer's pace; null without a goal or a pace. */
+export function finishDay(words: number, goal: number | null, perDay: number, today: string) {
+  if (!goal || perDay <= 0) return null;
+  return dayAfter(today, Math.ceil(Math.max(0, goal - words) / perDay));
+}
