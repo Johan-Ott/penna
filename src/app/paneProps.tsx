@@ -1,9 +1,10 @@
+import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
-import type { TreeNode } from "../project/tree.js";
+import { CHARACTERS_ID, SECRETS_ID, type TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
-import { NoteHeader, NoteMentions, noteSortOf } from "./notes/NotePage.js";
+import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./notes/NotePage.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
 import { FootnotePopover } from "./FootnotePopover.js";
 import { SelectionBar } from "./SelectionBar.js";
@@ -37,6 +38,14 @@ function sceneHeader(app: AppState, project: Project, sceneId: string) {
   );
 }
 
+// A secret's page says who learns it when; a person's page what they know. Book notes only.
+function SecretParts(props: NotePageProps & { sortId: string; app: AppState }) {
+  const parts = { ...props, onChangeTree: (tree: TreeNode[]) => void props.app.updateTree(tree) };
+  if (props.sortId === SECRETS_ID) return <SecretPanel {...parts} />;
+  if (props.sortId === CHARACTERS_ID) return <PersonSecrets {...parts} />;
+  return null;
+}
+
 function textParts(app: AppState, project: Project) {
   const scene = app.scene;
   if (!scene) return { header: null, footer: null };
@@ -56,7 +65,12 @@ function textParts(app: AppState, project: Project) {
   };
   return {
     header: <NoteHeader {...noteProps} sortId={sortId} />,
-    footer: <NoteMentions {...noteProps} />,
+    footer: (
+      <>
+        {!isInSeries && <SecretParts {...noteProps} sortId={sortId} app={app} />}
+        <NoteMentions {...noteProps} />
+      </>
+    ),
   };
 }
 
