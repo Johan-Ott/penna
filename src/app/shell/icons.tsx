@@ -60,6 +60,14 @@ export const BookIcon = () => (
   </Icon>
 );
 
+/** Two open pages, for Läs som bok. */
+export const ReadIcon = () => (
+  <Icon>
+    <path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z" />
+    <path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z" />
+  </Icon>
+);
+
 export const SearchIcon = () => (
   <Icon>
     <circle cx="11" cy="11" r="7" />

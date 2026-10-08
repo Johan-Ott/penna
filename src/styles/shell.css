@@ -1172,3 +1172,40 @@
   gap: 5px;
   align-items: center;
 }
+
+/* Granska at the foot of the text; the open panel has its own way to close. */
+.review-pill {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--text-label);
+  font: inherit;
+  font-size: 12px;
+}
+
+.review-pill:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.review-pill-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 11px;
+}

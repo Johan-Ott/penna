@@ -10,7 +10,7 @@ import { useShortcut } from "../useShortcut.js";
 import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";
-import { Topbar } from "./Topbar.js";
+import { ReviewPill, Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
@@ -46,8 +46,7 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       onSearch={app.palette.open}
       // The button took the cursor from the text; it goes back there, where the writer was.
       onFocus={() => (writingMode.onToggleFocus(), app.editor.requestFocus())}
-      review={writingMode.review}
-      onReview={() => writingMode.setReviewOpen(!writingMode.isReviewOpen)}
+      onRead={() => writingMode.read(null)}
     />
   );
 }
@@ -60,6 +59,12 @@ function MainCard({ app, project }: ScreenProps) {
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
+      {writingMode.view === "skriv" && !writingMode.isReviewOpen && (
+        <ReviewPill
+          review={writingMode.review}
+          onReview={() => writingMode.setReviewOpen(!writingMode.isReviewOpen)}
+        />
+      )}
       {writingMode.view === "innehall" && (
         <ContentsScreen app={app} project={project} pageMap={pageMap} />
       )}
@@ -103,6 +108,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const menu = useAppMenu({ app, project });
   useShortcut("enter", app.sceneSplit.split, { shift: true });
+  useShortcut("r", () => app.writingMode.read(null));
   const isPublishing = writingMode.view === "publicera";
   const classes = [
     "app",

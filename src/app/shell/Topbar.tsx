@@ -9,6 +9,7 @@ import {
   ForwardIcon,
   MenuIcon,
   PenIcon,
+  ReadIcon,
   ReviewIcon,
   SearchIcon,
   SidebarIcon,
@@ -26,8 +27,7 @@ export interface TopbarProps {
   onProgress: () => void;
   onSearch: () => void;
   onFocus: () => void;
-  review: { count: number | null; isOpen: boolean };
-  onReview: () => void;
+  onRead: () => void;
 }
 
 function IconButton(props: {
@@ -130,7 +130,9 @@ function TopbarStart(props: TopbarProps) {
   );
 }
 
-export function ReviewButton({ review, onReview }: Pick<TopbarProps, "review" | "onReview">) {
+type ReviewProps = { review: { count: number | null; isOpen: boolean }; onReview: () => void };
+
+export function ReviewButton({ review, onReview }: ReviewProps) {
   if (review.count === null) return null;
   return (
     <button
@@ -156,7 +158,9 @@ export function Topbar(props: TopbarProps) {
         <span className="topbar-title">{props.title}</span>
       )}
       <div className="topbar-end">
-        <ReviewButton review={props.review} onReview={props.onReview} />
+        <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
+          <ReadIcon />
+        </IconButton>
         <IconButton label={t("Sök · Ctrl+K")} onClick={props.onSearch}>
           <SearchIcon />
         </IconButton>
@@ -165,5 +169,21 @@ export function Topbar(props: TopbarProps) {
         </IconButton>
       </div>
     </header>
+  );
+}
+
+/** Granska floats at the foot of the text, with what it has found, as the design draws it. */
+export function ReviewPill({ review, onReview }: ReviewProps) {
+  if (review.count === null) return null;
+  return (
+    <button
+      className={review.isOpen ? "review-pill open" : "review-pill"}
+      aria-label={t("Granska · {count}", { count: review.count })}
+      aria-pressed={review.isOpen}
+      onClick={onReview}
+    >
+      {t("Granska")}
+      {review.count > 0 && <span className="review-pill-count">{review.count}</span>}
+    </button>
   );
 }
