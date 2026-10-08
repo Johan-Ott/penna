@@ -46,6 +46,7 @@ export function ContentsScreen(
       project={project}
       pageMap={props.pageMap}
       stats={app.stats}
+      notes={app.notes}
       onOpenScene={props.onOpenScene ?? sidebarProps(app, project).onOpenScene}
       onChangeTree={(tree) => void app.updateTree(tree)}
       onSaveFields={(fields) => void app.updateFields(fields)}

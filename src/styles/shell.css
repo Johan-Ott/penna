@@ -1272,3 +1272,26 @@
   border: 1px dashed var(--text-dim);
   background: transparent;
 }
+
+.contents-filter {
+  display: flex;
+  flex-grow: 1;
+  gap: 6px;
+  align-items: center;
+  max-width: 320px;
+}
+
+.contents-filter input {
+  flex-grow: 1;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.contents-row.dimmed {
+  opacity: 0.35;
+}

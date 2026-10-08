@@ -119,6 +119,17 @@ test("a chapter's point of view is written in Innehåll and kept", async ({ page
   await expect(page.getByRole("textbox", { name: "Vems ögon?" }).first()).toHaveValue("Elin");
 });
 
+test("Innehåll's filter fades the chapters where a person is not named", async ({ page }) => {
+  await editor(page).click();
+  await runCommand(page, "Gå till Innehåll");
+
+  await page.getByRole("textbox", { name: "Filtrera" }).fill("Arvid");
+
+  const rows = page.locator(".contents-row");
+  await expect(rows.filter({ hasText: "Brevet" })).not.toHaveClass(/dimmed/);
+  await expect(rows.filter({ hasText: "Smältningen" })).toHaveClass(/dimmed/);
+});
+
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 

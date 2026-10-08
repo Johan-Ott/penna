@@ -63,10 +63,10 @@ function noteCards(homes: Project[]): NoteCard[] {
 const firstSentence = (text: string) => (text.trim().match(/^[^.!?\n]*/)?.[0] ?? "").trim();
 
 /** `homes` must keep its identity between renders (useMemo), or the texts are read every time. */
-export function useNotes(homes: Project[], book: Project | null, isNoteOpen: boolean) {
+export function useNotes(homes: Project[], book: Project | null, areMentionsWanted: boolean) {
   const cards = useMemo(() => noteCards(homes), [homes]);
   const [mention, setMention] = useState<ShownMention | null>(null);
-  const isWanted = isNoteOpen || mention !== null;
+  const isWanted = areMentionsWanted || mention !== null;
   const manuscriptRefs = useMemo(
     () => (book ? manuscriptSceneIds(book.tree).map((id) => ({ dir: book.dir, id })) : []),
     [book],

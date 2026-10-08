@@ -106,7 +106,8 @@ function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const homes = useMemo(() => (project ? homesOf(project, series) : []), [project, series]);
   const noteId = sceneState.scene?.id ?? null;
   const isNoteOpen = noteId !== null && homes.some((home) => noteSortOf(home, noteId) !== null);
-  const notes = useNotes(homes, project, isNoteOpen);
+  // Innehåll's filter also needs to know where each note is named.
+  const notes = useNotes(homes, project, isNoteOpen || writingMode.view === "innehall");
   useMentionLinks(sceneState.editor, notes);
   useSpelling(sceneState.editor, project, notes, {
     isOn: writingMode.settings.spellcheck,

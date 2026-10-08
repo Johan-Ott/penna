@@ -15,6 +15,8 @@ export interface RowProps {
   /** The chapter's pages in the printed book, once they are counted. */
   pages: { first: number; last: number } | null;
   dragProps: object;
+  /** Faded by the filter: it holds nothing asked for. */
+  isDimmed?: boolean;
   onOpenScene: (id: string) => void;
   onChangeTree: (tree: TreeNode[]) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
@@ -154,7 +156,7 @@ export function Row(props: RowProps) {
   const save = (field: "summary" | "when" | "pov") => (text: string) =>
     props.onChangeTree(withNodeText(project.tree, row.id, field, text));
   return (
-    <div className="contents-row" {...props.dragProps}>
+    <div className={props.isDimmed ? "contents-row dimmed" : "contents-row"} {...props.dragProps}>
       <div className="contents-main">
         <TitleLine {...props} />
         <InlineText
