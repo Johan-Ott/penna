@@ -25,3 +25,20 @@ test("holiday mode is turned on from the inkwell", async ({ page }) => {
 
   await expect(page.getByRole("button", { name: /Semesterläge på/ })).toBeVisible();
 });
+
+test("a book opens where the writer left off, and a key goes on from there", async ({ page }) => {
+  await editor(page).locator("p").first().click();
+  await page.keyboard.press("Control+End");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("Hon log. Sedan gick hon");
+  await page.waitForTimeout(1500);
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Bokhylla" }).click();
+  await page.getByText("Vintervägen").first().click();
+
+  const resume = page.locator(".resume-screen");
+  await expect(resume).toContainText("Du slutade här · 1. Brevet · Köket");
+  await expect(resume.locator(".resume-sentence")).toHaveText("Sedan gick hon");
+  await page.keyboard.press("Shift");
+  await expect(resume).toBeHidden();
+});

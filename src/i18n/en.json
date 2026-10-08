@@ -879,5 +879,12 @@
   "Reservoar": "Fountain pen",
   "Fjäderpenna": "Quill",
   "Guldspets": "Gold nib",
-  "Här börjar resan.": "This is where the journey begins."
+  "Här börjar resan.": "This is where the journey begins.",
+  "Igår kväll": "Last night",
+  "För {count} dagar sedan": "{count} days ago",
+  "Du slutade här": "You stopped here",
+  "Förra veckan: {words} ord på {days} dagar": "Last week: {words} words on {days} days",
+  "din bästa vecka hittills": "your best week so far",
+  "{count} ord den dagen": "{count} words that day",
+  "Börja skriva så fortsätter du här": "Start writing to carry on here"
 }

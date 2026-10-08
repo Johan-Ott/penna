@@ -1,4 +1,5 @@
-import { Plugin } from "prosemirror-state";
+import type { Node } from "prosemirror-model";
+import { Plugin, TextSelection } from "prosemirror-state";
 import { Decoration, DecorationSet, type EditorView } from "prosemirror-view";
 
 const sentences = new Intl.Segmenter("sv", { granularity: "sentence" });
@@ -10,6 +11,15 @@ export function sentenceRange(text: string, offset: number): { from: number; to:
     if (offset < last.to) return last;
   }
   return last;
+}
+
+/** The sentence the cursor stands in, up to the cursor; the paragraph before when it is empty. */
+export function sentenceBefore(doc: Node, position: number): string {
+  const $at = TextSelection.near(doc.resolve(Math.min(position, doc.content.size)), -1).$head;
+  const text = $at.parent.textBetween(0, $at.parentOffset, undefined, " ");
+  const found = text.slice(sentenceRange(text, Math.max(0, text.length - 1)).from).trim();
+  if (found || $at.depth === 0 || $at.before() === 0) return found;
+  return sentenceBefore(doc, $at.before() - 1);
 }
 
 // Slightly above the middle of the screen.

@@ -90,6 +90,19 @@ export const weekOf = (stats: Stats, today: string) =>
     return { day, words: stats[day] ?? 0 };
   });
 
+/** Last week's words and writing days, and whether no week before it had more words. */
+export function lastWeek(stats: Stats, today: string) {
+  const monday = dayAfter(mondayOf(today), -7);
+  const totals = new Map<string, number>();
+  for (const [day, words] of Object.entries(stats)) {
+    totals.set(mondayOf(day), (totals.get(mondayOf(day)) ?? 0) + words);
+  }
+  const words = totals.get(monday) ?? 0;
+  const earlier = [...totals].filter(([start]) => start < monday).map(([, total]) => total);
+  const days = weekOf(stats, monday).filter((day) => day.words > 0).length;
+  return { words, days, isBest: earlier.length > 0 && words > Math.max(...earlier) };
+}
+
 /** "15 jan" for 2027-01-15. */
 export function shortDay(day: string): string {
   const [, month = 1, date = 1] = day.split("-").map(Number);

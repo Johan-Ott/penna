@@ -13,6 +13,9 @@ import {
 import { recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
 import { snapshotOnSave } from "../project/snapshots.js";
+import { rememberPlace } from "./resume/lastPlace.js";
+import type { EditorState } from "prosemirror-state";
+import { textBefore } from "../editor/documentText.js";
 import type { useSceneSession } from "./useSceneSession.js";
 import type { Project } from "./useProject.js";
 
@@ -91,14 +94,21 @@ export function useWritingStats(
   return { stats, today: todayOf(stats, project), recordSave };
 }
 
-/** Each save is counted, and kept as an automatic version when the writer wants those. */
+function placeOf(sceneId: string, state: EditorState) {
+  const position = state.selection.from;
+  return { sceneId, position, before: textBefore(state.doc, position), writtenAt: Date.now() };
+}
+
+/** Each save is counted, remembered as where the writer is, and kept as an automatic version. */
 export function listenToSaves(
-  savedRef: ReturnType<typeof useSceneSession>["savedRef"],
+  { savedRef, editor }: Pick<ReturnType<typeof useSceneSession>, "savedRef" | "editor">,
   recordSave: (dir: string, before: string, after: string) => void,
   isAutoSnapshotOn: boolean,
 ) {
   savedRef.current = (scene, before, after) => {
     recordSave(scene.dir, before, after);
+    const state = editor.viewRef.current?.state;
+    if (state) rememberPlace(scene.dir, placeOf(scene.id, state));
     if (!isAutoSnapshotOn) return;
     // A missed automatic version loses no text, so it is not shown as an error.
     void snapshotOnSave(platform.fileSystem, scene, { before, after }, Date.now()).catch(

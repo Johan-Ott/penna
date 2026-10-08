@@ -165,7 +165,7 @@ function useAppState() {
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
   const renameOffer = useRenameOffer(search.scope, project);
   const treeHandlers = useTreeHandlers(core.actions, renameOffer.noteRenamed);
-  listenToSaves(sceneState.savedRef, recordSave, startup.preferences.isAutoSnapshotOn);
+  listenToSaves(sceneState, recordSave, startup.preferences.isAutoSnapshotOn);
   const input = { project, session, editor: sceneState.editor, updateTree, refresh };
   const sceneSplit = sceneSplitActions(input);
   const zip = useExport(project, startup.preferences.authorName, projectState.updateFields);

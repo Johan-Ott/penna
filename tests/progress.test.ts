@@ -8,6 +8,7 @@ import {
   projectGoals,
   shortDay,
   weekOf,
+  lastWeek,
 } from "../src/project/progress";
 
 describe("deadlinePlan", () => {
@@ -101,6 +102,14 @@ describe("weekOf", () => {
       ["2026-10-10", 0],
       ["2026-10-11", 0],
     ]);
+  });
+});
+
+describe("lastWeek", () => {
+  it("adds up last week, counts its writing days, and knows when it was the best week", () => {
+    const stats = { "2026-09-22": 900, "2026-09-29": 1000, "2026-10-01": 400, "2026-10-06": 50 };
+
+    expect(lastWeek(stats, "2026-10-08")).toEqual({ words: 1400, days: 2, isBest: true });
   });
 });
 

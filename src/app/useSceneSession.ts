@@ -6,6 +6,7 @@ import { useEditorView } from "../editor/useEditorView.js";
 import type { SaveStatus } from "../storage/autosave.js";
 import { errorLog } from "./errorLog.js";
 import { platform } from "./platform.js";
+import { placeIn, showResume } from "./resume/lastPlace.js";
 import {
   closeScene,
   createSceneSession,
@@ -73,7 +74,15 @@ const isTextOf = (
   seriesDir: string | null,
 ) => openDir !== undefined && (openDir === bookDir || openDir === seriesDir);
 
-// A new project never keeps the previous project's scene; crash text is settled first.
+function startOf(project: Project) {
+  const onDisk = manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
+  const remembered = placeIn(project.dir);
+  const place = remembered && onDisk.includes(remembered.sceneId) ? remembered : null;
+  return { firstScene: place?.sceneId ?? onDisk[0] ?? project.scenes[0], place };
+}
+
+// A new project never keeps the previous project's scene; crash text is settled first. A book
+// opens where the writer last wrote, with the opening picture, and otherwise at its start.
 export function useOpenFirstScene(
   project: Project | null,
   session: SceneSession,
@@ -83,9 +92,10 @@ export function useOpenFirstScene(
   useEffect(() => {
     const isOwnText = isTextOf(session.scene?.dir, project?.dir, seriesDir);
     if (!project || isOwnText || project.recoverable.length > 0) return;
-    const onDisk = manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
-    const firstScene = onDisk[0] ?? project.scenes[0];
+    const { firstScene, place } = startOf(project);
     if (!firstScene) return void closeScene(session);
-    void openScene(session, project.dir, firstScene).then(focusEditor);
+    void openScene(session, project.dir, firstScene).then(() =>
+      place ? showResume(place) : focusEditor(),
+    );
   }, [project, session, focusEditor, seriesDir]);
 }

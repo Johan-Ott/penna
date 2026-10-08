@@ -3,6 +3,7 @@ import type { AppState } from "../App.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
+import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -51,6 +52,19 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
   );
 }
 
+// In Skriv: the Granska pill, and the opening picture when a book opens where you left off.
+function OverTheText({ app, project }: ScreenProps) {
+  const { writingMode } = app;
+  return (
+    <>
+      {!writingMode.isReviewOpen && (
+        <ReviewPill review={writingMode.review} onReview={() => writingMode.setReviewOpen(true)} />
+      )}
+      <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
+    </>
+  );
+}
+
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const isCounting = writingMode.view === "innehall" || writingMode.settings.showPages;
@@ -59,12 +73,7 @@ function MainCard({ app, project }: ScreenProps) {
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
-      {writingMode.view === "skriv" && !writingMode.isReviewOpen && (
-        <ReviewPill
-          review={writingMode.review}
-          onReview={() => writingMode.setReviewOpen(!writingMode.isReviewOpen)}
-        />
-      )}
+      {writingMode.view === "skriv" && <OverTheText app={app} project={project} />}
       {writingMode.view === "innehall" && (
         <ContentsScreen app={app} project={project} pageMap={pageMap} />
       )}

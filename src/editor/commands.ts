@@ -119,3 +119,12 @@ export const cursorAtBlock =
     dispatch?.(state.tr.setSelection(selection).scrollIntoView());
     return true;
   };
+
+/** The cursor back where the writer left it, or as near as the text still allows. */
+export const cursorAt =
+  (position: number): Command =>
+  (state, dispatch) => {
+    const near = TextSelection.near(state.doc.resolve(Math.min(position, state.doc.content.size)));
+    dispatch?.(state.tr.setSelection(near).scrollIntoView());
+    return true;
+  };
