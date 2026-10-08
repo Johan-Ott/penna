@@ -22,6 +22,7 @@ import { useDrafts, type Drafts } from "./drafts/useDrafts.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
 import { useJourney } from "./journey/useJourney.js";
+import { useProfile } from "./profile/useProfile.js";
 import { listenToSaves, useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
 import { StartScreen } from "./StartScreen.js";
@@ -77,10 +78,19 @@ function useCoreState() {
     notes: useNoteActions(input),
     series: seriesActions,
   };
-  const author = startup.preferences.authorName;
-  const review = useReviewParts({ ...sceneState, project, author });
+  const review = useReviewParts({ ...sceneState, project, author: startup.preferences.authorName });
   const writingMode = useWritingMode();
-  return { sceneState, projectState, seriesState, startup, actions, ...review, writingMode };
+  const profile = useProfile(startup.preferences.libraryDir);
+  return {
+    sceneState,
+    projectState,
+    seriesState,
+    startup,
+    actions,
+    ...review,
+    writingMode,
+    profile,
+  };
 }
 
 function useNotesParts(core: ReturnType<typeof useCoreState>) {

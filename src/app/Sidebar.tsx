@@ -8,6 +8,7 @@ import { TreeView, type TreeViewProps } from "./tree/TreeView.js";
 import { t } from "../i18n/i18n.js";
 
 interface SidebarProps extends TreeViewProps {
+  profile: ReactNode;
   seriesNotes: ReactNode;
   onJoinSeries: (folder: string | null) => void;
   onCreateSeries: (title: string, noteIds: string[]) => void;
@@ -60,6 +61,7 @@ function BookTitle(props: SidebarProps) {
 export function Sidebar(props: SidebarProps) {
   return (
     <nav className="sidebar" aria-label={t("Boken")}>
+      {props.profile}
       <BookTitle {...props} />
       <TreeView {...props} />
       <SyncNotices

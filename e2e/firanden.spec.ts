@@ -42,3 +42,16 @@ test("a book opens where the writer left off, and a key goes on from there", asy
   await page.keyboard.press("Shift");
   await expect(resume).toBeHidden();
 });
+
+test("the profile is opened from the sidebar and keeps what was written", async ({ page }) => {
+  await page.getByRole("button", { name: "Din profil" }).click();
+  const profile = page.getByRole("dialog", { name: "Författarprofil" });
+  await profile.getByRole("textbox", { name: "Namn", exact: true }).fill("Elin Berg");
+  await profile.getByRole("textbox", { name: "Om författaren" }).fill("Skriver om is och fyrar.");
+  await profile.getByRole("button", { name: "Klar" }).click();
+
+  await page.getByRole("button", { name: "Elin Berg" }).click();
+  await expect(profile.getByRole("textbox", { name: "Om författaren" })).toHaveValue(
+    "Skriver om is och fyrar.",
+  );
+});

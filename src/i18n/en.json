@@ -886,5 +886,16 @@
   "Förra veckan: {words} ord på {days} dagar": "Last week: {words} words on {days} days",
   "din bästa vecka hittills": "your best week so far",
   "{count} ord den dagen": "{count} words that day",
-  "Börja skriva så fortsätter du här": "Start writing to carry on here"
+  "Börja skriva så fortsätter du här": "Start writing to carry on here",
+  "1 skrivdag": "1 writing day",
+  "{count} skrivdagar": "{count} writing days",
+  "Ditt namn": "Your name",
+  "Byt bild": "Change picture",
+  "Författarnamn för {book}": "Author name for {book}",
+  "Pseudonym, valfritt": "Pen name, optional",
+  "Några meningar om dig. Används på delningskort.": "A few sentences about you. Used on share cards.",
+  "Länk till din sida eller ditt nyhetsbrev": "Link to your site or newsletter",
+  "Författarprofil": "Author profile",
+  "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.": "The profile is kept in your Penna folder and the name in the settings. No account, no sign-in.",
+  "Din profil": "Your profile"
 }

@@ -4,6 +4,7 @@ import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
+import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -88,6 +89,7 @@ function Floating({ app, project }: ScreenProps) {
   return (
     <>
       <InsightsLayer app={app} project={project} />
+      <ProfileLayer app={app} project={project} />
       {app.newNoteSort !== false && (
         <NewNoteDialog
           project={project}
