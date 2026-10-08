@@ -9,7 +9,7 @@ import { t } from "../../i18n/i18n.js";
 type Task = { sceneId: string; comment: Comment };
 
 // Only the scenes that have a comments file are read, so a save costs nothing here.
-async function openTasks(project: Project): Promise<Task[]> {
+export async function openTasks(project: Project): Promise<Task[]> {
   const files = await platform.fileSystem.list(joinPath(project.dir, "comments"));
   const sceneIds = files.filter((name) => name.endsWith(".json")).map((name) => name.slice(0, -5));
   const lists = await Promise.all(

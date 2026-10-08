@@ -104,6 +104,20 @@ test("an open comment is listed as a task in Granska from another scene", async 
   await expect(editor(page)).toContainText("Brevet låg på köksbordet");
 });
 
+test("Innehåll counts the open tasks and leads to Granska", async ({ page }) => {
+  await selectFirstWord(page);
+  await page.keyboard.press("Control+Shift+m");
+  await page.keyboard.type("Kolla tidslinjen");
+  await page.getByRole("button", { name: "Kommentera", exact: true }).last().click();
+  await expect(page.getByText("Kolla tidslinjen")).toBeVisible();
+  await page.getByRole("button", { name: "Stäng granskning" }).click();
+
+  await page.getByRole("button", { name: "Vintervägen" }).first().click();
+  await page.getByRole("button", { name: "Att göra · 1" }).click();
+
+  await expect(page.getByRole("complementary", { name: "Granskning" })).toBeVisible();
+});
+
 test("a chapter clicked opens its first scene", async ({ page }) => {
   await treeRow(page, "2. Fyren").click();
 

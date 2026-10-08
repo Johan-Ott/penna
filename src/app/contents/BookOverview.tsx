@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { designOf, trimSize } from "../../export/bookDesign.js";
+import { openTasks } from "../review/BookTasks.js";
 import { contentsRows } from "../../project/contents.js";
 import type { PageMap } from "../../project/pageMap.js";
 import {
@@ -147,5 +149,24 @@ export function PageGrid(props: {
       })}
       <LeftPages count={pagesLeft(project, pageMap)} />
     </div>
+  );
+}
+
+/** The comments not yet resolved in the whole book, read again for another book, not each save. */
+export function TasksLink({ project, onOpen }: { project: Project; onOpen: () => void }) {
+  const [count, setCount] = useState(0);
+  const { dir } = project;
+  useEffect(() => {
+    let isLive = true;
+    void openTasks(project)
+      .then((tasks) => isLive && setCount(tasks.length))
+      .catch(() => undefined);
+    return () => void (isLive = false);
+  }, [dir]);
+  if (count === 0) return null;
+  return (
+    <button className="link-button quiet contents-read" onClick={onOpen}>
+      {t("Att göra · {count}", { count })}
+    </button>
   );
 }

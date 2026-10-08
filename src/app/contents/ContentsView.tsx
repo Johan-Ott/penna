@@ -11,7 +11,7 @@ import {
 import type { TreeNode } from "../../project/tree.js";
 import type { Project } from "../useProject.js";
 import type { Stats } from "../../project/stats.js";
-import { BookMeta, PageGrid } from "./BookOverview.js";
+import { BookMeta, PageGrid, TasksLink } from "./BookOverview.js";
 import { rowMatches, type FilterSources } from "../../project/contentsFilter.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -24,6 +24,8 @@ interface ContentsProps {
   onReadBook: () => void;
   /** The drafts of the whole book. */
   onShowDrafts: () => void;
+  /** Granska, with the book's open tasks. */
+  onShowTasks: () => void;
   /** The printed book's pages, once they are counted; null while they are not shown. */
   pageMap: PageMap | null;
   /** The words of each day, for when the first draft is done at this pace. */
@@ -86,6 +88,7 @@ function ContentsHeader(props: ContentsProps) {
         <button className="link-button quiet contents-read" onClick={props.onShowDrafts}>
           {t("Utkast")}
         </button>
+        <TasksLink project={props.project} onOpen={props.onShowTasks} />
       </span>
       {props.pageMap && (
         <PageGrid project={props.project} pageMap={props.pageMap} onOpenScene={props.onOpenScene} />
