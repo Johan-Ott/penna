@@ -6,7 +6,7 @@ import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
 import { joinPath } from "../../storage/fileSystem.js";
 import type { AppState } from "../App.js";
-import { SceneText } from "../contents/ReadView.js";
+import { SceneText } from "../contents/sceneDocs.js";
 import { platform } from "../platform.js";
 import { DiffText } from "../snapshots/SnapshotsDialog.js";
 import type { Project } from "../useProject.js";
@@ -49,8 +49,7 @@ function titleOf(app: AppState, beside: Beside) {
 
 // A version is compared with the open text when that is the one, otherwise with its saved text.
 function besideBody(app: AppState, beside: Beside, doc: Node | null) {
-  if (beside.kind === "text")
-    return <SceneText doc={doc ?? undefined} onClickBlock={() => undefined} />;
+  if (beside.kind === "text") return <SceneText doc={doc ?? undefined} />;
   const live = app.scene?.id === beside.sceneId ? app.editor.editorState?.doc : doc;
   const now = live ? live.textBetween(0, live.content.size, "\n\n") : "";
   return <DiffText before={plainText(beside.snapshot.body, "\n\n")} now={now} />;

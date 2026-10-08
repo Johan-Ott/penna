@@ -1,101 +1,191 @@
 import type { Node } from "prosemirror-model";
-import { DOMSerializer } from "prosemirror-model";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { proseStyle, type WritingSettings } from "../../editor/writingSettings.js";
-import { parseMarkdown } from "../../manuscript/parseMarkdown.js";
-import { manuscriptSchema } from "../../manuscript/schema.js";
-import { splitSceneFile } from "../../manuscript/sceneFile.js";
+import { useEffect, useRef, type RefObject } from "react";
 import { readingScenes, type ReadingScene } from "../../project/reading.js";
-import { joinPath } from "../../storage/fileSystem.js";
-import { platform } from "../platform.js";
+import { usePhone } from "../phone/usePhone.js";
 import type { Project } from "../useProject.js";
 import { useEscape } from "../useShortcut.js";
+import { useBookPages, type PageLayout } from "./bookPages.js";
+import { ReadSelection, type ReadSaving } from "./ReadSelection.js";
+import { SceneText, useSceneDocs, type Docs } from "./sceneDocs.js";
 import { t } from "../../i18n/i18n.js";
 
 interface ReadViewProps {
   project: Project;
-  /** The chapter to read, or null for the whole book. */
-  chapterId: string | null;
-  settings: WritingSettings;
-  /** A click in the text: the scene opens in Skriv with the cursor at that paragraph. */
+  /** The book opens on this scene's page. */
+  startScene: string | null;
+  saving: ReadSaving;
+  /** "Skriv här": the scene opens in Skriv with the cursor at that paragraph. */
   onOpenAt: (sceneId: string, blockIndex: number) => void;
   onBack: () => void;
+  onDesign: () => void;
   /** Saves the open scene first, so what was written a moment ago is read too. */
   beforeRead: () => Promise<unknown>;
 }
 
-// Every save reads the project again, and with it the scenes.
-function useSceneDocs(project: Project, ids: string[], beforeRead: () => Promise<unknown>) {
-  const [docs, setDocs] = useState<Record<string, Node>>({});
-  const key = ids.join(",");
-  useEffect(() => {
-    let isCurrent = true;
-    const read = async (id: string) => {
-      const text = await platform.fileSystem.readText(joinPath(project.dir, `scenes/${id}.md`));
-      return [id, parseMarkdown(splitSceneFile(text).body)] as const;
-    };
-    const wanted = key ? key.split(",") : [];
-    void beforeRead()
-      .then(() => Promise.all(wanted.map((id) => read(id).catch(() => null))))
-      .then((entries) => {
-        if (isCurrent) setDocs(Object.fromEntries(entries.filter((entry) => entry !== null)));
-      });
-    return () => void (isCurrent = false);
-  }, [project, key, beforeRead]);
-  return docs;
-}
-
-const serializer = DOMSerializer.fromSchema(manuscriptSchema);
-
-// Uses the editor's markup and CSS, so the text looks as it does in Skriv.
-export function SceneText(props: { doc: Node | undefined; onClickBlock: (index: number) => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (ref.current && props.doc) {
-      ref.current.replaceChildren(serializer.serializeFragment(props.doc.content));
-    }
-  }, [props.doc]);
-  const onClick = (target: EventTarget) => {
-    const blocks = Array.from(ref.current?.children ?? []);
-    const index = blocks.findIndex((block) => block.contains(target as globalThis.Node));
-    props.onClickBlock(Math.max(0, index));
-  };
-  return <div ref={ref} className="read-text" onClick={(event) => onClick(event.target)} />;
-}
-
-function ReadScene(props: ReadViewProps & { scene: ReadingScene; doc: Node | undefined }) {
-  const { scene } = props;
-  const open = (index: number) => props.onOpenAt(scene.sceneId, index);
+function ReadScene({ scene, doc }: { scene: ReadingScene; doc: Node | undefined }) {
+  const opens = scene.chapter?.isFirstScene === true;
   return (
-    <section className="read-scene">
-      {scene.chapterTitle && <h2 className="read-chapter">{scene.chapterTitle}</h2>}
-      <button className="read-scene-title" onClick={() => open(0)}>
-        {props.project.summaries[scene.sceneId]?.title ?? ""}
-      </button>
-      <SceneText doc={props.doc} onClickBlock={open} />
+    <section
+      className={opens ? "read-scene opens-chapter" : "read-scene"}
+      data-scene={scene.sceneId}
+    >
+      {opens && scene.chapter && (
+        <header className="read-chapter">
+          <span className="read-chapter-number">
+            {t("Kapitel {number}", { number: scene.chapter.number })}
+          </span>
+          <h2 className="read-chapter-title">{scene.chapter.title}</h2>
+        </header>
+      )}
+      <SceneText doc={doc} />
     </section>
   );
 }
 
+// The chapter the left page belongs to.
+function chapterAt(scenes: ReadingScene[], layout: PageLayout, page: number) {
+  const shown = scenes.filter((scene) => (layout.sceneStarts.get(scene.sceneId) ?? 0) <= page);
+  return shown[shown.length - 1]?.chapter ?? null;
+}
+
+function placeText(scenes: ReadingScene[], layout: PageLayout, pages: number[]) {
+  const chapter = chapterAt(scenes, layout, pages[0] ?? 0);
+  const numbers = pages.filter((page) => page < layout.count).map((page) => page + 1);
+  const page = t("sida {pages} av {count}", { pages: numbers.join("–"), count: layout.count });
+  return chapter ? `${chapter.number}. ${chapter.title} · ${page}` : page;
+}
+
+// Left pages carry the chapter, right pages the book's title, as in a printed book.
+function PageChrome(props: {
+  pages: number[];
+  layout: PageLayout;
+  scenes: ReadingScene[];
+  title: string;
+}) {
+  const heads = (page: number) =>
+    page % 2 === 0 ? (chapterAt(props.scenes, props.layout, page)?.title ?? "") : props.title;
+  return props.pages.map((page) => (
+    <div key={page} className="read-page" aria-hidden="true">
+      {page < props.layout.count && !props.layout.chapterStarts.has(page) && (
+        <span className="read-page-head">{heads(page)}</span>
+      )}
+      {page < props.layout.count && <span className="read-page-number">{page + 1}</span>}
+    </div>
+  ));
+}
+
+function useTurnKeys(turn: (step: number) => void) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLInputElement)
+        return;
+      if (event.key === "ArrowRight" || event.key === "PageDown") turn(1);
+      if (event.key === "ArrowLeft" || event.key === "PageUp") turn(-1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
+}
+
+function TurnButton({ step, onTurn }: { step: 1 | -1; onTurn: (step: number) => void }) {
+  return (
+    <button
+      className="read-turn"
+      aria-label={step < 0 ? t("Föregående uppslag") : t("Nästa uppslag")}
+      onClick={() => onTurn(step)}
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+        <path d={step < 0 ? "m15 6-6 6 6 6" : "m9 6 6 6-6 6"} />
+      </svg>
+    </button>
+  );
+}
+
+function ReadFoot(props: {
+  first: number;
+  count: number;
+  perSpread: number;
+  goTo: (page: number) => void;
+}) {
+  return (
+    <footer className="read-foot">
+      <span>1</span>
+      <input
+        type="range"
+        aria-label={t("Sida")}
+        min={0}
+        max={props.count - 1}
+        step={props.perSpread}
+        value={props.first}
+        onChange={(event) => props.goTo(Number(event.target.value))}
+      />
+      <span>{props.count}</span>
+    </footer>
+  );
+}
+
+function ReadHead(props: ReadViewProps & { place: string }) {
+  return (
+    <header className="read-head">
+      <button className="read-back" onClick={props.onBack}>
+        {t("← Tillbaka till texten")} <span className="read-key">Esc</span>
+      </button>
+      <span className="read-place">{props.place}</span>
+      <button className="link-button quiet read-design" onClick={props.onDesign}>
+        {t("Ändra utseende")}
+      </button>
+    </header>
+  );
+}
+
+function BookFlow(props: {
+  flow: RefObject<HTMLDivElement | null>;
+  scenes: ReadingScene[];
+  docs: Docs | null;
+  first: number;
+}) {
+  return (
+    <div
+      ref={props.flow}
+      className="manuscript read-flow"
+      style={{ "--first": props.first } as object}
+    >
+      {props.scenes.length === 0 && <p>{t("Inga scener än.")}</p>}
+      {props.scenes.map((scene) => (
+        <ReadScene key={scene.sceneId} scene={scene} doc={props.docs?.[scene.sceneId]} />
+      ))}
+    </div>
+  );
+}
+
+/** Läs som bok: the book in spreads of pages, turned like a book, corrected right in the page. */
 export function ReadView(props: ReadViewProps) {
-  const scenes = readingScenes(props.project.tree, props.chapterId);
+  const { project } = props;
+  const scenes = readingScenes(project.tree);
   const docs = useSceneDocs(
-    props.project,
+    project,
     scenes.map((scene) => scene.sceneId),
     props.beforeRead,
   );
+  const flow = useRef<HTMLDivElement>(null);
+  const perSpread = usePhone() ? 1 : 2;
+  const { layout, first, goTo, turn } = useBookPages(flow, perSpread, docs, props.startScene);
+  const pages = Array.from({ length: perSpread }, (_unused, index) => first + index);
   useEscape(props.onBack);
+  useTurnKeys(turn);
   return (
     <main className="read-view">
-      <div className="manuscript read-column" style={proseStyle(props.settings) as CSSProperties}>
-        <button className="link-button quiet read-back" onClick={props.onBack}>
-          {t("← Tillbaka till texten")}
-        </button>
-        {scenes.length === 0 && <p className="contents-empty">{t("Inga scener än.")}</p>}
-        {scenes.map((scene) => (
-          <ReadScene key={scene.sceneId} {...props} scene={scene} doc={docs[scene.sceneId]} />
-        ))}
+      <ReadHead {...props} place={placeText(scenes, layout, pages)} />
+      <div className="read-stage">
+        <TurnButton step={-1} onTurn={turn} />
+        <div className={perSpread === 1 ? "read-spread single" : "read-spread"}>
+          <PageChrome pages={pages} layout={layout} scenes={scenes} title={project.name} />
+          <BookFlow flow={flow} scenes={scenes} docs={docs} first={first} />
+        </div>
+        <TurnButton step={1} onTurn={turn} />
       </div>
+      <ReadFoot first={first} count={layout.count} perSpread={perSpread} goTo={goTo} />
+      <ReadSelection flow={flow} saving={props.saving} onWriteHere={props.onOpenAt} />
     </main>
   );
 }

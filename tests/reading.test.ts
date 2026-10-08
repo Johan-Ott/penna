@@ -12,15 +12,15 @@ const tree = withSpecialFolders([
 ]);
 
 describe("readingScenes", () => {
-  it("reads one chapter's scenes, or the whole book with each chapter's title at its start", () => {
-    const chapter = readingScenes(tree, "kap2");
-    const book = readingScenes(tree, null);
+  it("reads the whole book in order, each scene with its chapter and whether it opens it", () => {
+    const book = readingScenes(tree);
 
-    expect(chapter).toEqual([{ sceneId: "s3", chapterTitle: "2. Isen" }]);
-    expect(book).toEqual([
-      { sceneId: "s1", chapterTitle: "1. Ankomsten" },
-      { sceneId: "s2", chapterTitle: null },
-      { sceneId: "s3", chapterTitle: "2. Isen" },
+    expect(
+      book.map((each) => [each.sceneId, each.chapter?.number, each.chapter?.isFirstScene]),
+    ).toEqual([
+      ["s1", 1, true],
+      ["s2", 1, false],
+      ["s3", 2, true],
     ]);
   });
 });

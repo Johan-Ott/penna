@@ -4,11 +4,13 @@ import { ReadView } from "../contents/ReadView.js";
 import { cursorAtBlock } from "../../editor/commands.js";
 import { sidebarProps } from "../paneProps.js";
 import { PublishView } from "../publish/PublishView.js";
-import { openScene } from "../sceneSession.js";
+import { openScene, writeOverScene } from "../sceneSession.js";
 import { SyncView } from "../sync/SyncReview.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
 import type { PageMap } from "../../project/pageMap.js";
+import { sceneIdsIn } from "../../project/tree.js";
+import { t } from "../../i18n/i18n.js";
 
 // Innehåll, Läs, Publicera and Från synken: the same on the computer and on a phone, where
 // only the way back and the way into a text differ.
@@ -60,15 +62,27 @@ export function ContentsScreen(
   );
 }
 
+// A chapter opens on its first page; the whole book where the writer is.
+function startScene(app: AppState, project: Project) {
+  const chapterId = app.writingMode.readChapterId;
+  if (chapterId) return sceneIdsIn(project.tree, chapterId)[0] ?? null;
+  return app.session.scene?.id ?? null;
+}
+
 export function ReadScreen({ app, project, onBack }: ViewProps) {
-  const { writingMode } = app;
   return (
     <ReadView
       project={project}
-      chapterId={writingMode.readChapterId}
-      settings={writingMode.settings}
+      startScene={startScene(app, project)}
+      saving={{
+        dir: project.dir,
+        author: app.startup.preferences.authorName || t("Du"),
+        writeOver: (path, write) => writeOverScene(app.session, path, write),
+        onSaved: app.refresh,
+      }}
       onOpenAt={(sceneId, blockIndex) => openAt(app, project, sceneId, blockIndex)}
       onBack={onBack}
+      onDesign={() => app.writingMode.setView("publicera")}
       beforeRead={app.session.autosave.flush}
     />
   );

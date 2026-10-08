@@ -632,3 +632,21 @@
   border-color: transparent;
   color: var(--text-muted);
 }
+
+/* Läs som bok on a phone: one page, and only the way back and where you are above it. */
+.phone-app .read-head {
+  grid-template-columns: auto 1fr;
+}
+
+.phone-app .read-key,
+.phone-app .read-head .read-design {
+  display: none;
+}
+
+.phone-app .read-place {
+  justify-self: end;
+}
+
+.phone-app .read-stage {
+  gap: 0;
+}

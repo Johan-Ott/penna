@@ -777,7 +777,6 @@
   "bilderna": "pictures",
   "Del": "Part",
   "Mapp": "Folder",
-  "Den här enheten": "This device",
   "Behåll båda, som två scener": "Keep both, as two scenes",
   "Från Drive": "From Drive",
   "Strukturen ändrades på en annan enhet.": "The structure changed on another device.",
@@ -810,5 +809,17 @@
   "Delar, kapitel och scener ordnar du i sidomenyn, på telefonen under Boken. ⋯ på en rad, eller högerklick, ger radens meny. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.": "Arrange parts, chapters and scenes in the sidebar, on a phone under Book. ⋯ on a row, or a right click, gives the row's menu. Contents shows the whole book: what happens, when, and how far you have come.",
   "Bilder: Infoga bild… i paletten, eller ▣ över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.": "Pictures: Insert image… in the palette, or ▣ above the keyboard on a phone, puts a map or a photo in the text, narrow, wide or on a page of its own.",
   "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen tar den hela skärmen.": "Beside: choose Open beside in a scene's menu, or compare an older version beside the text under Versions. On a phone it takes the whole screen.",
-  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject."
+  "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.": "For an editor: export the manuscript to Word, let the editor work in the file, and read it in under Menu, Read in the editor's Word file. Each change shows under Review, to accept or reject.",
+  "Texten har ändrats. Rätta den i Skriv.": "The text has changed. Correct it in Write.",
+  "Enter sparar · sidan sätts om": "Enter saves · the page is set again",
+  "Enter sparar": "Enter saves",
+  "Rätta text": "Correct text",
+  "Kommentar": "Comment",
+  "Rätta": "Correct",
+  "Skriv här": "Write here",
+  "sida {pages} av {count}": "page {pages} of {count}",
+  "Föregående uppslag": "Previous spread",
+  "Nästa uppslag": "Next spread",
+  "Sida": "Page",
+  "Ändra utseende": "Change the look"
 }

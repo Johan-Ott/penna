@@ -1,18 +1,11 @@
-import { findNode, manuscriptSceneIds, type TreeNode } from "./tree.js";
-import { chapterOf } from "./treeLabels.js";
+import { manuscriptSceneIds, type TreeNode } from "./tree.js";
+import { chapterOf, type SceneChapter } from "./treeLabels.js";
 
 export interface ReadingScene {
   sceneId: string;
-  chapterTitle: string | null;
+  chapter: SceneChapter | null;
 }
 
-/** One chapter, or the whole manuscript when `chapterId` is null. */
-export function readingScenes(tree: TreeNode[], chapterId: string | null): ReadingScene[] {
-  const chapter = chapterId ? findNode(tree, chapterId)?.node : null;
-  const ids = manuscriptSceneIds(chapter ? [chapter] : tree);
-  return ids.map((sceneId) => {
-    const found = chapterOf(tree, sceneId);
-    const title = found?.isFirstScene ? `${found.number}. ${found.title}` : null;
-    return { sceneId, chapterTitle: title };
-  });
-}
+/** The whole manuscript in reading order, each scene with its chapter. */
+export const readingScenes = (tree: TreeNode[]): ReadingScene[] =>
+  manuscriptSceneIds(tree).map((sceneId) => ({ sceneId, chapter: chapterOf(tree, sceneId) }));
