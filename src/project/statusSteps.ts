@@ -10,9 +10,9 @@ export interface StatusStep {
 
 export const DEFAULT_STEPS: Record<SceneStatus, StatusStep> = {
   idé: { name: t("Idé"), color: "" },
-  utkast: { name: t("Utkast"), color: "#e08a1e" },
-  redigering: { name: t("Redigering"), color: "#2f86c9" },
-  klar: { name: t("Klar"), color: "#3f9a4f" },
+  utkast: { name: t("Utkast"), color: "var(--status-utkast)" },
+  redigering: { name: t("Redigering"), color: "var(--status-redigering)" },
+  klar: { name: t("Klar"), color: "var(--status-klar)" },
 };
 
 type Stored = Partial<Record<SceneStatus, Partial<StatusStep>>>;

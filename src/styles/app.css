@@ -43,6 +43,15 @@ button {
   outline-offset: 2px;
 }
 
+/* A field shows its focus with a soft ring around its border, as the design draws it. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
 /* Penna's logo, from src/assets/penna-logo.png (made by `npm run icons`) */
 .brand-mark {
   width: 22px;
@@ -73,7 +82,7 @@ button {
 }
 
 .tree-row.active {
-  background: var(--surface-hover);
+  background: var(--surface-selected);
 }
 
 .sidebar-notices {
@@ -162,10 +171,10 @@ button {
 }
 
 .chip {
-  height: 26px;
-  padding: 0 8px;
+  height: 28px;
+  padding: 0 12px;
   border: 1px solid var(--border-control);
-  border-radius: 13px;
+  border-radius: 14px;
   background: var(--bg);
   color: var(--text-muted);
   font-size: 12px;
@@ -371,9 +380,12 @@ button {
   display: inline-flex;
 }
 
-.tree .tree-row:hover,
-.tree .tree-row.active {
+.tree .tree-row:hover {
   background: var(--surface-hover);
+}
+
+.tree .tree-row.active {
+  background: var(--surface-selected);
 }
 
 /* Top-level rows and the open text in black, deeper rows in a softer grey. */
@@ -1909,7 +1921,7 @@ button.book-cover:hover {
 
 /* A wavy line as in other writing programs; it stays under a repeat's dots. */
 .manuscript .misspelled {
-  text-decoration: underline wavy #d4483b;
+  text-decoration: underline wavy var(--danger);
   text-decoration-skip-ink: none;
   text-underline-offset: 3px;
 }
@@ -2959,5 +2971,5 @@ button.book-cover:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 10px;
-  color: #b4532a;
+  color: var(--danger);
 }
