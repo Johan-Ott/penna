@@ -5,6 +5,7 @@ import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
+import { themeStyle } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -120,7 +121,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
   ];
   return (
-    <div className={classes.filter(Boolean).join(" ")}>
+    <div className={classes.filter(Boolean).join(" ")} style={themeStyle(project.fields)}>
       <ScreenTopbar app={app} project={project} onMenu={menu.open} />
       {!isPublishing && <Sidebar {...sidebarProps(app, project)} />}
       <div className="sidebar-backdrop" onClick={() => writingMode.setSidebarOpen(false)} />

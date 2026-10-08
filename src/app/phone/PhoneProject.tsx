@@ -7,6 +7,7 @@ import { openInHome } from "../notes/noteHomes.js";
 import { Overlays } from "../Overlays.js";
 import { writingAreaProps } from "../paneProps.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
+import { themeStyle } from "../themes/themeStyle.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
@@ -195,7 +196,7 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
   return (
-    <div className="phone-app">
+    <div className="phone-app" style={themeStyle(project.fields)}>
       <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
       {!isTextShown(screens.screen, app.writingMode.view) && (

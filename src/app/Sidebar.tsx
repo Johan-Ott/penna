@@ -3,6 +3,8 @@ import { SeriesDialog } from "./notes/SeriesDialog.js";
 import { useMenuButton } from "./Menu.js";
 import { ChevronDownIcon } from "./shell/icons.js";
 import { SyncNotices } from "./SyncLayer.js";
+import { ThemeDialog } from "./themes/ThemeDialog.js";
+import { themeField } from "./themes/themeStyle.js";
 import { addMenu } from "./tree/treeMenus.js";
 import { TreeView, type TreeViewProps } from "./tree/TreeView.js";
 import { t } from "../i18n/i18n.js";
@@ -32,11 +34,25 @@ function useSeriesDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
+function useThemeDialog(props: SidebarProps) {
+  const [isOpen, setOpen] = useState(false);
+  const dialog = isOpen && (
+    <ThemeDialog
+      fields={props.project.fields}
+      onSave={(theme) => props.onUpdateProject?.({ fields: { theme: themeField(theme) } })}
+      onClose={() => setOpen(false)}
+    />
+  );
+  return { open: () => setOpen(true), dialog };
+}
+
 function BookTitle(props: SidebarProps) {
   const series = useSeriesDialog(props);
+  const theme = useThemeDialog(props);
   const menu = useMenuButton(t("Lägg till"), [
     ...addMenu({ add: props.onAdd }),
     { label: t("Serie…"), separatorBefore: true, onSelect: series.open },
+    { label: t("Tema…"), onSelect: theme.open },
     { label: t("Bokhylla"), onSelect: props.onShowShelf },
   ]);
   return (
@@ -54,6 +70,7 @@ function BookTitle(props: SidebarProps) {
       </button>
       {menu.menu}
       {series.dialog}
+      {theme.dialog}
     </div>
   );
 }

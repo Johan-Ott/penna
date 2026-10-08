@@ -216,7 +216,8 @@
   overflow: hidden;
   border: 0;
   background: transparent;
-  font: 600 15px var(--font-prose);
+  color: var(--text);
+  font: 600 15px var(--font-heading, var(--font-prose));
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -334,7 +335,8 @@
 .note-header h1 {
   margin: 20px 0 0;
   color: var(--text);
-  font: 600 36px/1.2 var(--font-prose);
+  font: 600 36px/1.2 var(--font-heading, var(--font-prose));
+  font-style: var(--heading-style, normal);
 }
 
 .connections {
@@ -2148,4 +2150,128 @@
 
 .tree-whole-book:hover {
   color: var(--text);
+}
+
+/* Tema för boken: the ready themes, and one's own of three colours. */
+.theme-dialog {
+  width: min(440px, calc(100vw - 48px));
+  gap: 8px;
+}
+
+.theme-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  color: var(--text);
+  font: 13px var(--font-ui);
+  text-align: left;
+}
+
+.theme-choice[aria-pressed="true"] {
+  border-color: var(--primary);
+}
+
+.theme-swatch {
+  width: 44px;
+  height: 30px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 6px;
+}
+
+.theme-swatch span:first-child {
+  width: 14px;
+  height: 18px;
+  border-radius: 2px;
+}
+
+.theme-swatch span:last-child {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.theme-words {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-name {
+  font-weight: 500;
+}
+
+.theme-own {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.theme-contrast {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.theme-contrast.low {
+  color: var(--danger);
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-row-label {
+  width: 72px;
+  color: var(--text-tree);
+}
+
+.theme-colour {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+}
+
+.theme-colour[aria-pressed="true"] {
+  border-color: var(--primary);
+}
+
+.theme-row input[type="color"] {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.theme-font {
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.theme-font[aria-pressed="true"] {
+  border-color: var(--primary);
+}
+
+.theme-own-actions {
+  display: flex;
+  gap: 8px;
 }
