@@ -74,8 +74,9 @@ function useTreeViewState(tree: TreeNode[]) {
   const [menu, setMenu] = useState<MenuState>(null);
   const [labelsFor, setLabelsFor] = useState<string | null>(null);
   const [filter, setFilter] = useState<string[]>([]);
+  const [focusId, setFocusId] = useState<string | null>(null);
   const editing = { renamingId, setRenamingId, menu, setMenu, labelsFor, setLabelsFor };
-  return { ...useCollapsed(tree), ...editing, filter, setFilter };
+  return { ...useCollapsed(tree), ...editing, filter, setFilter, focusId, setFocusId };
 }
 
 const foldableIds = (nodes: TreeNode[]): string[] =>
@@ -106,6 +107,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
     labelItems: labelMenu(props, view),
     showDrafts: props.onShowDrafts ? (node) => props.onShowDrafts?.(node.id) : null,
     editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
+    focus: (node) => view.setFocusId(node.id),
   };
 }
 
@@ -114,6 +116,20 @@ function noteLinkOf(project: Project, id: string) {
   const parent = findNode(project.tree, id)?.parent;
   if (parent?.kind !== "sort") return null;
   return project.summaries[id]?.link ?? isLinkedByDefault(parent.id);
+}
+
+// A filter shows every match unfolded; chapter focus shows only the chapter's scenes under Boken.
+function sectionsOf(tree: TreeNode[], view: View) {
+  const rows =
+    view.filter.length > 0
+      ? visibleRows(filteredTree(tree, view.filter), new Set())
+      : visibleRows(tree, view.collapsed);
+  const focused = view.focusId ? (findNode(tree, view.focusId)?.node ?? null) : null;
+  const all = sidebarSections(rows);
+  const book = focused
+    ? visibleRows(focused.children ?? [], view.collapsed, 0, focused.id)
+    : all.book;
+  return { sections: { ...all, book }, focused };
 }
 
 export function useTreeView(props: TreeViewProps) {
@@ -138,11 +154,8 @@ export function useTreeView(props: TreeViewProps) {
     if (items.length > 0) view.setMenu({ items, x: event.clientX, y: event.clientY });
   };
   const isFiltered = view.filter.length > 0;
-  const rows = isFiltered
-    ? visibleRows(filteredTree(project.tree, view.filter), new Set())
-    : visibleRows(project.tree, view.collapsed);
-  const sections = sidebarSections(rows);
-  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered };
+  const { sections, focused } = sectionsOf(project.tree, view);
+  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered, focused };
 }
 
 export type Tree = ReturnType<typeof useTreeView>;

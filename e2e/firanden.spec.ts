@@ -55,3 +55,16 @@ test("the profile is opened from the sidebar and keeps what was written", async 
     "Skriver om is och fyrar.",
   );
 });
+
+test("a chapter is shown alone in the sidebar, and Hela boken brings the book back", async ({
+  page,
+}) => {
+  await page.locator(".tree").getByText("2. Fyren").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Visa bara kapitlet" }).click();
+
+  const tree = page.locator(".sidebar .tree");
+  await expect(tree).not.toContainText("1. Brevet");
+  await expect(tree).toContainText("Fyren");
+  await page.getByRole("button", { name: "← Hela boken" }).click();
+  await expect(tree).toContainText("1. Brevet");
+});

@@ -24,6 +24,7 @@ const actions: TreeMenuActions = {
   labelItems: null,
   editLabels: null,
   showDrafts: null,
+  focus: noop,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));

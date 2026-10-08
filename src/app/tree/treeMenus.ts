@@ -33,6 +33,8 @@ export interface TreeMenuActions {
   editLabels: ((node: TreeNode) => void) | null;
   /** The book's labels to tick on the node; null where they cannot be changed. */
   labelItems: ((node: TreeNode) => MenuItem[]) | null;
+  /** Shows only this chapter's scenes in the sidebar. */
+  focus: (node: TreeNode) => void;
 }
 
 export function foldMenu(view: { foldAll: () => void; unfoldAll: () => void }): MenuItem[] {
@@ -128,9 +130,15 @@ function moveItems(move: ((step: 1 | -1) => void) | undefined): MenuItem[] {
 }
 
 // A chapter can be kept as it is now under a name, and put back later.
-function draftItems(node: TreeNode, { showDrafts }: TreeMenuActions): MenuItem[] {
-  if (node.kind !== "chapter" || !showDrafts) return [];
-  return [{ label: t("Utkast…"), separatorBefore: true, onSelect: () => showDrafts(node) }];
+function draftItems(node: TreeNode, { showDrafts, focus }: TreeMenuActions): MenuItem[] {
+  if (node.kind !== "chapter") return [];
+  const focusItem = {
+    label: t("Visa bara kapitlet"),
+    separatorBefore: true,
+    onSelect: () => focus(node),
+  };
+  if (!showDrafts) return [focusItem];
+  return [focusItem, { label: t("Utkast…"), onSelect: () => showDrafts(node) }];
 }
 
 function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {

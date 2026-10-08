@@ -13,7 +13,7 @@ import {
   type Tree,
   type TreeViewProps,
 } from "./useTreeView.js";
-import { manuscriptWords } from "../../project/treeLabels.js";
+import { manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
 import { FilterButton, LabelsLayer } from "../labels/LabelsInTree.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -123,6 +123,29 @@ function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
   );
 }
 
+// In chapter focus the heading is the chapter, with the way back to the whole book above it.
+function BookHeading({ props, tree }: { props: TreeViewProps; tree: Tree }) {
+  const { focused, view } = tree;
+  const { project } = props;
+  if (!focused)
+    return (
+      <SectionHeading
+        label={t("Boken")}
+        onDrop={tree.dropAtBookEnd}
+        words={manuscriptWords(project.tree, project.summaries)}
+        filter={<FilterButton props={props} view={view} />}
+      />
+    );
+  return (
+    <>
+      <button className="tree-whole-book" onClick={() => view.setFocusId(null)}>
+        {t("← Hela boken")}
+      </button>
+      <SectionHeading label={nodeLabel(focused, project.tree, project.summaries)} />
+    </>
+  );
+}
+
 /** One tree, so the arrow keys walk through all of it. */
 export function TreeView(props: TreeViewProps & BookExtras) {
   const tree = useTreeView(props);
@@ -135,12 +158,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       className="tree"
       onContextMenu={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(view)])}
     >
-      <SectionHeading
-        label={t("Boken")}
-        onDrop={tree.dropAtBookEnd}
-        words={manuscriptWords(props.project.tree, props.project.summaries)}
-        filter={<FilterButton props={props} view={view} />}
-      />
+      <BookHeading props={props} tree={tree} />
       <Rows rows={sections.book} props={props} tree={tree} />
       {props.isBookOnly ? (
         <BookOnlyEnd props={props} tree={tree} />

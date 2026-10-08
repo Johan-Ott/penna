@@ -2135,3 +2135,17 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.tree-whole-book {
+  align-self: flex-start;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font: 13px var(--font-ui);
+}
+
+.tree-whole-book:hover {
+  color: var(--text);
+}
