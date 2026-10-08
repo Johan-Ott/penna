@@ -8,6 +8,8 @@ export interface TreeNode {
   title?: string;
   summary?: string;
   when?: string;
+  /** Whose eyes the chapter or scene is seen through. */
+  pov?: string;
   /** Printed under a chapter's title, such as whose point of view it is. */
   subtitle?: string;
   /** A quotation printed before the chapter's text, and who said it. */

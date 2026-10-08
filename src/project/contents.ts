@@ -12,6 +12,7 @@ export interface ContentsRow {
   title: string;
   summary: string;
   when: string;
+  pov: string;
   words: number;
   status: SceneStatus;
   sceneIds: string[];
@@ -35,6 +36,7 @@ function rowOf(node: TreeNode, number: number | null, summaries: Summaries): Con
     title,
     summary: node.summary ?? "",
     when: node.when ?? "",
+    pov: node.pov ?? "",
     words: sceneIds.reduce((sum, id) => sum + (summaries[id]?.words ?? 0), 0),
     status: leastFinished(sceneIds.map((id) => summaries[id]?.status ?? "idé")),
     sceneIds,
@@ -95,6 +97,6 @@ export function withNodeFields(tree: TreeNode[], id: string, fields: NodeFields)
 export const withNodeText = (
   tree: TreeNode[],
   id: string,
-  field: "summary" | "when",
+  field: "summary" | "when" | "pov",
   text: string,
 ) => withNodeFields(tree, id, { [field]: text });

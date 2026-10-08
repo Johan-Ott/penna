@@ -556,7 +556,7 @@
 
 .contents-row {
   display: grid;
-  grid-template-columns: 1fr 120px 60px 80px;
+  grid-template-columns: 1fr 90px 110px 60px 90px;
   align-items: baseline;
   gap: 16px;
   padding: 12px 0;
@@ -643,6 +643,7 @@
   line-height: 1.45;
 }
 
+.contents-pov,
 .contents-when,
 .contents-words,
 .contents-status {

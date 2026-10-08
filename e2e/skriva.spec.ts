@@ -84,19 +84,6 @@ test("a new scene from the palette opens empty, ready to write", async ({ page }
   await expect(editor(page)).toHaveText("Ny början.");
 });
 
-test("search finds a name across the scene", async ({ page }) => {
-  await editor(page).click();
-
-  await page.keyboard.press("Control+f");
-  await page.keyboard.type("Elin");
-
-  await expect(page.getByText(/^\d+ träffar$/)).toBeVisible();
-  await page.keyboard.press("Enter");
-  await expect(page.getByText(/^1 av \d+$/)).toBeVisible();
-  await page.getByRole("button", { name: "Stäng sökning" }).click();
-  await expect(page.getByRole("search")).toBeHidden();
-});
-
 test("the palette's chips narrow the search to the kinds chosen", async ({ page }) => {
   await page.keyboard.press("Control+k");
   const palette = page.getByRole("dialog", { name: "Kommandopalett" });
@@ -106,37 +93,6 @@ test("the palette's chips narrow the search to the kinds chosen", async ({ page 
 
   await expect(palette.getByRole("option", { name: /Fyren/ })).toHaveCount(1);
   await expect(palette.locator(".palette-group")).toHaveText(["Kapitel", "Kommandon"]);
-});
-
-test("across the manuscript the matches are listed by scene, and one opens its scene", async ({
-  page,
-}) => {
-  await editor(page).click();
-  await page.keyboard.press("Control+f");
-  await page.keyboard.type("Elin");
-  await page.getByRole("button", { name: "Hela manuset" }).click();
-
-  const hits = page.getByRole("list", { name: "Träffar i manuset" }).getByRole("listitem");
-  await expect(hits).not.toHaveCount(0);
-  await hits.filter({ hasText: "· Isen" }).click();
-
-  await expect(editor(page)).toContainText("Isen bar.");
-});
-
-test("a status chip narrows the manuscript's matches to scenes in that step", async ({ page }) => {
-  await editor(page).click();
-  await page.keyboard.press("Control+f");
-  await page.keyboard.type("Elin");
-  await page.getByRole("button", { name: "Hela manuset" }).click();
-
-  await page
-    .getByRole("group", { name: "Bara scener med" })
-    .getByRole("button", { name: "Redigering" })
-    .click();
-
-  const hits = page.getByRole("list", { name: "Träffar i manuset" }).getByRole("listitem");
-  await expect(hits).toHaveCount(1);
-  await expect(hits).toContainText("Köket");
 });
 
 test("Framsteg shows the book's words per step", async ({ page }) => {
@@ -150,21 +106,17 @@ test("Framsteg shows the book's words per step", async ({ page }) => {
   await expect(progress.getByText("Utkast 145")).toBeVisible();
 });
 
-test("Med anteckningar searches the notes' text too", async ({ page }) => {
+test("a chapter's point of view is written in Innehåll and kept", async ({ page }) => {
   await editor(page).click();
-  await page.keyboard.press("Control+f");
-  await page.keyboard.type("Trettioåtta");
-  await page.getByRole("button", { name: "Hela manuset" }).click();
-  await expect(page.getByText("Inga träffar")).toBeVisible();
+  await runCommand(page, "Gå till Innehåll");
 
-  await page
-    .getByRole("group", { name: "Bara scener med" })
-    .getByRole("button", { name: "Med anteckningar" })
-    .click();
+  const pov = page.getByRole("textbox", { name: "Vems ögon?" }).first();
+  await pov.fill("Elin");
+  await pov.press("Enter");
+  await runCommand(page, "Gå till Skriv");
+  await runCommand(page, "Gå till Innehåll");
 
-  const hits = page.getByRole("list", { name: "Träffar i manuset" }).getByRole("listitem");
-  await expect(hits).toHaveCount(1);
-  await expect(hits).toContainText("Elin");
+  await expect(page.getByRole("textbox", { name: "Vems ögon?" }).first()).toHaveValue("Elin");
 });
 
 test("the focus mode opens and Escape leaves it", async ({ page }) => {

@@ -136,9 +136,22 @@ function pageText(pages: RowProps["pages"]) {
 }
 
 /** One chapter in Innehåll: its title, what happens, when, its length and its status. */
+const WordsCell = ({ row, pages }: RowProps) => (
+  <span className="contents-words">
+    {format(row.words)}
+    {pages && <span className="contents-pages">{pageText(pages)}</span>}
+  </span>
+);
+
+// Whose eyes and when, each in its own narrow column.
+const SHORT_FIELDS: ["pov" | "when", string][] = [
+  ["pov", t("Vems ögon?")],
+  ["when", t("När?")],
+];
+
 export function Row(props: RowProps) {
   const { row, project } = props;
-  const save = (field: "summary" | "when") => (text: string) =>
+  const save = (field: "summary" | "when" | "pov") => (text: string) =>
     props.onChangeTree(withNodeText(project.tree, row.id, field, text));
   return (
     <div className="contents-row" {...props.dragProps}>
@@ -152,16 +165,16 @@ export function Row(props: RowProps) {
         />
         <RowLabels {...props} />
       </div>
-      <InlineText
-        value={row.when}
-        label={t("När?")}
-        className="contents-when"
-        onSave={save("when")}
-      />
-      <span className="contents-words">
-        {format(row.words)}
-        {props.pages && <span className="contents-pages">{pageText(props.pages)}</span>}
-      </span>
+      {SHORT_FIELDS.map(([field, label]) => (
+        <InlineText
+          key={field}
+          value={row[field]}
+          label={label}
+          className={`contents-${field}`}
+          onSave={save(field)}
+        />
+      ))}
+      <WordsCell {...props} />
       <StatusButton {...props} />
     </div>
   );
