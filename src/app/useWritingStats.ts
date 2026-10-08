@@ -12,6 +12,8 @@ import {
 } from "../project/stats.js";
 import { recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
+import { snapshotOnSave } from "../project/snapshots.js";
+import type { useSceneSession } from "./useSceneSession.js";
 import type { Project } from "./useProject.js";
 
 export interface Today {
@@ -30,7 +32,7 @@ function todayOf(stats: Stats, project: Project | null): Today {
 }
 
 // Made once at random and kept in localStorage.
-function thisDevice() {
+export function thisDevice() {
   const key = "penna.device";
   try {
     const known = localStorage.getItem(key);
@@ -51,8 +53,20 @@ async function addToThisDevice(dir: string, added: number) {
   return readStats(fileSystem, dir);
 }
 
-export function useWritingStats(project: Project | null) {
+function crossesGoal(stats: Stats, added: number, goal: number | null) {
+  const after = stats[dayKey(Date.now())] ?? 0;
+  return goal !== null && after - added < goal && after >= goal;
+}
+
+/** `onWritten` hears every save that added words, and whether it reached the daily goal. */
+export function useWritingStats(
+  project: Project | null,
+  onWritten: (words: number, isGoalReached: boolean) => void,
+) {
   const dir = project?.dir ?? null;
+  const goal = project ? dailyGoalOf(project.fields) : null;
+  const heard = useRef(onWritten);
+  heard.current = onWritten;
   const [stats, setStats] = useState<Stats>({});
   const queue = useRef(Promise.resolve());
   useEffect(() => {
@@ -68,10 +82,27 @@ export function useWritingStats(project: Project | null) {
         .then(async () => {
           const stats = await addToThisDevice(sceneDir, added);
           if (sceneDir === dir) setStats(stats);
+          heard.current(added, crossesGoal(stats, added, goal));
         })
         .catch(recordFailure("Ord per dag kunde inte sparas"));
     },
-    [dir],
+    [dir, goal],
   );
   return { stats, today: todayOf(stats, project), recordSave };
+}
+
+/** Each save is counted, and kept as an automatic version when the writer wants those. */
+export function listenToSaves(
+  savedRef: ReturnType<typeof useSceneSession>["savedRef"],
+  recordSave: (dir: string, before: string, after: string) => void,
+  isAutoSnapshotOn: boolean,
+) {
+  savedRef.current = (scene, before, after) => {
+    recordSave(scene.dir, before, after);
+    if (!isAutoSnapshotOn) return;
+    // A missed automatic version loses no text, so it is not shown as an error.
+    void snapshotOnSave(platform.fileSystem, scene, { before, after }, Date.now()).catch(
+      () => undefined,
+    );
+  };
 }

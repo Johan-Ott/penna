@@ -2,7 +2,7 @@ import type { MouseEvent } from "react";
 import type { AppState } from "../App.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
-import { InsightsPanel } from "../progress/InsightsPanel.js";
+import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -76,17 +76,9 @@ function MainCard({ app, project }: ScreenProps) {
 
 function Floating({ app, project }: ScreenProps) {
   const { writingMode } = app;
-  const saveFields = (fields: Record<string, unknown>) => void app.updateFields(fields);
   return (
     <>
-      {writingMode.isProgressOpen && (
-        <InsightsPanel
-          project={project}
-          stats={app.stats}
-          onSaveGoals={saveFields}
-          onClose={() => writingMode.setProgressOpen(false)}
-        />
-      )}
+      <InsightsLayer app={app} project={project} />
       {app.newNoteSort !== false && (
         <NewNoteDialog
           project={project}

@@ -7,7 +7,7 @@ const HEATMAP_WEEKS = 12;
 
 // Day keys are counted in UTC, so a summer time change never adds or loses a day.
 const utcOf = (day: string) => Date.parse(`${day}T00:00:00Z`);
-const dayAfter = (day: string, days: number) =>
+export const dayAfter = (day: string, days: number) =>
   new Date(utcOf(day) + days * DAY).toISOString().slice(0, 10);
 
 export const daysBetween = (from: string, to: string) =>

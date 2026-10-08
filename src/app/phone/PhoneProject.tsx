@@ -6,7 +6,7 @@ import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { openInHome } from "../notes/noteHomes.js";
 import { Overlays } from "../Overlays.js";
 import { writingAreaProps } from "../paneProps.js";
-import { InsightsPanel } from "../progress/InsightsPanel.js";
+import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
@@ -50,18 +50,10 @@ function TextBar({ app, project, onBack }: Props & { onBack: () => void }) {
 }
 
 function Floating({ app, project }: Props) {
-  const { writingMode } = app;
   const notes = (isInSeries: boolean) => (isInSeries ? app.actions.series : app.actions).notes;
   return (
     <>
-      {writingMode.isProgressOpen && (
-        <InsightsPanel
-          project={project}
-          stats={app.stats}
-          onSaveGoals={(fields) => void app.updateFields(fields)}
-          onClose={() => writingMode.setProgressOpen(false)}
-        />
-      )}
+      <InsightsLayer app={app} project={project} />
       {app.newNoteSort !== false && (
         <NewNoteDialog
           project={project}

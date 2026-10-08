@@ -1,0 +1,65 @@
+import { mergedJourney, NO_JOURNEY, type Holiday, type Journey } from "../../project/journey.js";
+import type { Stats } from "../../project/stats.js";
+import { writeAtomic } from "../../storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "../../storage/fileSystem.js";
+import { platform } from "../platform.js";
+
+// One file per device in the Penna folder, so two computers never write over each other.
+const folderOf = (library: string) => joinPath(library, "skrivresa");
+
+export async function libraryOf(libraryDir: string | null) {
+  return libraryDir ?? `${(await platform.knownFolders()).documents}/Penna`;
+}
+
+function statsFrom(value: unknown): Stats {
+  if (typeof value !== "object" || value === null) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [string, number] => typeof entry[1] === "number",
+    ),
+  );
+}
+
+const isHoliday = (value: unknown): value is Holiday =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as Holiday).from === "string" &&
+  (typeof (value as Holiday).to === "string" || (value as Holiday).to === null);
+
+function journeyFrom(text: string): Journey {
+  try {
+    const parsed = JSON.parse(text) as Record<string, unknown>;
+    const holidays = Array.isArray(parsed["holidays"]) ? parsed["holidays"] : [];
+    return {
+      words: statsFrom(parsed["words"]),
+      ink: statsFrom(parsed["ink"]),
+      holidays: holidays.filter(isHoliday),
+    };
+  } catch {
+    return NO_JOURNEY;
+  }
+}
+
+/** This device's own journey, and the other devices' added up. */
+export async function readJourneys(fileSystem: FileSystem, library: string, device: string) {
+  const names: string[] = await fileSystem.list(folderOf(library)).catch(() => []);
+  const read = (name: string) =>
+    fileSystem
+      .readText(joinPath(folderOf(library), name))
+      .then(journeyFrom)
+      .catch(() => NO_JOURNEY);
+  const own = names.includes(`${device}.json`) ? await read(`${device}.json`) : NO_JOURNEY;
+  const others = names.filter((name) => name.endsWith(".json") && name !== `${device}.json`);
+  return { own, others: mergedJourney(await Promise.all(others.map(read))) };
+}
+
+export async function writeOwnJourney(
+  fileSystem: FileSystem,
+  library: string,
+  device: string,
+  journey: Journey,
+) {
+  await fileSystem.makeDir(folderOf(library));
+  const path = joinPath(folderOf(library), `${device}.json`);
+  await writeAtomic(fileSystem, path, `${JSON.stringify(journey, null, 2)}\n`);
+}

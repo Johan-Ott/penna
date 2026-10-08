@@ -12,6 +12,8 @@ import {
   type Comment,
 } from "../../project/comments.js";
 import { recordFailure } from "../errorLog.js";
+import { earnInk } from "../journey/journeyEvents.js";
+import { INK } from "../../project/journey.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
 import { useShortcut } from "../useShortcut.js";
@@ -80,6 +82,12 @@ function useCommentMarks(editor: Editor, comments: Comment[], onComment: (id: st
   useEffect(() => run(refreshComments, false), [comments, run]);
 }
 
+// A comment ticked off as done gives a little ink.
+function withResolved(comments: Comment[], id: string, resolved: boolean) {
+  if (resolved) earnInk(INK.commentDone);
+  return comments.map((comment) => (comment.id === id ? { ...comment, resolved } : comment));
+}
+
 export function useComments(parts: {
   project: Project | null;
   scene: OpenScene | null;
@@ -105,7 +113,6 @@ export function useComments(parts: {
       setDraft(null);
     },
     reply: (to: Comment, body: string) => save([...comments, newReply(to, body, author)]),
-    setResolved: (id: string, resolved: boolean) =>
-      save(comments.map((comment) => (comment.id === id ? { ...comment, resolved } : comment))),
+    setResolved: (id: string, resolved: boolean) => save(withResolved(comments, id, resolved)),
   };
 }

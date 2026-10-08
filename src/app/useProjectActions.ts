@@ -9,6 +9,8 @@ import {
 import { chapterOf } from "../project/treeLabels.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { platform } from "./platform.js";
+import { earnInk } from "./journey/journeyEvents.js";
+import { INK } from "../project/journey.js";
 import type { SceneStatus } from "../manuscript/sceneFile.js";
 import {
   createScene,
@@ -75,7 +77,9 @@ function useSceneFileActions({
   const setStatus = useCallback(
     async (id: string, status: SceneStatus) => {
       if (!project) return;
+      const wasDone = project.summaries[id]?.status === "klar";
       await setSceneStatus(session, project.dir, id, status);
+      if (status === "klar" && !wasDone) earnInk(INK.sceneDone);
       await refresh();
     },
     [project, session, refresh],

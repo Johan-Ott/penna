@@ -667,7 +667,6 @@
   top: 44px;
   right: 8px;
   bottom: 8px;
-  z-index: 30;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -853,6 +852,318 @@
 
 .insights-panel > .link-button {
   align-self: flex-start;
+}
+
+.insight-journey {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.insight-journey:hover {
+  border-color: var(--border-control);
+}
+
+.insight-journey .spine.done {
+  fill: var(--text);
+}
+
+.insight-journey .spine.now {
+  fill: var(--accent);
+}
+
+.insight-journey .spine.next {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 2;
+}
+
+.insight-journey .shelf {
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.insight-journey-words {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Skrivarresan: levels as book spines, the inkwell, and the ink. */
+.journey-dialog {
+  width: min(1200px, calc(100vw - 48px));
+  max-width: none;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+
+.journey-levels,
+.journey-inkwell,
+.journey-ink {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+  border-radius: var(--radius-dialog);
+}
+
+.journey-levels {
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  box-shadow: var(--shadow-dialog);
+}
+
+.journey-kicker {
+  color: var(--text-label);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.journey-headline {
+  font: 600 38px/1.05 var(--font-prose);
+}
+
+.journey-headline em {
+  color: var(--accent);
+}
+
+.journey-sub {
+  color: var(--text-tree);
+  font-size: 15px;
+}
+
+.journey-title {
+  font: 600 22px var(--font-prose);
+}
+
+.level-shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 250px;
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.level-spine {
+  min-height: 84px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  border: 1.5px dashed var(--border-control);
+  border-radius: 3px;
+  color: var(--text-label);
+  font: 11px var(--font-prose);
+}
+
+.level-spine span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+.level-spine.done,
+.level-spine.now {
+  border: 0;
+  background: #1c1c1c;
+  color: #f2f2f2;
+  box-shadow:
+    inset 4px 0 0 rgba(255, 255, 255, 0.08),
+    3px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.level-spine.now {
+  background: #3f6b4e;
+}
+
+.journey-bar,
+.journey-bar > div {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.journey-bar > div {
+  background: var(--accent);
+}
+
+.journey-inkwell {
+  background: #161616;
+  color: #f2f2f2;
+}
+
+.journey-inkwell .journey-kicker,
+.inkwell-hint {
+  color: #a3a3a3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.journey-ink .inkwell-hint {
+  color: var(--text-label);
+}
+
+.inkwell-row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.inkwell-row .ink {
+  fill: #3f6b4e;
+}
+
+.inkwell-row .glass {
+  fill: none;
+  stroke: #f2f2f2;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.inkwell-count {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inkwell-days {
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.inkwell-label {
+  color: #cfcfcf;
+  font: 15px var(--font-prose);
+}
+
+.inkwell-week {
+  display: flex;
+  gap: 8px;
+}
+
+.inkwell-day {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #a3a3a3;
+  font-size: 11px;
+}
+
+.ring {
+  width: 26px;
+  height: 26px;
+  box-sizing: border-box;
+  border-radius: 13px;
+}
+
+.ring.done {
+  background: #3f6b4e;
+}
+
+.ring.today {
+  background: #f2f2f2;
+}
+
+.ring.rest {
+  border: 1.5px solid #5a5a5a;
+}
+
+.ring.holiday {
+  border: 1.5px dashed #5a5a5a;
+}
+
+.ring.later {
+  background: #262626;
+}
+
+.inkwell-holiday {
+  align-self: flex-start;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #3a3a3a;
+  border-radius: 16px;
+  background: transparent;
+  color: #f2f2f2;
+  font: inherit;
+}
+
+.inkwell-holiday[aria-pressed="true"] {
+  border-color: #3f6b4e;
+}
+
+.journey-ink {
+  gap: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.ink-rule {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ink-points {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.ink-rank {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-label);
+}
+
+.ink-rank.reached {
+  color: var(--text);
+}
+
+.ink-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border-control);
+}
+
+.ink-rank.reached .ink-dot {
+  background: var(--accent);
+}
+
+.ink-rank-name {
+  flex-grow: 1;
+}
+
+.ink-rank-name.now {
+  font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+  .journey-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* Publicera: three steps on the left, the book on the right */

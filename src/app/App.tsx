@@ -21,14 +21,13 @@ import { BookToasts, useRenameOffer } from "./renameOffer.js";
 import { useDrafts, type Drafts } from "./drafts/useDrafts.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
-import { useWritingStats } from "./useWritingStats.js";
+import { useJourney } from "./journey/useJourney.js";
+import { listenToSaves, useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
 import { StartScreen } from "./StartScreen.js";
 import { useSyncReview } from "./sync/useSyncReview.js";
 import { useStartup, type PreferenceChange } from "./useStartup.js";
 import { useSnapshots } from "./snapshots/useSnapshots.js";
-import { snapshotOnSave } from "../project/snapshots.js";
-import { platform } from "./platform.js";
 import { useExport } from "./exporting/useExport.js";
 import { ProjectScreen } from "./shell/ProjectScreen.js";
 import { PhoneProject } from "./phone/PhoneProject.js";
@@ -46,21 +45,6 @@ function useShowShelf(
     update((current) => ({ ...current, lastProjectDir: null }));
     close();
   }, [session, close, update]);
-}
-
-function listenToSaves(
-  savedRef: ReturnType<typeof useSceneSession>["savedRef"],
-  recordSave: (dir: string, before: string, after: string) => void,
-  isAutoSnapshotOn: boolean,
-) {
-  savedRef.current = (scene, before, after) => {
-    recordSave(scene.dir, before, after);
-    if (!isAutoSnapshotOn) return;
-    // A missed automatic version loses no text, so it is not shown as an error.
-    void snapshotOnSave(platform.fileSystem, scene, { before, after }, Date.now()).catch(
-      () => undefined,
-    );
-  };
 }
 
 function useSeriesParts(project: Project | null, session: SceneSession, onChange: () => void) {
@@ -174,7 +158,8 @@ function useAppState() {
   const snapshots = useSnapshots(project, session);
   const drafts = useDrafts(project, session, refresh);
   const syncReview = useSyncReview({ project, session, updateTree, refresh });
-  const { stats, today, recordSave } = useWritingStats(project);
+  const journey = useJourney(startup.preferences.libraryDir);
+  const { stats, today, recordSave } = useWritingStats(project, journey.record);
   useReminder(startup.preferences.reminderHour, today.words);
   const isSearchOpen = writingMode.isSearchOpen;
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
@@ -189,7 +174,7 @@ function useAppState() {
   const app = {
     ...parts,
     ...{ treeHandlers, seriesTreeHandlers, showShelf, snapshots, syncReview, stats, today },
-    ...{ search, renameOffer, zip, newProjectAsked, sceneSplit, drafts },
+    ...{ search, renameOffer, zip, newProjectAsked, sceneSplit, drafts, journey },
   };
   return { ...app, palette: usePalette(paletteContextOf(app)) };
 }
