@@ -1001,13 +1001,12 @@
   "Texten på ett pappersark, med bokens sidor nederst.": "The text on a sheet of paper, with the book's pages at the foot.",
   "Boktypografi": "Book typography",
   "Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener.": "Justified, a drop cap where the chapter opens and an ornament between scenes.",
-  "s. {page} av {count}": "p. {page} of {count}",
-  "s. {first}–{last} av {count}": "pp. {first}–{last} of {count}",
   "Dela hela boken": "Share the whole book",
   "Kapitel {span} · {count} ord": "Chapters {span} · {count} words",
   "Status: {step}": "Status: {step}",
   "Dagens mål nått · {count} ord": "Today's goal reached · {count} words",
   "Insikter och mål": "Insights and goals",
   "Sidomenyn som innehållsförteckning": "The sidebar as a table of contents",
-  "Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok.": "Dotted leaders to the page number at each chapter, as in a printed book."
+  "Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok.": "Dotted leaders to the page number at each chapter, as in a printed book.",
+  "av cirka {count}": "of about {count}"
 }

@@ -16,9 +16,10 @@ import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookVie
 import { ReviewPill, Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
-import { folioOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
+import { firstPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
 import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
+import { pagesAtGoal } from "../contents/ShareSpreadButton.js";
 import { t } from "../../i18n/i18n.js";
 
 type ScreenProps = { app: AppState; project: Project };
@@ -69,12 +70,21 @@ function OverTheText({ app, project }: ScreenProps) {
   );
 }
 
-// The open scene's pages: marks in the margin, the sheet's foot, and whether it opens a chapter.
-const pageParts = (app: AppState, project: Project, pageMap: PageMap | null) => ({
-  scenePages: scenePagesOf(app, pageMap),
-  folio: folioOf(app.scene?.id ?? null, pageMap),
-  opensChapter: app.scene ? chapterOf(project.tree, app.scene.id)?.isFirstScene === true : false,
-});
+// The open scene's pages in the margin, and the sheet around it: book and chapter above, page below.
+function pageParts(app: AppState, project: Project, pageMap: PageMap | null) {
+  const sceneId = app.scene?.id ?? null;
+  const chapter = sceneId ? chapterOf(project.tree, sceneId) : null;
+  const page = firstPageOf(sceneId, pageMap);
+  return {
+    scenePages: scenePagesOf(app, pageMap),
+    runningHead: {
+      book: project.name,
+      chapter: chapter ? `${chapter.number}. ${chapter.title}` : "",
+    },
+    folio: page !== null && pageMap ? { page, total: pagesAtGoal(project, pageMap.pages) } : null,
+    opensChapter: chapter?.isFirstScene === true,
+  };
+}
 
 // The printed book's pages, counted while Innehåll, the sheet or the table of contents shows them.
 function useScreenPages({ app, project }: ScreenProps) {

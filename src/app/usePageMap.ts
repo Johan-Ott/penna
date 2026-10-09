@@ -9,7 +9,6 @@ import type { ExportChoices } from "./exporting/useExport.js";
 import { appTypst } from "./typstAssets.js";
 import type { Project } from "./useProject.js";
 import { findNode, type TreeNode } from "../project/tree.js";
-import { t } from "../i18n/i18n.js";
 
 // Waits for a pause in the writing; setting the whole book takes about 0.1 s once Typst is warm.
 const SETTLE_MS = 3000;
@@ -45,16 +44,12 @@ export function scenePagesOf(
 }
 
 /** The open scene's printed pages, for the foot of the sheet; null until they are counted. */
-export function folioOf(sceneId: string | null, map: PageMap | null) {
+/** The page the open scene starts on, for the foot of the sheet. */
+export function firstPageOf(sceneId: string | null, map: PageMap | null) {
   const pages = (sceneId ? (map?.blockPages.get(sceneId) ?? []) : []).filter(
     (page): page is number => page !== undefined,
   );
-  if (!map || pages.length === 0) return null;
-  const first = Math.min(...pages);
-  const last = Math.max(...pages);
-  return first === last
-    ? t("s. {page} av {count}", { page: first, count: map.pages })
-    : t("s. {first}–{last} av {count}", { first, last, count: map.pages });
+  return pages.length === 0 ? null : Math.min(...pages);
 }
 
 /** Where a part, chapter or scene starts in the printed book, for the table of contents. */

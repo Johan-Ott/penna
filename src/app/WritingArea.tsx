@@ -19,14 +19,15 @@ import { ReadOnlyNotice, SaveToast, TreeFailureToast, SavedNowToast } from "./Sa
 import { useEscape, useShortcut } from "./useShortcut.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
+import { SheetEdges, type SheetProps } from "./SheetEdges.js";
 import { t } from "../i18n/i18n.js";
 import { useTextMenu } from "./spelling/useTextMenu.js";
 
 interface WritingAreaProps {
   /** The printed page of each block of the open scene, when page breaks are shown. */
   scenePages?: (number | undefined)[] | null;
-  /** "s. 192–197 av 320" at the foot of the sheet, once the pages are counted. */
-  folio?: string | null;
+  runningHead?: SheetProps["runningHead"];
+  folio?: SheetProps["folio"];
   /** The open scene starts its chapter, so book type gives it a drop cap. */
   opensChapter?: boolean;
   aside: ReactNode;
@@ -114,8 +115,8 @@ function pageClass({ settings, isFocusMode, opensChapter }: WritingAreaProps) {
     .join(" ");
 }
 
-const Folio = ({ hasScene, settings, folio }: WritingAreaProps) =>
-  hasScene && settings.paper && folio ? <span className="sheet-folio">{folio}</span> : null;
+const isOnPaper = (props: WritingAreaProps) =>
+  props.hasScene && props.settings.paper && !props.isFocusMode;
 
 // On paper the text, its header and its footer lie on one sheet, with its pages at the foot.
 function Page(props: WritingAreaProps) {
@@ -132,7 +133,7 @@ function Page(props: WritingAreaProps) {
           onContextMenu={textMenu.onContextMenu}
         />
         {hasScene && !isFocusMode && props.footer}
-        <Folio {...props} />
+        <SheetEdges {...props} isShown={isOnPaper(props)} />
       </div>
       {textMenu.layer}
     </div>

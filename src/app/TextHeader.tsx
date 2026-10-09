@@ -1,6 +1,6 @@
 import { withNodeText } from "../project/contents.js";
 import { findNode, type TreeNode } from "../project/tree.js";
-import { chapterOf } from "../project/treeLabels.js";
+import { chapterOf, type SceneChapter } from "../project/treeLabels.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 
@@ -40,6 +40,16 @@ function headingOf(project: Project, sceneId: string) {
   return { chapter, place, whenId, when: findNode(project.tree, whenId)?.node.when ?? "" };
 }
 
+// The number shows only with book type, above the title as on a printed chapter's first page.
+function ChapterOpening({ chapter }: { chapter: SceneChapter }) {
+  return (
+    <>
+      <span className="chapter-number">{t("Kapitel {number}", { number: chapter.number })}</span>
+      <h1 className="chapter-title">{chapter.title}</h1>
+    </>
+  );
+}
+
 export function TextHeader(props: TextHeaderProps) {
   const { project, sceneId, onChangeTree, onReadChapter } = props;
   const { chapter, place, whenId, when } = headingOf(project, sceneId);
@@ -62,7 +72,7 @@ export function TextHeader(props: TextHeaderProps) {
           onSave={(text) => onChangeTree(withNodeText(project.tree, whenId, "when", text))}
         />
       </div>
-      {chapter?.isFirstScene && <h1 className="chapter-title">{chapter.title}</h1>}
+      {chapter?.isFirstScene && <ChapterOpening chapter={chapter} />}
     </header>
   );
 }

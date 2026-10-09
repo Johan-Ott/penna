@@ -3055,32 +3055,62 @@ button.book-cover:hover {
 }
 
 .page.paper {
-  padding: 28px 24px 0;
-  background: var(--bg-preview);
+  padding: 40px 48px;
+  background: color-mix(in srgb, var(--bg-preview), #000 4%);
 }
 
+/* A sheet below peeks out at the edge, as in a pile of paper. */
 .page.paper > .sheet {
   position: relative;
   box-sizing: border-box;
-  width: calc(var(--prose-width, 600px) + 160px);
-  max-width: 100%;
-  min-height: calc(100% - 28px);
+  width: min(calc(var(--prose-width, 600px) + 176px), 100%);
+  min-height: calc(100% - 80px);
   margin: 0 auto;
-  padding: 64px 80px 120px;
+  padding: 104px 88px 128px;
   background: var(--bg);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
-    0 12px 32px rgba(0, 0, 0, 0.08);
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    4px 4px 0 -1px var(--bg),
+    4px 4px 0 0 var(--border-card);
+}
+
+.sheet-head {
+  position: absolute;
+  top: 44px;
+  right: 88px;
+  left: 88px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  color: var(--text-label);
+  font: 10px var(--font-prose);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .sheet-folio {
   position: absolute;
   right: 0;
-  bottom: 36px;
+  bottom: 40px;
   left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
   color: var(--text-label);
+  font: 11px var(--font-ui);
+}
+
+.sheet-page {
+  color: var(--text-muted);
   font: 13px var(--font-prose);
-  text-align: center;
+}
+
+.chapter-number {
+  display: none;
 }
 
 /* Boktypografi: justified with hyphens, a drop cap where the chapter opens, an ornament between
@@ -3090,7 +3120,19 @@ button.book-cover:hover {
   hyphens: auto;
 }
 
+/* A chapter opens lower on its page, under its number, as in a printed book. */
+.page.book-type .chapter-number {
+  display: block;
+  margin-top: 64px;
+  color: var(--text-label);
+  font: 11px var(--font-prose);
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .page.book-type .chapter-title {
+  margin: 10px 0 40px;
   text-align: center;
 }
 
@@ -3123,5 +3165,9 @@ button.book-cover:hover {
   .page.paper > .sheet {
     padding: 0 0 80px;
     box-shadow: none;
+  }
+
+  .sheet-head {
+    display: none;
   }
 }
