@@ -7,11 +7,14 @@ import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
 import { manuscriptSceneIds, withSpecialFolders, type TreeNode } from "./tree.js";
+import { templateBook, templateOf } from "./templates.js";
 import { t } from "../i18n/i18n.js";
 
 export interface ProjectDetails {
   title: string;
   type: string;
+  /** The book template it starts from; see templates.ts. */
+  template: string;
   dailyGoal: number;
   /** YYYY-MM-DD, or "" when the writer has no deadline. */
   deadline: string;
@@ -34,14 +37,6 @@ export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string,
   return joinPath(libraryDir, candidate);
 }
 
-const EMPTY_BOOK: ImportedNode[] = [
-  {
-    kind: "chapter",
-    title: t("Första kapitlet"),
-    children: [{ kind: "scene", title: t("Första scenen"), body: "" }],
-  },
-];
-
 async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
   const tree: TreeNode[] = [];
   for (const node of book) {
@@ -51,6 +46,7 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
         id,
         kind: node.kind,
         title: node.title,
+        ...(node.summary ? { summary: node.summary } : {}),
         children: await writeBook(fileSystem, dir, node.children),
       });
       continue;
@@ -63,24 +59,54 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
   return tree;
 }
 
-/** Without an imported book it gets one chapter and one scene, so the writer can start at once. */
+// The template's goal, its labels and its note sorts; the standard labels when it has none.
+function templateParts(details: ProjectDetails) {
+  const template = templateOf(details.template);
+  const labels = template.labels.map(([name = "", color = ""]) => ({
+    id: newSceneId(),
+    name,
+    color,
+  }));
+  const sorts: TreeNode[] = template.sorts.map((title) => ({
+    id: newSceneId(),
+    kind: "sort",
+    title,
+    children: [],
+  }));
+  return {
+    fields: {
+      ...(template.totalGoal ? { totalGoal: template.totalGoal } : {}),
+      ...(labels.length ? { labels } : {}),
+    },
+    sorts,
+  };
+}
+
+/** An imported book, or the template's: by default one chapter and one scene, to start at once. */
 export async function createProject(
   fileSystem: FileSystem,
   libraryDir: string,
   details: ProjectDetails,
-  book: ImportedNode[] = EMPTY_BOOK,
+  book: ImportedNode[] = templateBook(templateOf(details.template), t("Scen 1")),
 ) {
   const dir = await freeProjectDir(fileSystem, libraryDir, details.title);
   await fileSystem.makeDir(joinPath(dir, "scenes"));
   const tree = await writeBook(fileSystem, dir, book);
   const sceneId = manuscriptSceneIds(tree)[0] ?? null;
+  const fromTemplate = templateParts(details);
   const fields = {
     title: details.title.trim() || t("Namnlöst projekt"),
     type: details.type,
     dailyGoal: details.dailyGoal,
     ...(details.deadline ? { deadline: details.deadline } : {}),
+    ...fromTemplate.fields,
   };
-  await writeProjectFile(fileSystem, dir, fields, withSpecialFolders(tree));
+  await writeProjectFile(
+    fileSystem,
+    dir,
+    fields,
+    withSpecialFolders([...tree, ...fromTemplate.sorts]),
+  );
   return { dir, sceneId };
 }
 

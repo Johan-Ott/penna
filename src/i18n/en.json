@@ -130,8 +130,6 @@
   "Förhandsvisning · E-bok": "Preview · E-book",
   "Förhandsvisning · Standardmanus": "Preview · Standard manuscript",
   "Förhandsvisning · första kapitlet": "Preview · first chapter",
-  "Första kapitlet": "First chapter",
-  "Första scenen": "First scene",
   "Första utkast": "First draft",
   "Försök nu": "Try now",
   "Försöker igen…": "Trying again…",
@@ -1154,5 +1152,8 @@
   "{book} · {hint}": "{book} · {hint}",
   "I {book}": "In {book}",
   "Senaste utmärkelserna": "Latest badges",
-  "Alla utmärkelser finns i din profil.": "All badges are in your profile."
+  "Alla utmärkelser finns i din profil.": "All badges are in your profile.",
+  "Mall": "Template",
+  "Börja från": "Start from",
+  "Scen 1": "Scene 1"
 }

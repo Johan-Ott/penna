@@ -23,4 +23,6 @@ export function t(swedish: string, values: Record<string, string | number> = {})
   return text.replace(/\{(\w+)\}/g, (all, name: string) => String(values[name] ?? all));
 }
 
+export const uiLanguage = () => current;
+
 export const numberLocale = () => (current === "en" ? "en-GB" : "sv-SE");

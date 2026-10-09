@@ -1,0 +1,296 @@
+[
+  {
+    "id": "tom",
+    "name": "Empty book",
+    "hint": "One chapter and one scene. You build the rest.",
+    "totalGoal": null,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [["First chapter", ""]]
+      }
+    ],
+    "scene": "First scene"
+  },
+  {
+    "id": "tre-akter",
+    "name": "Three acts",
+    "hint": "Beginning, middle and end, with the turns that carry a novel.",
+    "totalGoal": 80000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "Beginning",
+        "chapters": [
+          [
+            "The ordinary world",
+            "The main character in their everyday life, and what is missing there."
+          ],
+          ["The inciting incident", "Something happens that cannot be ignored."],
+          ["The decision", "The main character chooses to take it on."]
+        ]
+      },
+      {
+        "title": "Middle",
+        "chapters": [
+          ["New rules", "A new situation, new friends and new enemies."],
+          ["The midpoint", "Everything turns: a revelation or a false victory."],
+          ["The stakes rise", "The opposition grows and every mistake costs more."],
+          ["All is lost", "The lowest point. The goal seems impossible."]
+        ]
+      },
+      {
+        "title": "End",
+        "chapters": [
+          ["The insight", "The main character understands what really has to be done."],
+          ["Climax", "The great confrontation."],
+          ["The new life", "How the world and the main character have changed."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "inre-resa",
+    "name": "Three acts with an inner journey",
+    "hint": "In the spirit of Abbie Emmons: what happens outside, and what the main character learns inside.",
+    "totalGoal": 80000,
+    "sorts": ["Themes"],
+    "labels": [],
+    "parts": [
+      {
+        "title": "The lie",
+        "chapters": [
+          [
+            "The ordinary world and the lie",
+            "Outside: life as it is. Inside: the false belief that rules the main character."
+          ],
+          [
+            "The inciting incident",
+            "Outside: something upsets everyday life. Inside: the lie is challenged for the first time."
+          ],
+          ["Resistance", "Outside: the main character hesitates. Inside: fear clings to the lie."],
+          ["Stepping in", "Outside: the decision to act. Inside: a first doubt."]
+        ]
+      },
+      {
+        "title": "The struggle",
+        "chapters": [
+          [
+            "Trial and error",
+            "Outside: the goal is chased the wrong way. Inside: the lie still rules the choices."
+          ],
+          ["The midpoint", "Outside: a turn. Inside: the truth is glimpsed for the first time."],
+          [
+            "It gets worse",
+            "Outside: the obstacles grow. Inside: lie and truth fight over the main character."
+          ],
+          ["The dark night", "Outside: everything seems lost. Inside: the lie has to die."]
+        ]
+      },
+      {
+        "title": "The truth",
+        "chapters": [
+          [
+            "The choice",
+            "Outside: the main character acts on the truth. Inside: the change happens."
+          ],
+          [
+            "The new self",
+            "Outside: the goal is reached, or let go. Inside: the main character is someone else now."
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "femton-steg",
+    "name": "Fifteen beats",
+    "hint": "In Save the Cat style: every beat in its place in the book, in percent.",
+    "totalGoal": 80000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [
+          ["Opening image", "1%. A picture of life before the change."],
+          ["Theme stated", "5%. Someone says, without knowing it, what the book is about."],
+          ["Setup", "1–10%. The main character, the world and what needs to change."],
+          ["Catalyst", "10%. The event that sets everything in motion."],
+          ["Debate", "10–20%. Will the main character dare?"],
+          ["Break into two", "20%. The decision. A new world."],
+          ["B story", "22%. A new person or relationship that carries the theme."],
+          ["Fun and games", "20–50%. The promise of the premise, what the reader came for."],
+          ["Midpoint", "50%. A false victory or a false defeat. The stakes rise."],
+          ["Bad guys close in", "50–75%. Inner and outer opposition grows."],
+          ["All is lost", "75%. The lowest point, often with a whiff of death."],
+          ["Dark night of the soul", "75–80%. The main character takes in the loss."],
+          ["Break into three", "80%. The solution, thanks to the B story."],
+          ["Finale", "80–99%. The plan is carried out, and rethought."],
+          [
+            "Final image",
+            "99–100%. The mirror of the opening image: this is how everything changed."
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hjaltens-resa",
+    "name": "The hero's journey",
+    "hint": "Twelve steps from home and back, for fantasy and adventure.",
+    "totalGoal": 100000,
+    "sorts": ["The world"],
+    "labels": [],
+    "parts": [
+      {
+        "title": "Departure",
+        "chapters": [
+          ["The ordinary world", "The hero at home, before the adventure."],
+          ["The call", "A problem or a challenge appears."],
+          ["Refusal", "The hero hesitates before the unknown."],
+          ["The mentor", "Someone gives advice, courage or a gift."],
+          ["Crossing the threshold", "The hero leaves the known."]
+        ]
+      },
+      {
+        "title": "Initiation",
+        "chapters": [
+          ["Tests, allies and enemies", "The rules of the new world are learned."],
+          ["The approach", "Preparing for the great danger."],
+          ["The ordeal", "The hero faces their greatest fear."],
+          ["The reward", "Something is won, at a price."]
+        ]
+      },
+      {
+        "title": "Return",
+        "chapters": [
+          ["The road back", "The consequences chase the hero home."],
+          ["Resurrection", "A last test where everything is at stake."],
+          ["Return with the elixir", "The hero comes home changed, with something to give."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "romantasy",
+    "name": "Romantasy",
+    "hint": "In the spirit of Sarah J. Maas: two voices, one love and a world of magic and courts.",
+    "totalGoal": 110000,
+    "sorts": ["Magic system", "Realms and courts", "Creatures"],
+    "labels": [
+      ["Romance", "#c9508f"],
+      ["Magic", "#7a5cc9"],
+      ["Politics", "#2f86c9"],
+      ["Tension", "#d4483b"],
+      ["Rewrite", "#e08a1e"]
+    ],
+    "parts": [
+      {
+        "title": "Two worlds",
+        "chapters": [
+          ["Her world", "The main character, her burden and what she is willing to do."],
+          ["The meeting", "The two meet, and the friction sparks."],
+          ["His world", "The second voice: his secret and his court."],
+          ["Enemies or allies", "A bargain or a bond ties them together."]
+        ]
+      },
+      {
+        "title": "Drawn closer",
+        "chapters": [
+          ["The magic wakes", "A power or a heritage begins to show."],
+          ["Court intrigue", "Politics, loyalties and dangers around them."],
+          ["Almost", "A moment that almost becomes more."],
+          ["The first kiss", "Pretending is no longer possible."]
+        ]
+      },
+      {
+        "title": "Betrayal and choice",
+        "chapters": [
+          ["The betrayal", "A secret comes out and everything falls apart."],
+          ["Apart", "They go separate ways, and war draws near."],
+          ["The choice", "She has to choose between love and duty."]
+        ]
+      },
+      {
+        "title": "What remains",
+        "chapters": [
+          ["The battle", "Magic, politics and love come to a head."],
+          ["The bond", "What they are to each other now."],
+          ["The hook", "A new threat or a secret that leads to the next book."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deckare",
+    "name": "Mystery",
+    "hint": "The crime, the investigation, the turn and the solution, with clues to keep track of.",
+    "totalGoal": 80000,
+    "sorts": ["Suspects", "Clues", "Timeline"],
+    "labels": [
+      ["Clue", "#2f86c9"],
+      ["Red herring", "#e08a1e"],
+      ["Reveal", "#d4483b"],
+      ["Alibi", "#7d7d7d"],
+      ["Rewrite", "#c9a400"]
+    ],
+    "parts": [
+      {
+        "title": "The crime",
+        "chapters": [
+          ["The crime", "The crime is discovered, ideally in the first chapter."],
+          ["The investigator", "Who investigates, and why it is them."],
+          ["The first leads", "The scene, the witnesses and the first suspects."]
+        ]
+      },
+      {
+        "title": "The investigation",
+        "chapters": [
+          ["The first suspect", "An obvious suspect who is not the answer."],
+          ["The red herring", "A clue that points the wrong way, and the reader follows."],
+          ["A second crime", "The stakes rise and time runs short."],
+          ["It gets personal", "The case comes close to the investigator."]
+        ]
+      },
+      {
+        "title": "The turn",
+        "chapters": [
+          ["The decisive clue", "A detail that was there all along."],
+          ["The investigator in danger", "The culprit realises the truth is close."],
+          ["The confrontation", "The investigator and the culprit meet."]
+        ]
+      },
+      {
+        "title": "The solution",
+        "chapters": [
+          ["The reveal", "How it was done, and why."],
+          ["Afterwards", "What the case cost, and what lies ahead."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "novell",
+    "name": "Short story",
+    "hint": "Five short steps for a story of a few thousand words.",
+    "totalGoal": 10000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [
+          ["The hook", "A first sentence or image that raises a question."],
+          ["The conflict", "What the main character wants, and what stands in the way."],
+          ["The complication", "It gets harder than expected."],
+          ["Climax", "The moment everything is decided."],
+          ["The resolution", "The echo."]
+        ]
+      }
+    ]
+  }
+]

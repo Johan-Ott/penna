@@ -16,7 +16,13 @@ describe("projectFolderName", () => {
 });
 
 describe("createProject", () => {
-  const details = { title: "Vintervägen", type: "roman", dailyGoal: 1000, deadline: "" };
+  const details = {
+    title: "Vintervägen",
+    type: "roman",
+    template: "tom",
+    dailyGoal: 1000,
+    deadline: "",
+  };
 
   it("makes a project folder with a first chapter and scene, ready to write in", async () => {
     const files = createMemoryFileSystem({});
@@ -28,6 +34,28 @@ describe("createProject", () => {
     expect(project.fields).toMatchObject({ title: "Vintervägen", type: "roman", dailyGoal: 1000 });
     expect(manuscriptSceneIds(project.tree)).toEqual([created.sceneId]);
     expect((await openProjectFolder(files, created.dir)).scenes).toEqual([created.sceneId]);
+  });
+
+  it("starts from a template: its parts and steps, notes, labels and goal", async () => {
+    const files = createMemoryFileSystem({});
+
+    const created = await createProject(files, "/Penna", { ...details, template: "deckare" });
+
+    const project = await readProjectFile(files, created.dir, []);
+    const [part] = project.tree;
+    expect(part).toMatchObject({ kind: "part", title: "Brottet" });
+    expect(part?.children?.[0]).toMatchObject({
+      kind: "chapter",
+      title: "Brottet",
+      summary: "Brottet upptäcks, gärna redan i första kapitlet.",
+    });
+    expect(manuscriptSceneIds(project.tree)).toHaveLength(12);
+    const sorts = project.tree.filter((node) => node.kind === "sort").map((node) => node.title);
+    expect(sorts.slice(-3)).toEqual(["Misstänkta", "Ledtrådar", "Tidslinje"]);
+    expect(project.fields).toMatchObject({ totalGoal: 80_000 });
+    expect((project.fields["labels"] as { name: string }[]).map((label) => label.name)).toContain(
+      "Falskt spår",
+    );
   });
 
   it("never writes into an existing project with the same name", async () => {

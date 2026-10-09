@@ -1,0 +1,278 @@
+[
+  {
+    "id": "tom",
+    "name": "Tom bok",
+    "hint": "Ett kapitel och en scen. Du bygger resten.",
+    "totalGoal": null,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [["Första kapitlet", ""]]
+      }
+    ],
+    "scene": "Första scenen"
+  },
+  {
+    "id": "tre-akter",
+    "name": "Tre akter",
+    "hint": "Början, mitten och slutet, med de vändningar som bär en roman.",
+    "totalGoal": 80000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "Början",
+        "chapters": [
+          ["Vardagen", "Huvudpersonen i sin vanliga värld, och det som saknas där."],
+          ["Den utlösande händelsen", "Något händer som inte går att strunta i."],
+          ["Beslutet", "Huvudpersonen väljer att ge sig in i det."]
+        ]
+      },
+      {
+        "title": "Mitten",
+        "chapters": [
+          ["Nya regler", "En ny situation, nya vänner och nya fiender."],
+          ["Mittpunkten", "Allt vänder: ett avslöjande eller en falsk seger."],
+          ["Insatserna höjs", "Motståndet växer och varje misstag kostar mer."],
+          ["Allt är förlorat", "Det lägsta läget. Målet verkar omöjligt."]
+        ]
+      },
+      {
+        "title": "Slutet",
+        "chapters": [
+          ["Insikten", "Huvudpersonen förstår vad som verkligen måste göras."],
+          ["Klimax", "Den stora konfrontationen."],
+          ["Det nya livet", "Hur världen och huvudpersonen har förändrats."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "inre-resa",
+    "name": "Tre akter med inre resa",
+    "hint": "I Abbie Emmons anda: vad som händer utåt, och vad huvudpersonen lär sig inuti.",
+    "totalGoal": 80000,
+    "sorts": ["Teman"],
+    "labels": [],
+    "parts": [
+      {
+        "title": "Lögnen",
+        "chapters": [
+          [
+            "Vardagen och lögnen",
+            "Utåt: livet som det är. Inåt: den felaktiga tro som styr huvudpersonen."
+          ],
+          [
+            "Den utlösande händelsen",
+            "Utåt: något rubbar vardagen. Inåt: lögnen utmanas för första gången."
+          ],
+          ["Motståndet", "Utåt: huvudpersonen tvekar. Inåt: rädslan håller fast vid lögnen."],
+          ["Steget in", "Utåt: beslutet att agera. Inåt: ett första tvivel."]
+        ]
+      },
+      {
+        "title": "Kampen",
+        "chapters": [
+          ["Försök och fel", "Utåt: målet jagas på fel sätt. Inåt: lögnen styr fortfarande valen."],
+          ["Mittpunkten", "Utåt: en vändning. Inåt: sanningen skymtar för första gången."],
+          ["Det blir värre", "Utåt: hindren växer. Inåt: lögn och sanning slåss om huvudpersonen."],
+          ["Den mörka natten", "Utåt: allt verkar förlorat. Inåt: lögnen måste dö."]
+        ]
+      },
+      {
+        "title": "Sanningen",
+        "chapters": [
+          ["Valet", "Utåt: huvudpersonen agerar efter sanningen. Inåt: förändringen sker."],
+          ["Det nya jaget", "Utåt: målet nås, eller släpps. Inåt: huvudpersonen är någon annan nu."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "femton-steg",
+    "name": "Femton steg",
+    "hint": "I Save the Cat-stil: varje steg på sin plats i boken, i procent.",
+    "totalGoal": 80000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [
+          ["Öppningsbild", "1 %. En bild av livet före förändringen."],
+          ["Temat sägs", "5 %. Någon säger, utan att veta det, vad boken handlar om."],
+          ["Upptakten", "1–10 %. Huvudpersonen, världen och det som behöver ändras."],
+          ["Katalysatorn", "10 %. Händelsen som sätter allt i rörelse."],
+          ["Debatten", "10–20 %. Ska huvudpersonen våga?"],
+          ["In i andra akten", "20 %. Beslutet. En ny värld."],
+          ["B-handlingen", "22 %. En ny person eller relation som bär temat."],
+          ["Lek och lockelse", "20–50 %. Löftet i bokens idé, det läsaren kom för."],
+          ["Mittpunkten", "50 %. En falsk seger eller ett falskt nederlag. Insatserna höjs."],
+          ["Ondskan närmar sig", "50–75 %. Det inre och yttre motståndet växer."],
+          ["Allt är förlorat", "75 %. Det lägsta läget, ofta med en känsla av död."],
+          ["Själens mörka natt", "75–80 %. Huvudpersonen bearbetar förlusten."],
+          ["In i tredje akten", "80 %. Lösningen, tack vare B-handlingen."],
+          ["Finalen", "80–99 %. Planen genomförs, och omprövas."],
+          ["Slutbild", "99–100 %. Spegeln av öppningsbilden: så här har allt förändrats."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hjaltens-resa",
+    "name": "Hjältens resa",
+    "hint": "Tolv steg från hemmet och tillbaka, för fantasy och äventyr.",
+    "totalGoal": 100000,
+    "sorts": ["Världen"],
+    "labels": [],
+    "parts": [
+      {
+        "title": "Avfärden",
+        "chapters": [
+          ["Den vanliga världen", "Hjälten hemma, innan äventyret."],
+          ["Kallelsen", "Ett problem eller en utmaning dyker upp."],
+          ["Vägran", "Hjälten tvekar inför det okända."],
+          ["Mentorn", "Någon ger råd, mod eller en gåva."],
+          ["Över tröskeln", "Hjälten lämnar det kända."]
+        ]
+      },
+      {
+        "title": "Prövningen",
+        "chapters": [
+          ["Prov, vänner och fiender", "Den nya världens regler lärs in."],
+          ["Närmandet", "Förberedelser inför den stora faran."],
+          ["Den stora prövningen", "Hjälten möter sin största rädsla."],
+          ["Belöningen", "Något vinns, men till ett pris."]
+        ]
+      },
+      {
+        "title": "Hemkomsten",
+        "chapters": [
+          ["Vägen tillbaka", "Följderna jagar hjälten hemåt."],
+          ["Återuppståndelsen", "Ett sista prov där allt står på spel."],
+          ["Hemkomsten", "Hjälten kommer hem förändrad, med något att ge."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "romantasy",
+    "name": "Romantasy",
+    "hint": "I Sarah J. Maas anda: två röster, en kärlek och en värld av magi och hov.",
+    "totalGoal": 110000,
+    "sorts": ["Magisystem", "Riken och hov", "Varelser"],
+    "labels": [
+      ["Romans", "#c9508f"],
+      ["Magi", "#7a5cc9"],
+      ["Politik", "#2f86c9"],
+      ["Spänning", "#d4483b"],
+      ["Skriv om", "#e08a1e"]
+    ],
+    "parts": [
+      {
+        "title": "Två världar",
+        "chapters": [
+          ["Hennes värld", "Huvudpersonen, hennes börda och vad hon är beredd att göra."],
+          ["Mötet", "De två möts, och det gnistrar av motstånd."],
+          ["Hans värld", "Den andra rösten: hans hemlighet och hans hov."],
+          ["Fiender eller allierade", "Ett tvång eller en pakt binder dem samman."]
+        ]
+      },
+      {
+        "title": "Dras närmare",
+        "chapters": [
+          ["Magin vaknar", "En kraft eller ett arv börjar visa sig."],
+          ["Hovets intriger", "Politik, lojaliteter och faror runt dem."],
+          ["Nästan", "Ett ögonblick som nästan blir mer."],
+          ["Första kyssen", "Det går inte längre att låtsas."]
+        ]
+      },
+      {
+        "title": "Svek och val",
+        "chapters": [
+          ["Sveket", "En hemlighet kommer fram och allt rasar."],
+          ["Isär", "De går skilda vägar, och kriget närmar sig."],
+          ["Valet", "Hon måste välja mellan kärleken och plikten."]
+        ]
+      },
+      {
+        "title": "Det som återstår",
+        "chapters": [
+          ["Slaget", "Magin, politiken och kärleken ställs på sin spets."],
+          ["Bandet", "Vad de är för varandra nu."],
+          ["Kroken", "Ett nytt hot eller en hemlighet som leder till nästa bok."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deckare",
+    "name": "Deckare",
+    "hint": "Brottet, utredningen, vändningen och upplösningen, med ledtrådar att hålla reda på.",
+    "totalGoal": 80000,
+    "sorts": ["Misstänkta", "Ledtrådar", "Tidslinje"],
+    "labels": [
+      ["Ledtråd", "#2f86c9"],
+      ["Falskt spår", "#e08a1e"],
+      ["Avslöjande", "#d4483b"],
+      ["Alibi", "#7d7d7d"],
+      ["Skriv om", "#c9a400"]
+    ],
+    "parts": [
+      {
+        "title": "Brottet",
+        "chapters": [
+          ["Brottet", "Brottet upptäcks, gärna redan i första kapitlet."],
+          ["Utredaren", "Vem som utreder, och varför just hen."],
+          ["De första spåren", "Platsen, vittnena och de första misstänkta."]
+        ]
+      },
+      {
+        "title": "Utredningen",
+        "chapters": [
+          ["Den första misstänkta", "En tydlig misstänkt, som inte är svaret."],
+          ["Det falska spåret", "En ledtråd som pekar fel, och läsaren följer med."],
+          ["Ett andra brott", "Insatserna höjs och tiden blir knapp."],
+          ["Det personliga", "Fallet kommer nära utredaren."]
+        ]
+      },
+      {
+        "title": "Vändningen",
+        "chapters": [
+          ["Den avgörande ledtråden", "En detalj som funnits där hela tiden."],
+          ["Utredaren i fara", "Den skyldige förstår att sanningen är nära."],
+          ["Konfrontationen", "Utredaren och den skyldige möts."]
+        ]
+      },
+      {
+        "title": "Upplösningen",
+        "chapters": [
+          ["Avslöjandet", "Hur det gick till, och varför."],
+          ["Efteråt", "Vad fallet kostade, och vad som väntar."]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "novell",
+    "name": "Novell",
+    "hint": "Fem korta steg för en berättelse på några tusen ord.",
+    "totalGoal": 10000,
+    "sorts": [],
+    "labels": [],
+    "parts": [
+      {
+        "title": "",
+        "chapters": [
+          ["Kroken", "En första mening eller bild som väcker en fråga."],
+          ["Konflikten", "Vad huvudpersonen vill, och vad som står i vägen."],
+          ["Komplikationen", "Det blir svårare än väntat."],
+          ["Klimax", "Ögonblicket då allt avgörs."],
+          ["Upplösningen", "Efterklangen."]
+        ]
+      }
+    ]
+  }
+]

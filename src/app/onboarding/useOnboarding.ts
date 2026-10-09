@@ -18,7 +18,13 @@ export type ProjectMode = "new" | "import" | "open";
 
 export const LAST_STEP = 5;
 
-const START_DETAILS: ProjectDetails = { title: "", type: "roman", dailyGoal: 1000, deadline: "" };
+const START_DETAILS: ProjectDetails = {
+  title: "",
+  type: "roman",
+  template: "tom",
+  dailyGoal: 1000,
+  deadline: "",
+};
 
 async function availableLibraries(): Promise<LibraryCandidate[]> {
   const candidates = libraryCandidates(await platform.knownFolders());

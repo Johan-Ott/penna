@@ -1,6 +1,6 @@
 import { t } from "../i18n/i18n.js";
 export type ImportedNode =
-  | { kind: "part" | "chapter"; title: string; children: ImportedNode[] }
+  | { kind: "part" | "chapter"; title: string; summary?: string; children: ImportedNode[] }
   | { kind: "scene"; title: string; body: string };
 
 export class ImportError extends Error {}
