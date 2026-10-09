@@ -29,6 +29,8 @@ interface WritingAreaProps {
   /** How the book's design in Publicera sets the text, used by book type. */
   bookLook?: BookLook;
   aside: ReactNode;
+  /** The comments beside the text, inside the page so they scroll with it. */
+  margin?: ReactNode;
   /** Another text, or a version of this one, read beside it. */
   beside: ReactNode;
   selectionBar: ReactNode;
@@ -121,6 +123,7 @@ function Page(props: WritingAreaProps) {
         {hasScene && !isFocusMode && props.footer}
         <SheetEdges {...props} isShown={isOnPaper(props)} />
       </div>
+      {props.margin}
       {textMenu.layer}
     </div>
   );

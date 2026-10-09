@@ -1022,5 +1022,8 @@
   "Kolofon": "Colophon",
   "{title} har skrivits sedan den {date}.": "{title} has been written since {date}.",
   "Titelsidan": "The title page",
-  "Satt med {font}": "Set in {font}"
+  "Satt med {font}": "Set in {font}",
+  "Kommentarer i marginalen": "Comments in the margin",
+  "Kommentarerna står bredvid texten, som blyerts i en bok. Korten i Granska finns kvar.": "Comments stand beside the text, like pencil in a book. The cards in Review stay.",
+  "{count} svar": "{count} replies"
 }

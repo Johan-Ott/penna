@@ -5,6 +5,7 @@ import { CHARACTERS_ID, SECRETS_ID, type TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./notes/NotePage.js";
+import { MarginNotes } from "./review/MarginNotes.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
 import { FootnotePopover } from "./FootnotePopover.js";
 import { SelectionBar } from "./SelectionBar.js";
@@ -138,6 +139,7 @@ export function writingAreaProps(app: AppState, project: Project) {
     treeFailure: app.treeFailure,
     manuscriptSearch: app.search.scope,
     aside: <ReviewLayer app={app} project={project} />,
+    margin: <MarginNotes app={app} />,
     beside: <BesidePane app={app} project={project} />,
     selectionBar: (
       <>

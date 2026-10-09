@@ -106,6 +106,7 @@ export function useComments(parts: {
     comments,
     draft,
     focused,
+    focus: setFocused,
     start,
     cancel: () => setDraft(null),
     add: (body: string) => {

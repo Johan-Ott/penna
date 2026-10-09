@@ -48,7 +48,14 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
 }
 
 type EditorSwitch =
-  "paper" | "bookType" | "tableOfContents" | "typewriter" | "spellcheck" | "typography" | "review";
+  | "paper"
+  | "bookType"
+  | "tableOfContents"
+  | "commentsInMargin"
+  | "typewriter"
+  | "spellcheck"
+  | "typography"
+  | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
   [
@@ -60,6 +67,11 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     "tableOfContents",
     t("Sidomenyn som innehållsförteckning"),
     t("Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok."),
+  ],
+  [
+    "commentsInMargin",
+    t("Kommentarer i marginalen"),
+    t("Kommentarerna står bredvid texten, som blyerts i en bok. Korten i Granska finns kvar."),
   ],
   [
     "typewriter",

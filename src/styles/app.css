@@ -3116,6 +3116,45 @@ button.book-cover:hover {
   font: 13px var(--font-prose);
 }
 
+/* Kommentarer i marginalen: pencilled notes beside the text, placed by MarginNotes. */
+.page:has(> .margin-notes) {
+  position: relative;
+}
+
+.margin-notes {
+  position: absolute;
+  top: 0;
+  width: 200px;
+}
+
+.margin-note {
+  position: absolute;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border-card);
+}
+
+.margin-note-body {
+  color: var(--text-muted);
+  font: italic 14px/1.5 var(--font-prose);
+}
+
+.margin-note-by {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  color: var(--text-label);
+  font: 11px var(--font-ui);
+}
+
+.margin-note-by .link-button {
+  font-size: 11px;
+}
+
 .chapter-number,
 .part-page {
   display: none;

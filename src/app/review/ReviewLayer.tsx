@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { Node } from "prosemirror-model";
 import { SearchQuery } from "prosemirror-search";
 import type { NameSuspect } from "../../manuscript/review.js";
@@ -55,18 +55,24 @@ function CommentsAndTasks(props: ShownProps) {
   );
 }
 
+// Opened while a comment is written, and closed once it is sent if it then stands in the margin.
+// Opened by itself for an editor's changes, too, so they are seen.
+function useOpening(app: AppState, isWriting: boolean) {
+  const { setReviewOpen, settings } = app.writingMode;
+  const hasRevision = app.revision.isOpen;
+  const wasWriting = useRef(false);
+  useEffect(() => {
+    if (isWriting || hasRevision) setReviewOpen(true);
+    else if (wasWriting.current && settings.commentsInMargin) setReviewOpen(false);
+    wasWriting.current = isWriting;
+  }, [isWriting, hasRevision, setReviewOpen, settings.commentsInMargin]);
+}
+
 function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
   const review = useReview({ ...props, cards: app.notes.cards, repeatWindow });
-  const isWriting = props.comments.draft !== null;
-  const { setReviewOpen } = app.writingMode;
-  // Opened while a comment is written, so the comment is still in view once it is sent.
-  // Opened by itself for an editor's changes, too, so they are seen.
-  const hasRevision = app.revision.isOpen;
-  useEffect(() => {
-    if (isWriting || hasRevision) setReviewOpen(true);
-  }, [isWriting, hasRevision, setReviewOpen]);
+  useOpening(app, props.comments.draft !== null);
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}

@@ -29,6 +29,8 @@ export interface WritingSettings {
   bookType: boolean;
   /** The sidebar as a printed table of contents: dotted leaders to each chapter's page. */
   tableOfContents: boolean;
+  /** Comments beside the text, as pencilled notes in the margin. */
+  commentsInMargin: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -48,6 +50,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   paper: true,
   bookType: false,
   tableOfContents: false,
+  commentsInMargin: false,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -92,6 +95,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     paper: pick("paper", isBoolean),
     bookType: pick("bookType", isBoolean),
     tableOfContents: pick("tableOfContents", isBoolean),
+    commentsInMargin: pick("commentsInMargin", isBoolean),
   };
 }
 
