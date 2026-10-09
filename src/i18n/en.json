@@ -991,5 +991,10 @@
   "Boken väntade. Du slutade i {chapter}.": "The book waited. You stopped in {chapter}.",
   "Första utkastet är klart.": "The first draft is done.",
   "{count} ord i {book}.": "{count} words in {book}.",
-  "Scener i {chapter}": "Scenes in {chapter}"
+  "Scener i {chapter}": "Scenes in {chapter}",
+  "klart runt {day} i din takt": "done around {day} at your pace",
+  "Bokens rytm: {chapters} kapitel, {count} ord kvar": "The book's rhythm: {chapters} chapters, {count} words left",
+  "Minimal": "Minimal",
+  "Högst {count} tecken. Resten av manuset stannar hos dig.": "At most {count} characters. The rest of the manuscript stays with you.",
+  "Dela utdrag": "Share excerpt"
 }

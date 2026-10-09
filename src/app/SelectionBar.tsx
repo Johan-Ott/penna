@@ -105,9 +105,9 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
         {t("Fotnot")}
       </button>
       <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
-        {t("Dela som bild")}
+        {isPhone ? t("Dela") : t("Dela som bild")}
       </button>
-      <SelectedWords editorState={editor.editorState} />
+      {!isPhone && <SelectedWords editorState={editor.editorState} />}
     </div>
   );
 }

@@ -213,7 +213,7 @@ test("Skicka till redaktör in the menu makes the Word manuscript at once", asyn
 test("selected words are shared as a picture, saved as a PNG", async ({ page }) => {
   await selectFirstWord(page);
   await page.getByRole("button", { name: "Dela som bild" }).click();
-  const dialog = page.getByRole("dialog", { name: "Dela som bild" });
+  const dialog = page.getByRole("dialog", { name: "Dela utdrag" });
   await dialog.getByRole("radio", { name: "Kvadrat" }).click();
 
   const download = page.waitForEvent("download");

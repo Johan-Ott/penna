@@ -1,7 +1,15 @@
-import { daysBetween, projectGoals } from "../../project/progress.js";
+import {
+  averagePerDay,
+  daysBetween,
+  finishDay,
+  projectGoals,
+  shortDay,
+} from "../../project/progress.js";
 import { dayKey } from "../../project/stats.js";
 import { sceneIdsIn, sortsOf } from "../../project/tree.js";
-import { chapterOf, nodeLabel } from "../../project/treeLabels.js";
+import { chapterOf, manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
+import { requestStudio } from "../studio/studioRequest.js";
+import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
 import { sidebarProps } from "../paneProps.js";
@@ -26,36 +34,49 @@ interface PhoneBookProps {
 
 const format = (words: number) => words.toLocaleString(numberLocale());
 
-function todayFacts(streak: number, deadline: string | null) {
-  const daysLeft = deadline ? Math.max(0, daysBetween(dayKey(Date.now()), deadline)) : null;
-  const left =
-    daysLeft === 1
-      ? t("1 dag till deadline")
-      : t("{days} dagar till deadline", { days: daysLeft ?? 0 });
+function todayFacts(app: AppState, project: Project) {
+  const today = dayKey(Date.now());
+  const { deadline, totalGoal } = projectGoals(project.fields);
+  const daysLeft = deadline ? Math.max(0, daysBetween(today, deadline)) : null;
+  const words = manuscriptWords(project.tree, project.summaries);
+  const finish = finishDay(words, totalGoal, averagePerDay(app.stats, today), today);
+  const { streak } = app.today;
   return [
     streak === 1 ? t("1 dag i rad") : t("{days} dagar i rad", { days: streak }),
-    ...(daysLeft === null ? [] : [left]),
-  ];
+    finish && t("klart runt {day} i din takt", { day: shortDay(finish) }),
+    daysLeft === 1 && t("1 dag till deadline"),
+    daysLeft !== null && daysLeft !== 1 && t("{days} dagar till deadline", { days: daysLeft }),
+  ].filter(Boolean);
 }
 
+// The day's words open Insikter; Dela opens the week as a picture in Studio.
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const { today } = app;
   const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : 0;
-  const facts = todayFacts(today.streak, projectGoals(project.fields).deadline);
+  const shareWeek = () => (requestStudio("vecka"), app.writingMode.setView("publicera"));
   return (
-    <button className="phone-today" onClick={() => app.writingMode.setProgressOpen(true)}>
-      <span className="phone-today-words">
-        {today.goal
-          ? t("{words} / {goal} ord idag", { words: format(today.words), goal: format(today.goal) })
-          : t("{count} ord idag", { count: format(today.words) })}
+    <div className="phone-today">
+      <span className="phone-today-head">
+        <button className="phone-today-words" onClick={() => app.writingMode.setProgressOpen(true)}>
+          {today.goal
+            ? t("{words} / {goal} ord idag", {
+                words: format(today.words),
+                goal: format(today.goal),
+              })
+            : t("{count} ord idag", { count: format(today.words) })}
+        </button>
+        <button className="link-button quiet" onClick={shareWeek}>
+          {t("Dela")}
+        </button>
       </span>
       {today.goal && (
         <span className="day-progress-bar wide">
           <span style={{ width: `${share}%` }} />
         </span>
       )}
-      <span className="phone-today-facts">{facts.join(" · ")}</span>
-    </button>
+      <span className="phone-today-facts">{todayFacts(app, project).join(" · ")}</span>
+      <BookRhythm project={project} />
+    </div>
   );
 }
 
