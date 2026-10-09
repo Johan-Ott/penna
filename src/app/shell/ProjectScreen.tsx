@@ -16,7 +16,9 @@ import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookVie
 import { ReviewPill, Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
-import { scenePagesOf, usePageMap } from "../usePageMap.js";
+import { folioOf, scenePagesOf, usePageMap } from "../usePageMap.js";
+import type { PageMap } from "../../project/pageMap.js";
+import { chapterOf } from "../../project/treeLabels.js";
 import { t } from "../../i18n/i18n.js";
 
 type ScreenProps = { app: AppState; project: Project };
@@ -67,14 +69,22 @@ function OverTheText({ app, project }: ScreenProps) {
   );
 }
 
+// The open scene's pages: marks in the margin, the sheet's foot, and whether it opens a chapter.
+const pageParts = (app: AppState, project: Project, pageMap: PageMap | null) => ({
+  scenePages: scenePagesOf(app, pageMap),
+  folio: folioOf(app.scene?.id ?? null, pageMap),
+  opensChapter: app.scene ? chapterOf(project.tree, app.scene.id)?.isFirstScene === true : false,
+});
+
 function MainCard({ app, project }: ScreenProps) {
   const { writingMode } = app;
-  const isCounting = writingMode.view === "innehall" || writingMode.settings.showPages;
+  const { showPages, paper } = writingMode.settings;
+  const isCounting = writingMode.view === "innehall" || showPages || paper;
   const pageMap = usePageMap(project, app.startup.preferences.authorName, isCounting);
   const views = { app, project, onBack: () => writingMode.setView("skriv") };
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
-      <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
+      <WritingArea {...writingAreaProps(app, project)} {...pageParts(app, project, pageMap)} />
       {writingMode.view === "skriv" && <OverTheText app={app} project={project} />}
       {writingMode.view === "innehall" && (
         <ContentsScreen app={app} project={project} pageMap={pageMap} />

@@ -23,6 +23,10 @@ export interface WritingSettings {
   repeatWindow: number;
   /** Where the printed book's pages begin, marked in the margin while writing. */
   showPages: boolean;
+  /** The text on a sheet of paper, with its printed pages at the foot. */
+  paper: boolean;
+  /** Justified text, a drop cap where a chapter opens and an ornament for scene breaks. */
+  bookType: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -39,6 +43,8 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   review: true,
   repeatWindow: 3,
   showPages: false,
+  paper: true,
+  bookType: false,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -80,6 +86,8 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     review: pick("review", isBoolean),
     repeatWindow: pick("repeatWindow", (value) => REPEAT_WINDOWS.includes(value as number)),
     showPages: pick("showPages", isBoolean),
+    paper: pick("paper", isBoolean),
+    bookType: pick("bookType", isBoolean),
   };
 }
 

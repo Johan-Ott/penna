@@ -47,8 +47,14 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
   );
 }
 
-type EditorSwitch = "typewriter" | "spellcheck" | "typography" | "review";
+type EditorSwitch = "paper" | "bookType" | "typewriter" | "spellcheck" | "typography" | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
+  ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
+  [
+    "bookType",
+    t("Boktypografi"),
+    t("Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener."),
+  ],
   [
     "typewriter",
     t("Typewriter-läge"),

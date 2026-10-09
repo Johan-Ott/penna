@@ -997,5 +997,11 @@
   "Minimal": "Minimal",
   "Högst {count} tecken. Resten av manuset stannar hos dig.": "At most {count} characters. The rest of the manuscript stays with you.",
   "Dela utdrag": "Share excerpt",
-  "Innehåll · G I": "Contents · G I"
+  "Innehåll · G I": "Contents · G I",
+  "Skriv på ett ark": "Write on a sheet",
+  "Texten på ett pappersark, med bokens sidor nederst.": "The text on a sheet of paper, with the book's pages at the foot.",
+  "Boktypografi": "Book typography",
+  "Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener.": "Justified, a drop cap where the chapter opens and an ornament between scenes.",
+  "s. {page} av {count}": "p. {page} of {count}",
+  "s. {first}–{last} av {count}": "pp. {first}–{last} of {count}"
 }

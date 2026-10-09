@@ -25,6 +25,10 @@ import { useTextMenu } from "./spelling/useTextMenu.js";
 interface WritingAreaProps {
   /** The printed page of each block of the open scene, when page breaks are shown. */
   scenePages?: (number | undefined)[] | null;
+  /** "s. 192–197 av 320" at the foot of the sheet, once the pages are counted. */
+  folio?: string | null;
+  /** The open scene starts its chapter, so book type gives it a drop cap. */
+  opensChapter?: boolean;
   aside: ReactNode;
   /** Another text, or a version of this one, read beside it. */
   beside: ReactNode;
@@ -98,19 +102,38 @@ function EmptyScene({ onNewScene }: { onNewScene: () => void }) {
 }
 
 // The editor stays mounted in both modes, so undo history and cursor survive the switch.
+function pageClass({ settings, isFocusMode, opensChapter }: WritingAreaProps) {
+  const isPaper = settings.paper && !isFocusMode;
+  return [
+    "page",
+    isPaper && "paper",
+    settings.bookType && "book-type",
+    opensChapter && "opens-chapter",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+const Folio = ({ hasScene, settings, folio }: WritingAreaProps) =>
+  hasScene && settings.paper && folio ? <span className="sheet-folio">{folio}</span> : null;
+
+// On paper the text, its header and its footer lie on one sheet, with its pages at the foot.
 function Page(props: WritingAreaProps) {
   const { editor, settings, isFocusMode, hasScene } = props;
   const textMenu = useTextMenu(editor);
   return (
-    <div className="page" style={proseStyle(settings) as CSSProperties}>
-      {!hasScene && <EmptyScene onNewScene={props.onNewScene} />}
-      {hasScene && !isFocusMode && props.header}
-      <div
-        className={manuscriptClass(settings, isFocusMode) + (hasScene ? "" : " hidden")}
-        ref={editor.mount}
-        onContextMenu={textMenu.onContextMenu}
-      />
-      {hasScene && !isFocusMode && props.footer}
+    <div className={pageClass(props)} style={proseStyle(settings) as CSSProperties}>
+      <div className="sheet">
+        {!hasScene && <EmptyScene onNewScene={props.onNewScene} />}
+        {hasScene && !isFocusMode && props.header}
+        <div
+          className={manuscriptClass(settings, isFocusMode) + (hasScene ? "" : " hidden")}
+          ref={editor.mount}
+          onContextMenu={textMenu.onContextMenu}
+        />
+        {hasScene && !isFocusMode && props.footer}
+        <Folio {...props} />
+      </div>
       {textMenu.layer}
     </div>
   );
