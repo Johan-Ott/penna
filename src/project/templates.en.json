@@ -55,7 +55,7 @@
   {
     "id": "inre-resa",
     "name": "Three acts with an inner journey",
-    "hint": "In the spirit of Abbie Emmons: what happens outside, and what the main character learns inside.",
+    "hint": "What happens outside, and what the main character learns inside: the inner journey carries the story.",
     "totalGoal": 80000,
     "sorts": ["Themes"],
     "labels": [],
@@ -108,7 +108,7 @@
   {
     "id": "femton-steg",
     "name": "Fifteen beats",
-    "hint": "In Save the Cat style: every beat in its place in the book, in percent.",
+    "hint": "Fifteen beats, each in its place in the book, in percent.",
     "totalGoal": 80000,
     "sorts": [],
     "labels": [],
@@ -178,7 +178,7 @@
   {
     "id": "romantasy",
     "name": "Romantasy",
-    "hint": "In the spirit of Sarah J. Maas: two voices, one love and a world of magic and courts.",
+    "hint": "Two voices, one love and a world of magic and courts, built for a series.",
     "totalGoal": 110000,
     "sorts": ["Magic system", "Realms and courts", "Creatures"],
     "labels": [

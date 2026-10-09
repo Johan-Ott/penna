@@ -52,7 +52,7 @@
   {
     "id": "inre-resa",
     "name": "Tre akter med inre resa",
-    "hint": "I Abbie Emmons anda: vad som händer utåt, och vad huvudpersonen lär sig inuti.",
+    "hint": "Vad som händer utåt, och vad huvudpersonen lär sig inuti: den inre resan bär berättelsen.",
     "totalGoal": 80000,
     "sorts": ["Teman"],
     "labels": [],
@@ -93,7 +93,7 @@
   {
     "id": "femton-steg",
     "name": "Femton steg",
-    "hint": "I Save the Cat-stil: varje steg på sin plats i boken, i procent.",
+    "hint": "Femton steg, vart och ett på sin plats i boken, i procent.",
     "totalGoal": 80000,
     "sorts": [],
     "labels": [],
@@ -160,7 +160,7 @@
   {
     "id": "romantasy",
     "name": "Romantasy",
-    "hint": "I Sarah J. Maas anda: två röster, en kärlek och en värld av magi och hov.",
+    "hint": "Två röster, en kärlek och en värld av magi och hov, byggd för en serie.",
     "totalGoal": 110000,
     "sorts": ["Magisystem", "Riken och hov", "Varelser"],
     "labels": [
