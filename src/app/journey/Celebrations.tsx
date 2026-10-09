@@ -14,6 +14,7 @@ const GLYPHS: Record<Celebration["kind"], string> = {
   rank: "",
   best: "★",
   back: "↩",
+  badge: "",
 };
 
 // A streak shows its days, a level or rank its first letter.

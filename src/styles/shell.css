@@ -2166,7 +2166,105 @@
 
 .profile-dialog {
   width: min(560px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
   gap: 20px;
+}
+
+/* Första resan and the badges: what is reached stands dark, the rest waits dashed. */
+.profile-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.first-journey {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  color: var(--text-label);
+  font-size: 13px;
+}
+
+.first-journey li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.first-journey li.done {
+  color: var(--text);
+}
+
+.first-journey-check {
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  border: 1.5px dashed var(--text-dim);
+  border-radius: 50%;
+}
+
+.first-journey li.done .first-journey-check {
+  border: 0;
+  background:
+    center / 10px no-repeat
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E"),
+    var(--accent, #3f6b4e);
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 14px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.badge-medal {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent, #3f6b4e);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font: 600 18px var(--font-prose);
+}
+
+.badge.locked .badge-medal {
+  border: 1.5px dashed var(--text-dim);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-dim);
+}
+
+.badge-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge.locked .badge-name {
+  color: var(--text-label);
+}
+
+.badge-when {
+  color: var(--text-label);
+  font-size: 11px;
+  line-height: 1.3;
 }
 
 .profile-head {

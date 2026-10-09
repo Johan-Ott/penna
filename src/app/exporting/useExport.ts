@@ -12,6 +12,7 @@ import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
 import { bookMaterial, chosenExtras, printInput, type ExportProgress } from "./bookMaterial.js";
 import { t } from "../../i18n/i18n.js";
+import { earnBadge } from "../journey/journeyEvents.js";
 
 export type ExportState =
   | { kind: "idle" }
@@ -110,13 +111,19 @@ function fileNameFor({ project, choices }: ExportJob) {
   return `${name}.${FILE_KINDS[choices.format].extension}`;
 }
 
+// A saved book also unlocks Till tryck.
+function saved(path: string): ExportState {
+  earnBadge("till-tryck");
+  return { kind: "saved", fileName: fileNameOf(path), path };
+}
+
 async function exportBook(job: ExportJob, isCancelled: () => boolean): Promise<ExportState> {
   try {
     const bytes = await buildFile(job);
     if (isCancelled()) return { kind: "idle" };
     const kind = FILE_KINDS[job.choices.format];
     const path = await platform.saveFile(fileNameFor(job), bytes, kind);
-    return path ? { kind: "saved", fileName: fileNameOf(path), path } : { kind: "idle" };
+    return path ? saved(path) : { kind: "idle" };
   } catch (error) {
     recordFailure("Export")(error);
     const known = error instanceof ExportError;

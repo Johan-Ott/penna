@@ -10,6 +10,7 @@ import { ShareSpreadButton } from "./ShareSpreadButton.js";
 import { SceneText, useSceneDocs, type Docs } from "./sceneDocs.js";
 import { chapterLabel } from "../bookLook.js";
 import { FRONT_PAGES, ReadFront } from "./ReadFront.js";
+import { earnBadge } from "../journey/journeyEvents.js";
 import { t } from "../../i18n/i18n.js";
 
 interface ReadViewProps {
@@ -197,6 +198,7 @@ export function ReadView(props: ReadViewProps) {
   const share = <ShareSpreadButton {...{ flow, project, first, perSpread, count: layout.count }} />;
   useEscape(props.onBack);
   useTurnKeys(turn);
+  useEffect(() => earnBadge("som-en-bok"), []);
   return (
     <main className="read-view">
       <ReadHead {...props} place={placeText(scenes, layout, pages)} share={share} />

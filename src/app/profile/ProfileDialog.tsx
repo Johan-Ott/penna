@@ -5,6 +5,7 @@ import { dayKey } from "../../project/stats.js";
 import { Dialog } from "../controls.js";
 import { platform } from "../platform.js";
 import { Avatar } from "./Avatar.js";
+import { Badges } from "./Badges.js";
 import type { Profile } from "./useProfile.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -33,6 +34,7 @@ function factsOf(journey: Journey) {
   const days = Object.values(journey.words).filter((words) => words > 0).length;
   return [
     summary.level.name,
+    summary.rank.name,
     t("{count} ord", { count: summary.words.toLocaleString(numberLocale()) }),
     days === 1 ? t("1 skrivdag") : t("{count} skrivdagar", { count: days }),
   ].join(" · ");
@@ -139,6 +141,7 @@ export function ProfileDialog(props: {
     <Dialog label={t("Författarprofil")} className="profile-dialog" onClose={done}>
       <ProfileHead form={form} journey={props.journey} onPicture={(picture) => set({ picture })} />
       <ProfileFields form={form} bookName={props.bookName} set={set} />
+      <Badges journey={props.journey} />
       <div className="profile-foot">
         <span className="setting-hint">
           {t(

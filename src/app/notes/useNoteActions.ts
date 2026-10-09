@@ -5,6 +5,7 @@ import { newSceneId } from "../../storage/sceneId.js";
 import { platform } from "../platform.js";
 import { createScene, openScene, setNoteLink, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
+import { earnBadge } from "../journey/journeyEvents.js";
 
 export interface NewNote {
   name: string;
@@ -39,6 +40,7 @@ export function useNoteActions({ project, session, updateTree, refresh }: NoteAc
       await updateTree(insertNode(tree, { id, kind: "scene" }, sortId, Number.MAX_SAFE_INTEGER));
       await refresh();
       await openScene(session, project.dir, id);
+      earnBadge("rollistan");
     },
     [project, session, updateTree, refresh],
   );

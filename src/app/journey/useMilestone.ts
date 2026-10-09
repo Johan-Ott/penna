@@ -3,7 +3,7 @@ import { projectGoals } from "../../project/progress.js";
 import { dayKey } from "../../project/stats.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
-import { celebrate } from "./journeyEvents.js";
+import { celebrate, earnBadge } from "./journeyEvents.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 /** True when a change took the book from under its goal to it or past it. */
@@ -32,5 +32,6 @@ export function useMilestone(
       }),
     });
     updateFields({ firstDraftDone: dayKey(Date.now()) });
+    earnBadge("forsta-utkastet");
   }, [project, updateFields]);
 }

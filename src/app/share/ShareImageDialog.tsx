@@ -13,6 +13,7 @@ import {
   type ExcerptLook,
 } from "./excerptImage.js";
 import { closeExcerpt, useShownExcerpt } from "./shareExcerpt.js";
+import { earnBadge } from "../journey/journeyEvents.js";
 import { t } from "../../i18n/i18n.js";
 
 const PNG = { name: t("Bild"), extension: "png" };
@@ -39,7 +40,8 @@ function excerptOf(
 async function savePicture(canvas: HTMLCanvasElement, title: string) {
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
   if (!blob) return;
-  await platform.saveFile(`${title} – utdrag.png`, new Uint8Array(await blob.arrayBuffer()), PNG);
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  if (await platform.saveFile(`${title} – utdrag.png`, bytes, PNG)) earnBadge("ut-i-varlden");
 }
 
 // The book's font is loaded first, or the canvas would draw the excerpt in a fallback.

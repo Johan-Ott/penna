@@ -61,7 +61,7 @@ export function journeySummary(journey: Journey, today: string) {
 export type Summary = ReturnType<typeof journeySummary>;
 
 export interface Celebration {
-  kind: "goal" | "streak" | "level" | "rank" | "best" | "back" | "milestone";
+  kind: "goal" | "streak" | "level" | "rank" | "best" | "back" | "milestone" | "badge";
   title: string;
   text: string;
 }

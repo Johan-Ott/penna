@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { celebrationsBetween, goalReached, journeySummary } from "../../project/inkwell.js";
+import { badgeForHour, badges, reachedBadges } from "../../project/badges.js";
+import {
+  celebrationsBetween,
+  goalReached,
+  journeySummary,
+  type Celebration,
+} from "../../project/inkwell.js";
 import {
   INK,
   mergedJourney,
   NO_JOURNEY,
   withHoliday,
   withInk,
+  withBadge,
   withWords,
   type Journey,
 } from "../../project/journey.js";
@@ -13,8 +20,9 @@ import { dayKey } from "../../project/stats.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 import { thisDevice } from "../useWritingStats.js";
-import { celebrate, takeInk } from "./journeyEvents.js";
+import { celebrate, takeBadge, takeInk } from "./journeyEvents.js";
 import { libraryOf, readJourneys, writeOwnJourney } from "./journeyFile.js";
+import { t } from "../../i18n/i18n.js";
 
 interface Loaded {
   library: string;
@@ -38,6 +46,24 @@ function useLoadedJourney(libraryDir: string | null) {
   return { loaded, journey, setJourney };
 }
 
+// What the numbers reached after a change is unlocked with it.
+function withReachedBadges(own: Journey, others: Journey, today: string) {
+  const all = mergedJourney([own, others]);
+  return reachedBadges(journeySummary(all, today), all.badges).reduce(
+    (journey, badge) => withBadge(journey, badge.id, today),
+    own,
+  );
+}
+
+const newBadges = (before: Journey, after: Journey): Celebration[] =>
+  badges()
+    .filter((badge) => after.badges[badge.id] && !before.badges[badge.id])
+    .map((badge) => ({
+      kind: "badge",
+      title: t("Ny utmärkelse: {name}", { name: badge.name }),
+      text: badge.hint,
+    }));
+
 type Change = (update: (own: Journey, today: string) => Journey, isGoalReached?: boolean) => void;
 
 // Saved one change at a time; what the change reached is celebrated.
@@ -54,18 +80,27 @@ function useJourneyChange(
           if (!current) return;
           const today = dayKey(Date.now());
           const before = journeySummary(mergedJourney([current.own, current.others]), today);
-          const own = update(current.own, today);
+          const own = withReachedBadges(update(current.own, today), current.others, today);
           await writeOwnJourney(platform.fileSystem, current.library, thisDevice(), own);
           loaded.current = { ...current, own };
           const all = mergedJourney([own, current.others]);
           setJourney(all);
           if (isGoalReached) celebrate(goalReached(all.words[today] ?? 0));
           celebrationsBetween(before, journeySummary(all, today)).forEach(celebrate);
+          newBadges(current.own, own).forEach(celebrate);
         })
         .catch(recordFailure("Skrivresan kunde inte sparas"));
     },
     [loaded, setJourney],
   );
+}
+
+// The words, the daily goal's ink and badge, and a badge for writing at night or dawn.
+function written(own: Journey, today: string, words: number, isGoalReached: boolean) {
+  const hourBadge = badgeForHour(new Date().getHours());
+  let journey = withWords(own, today, words);
+  if (isGoalReached) journey = withBadge(withInk(journey, today, INK.goal), "dagens-mal", today);
+  return hourBadge ? withBadge(journey, hourBadge, today) : journey;
 }
 
 /** The writer's journey in every book, on every device. */
@@ -74,16 +109,14 @@ export function useJourney(libraryDir: string | null) {
   const change = useJourneyChange(loaded, setJourney);
   useEffect(() => {
     takeInk((points) => change((own, today) => withInk(own, today, points)));
-    return () => takeInk(null);
+    takeBadge((id) => change((own, today) => withBadge(own, id, today)));
+    return () => (takeInk(null), takeBadge(null));
   }, [change]);
   return {
     journey,
     /** Words a save added; reaching the book's daily goal gives its ink once. */
     record: (words: number, isGoalReached: boolean) =>
-      change((own, today) => {
-        const written = withWords(own, today, words);
-        return isGoalReached ? withInk(written, today, INK.goal) : written;
-      }, isGoalReached),
+      change((own, today) => written(own, today, words, isGoalReached), isGoalReached),
     setHoliday: (isOn: boolean) => change((own, today) => withHoliday(own, isOn, today)),
   };
 }

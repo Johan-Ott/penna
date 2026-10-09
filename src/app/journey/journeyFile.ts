@@ -26,6 +26,15 @@ const isHoliday = (value: unknown): value is Holiday =>
   typeof (value as Holiday).from === "string" &&
   (typeof (value as Holiday).to === "string" || (value as Holiday).to === null);
 
+function badgesFrom(value: unknown): Record<string, string> {
+  if (typeof value !== "object" || value === null) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [string, string] => typeof entry[1] === "string",
+    ),
+  );
+}
+
 function journeyFrom(text: string): Journey {
   try {
     const parsed = JSON.parse(text) as Record<string, unknown>;
@@ -34,6 +43,7 @@ function journeyFrom(text: string): Journey {
       words: statsFrom(parsed["words"]),
       ink: statsFrom(parsed["ink"]),
       holidays: holidays.filter(isHoliday),
+      badges: badgesFrom(parsed["badges"]),
     };
   } catch {
     return NO_JOURNEY;

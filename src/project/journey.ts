@@ -15,9 +15,11 @@ export interface Journey {
   /** Ink earned each day for goals, finished scenes and resolved comments. */
   ink: Stats;
   holidays: Holiday[];
+  /** Badges unlocked, each with the day it was. */
+  badges: Record<string, string>;
 }
 
-export const NO_JOURNEY: Journey = { words: {}, ink: {}, holidays: [] };
+export const NO_JOURNEY: Journey = { words: {}, ink: {}, holidays: [], badges: {} };
 
 export const INK = { goal: 50, hundredWords: 5, sceneDone: 20, commentDone: 2, missedDay: 10 };
 
@@ -87,12 +89,24 @@ function addStats(all: Stats[]) {
   }, {});
 }
 
+// A badge unlocked on two devices keeps the earlier day.
+const earliest = (all: Record<string, string>[]) =>
+  all.reduce<Record<string, string>>((kept, badges) => {
+    for (const [id, day] of Object.entries(badges)) if (!kept[id] || day < kept[id]) kept[id] = day;
+    return kept;
+  }, {});
+
 /** Every device's file added up. */
 export const mergedJourney = (parts: Journey[]): Journey => ({
   words: addStats(parts.map((part) => part.words)),
   ink: addStats(parts.map((part) => part.ink)),
   holidays: parts.flatMap((part) => part.holidays),
+  badges: earliest(parts.map((part) => part.badges)),
 });
+
+/** A badge is kept with the day it was first unlocked. */
+export const withBadge = (journey: Journey, id: string, day: string): Journey =>
+  journey.badges[id] ? journey : { ...journey, badges: { ...journey.badges, [id]: day } };
 
 /** The days from the first one with words or ink up to today, oldest first. */
 export function journeyDays(journey: Journey, today: string) {

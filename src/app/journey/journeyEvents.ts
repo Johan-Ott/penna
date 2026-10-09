@@ -23,3 +23,8 @@ export function useCelebrations() {
 
 export const earnInk = (points: number) => inkTaker?.(points);
 export const takeInk = (taker: ((points: number) => void) | null) => void (inkTaker = taker);
+
+// Badges unlocked where something happens, such as an export, are handed to the journey too.
+let badgeTaker: ((id: string) => void) | null = null;
+export const earnBadge = (id: string) => badgeTaker?.(id);
+export const takeBadge = (taker: ((id: string) => void) | null) => void (badgeTaker = taker);

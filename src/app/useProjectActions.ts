@@ -9,7 +9,7 @@ import {
 import { chapterOf } from "../project/treeLabels.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { platform } from "./platform.js";
-import { earnInk } from "./journey/journeyEvents.js";
+import { earnBadge, earnInk } from "./journey/journeyEvents.js";
 import { INK } from "../project/journey.js";
 import type { SceneStatus } from "../manuscript/sceneFile.js";
 import {
@@ -79,7 +79,10 @@ function useSceneFileActions({
       if (!project) return;
       const wasDone = project.summaries[id]?.status === "klar";
       await setSceneStatus(session, project.dir, id, status);
-      if (status === "klar" && !wasDone) earnInk(INK.sceneDone);
+      if (status === "klar" && !wasDone) {
+        earnInk(INK.sceneDone);
+        earnBadge("klar");
+      }
       await refresh();
     },
     [project, session, refresh],

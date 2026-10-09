@@ -18,6 +18,7 @@ import { bookOutline, estimatedPages } from "../../export/book.js";
 import { KIND_LABELS } from "../../project/shelf.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
+import { earnBadge } from "../journey/journeyEvents.js";
 
 export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "omslag" | "nedrakning" | "handeln";
 
@@ -104,10 +105,18 @@ const pngOf = (canvas: HTMLCanvasElement) =>
 
 export async function savePng(canvas: HTMLCanvasElement, name: string) {
   const blob = await pngOf(canvas);
-  if (blob) await platform.saveFile(`${name}.png`, new Uint8Array(await blob.arrayBuffer()), PNG);
+  if (!blob) return;
+  const path = await platform.saveFile(
+    `${name}.png`,
+    new Uint8Array(await blob.arrayBuffer()),
+    PNG,
+  );
+  if (path) earnBadge("ut-i-varlden");
 }
 
 export async function copyPng(canvas: HTMLCanvasElement) {
   const blob = await pngOf(canvas);
-  if (blob) await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+  if (!blob) return;
+  await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+  earnBadge("ut-i-varlden");
 }
