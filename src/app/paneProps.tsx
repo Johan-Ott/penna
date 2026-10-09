@@ -80,7 +80,7 @@ function textParts(app: AppState, project: Project) {
 export function sidebarProps(app: AppState, project: Project) {
   const { writingMode } = app;
   return {
-    project,
+    ...{ project, libraryDir: app.startup.preferences.libraryDir },
     openSceneId: writingMode.view === "skriv" ? (app.scene?.id ?? null) : null,
     onOpenScene: openText(app),
     isContentsShown: writingMode.view === "innehall",

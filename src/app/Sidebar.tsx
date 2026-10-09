@@ -4,6 +4,7 @@ import { useMenuButton } from "./Menu.js";
 import { ChevronDownIcon, ContentsIcon } from "./shell/icons.js";
 import { SyncNotices } from "./SyncLayer.js";
 import { ThemeDialog } from "./themes/ThemeDialog.js";
+import { TemplatesDialog } from "./templates/TemplatesDialog.js";
 import { themeField } from "./themes/themeStyle.js";
 import { addMenu } from "./tree/treeMenus.js";
 import { TreeView, type TreeViewProps } from "./tree/TreeView.js";
@@ -11,6 +12,8 @@ import { t } from "../i18n/i18n.js";
 
 interface SidebarProps extends TreeViewProps {
   profile: ReactNode;
+  /** The Penna folder, where the writer's own templates are kept. */
+  libraryDir: string | null;
   seriesNotes: ReactNode;
   onJoinSeries: (folder: string | null) => void;
   onCreateSeries: (title: string, noteIds: string[]) => void;
@@ -46,6 +49,19 @@ function useThemeDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
+function useTemplatesDialog(props: SidebarProps) {
+  const [isOpen, setOpen] = useState(false);
+  const dialog = isOpen && props.onUpdateProject && (
+    <TemplatesDialog
+      project={props.project}
+      libraryDir={props.libraryDir}
+      onUpdate={props.onUpdateProject}
+      onClose={() => setOpen(false)}
+    />
+  );
+  return { open: () => setOpen(true), dialog };
+}
+
 // Innehåll beside the book's title, so the book's overview is one click away.
 const ContentsButton = ({ onShow }: { onShow: () => void }) => (
   <button
@@ -58,15 +74,21 @@ const ContentsButton = ({ onShow }: { onShow: () => void }) => (
   </button>
 );
 
+type Opens = Record<"series" | "theme" | "templates", { open: () => void }>;
+
+const bookMenu = (props: SidebarProps, dialogs: Opens) => [
+  ...addMenu({ add: props.onAdd }),
+  { label: t("Serie…"), separatorBefore: true, onSelect: dialogs.series.open },
+  { label: t("Tema…"), onSelect: dialogs.theme.open },
+  { label: t("Mallar och bitar…"), onSelect: dialogs.templates.open },
+  { label: t("Bokhylla"), onSelect: props.onShowShelf },
+];
+
 function BookTitle(props: SidebarProps) {
   const series = useSeriesDialog(props);
   const theme = useThemeDialog(props);
-  const menu = useMenuButton(t("Lägg till"), [
-    ...addMenu({ add: props.onAdd }),
-    { label: t("Serie…"), separatorBefore: true, onSelect: series.open },
-    { label: t("Tema…"), onSelect: theme.open },
-    { label: t("Bokhylla"), onSelect: props.onShowShelf },
-  ]);
+  const templates = useTemplatesDialog(props);
+  const menu = useMenuButton(t("Lägg till"), bookMenu(props, { series, theme, templates }));
   return (
     <div className={props.isContentsShown ? "book-title-row chosen" : "book-title-row"}>
       <button className="book-title-button" onClick={props.onShowContents}>
@@ -84,6 +106,7 @@ function BookTitle(props: SidebarProps) {
       {menu.menu}
       {series.dialog}
       {theme.dialog}
+      {templates.dialog}
     </div>
   );
 }

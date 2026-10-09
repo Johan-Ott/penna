@@ -21,7 +21,8 @@ export const LAST_STEP = 5;
 const START_DETAILS: ProjectDetails = {
   title: "",
   type: "roman",
-  template: "tom",
+  structure: "tom",
+  pieces: [],
   dailyGoal: 1000,
   deadline: "",
 };

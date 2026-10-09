@@ -19,7 +19,8 @@ describe("createProject", () => {
   const details = {
     title: "Vintervägen",
     type: "roman",
-    template: "tom",
+    structure: "tom",
+    pieces: [],
     dailyGoal: 1000,
     deadline: "",
   };
@@ -39,7 +40,11 @@ describe("createProject", () => {
   it("starts from a template: its parts and steps, notes, labels and goal", async () => {
     const files = createMemoryFileSystem({});
 
-    const created = await createProject(files, "/Penna", { ...details, template: "deckare" });
+    const created = await createProject(files, "/Penna", {
+      ...details,
+      structure: "deckare",
+      pieces: ["deckare", "serie"],
+    });
 
     const project = await readProjectFile(files, created.dir, []);
     const [part] = project.tree;
@@ -49,7 +54,7 @@ describe("createProject", () => {
       title: "Brottet",
       summary: "Brottet upptäcks, gärna redan i första kapitlet.",
     });
-    expect(manuscriptSceneIds(project.tree)).toHaveLength(12);
+    expect(manuscriptSceneIds(project.tree)).toHaveLength(13);
     const sorts = project.tree.filter((node) => node.kind === "sort").map((node) => node.title);
     expect(sorts.slice(-3)).toEqual(["Misstänkta", "Ledtrådar", "Tidslinje"]);
     expect(project.fields).toMatchObject({ totalGoal: 80_000 });

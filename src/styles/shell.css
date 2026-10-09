@@ -2969,3 +2969,26 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Mallar och bitar: adding pieces to a book, saving it as a template, importing one. */
+.templates-dialog {
+  width: min(560px, calc(100vw - 48px));
+  gap: 18px;
+}
+
+.templates-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.templates-section .settings-text {
+  align-self: stretch;
+}
+
+.piece-row .chip[aria-pressed="true"] {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg);
+}

@@ -1,7 +1,7 @@
 import { useState, type DragEvent, type ReactNode } from "react";
 import { MANUSCRIPT_FILES } from "../../import/importManuscript.js";
 import type { ProjectDetails } from "../../project/newProject.js";
-import { bookTemplates } from "../../project/templates.js";
+import { TemplateChoices } from "../templates/TemplateChoices.js";
 import { platform } from "../platform.js";
 import {
   continueFrom,
@@ -65,27 +65,7 @@ function TypeChips({ details, onChange }: FieldProps) {
   );
 }
 
-/** The template the book starts from: its structure, notes and labels. */
-function TemplateChoices({ details, onChange }: FieldProps) {
-  return (
-    <div className="template-list" role="radiogroup" aria-label={t("Mall")}>
-      {bookTemplates().map((template) => (
-        <button
-          key={template.id}
-          role="radio"
-          className="template-choice"
-          aria-checked={details.template === template.id}
-          onClick={() => onChange({ ...details, template: template.id })}
-        >
-          <span className="template-name">{template.name}</span>
-          <span className="choice-hint">{template.hint}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function NewProjectFields(props: FieldProps & { onSubmit: () => void }) {
+function NewProjectFields(props: FieldProps & { onSubmit: () => void; libraryDir: string | null }) {
   return (
     <div
       className="onboarding-form"
@@ -104,7 +84,6 @@ function NewProjectFields(props: FieldProps & { onSubmit: () => void }) {
       </label>
       <GoalFields {...props} />
       <TypeChips {...props} />
-      <span className="field-label">{t("Börja från")}</span>
       <TemplateChoices {...props} />
     </div>
   );
@@ -171,6 +150,7 @@ const CHOICES: Record<ProjectMode, (state: OnboardingState) => ReactNode> = {
       details={state.details}
       onChange={state.setDetails}
       onSubmit={() => void continueFrom(state)}
+      libraryDir={state.libraryDir}
     />
   ),
   import: (state) => <ImportChoices state={state} />,

@@ -1,10 +1,11 @@
 import type { ImportedNode } from "../import/markdownImport.js";
 import { uiLanguage } from "../i18n/i18n.js";
+import { defaultLabels } from "./labels.js";
 import english from "./templates.en.json";
 import swedish from "./templates.sv.json";
 
-// Ways to start a book: chapters named for the steps of a story structure, with what each is for.
-// The texts live in templates.sv.json and templates.en.json, one file per language.
+// A new book starts from one structure, its chapters named for the steps of the story, and any
+// pieces: notes, labels and chapters for a genre. The texts live in templates.sv.json and .en.json.
 
 export interface BookTemplate {
   id: string;
@@ -15,16 +16,51 @@ export interface BookTemplate {
   totalGoal: number | null;
   /** Note sorts beside Personer, Platser and the others. */
   sorts: string[];
-  /** Name and colour; none keeps Penna's standard labels. */
+  /** Name and colour. */
   labels: string[][];
   /** An empty part title puts its chapters straight in the book. */
   parts: { title: string; chapters: string[][] }[];
 }
 
-export const bookTemplates = (): BookTemplate[] => (uiLanguage() === "en" ? english : swedish);
+export interface TemplatePiece {
+  id: string;
+  name: string;
+  hint: string;
+  sorts: string[];
+  labels: string[][];
+  /** Chapters added at the end of the book, as [title, what happens]. */
+  chapters: string[][];
+}
 
-export const templateOf = (id: string): BookTemplate =>
-  bookTemplates().find((template) => template.id === id) ?? (swedish[0] as BookTemplate);
+const texts = () => (uiLanguage() === "en" ? english : swedish);
+
+export const structures = (): BookTemplate[] => texts().structures;
+export const templatePieces = (): TemplatePiece[] => texts().pieces;
+
+const unique = (values: string[]) => [...new Set(values)];
+
+// Penna's standard labels stay, with the pieces' own after them.
+function labelsWith(pieces: TemplatePiece[], own: string[][]) {
+  const added = [...own, ...pieces.flatMap((piece) => piece.labels)];
+  if (added.length === 0) return [];
+  const standard = defaultLabels().map((label) => [label.name, label.color]);
+  const all = [...standard, ...added];
+  return all.filter(([name], index) => all.findIndex(([other]) => other === name) === index);
+}
+
+/** The structure with the chosen pieces' notes, labels and closing chapters added. */
+export function composeTemplate(structure: BookTemplate, pieceIds: string[]): BookTemplate {
+  const pieces = templatePieces().filter((piece) => pieceIds.includes(piece.id));
+  const closing = pieces.flatMap((piece) => piece.chapters);
+  return {
+    ...structure,
+    sorts: unique([...structure.sorts, ...pieces.flatMap((piece) => piece.sorts)]),
+    labels: labelsWith(pieces, structure.labels),
+    parts: closing.length
+      ? [...structure.parts, { title: "", chapters: closing }]
+      : structure.parts,
+  };
+}
 
 // Each chapter gets one empty scene, so the writer can start writing in any step.
 const chapterNode = ([title = "", summary = ""]: string[], scene: string): ImportedNode => ({

@@ -7,14 +7,17 @@ import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
 import { manuscriptSceneIds, withSpecialFolders, type TreeNode } from "./tree.js";
-import { templateBook, templateOf } from "./templates.js";
+import { readOwnTemplates, OWN_PREFIX } from "./ownTemplates.js";
+import { composeTemplate, structures, templateBook, type BookTemplate } from "./templates.js";
 import { t } from "../i18n/i18n.js";
 
 export interface ProjectDetails {
   title: string;
   type: string;
-  /** The book template it starts from; see templates.ts. */
-  template: string;
+  /** The structure it starts from, built in or the writer's own; see templates.ts. */
+  structure: string;
+  /** The pieces added to it, such as Deckare and Romans. */
+  pieces: string[];
   dailyGoal: number;
   /** YYYY-MM-DD, or "" when the writer has no deadline. */
   deadline: string;
@@ -59,9 +62,18 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
   return tree;
 }
 
-// The template's goal, its labels and its note sorts; the standard labels when it has none.
-function templateParts(details: ProjectDetails) {
-  const template = templateOf(details.template);
+// The writer's own templates are read from the Penna folder; the built-in ones from Penna.
+async function templateFor(fileSystem: FileSystem, libraryDir: string, details: ProjectDetails) {
+  const own = details.structure.startsWith(OWN_PREFIX)
+    ? await readOwnTemplates(fileSystem, libraryDir)
+    : [];
+  const all = [...structures(), ...own];
+  const structure = all.find((each) => each.id === details.structure) ?? (all[0] as BookTemplate);
+  return composeTemplate(structure, details.pieces);
+}
+
+// The template's goal, labels and note sorts; Penna's standard labels when it adds none.
+function templateParts(template: BookTemplate) {
   const labels = template.labels.map(([name = "", color = ""]) => ({
     id: newSceneId(),
     name,
@@ -73,13 +85,11 @@ function templateParts(details: ProjectDetails) {
     title,
     children: [],
   }));
-  return {
-    fields: {
-      ...(template.totalGoal ? { totalGoal: template.totalGoal } : {}),
-      ...(labels.length ? { labels } : {}),
-    },
-    sorts,
+  const fields = {
+    ...(template.totalGoal ? { totalGoal: template.totalGoal } : {}),
+    ...(labels.length ? { labels } : {}),
   };
+  return { fields, sorts };
 }
 
 /** An imported book, or the template's: by default one chapter and one scene, to start at once. */
@@ -87,13 +97,15 @@ export async function createProject(
   fileSystem: FileSystem,
   libraryDir: string,
   details: ProjectDetails,
-  book: ImportedNode[] = templateBook(templateOf(details.template), t("Scen 1")),
+  imported?: ImportedNode[],
 ) {
+  const template = await templateFor(fileSystem, libraryDir, details);
   const dir = await freeProjectDir(fileSystem, libraryDir, details.title);
   await fileSystem.makeDir(joinPath(dir, "scenes"));
+  const book = imported ?? templateBook(template, t("Scen 1"));
   const tree = await writeBook(fileSystem, dir, book);
   const sceneId = manuscriptSceneIds(tree)[0] ?? null;
-  const fromTemplate = templateParts(details);
+  const fromTemplate = templateParts(template);
   const fields = {
     title: details.title.trim() || t("Namnlöst projekt"),
     type: details.type,
