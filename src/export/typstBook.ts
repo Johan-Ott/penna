@@ -1,6 +1,6 @@
 import type { Node } from "prosemirror-model";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
-import type { BookExtras } from "./bookParts.js";
+import { backTexts, type BookExtras } from "./bookParts.js";
 import type { BookDesign } from "./bookDesign.js";
 import { bookWords, contentsLabel, designedLabel } from "./bookWords.js";
 import {
@@ -120,18 +120,12 @@ function story(input: PrintInput, hasBleed: boolean): string[] {
   return parts;
 }
 
-// Thanks and about the author open like chapters, so the contents list them.
+// The pages after the story open like chapters, so the contents list them; print has no links.
 function backMatter({ extras, language }: PrintInput): string[] {
-  const words = bookWords(language);
-  const pages: [string, string | undefined][] = [
-    [words.thanks, extras.thanks],
-    [words.aboutAuthor, extras.about],
-  ];
-  return pages.flatMap(([title, text]) => {
-    if (!text?.trim()) return [];
+  return backTexts(extras, language, false).map(({ title, text }) => {
     const paragraphs = text.split(/\n\s*\n/).map((paragraph) => escapeTypst(paragraph.trim()));
     const name = typstString(title);
-    return [`#kapitel(none, ${name}, ${name})\n${paragraphs.join("\n\n")}`];
+    return `#kapitel(none, ${name}, ${name})\n${paragraphs.join("\n\n")}`;
   });
 }
 

@@ -15,6 +15,40 @@ export interface BookExtras {
   dedication?: string;
   thanks?: string;
   about?: string;
+  /** The writer's other books, one title to a line. */
+  alsoBy?: string;
+  newsletter?: string;
+  /** "Name https://…", one store to a line; only an e-book has them, where they can be clicked. */
+  stores?: string;
+  /** The opening of another book, as plain paragraphs. */
+  excerpt?: { title: string; text: string };
+}
+
+export interface BackText {
+  id: string;
+  title: string;
+  text: string;
+}
+
+const linesAsParagraphs = (text: string) =>
+  text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("\n\n");
+
+/** The pages after the story, in the order books have them: thanks and the writer, then what next. */
+export function backTexts(extras: BookExtras, language: string, hasLinks: boolean): BackText[] {
+  const words = bookWords(language);
+  const parts: [string, string, string | undefined][] = [
+    ["thanks", words.thanks, extras.thanks],
+    ["about", words.aboutAuthor, extras.about],
+    ["also-by", words.alsoBy, extras.alsoBy && linesAsParagraphs(extras.alsoBy)],
+    ["newsletter", words.keepInTouch, extras.newsletter],
+    ["stores", words.stores, hasLinks ? extras.stores : undefined],
+    ["excerpt", words.excerptFrom(extras.excerpt?.title ?? ""), extras.excerpt?.text],
+  ];
+  return parts.flatMap(([id, title, text]) => (text?.trim() ? [{ id, title, text }] : []));
 }
 
 interface FrontInput {
@@ -73,15 +107,20 @@ export function frontPages(input: FrontInput): Page[] {
   return pages;
 }
 
+// A store line is its name and then its address: "Adlibris https://…".
+function storeLinks(text: string) {
+  const links = text.split("\n").flatMap((line) => {
+    const found = /^(.*?)\s*(https?:\/\/\S+)$/.exec(line.trim());
+    if (!found) return [];
+    const [, name = "", address = ""] = found;
+    return [`<p><a href="${escapeXml(address)}">${escapeXml(name || address)}</a></p>`];
+  });
+  return links.join("\n");
+}
+
 export function backPages(extras: BookExtras, language: string): Page[] {
-  const words = bookWords(language);
-  const parts: [string, string, string | undefined][] = [
-    ["thanks", words.thanks, extras.thanks],
-    ["about", words.aboutAuthor, extras.about],
-  ];
-  return parts.flatMap(([id, title, text]) =>
-    text?.trim()
-      ? [{ id, title, tocLabel: title, body: `<h1>${escapeXml(title)}</h1>\n${paragraphs(text)}` }]
-      : [],
-  );
+  return backTexts(extras, language, true).map(({ id, title, text }) => {
+    const body = id === "stores" ? storeLinks(text) : paragraphs(text);
+    return { id, title, tocLabel: title, body: `<h1>${escapeXml(title)}</h1>\n${body}` };
+  });
 }

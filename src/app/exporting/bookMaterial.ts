@@ -7,6 +7,7 @@ import { bookLanguage } from "../../project/bookLanguage.js";
 import { picturesUsed, readPictures } from "../../project/pictures.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { platform } from "../platform.js";
+import { readExcerpt } from "../../export/excerpt.js";
 import type { Project } from "../useProject.js";
 import type { ExportChoices } from "./useExport.js";
 import { t } from "../../i18n/i18n.js";
@@ -15,6 +16,9 @@ export const EXTRA_FIELDS = {
   hasDedication: "dedication",
   hasThanks: "thanks",
   hasAbout: "aboutAuthor",
+  hasAlsoBy: "alsoBy",
+  hasNewsletter: "newsletter",
+  hasStores: "storeLinks",
 } as const;
 
 export function chosenExtras(project: Project, choices: ExportChoices): BookExtras {
@@ -22,14 +26,27 @@ export function chosenExtras(project: Project, choices: ExportChoices): BookExtr
     const value = project.fields[EXTRA_FIELDS[key]];
     return choices[key] && typeof value === "string" && value.trim() ? value : null;
   };
-  const dedication = textOf("hasDedication");
-  const thanks = textOf("hasThanks");
-  const about = textOf("hasAbout");
-  return {
-    ...(dedication ? { dedication } : {}),
-    ...(thanks ? { thanks } : {}),
-    ...(about ? { about } : {}),
-  };
+  const texts: [keyof BookExtras, string | null][] = [
+    ["dedication", textOf("hasDedication")],
+    ["thanks", textOf("hasThanks")],
+    ["about", textOf("hasAbout")],
+    ["alsoBy", textOf("hasAlsoBy")],
+    ["newsletter", textOf("hasNewsletter")],
+    ["stores", textOf("hasStores")],
+  ];
+  return Object.fromEntries(texts.filter(([, text]) => text !== null)) as BookExtras;
+}
+
+/** The first chapter of the book picked for the excerpt, read when the book is exported. */
+export async function withExcerpt(
+  extras: BookExtras,
+  project: Project,
+  choices: ExportChoices,
+): Promise<BookExtras> {
+  const dir = project.fields["excerptBook"];
+  if (!choices.hasExcerpt || typeof dir !== "string" || !dir) return extras;
+  const excerpt = await readExcerpt(platform.fileSystem, dir).catch(() => null);
+  return excerpt ? { ...extras, excerpt } : extras;
 }
 
 export type ExportProgress = (chapter: number, chapters: number) => void;

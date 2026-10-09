@@ -10,7 +10,13 @@ import { recordFailure } from "../errorLog.js";
 import { platform, type FileKind } from "../platform.js";
 import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
-import { bookMaterial, chosenExtras, printInput, type ExportProgress } from "./bookMaterial.js";
+import {
+  bookMaterial,
+  chosenExtras,
+  printInput,
+  withExcerpt,
+  type ExportProgress,
+} from "./bookMaterial.js";
 import { t } from "../../i18n/i18n.js";
 import { earnBadge } from "../journey/journeyEvents.js";
 
@@ -31,6 +37,10 @@ export interface ExportChoices {
   hasDedication: boolean;
   hasThanks: boolean;
   hasAbout: boolean;
+  hasAlsoBy: boolean;
+  hasNewsletter: boolean;
+  hasStores: boolean;
+  hasExcerpt: boolean;
 }
 
 type SaveFields = (fields: Record<string, unknown>) => void;
@@ -45,6 +55,10 @@ export const startChoices = (project: Project): ExportChoices => ({
   hasDedication: false,
   hasThanks: false,
   hasAbout: true,
+  hasAlsoBy: false,
+  hasNewsletter: false,
+  hasStores: false,
+  hasExcerpt: false,
 });
 
 const FILE_KINDS: Record<ExportFormat, FileKind> = {
@@ -81,12 +95,12 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     const { standardManuscript } = await import("../../export/standardManuscript.js");
     return standardManuscript({ ...material, ...choices, language });
   }
+  const extras = await withExcerpt(chosenExtras(project, choices), project, choices);
   if (choices.format === "omslag") {
     const { printCoverPdf } = await import("./printCover.js");
-    return printCoverPdf(project, material, choices, chosenExtras(project, choices));
+    return printCoverPdf(project, material, choices, extras);
   }
   if (choices.format === "tryck") {
-    const extras = chosenExtras(project, choices);
     const input = printInput({ project, material, choices, extras });
     return appTypst.pdf(typstSource(input), typstFiles(input));
   }
@@ -98,7 +112,7 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     typography: choices.typography,
     language,
     design: designOf(project.fields),
-    extras: chosenExtras(project, choices),
+    extras,
     identifier: bookIdentifier(project, saveFields),
     modified: new Date(),
     parts: choices,

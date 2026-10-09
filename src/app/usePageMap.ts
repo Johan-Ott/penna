@@ -23,6 +23,10 @@ const choicesFor = (project: Project): ExportChoices => ({
   hasDedication: true,
   hasThanks: true,
   hasAbout: true,
+  hasAlsoBy: true,
+  hasNewsletter: true,
+  hasStores: false,
+  hasExcerpt: false,
 });
 
 async function buildPageMap(project: Project, generalAuthor: string): Promise<PageMap> {

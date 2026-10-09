@@ -18,6 +18,18 @@ function cachedShelf(libraryDir: string | null): ShelfBook[] | null {
   }
 }
 
+/** The shelf as last read, wherever it was, for choosing among the writer's other books. */
+export function knownBooks(): ShelfBook[] {
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) ?? "null") as {
+      books?: unknown;
+    } | null;
+    return Array.isArray(cached?.books) ? (cached.books as ShelfBook[]) : [];
+  } catch {
+    return [];
+  }
+}
+
 function cacheShelf(libraryDir: string | null, books: ShelfBook[]) {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify({ libraryDir, books }));

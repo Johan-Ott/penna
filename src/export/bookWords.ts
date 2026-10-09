@@ -12,6 +12,10 @@ interface BookWords {
   dedication: string;
   thanks: string;
   aboutAuthor: string;
+  alsoBy: string;
+  keepInTouch: string;
+  stores: string;
+  excerptFrom: (title: string) => string;
   about: (words: string) => string;
   byAuthor: (author: string) => string;
 }
@@ -27,6 +31,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Dedikation",
     thanks: "Tack",
     aboutAuthor: "Om författaren",
+    alsoBy: "Av samma författare",
+    keepInTouch: "Håll kontakten",
+    stores: "Var du hittar mina böcker",
+    excerptFrom: (title) => `Ur ${title}`,
     about: (words) => `ca ${words} ord`,
     byAuthor: (author) => `av ${author}`,
   },
@@ -40,6 +48,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Dedication",
     thanks: "Acknowledgements",
     aboutAuthor: "About the author",
+    alsoBy: "Also by the author",
+    keepInTouch: "Stay in touch",
+    stores: "Where to find my books",
+    excerptFrom: (title) => `From ${title}`,
     about: (words) => `approx. ${words} words`,
     byAuthor: (author) => `by ${author}`,
   },
@@ -53,6 +65,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Dedikasjon",
     thanks: "Takk",
     aboutAuthor: "Om forfatteren",
+    alsoBy: "Av samme forfatter",
+    keepInTouch: "Hold kontakten",
+    stores: "Hvor du finner bøkene mine",
+    excerptFrom: (title) => `Fra ${title}`,
     about: (words) => `ca. ${words} ord`,
     byAuthor: (author) => `av ${author}`,
   },
@@ -66,6 +82,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Dedikation",
     thanks: "Tak",
     aboutAuthor: "Om forfatteren",
+    alsoBy: "Af samme forfatter",
+    keepInTouch: "Hold kontakten",
+    stores: "Hvor du finder mine bøger",
+    excerptFrom: (title) => `Fra ${title}`,
     about: (words) => `ca. ${words} ord`,
     byAuthor: (author) => `af ${author}`,
   },
@@ -79,6 +99,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Omistus",
     thanks: "Kiitokset",
     aboutAuthor: "Kirjailijasta",
+    alsoBy: "Samalta kirjailijalta",
+    keepInTouch: "Pidetään yhteyttä",
+    stores: "Mistä löydät kirjani",
+    excerptFrom: (title) => `Otteita teoksesta ${title}`,
     about: (words) => `noin ${words} sanaa`,
     byAuthor: (author) => author,
   },
@@ -92,6 +116,10 @@ const WORDS: Record<string, BookWords> = {
     dedication: "Widmung",
     thanks: "Danksagung",
     aboutAuthor: "Zur Person",
+    alsoBy: "Ebenfalls erschienen",
+    keepInTouch: "In Kontakt bleiben",
+    stores: "Wo du meine Bücher findest",
+    excerptFrom: (title) => `Aus ${title}`,
     about: (words) => `ca. ${words} Wörter`,
     byAuthor: (author) => `von ${author}`,
   },
