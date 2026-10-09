@@ -120,7 +120,6 @@
   "Format": "Format",
   "Fortsätt": "Continue",
   "Fortsätt skriva": "Keep writing",
-  "Framsteg idag": "Progress today",
   "Framåt": "Forward",
   "Följer annars systemet": "Otherwise follows the system",
   "Följer systemet om inget annat väljs.": "Follows the system unless you choose otherwise.",
@@ -1006,5 +1005,7 @@
   "s. {first}–{last} av {count}": "pp. {first}–{last} of {count}",
   "Dela hela boken": "Share the whole book",
   "Kapitel {span} · {count} ord": "Chapters {span} · {count} words",
-  "Status: {step}": "Status: {step}"
+  "Status: {step}": "Status: {step}",
+  "Dagens mål nått · {count} ord": "Today's goal reached · {count} words",
+  "Insikter och mål": "Insights and goals"
 }

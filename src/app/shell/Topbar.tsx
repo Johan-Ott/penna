@@ -71,16 +71,24 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   );
 }
 
+function dayText({ words, goal }: Today) {
+  const format = (count: number) => count.toLocaleString(numberLocale());
+  if (!goal) return t("{count} ord idag", { count: format(words) });
+  if (words >= goal) return t("Dagens mål nått · {count} ord", { count: format(words) });
+  return t("{words} / {goal} ord", { words: format(words), goal: format(goal) });
+}
+
+// The day's words; a click opens Insikter, with the goals, the week and the writing journey.
 function DayProgress({ today, onProgress }: { today: Today; onProgress: () => void }) {
-  const format = (words: number) => words.toLocaleString(numberLocale());
   const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : null;
   return (
-    <button className="day-progress" aria-label={t("Framsteg idag")} onClick={onProgress}>
-      <span>
-        {today.goal
-          ? t("{words} / {goal} ord", { words: format(today.words), goal: format(today.goal) })
-          : t("{count} ord idag", { count: format(today.words) })}
-      </span>
+    <button
+      className="day-progress"
+      aria-label={t("Insikter och mål")}
+      title={t("Insikter och mål")}
+      onClick={onProgress}
+    >
+      <span>{dayText(today)}</span>
       {share !== null && (
         <span className="day-progress-bar">
           <span style={{ width: `${share}%` }} />
