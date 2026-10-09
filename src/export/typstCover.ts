@@ -1,6 +1,7 @@
 import { trimSize } from "./bookDesign.js";
 import { BLEED_MM, millimetres } from "./typstPage.js";
 import { escapeTypst, typstString } from "./typstText.js";
+import { barRuns, ean13Modules, isbn13 } from "./barcode.js";
 
 /** The paper the book is printed on decides how thick its spine is. */
 export type CoverPaper = "vitt" | "kramvitt";
@@ -31,6 +32,28 @@ export interface CoverInput {
   backText: string;
   /** Typst's path to the front picture, or null for a front of type only. */
   frontPicture: string | null;
+  /** Drawn as the EAN-13 barcode on the back when it is a valid ISBN. */
+  isbn: string;
+}
+
+// At the standard size a bar is 0.33 mm wide; the box keeps the white quiet zone printers ask for.
+const MODULE_MM = 0.33;
+const BARS_HIGH_MM = 20;
+
+function barcodeTypst(isbn: string, backWidth: number) {
+  const code = isbn13(isbn);
+  if (!code) return "";
+  const bars = barRuns(ean13Modules(code))
+    .map(
+      ([start, width]) =>
+        `place(top + left, dx: ${millimetres(start * MODULE_MM)}, rect(width: ${millimetres(width * MODULE_MM)}, height: ${BARS_HIGH_MM}mm, fill: black))`,
+    )
+    .join("\n    ");
+  return `// The barcode: bottom right on the back, 15 mm from the trim.
+#place(top + left, dx: bleed + ${millimetres(backWidth)} - 15mm - 38mm, dy: full-height - bleed - 15mm - 28mm, box(width: 38mm, height: 28mm, fill: white, inset: (x: 3.2mm, y: 2.5mm), {
+    ${bars}
+    place(bottom + center, text(size: 7pt, fill: black, font: "Geist", tracking: 0.05em, ${typstString(`ISBN ${code}`)}))
+  }))`;
 }
 
 export const spineWidth = (pages: number, paper: CoverPaper) =>
@@ -64,6 +87,7 @@ export function coverSource(input: CoverInput): string {
 #place(top + left, dx: bleed + 15mm, dy: bleed + 20mm, box(width: ${millimetres(width)} - 30mm, text(size: 10.5pt)[${paragraphs}]))
 ${input.pages >= SPINE_TEXT_PAGES ? `#place(top + left, dx: back-width, box(width: spine, height: full-height, align(center + horizon, rotate(90deg, reflow: true, text(size: 9pt, tracking: 0.08em)[#upper(title) #h(1.5em) #author]))))` : ""}
 #${front}
+${barcodeTypst(input.isbn, width)}
 `;
 }
 

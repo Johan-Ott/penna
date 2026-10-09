@@ -26,6 +26,7 @@ const INPUT: CoverInput = {
   author: "Elin Berg",
   backText: "Brevet låg på köksbordet.\n\nIsen bär den som går lätt.",
   frontPicture: null,
+  isbn: "978-91-7343-555-0",
 };
 
 describe("the print cover", () => {
@@ -44,6 +45,11 @@ describe("the print cover", () => {
 
   it("leaves the spine without text when the book is too thin for it", () => {
     expect(coverSource({ ...INPUT, pages: 60 })).not.toContain("rotate(90deg");
+  });
+
+  it("has the ISBN's barcode on the back, and none for an ISBN that is not valid", () => {
+    expect(coverSource(INPUT)).toContain('"ISBN 9789173435550"');
+    expect(coverSource({ ...INPUT, isbn: "978-91-7343-555-6" })).not.toContain("ISBN 978");
   });
 
   it("compiles to a PDF", async () => {

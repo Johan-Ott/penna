@@ -27,6 +27,7 @@ export async function printCoverPdf(
     title: material.book.title,
     author: material.book.author,
     frontPicture: path,
+    isbn: String(project.fields["isbn"] ?? ""),
   });
   return appTypst.pdf(source, picture && path ? new Map([[path, picture.bytes]]) : new Map());
 }
