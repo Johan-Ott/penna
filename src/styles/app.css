@@ -2010,8 +2010,8 @@ button.book-cover:hover {
   gap: 8px;
 }
 
-/* Under 1200 px the review panel lies over the text instead of beside it. */
-@media (max-width: 1199px) {
+/* Only on a narrow window does the review panel lie over the text; otherwise the text makes room. */
+@media (max-width: 959px) {
   .review-panel {
     position: absolute;
     top: 0;

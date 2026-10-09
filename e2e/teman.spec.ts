@@ -4,7 +4,7 @@ import { openExample } from "./helpers";
 test.beforeEach(async ({ page }) => openExample(page));
 
 async function openThemes(page: Page) {
-  await page.locator(".book-title-menu").click();
+  await page.locator(".book-title-menu:not(.contents)").click();
   await page.getByRole("menuitem", { name: "Tema…" }).click();
 }
 

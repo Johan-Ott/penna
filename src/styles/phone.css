@@ -694,3 +694,15 @@
   gap: 2px;
   padding: 10px 0;
 }
+
+/* The text's eyebrow wraps whole items onto a new line instead of squeezing them. */
+.phone-app .text-eyebrow,
+.phone-app .text-place {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+.phone-app .text-place > *,
+.phone-app .text-when {
+  white-space: nowrap;
+}

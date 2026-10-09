@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { SeriesDialog } from "./notes/SeriesDialog.js";
 import { useMenuButton } from "./Menu.js";
-import { ChevronDownIcon } from "./shell/icons.js";
+import { ChevronDownIcon, ContentsIcon } from "./shell/icons.js";
 import { SyncNotices } from "./SyncLayer.js";
 import { ThemeDialog } from "./themes/ThemeDialog.js";
 import { themeField } from "./themes/themeStyle.js";
@@ -46,6 +46,18 @@ function useThemeDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
+// Innehåll beside the book's title, so the book's overview is one click away.
+const ContentsButton = ({ onShow }: { onShow: () => void }) => (
+  <button
+    className="book-title-menu contents"
+    aria-label={t("Innehåll")}
+    title={t("Innehåll · G I")}
+    onClick={onShow}
+  >
+    <ContentsIcon />
+  </button>
+);
+
 function BookTitle(props: SidebarProps) {
   const series = useSeriesDialog(props);
   const theme = useThemeDialog(props);
@@ -60,6 +72,7 @@ function BookTitle(props: SidebarProps) {
       <button className="book-title-button" onClick={props.onShowContents}>
         {props.project.name}
       </button>
+      <ContentsButton onShow={props.onShowContents} />
       <button
         className="book-title-menu"
         aria-label={t("Lägg till")}
