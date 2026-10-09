@@ -558,10 +558,10 @@
 
 .contents-row {
   display: grid;
-  grid-template-columns: 1fr 90px 110px 60px 90px;
+  grid-template-columns: 16px 1fr 80px 100px 70px;
   align-items: baseline;
-  gap: 16px;
-  padding: 12px 0;
+  gap: 12px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border-soft);
 }
 
@@ -1943,13 +1943,21 @@
   max-width: 320px;
 }
 
-.contents-filter input {
-  flex-grow: 1;
+.contents-filter {
   height: 30px;
-  padding: 0 10px;
+  padding: 0 4px 0 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--bg);
+}
+
+.contents-filter input {
+  flex-grow: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
   color: var(--text);
   font: inherit;
 }
@@ -1958,11 +1966,11 @@
   opacity: 0.35;
 }
 
-/* Du slutade här: the sentence the writer stopped in, over the whole text card. */
+/* Du slutade här: the sentence the writer stopped in, over the whole window. */
 .resume-screen {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 5;
+  z-index: 60;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2529,7 +2537,7 @@
   background: var(--surface-hover);
 }
 
-.contents-row.scene .contents-main {
+.contents-row.scene {
   padding-left: 28px;
 }
 
@@ -2540,4 +2548,74 @@
 
 .contents-row.scene[draggable="true"] {
   cursor: grab;
+}
+
+/* Innehåll as in the design: part headings that fold, quick filters, the status as a dot. */
+.contents-part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 14px 0 6px;
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  background: transparent;
+  text-align: left;
+}
+
+.contents-part-title {
+  color: var(--text-label);
+  font: 500 11px var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.contents-part-summary {
+  color: var(--text-tree);
+  font: 13px var(--font-ui);
+}
+
+.contents-bar-filter {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.contents-filter svg {
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--text-label);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.contents-chip {
+  height: 30px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  border: 1px solid var(--border-control);
+  border-radius: 15px;
+  background: var(--bg);
+  color: var(--text-muted);
+  font: 13px var(--font-ui);
+}
+
+.contents-chip[aria-pressed="true"] {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.contents-row .contents-status {
+  align-self: start;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.contents-row.scene .contents-title {
+  font: 500 13px var(--font-ui);
 }

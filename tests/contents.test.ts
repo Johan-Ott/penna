@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  contentsGroups,
   contentsRows,
   inTimeOrder,
   leastFinished,
@@ -134,6 +135,19 @@ describe("scene rows", () => {
     expect(findNode(last, "kap2")?.node.children?.map((node) => node.id)).toEqual([
       "viken",
       "farjan",
+    ]);
+  });
+});
+
+describe("contentsGroups", () => {
+  it("groups the chapters by part, and keeps what lies outside a part on its own", () => {
+    const groups = contentsGroups(tree, summaries);
+
+    expect(
+      groups.map((group) => [group.part?.title ?? null, group.rows.map((row) => row.id)]),
+    ).toEqual([
+      ["Hemkomsten", ["kap1", "kap2"]],
+      [null, ["lös"]],
     ]);
   });
 });

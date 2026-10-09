@@ -51,16 +51,19 @@ const formats = (): [CardFormat, string][] => [
   ["liggande", t("Liggande")],
 ];
 
-function ShareChoices({ choices, onChange }: ChoiceProps) {
+// Without a spread on show, as from Innehåll, only the whole book can be shared.
+function ShareChoices({ choices, onChange, hasSpread }: ChoiceProps & { hasSpread: boolean }) {
   const set = (change: Partial<Choices>) => onChange({ ...choices, ...change });
   return (
     <>
-      <Choice
-        label={t("Vad")}
-        value={choices.subject}
-        options={subjects()}
-        onSelect={(subject) => set({ subject })}
-      />
+      {hasSpread && (
+        <Choice
+          label={t("Vad")}
+          value={choices.subject}
+          options={subjects()}
+          onSelect={(subject) => set({ subject })}
+        />
+      )}
       <Choice
         label={t("Bakgrund")}
         value={choices.look}
@@ -114,15 +117,17 @@ function ShareActions({
   );
 }
 
+const startChoices = (share: SpreadShare): Choices => ({
+  subject: share.pages.length > 0 ? "uppslag" : "boken",
+  look: "ljus",
+  format: "kvadrat",
+  isMarked: true,
+});
+
 /** Dela uppslag: the spread on show as a picture, made on this computer; only what is seen is shared. */
 export function ShareSpreadDialog({ share, onClose }: { share: SpreadShare; onClose: () => void }) {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const [choices, setChoices] = useState<Choices>({
-    subject: "uppslag",
-    look: "ljus",
-    format: "kvadrat",
-    isMarked: true,
-  });
+  const [choices, setChoices] = useState<Choices>(() => startChoices(share));
   useEffect(() => {
     void document.fonts.ready.then(() => canvas.current && draw(canvas.current, share, choices));
   }, [share, choices]);
@@ -131,7 +136,11 @@ export function ShareSpreadDialog({ share, onClose }: { share: SpreadShare; onCl
       <div className="share-spread-body">
         <canvas ref={canvas} className={`studio-card ${choices.format}`} aria-label={t("Bilden")} />
         <div className="share-spread-choices">
-          <ShareChoices choices={choices} onChange={setChoices} />
+          <ShareChoices
+            choices={choices}
+            onChange={setChoices}
+            hasSpread={share.pages.length > 0}
+          />
           <MarkRow choices={choices} onChange={setChoices} />
           <ShareActions canvas={canvas} title={share.title} />
           <span className="setting-hint">

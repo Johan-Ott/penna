@@ -7,7 +7,7 @@ import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
 // The pages still to write at the book's words per page, so Hela boken shows what is left too.
-function pagesAtGoal(project: Project, written: number) {
+export function pagesAtGoal(project: Project, written: number) {
   const words = manuscriptWords(project.tree, project.summaries);
   const goal = projectGoals(project.fields).totalGoal;
   if (!goal || words === 0) return written;

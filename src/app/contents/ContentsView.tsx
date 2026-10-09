@@ -1,22 +1,19 @@
 import { useState } from "react";
-import type { PageMap } from "../../project/pageMap.js";
-import { Row } from "./ContentsRowView.js";
-import { SceneRows, useSceneDrag, type SceneDrag } from "./SceneRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
-import {
-  contentsRows,
-  inTimeOrder,
-  movedInTime,
-  type ContentsRow,
-} from "../../project/contents.js";
-import type { TreeNode } from "../../project/tree.js";
-import type { Project } from "../useProject.js";
+import { contentsRows } from "../../project/contents.js";
+import type { FilterSources } from "../../project/contentsFilter.js";
+import type { PageMap } from "../../project/pageMap.js";
 import type { Stats } from "../../project/stats.js";
+import type { TreeNode } from "../../project/tree.js";
+import { ShareSpreadDialog } from "../share/ShareSpreadDialog.js";
+import type { Project } from "../useProject.js";
 import { BookMeta, PageGrid, TasksLink } from "./BookOverview.js";
-import { rowMatches, type FilterSources } from "../../project/contentsFilter.js";
+import { ContentsBar } from "./ContentsBar.js";
+import { ContentsList } from "./ContentsList.js";
+import { pagesAtGoal } from "./ShareSpreadButton.js";
 import { t } from "../../i18n/i18n.js";
 
-interface ContentsProps {
+export interface ContentsProps {
   project: Project;
   onOpenScene: (id: string) => void;
   onChangeTree: (tree: TreeNode[]) => void;
@@ -35,45 +32,23 @@ interface ContentsProps {
   notes: Pick<FilterSources, "cards" | "mentions">;
 }
 
-const timeOrderOf = (fields: Record<string, unknown>) => {
-  const stored = fields["timeOrder"];
-  return Array.isArray(stored) ? stored.filter((id): id is string => typeof id === "string") : [];
-};
-
-function useRowDrag(shown: ContentsRow[], onOrder: (order: string[]) => void) {
-  const [draggedId, setDraggedId] = useState<string | null>(null);
-  return {
-    propsFor: (id: string) => ({
-      draggable: true,
-      onDragStart: () => setDraggedId(id),
-      onDragOver: (event: { preventDefault: () => void }) => event.preventDefault(),
-      onDrop: () => {
-        if (draggedId && draggedId !== id) {
-          const index = shown.findIndex((row) => row.id === id);
-          onOrder(movedInTime(shown, draggedId, index));
-        }
-        setDraggedId(null);
-      },
-      onDragEnd: () => setDraggedId(null),
-    }),
+// The whole book's pages as a picture: what is written, and outlined pages for what is left.
+function ShareBook({ project, pageMap }: { project: Project; pageMap: PageMap }) {
+  const [isOpen, setOpen] = useState(false);
+  const share = {
+    title: project.name,
+    pages: [],
+    firstNumber: 1,
+    written: pageMap.pages,
+    total: pagesAtGoal(project, pageMap.pages),
   };
-}
-
-function OrderSwitch(props: { isTimeOrder: boolean; onChange: (isTimeOrder: boolean) => void }) {
-  const option = (label: string, isTimeOrder: boolean) => (
-    <button
-      role="radio"
-      aria-checked={props.isTimeOrder === isTimeOrder}
-      onClick={() => props.onChange(isTimeOrder)}
-    >
-      {label}
-    </button>
-  );
   return (
-    <div className="segmented small" role="radiogroup" aria-label={t("Ordning")}>
-      {option(t("Läsordning"), false)}
-      {option(t("Tidsordning"), true)}
-    </div>
+    <>
+      <button className="link-button quiet contents-read" onClick={() => setOpen(true)}>
+        {t("Dela hela boken")}
+      </button>
+      {isOpen && <ShareSpreadDialog share={share} onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
@@ -83,13 +58,14 @@ function ContentsHeader(props: ContentsProps) {
       <h1>{props.project.name}</h1>
       <BookMeta project={props.project} pageMap={props.pageMap} stats={props.stats} />
       <span className="contents-links">
-        <button className="link-button quiet contents-read" onClick={props.onReadBook}>
-          {t("Läs hela boken")}
-        </button>
+        <TasksLink project={props.project} onOpen={props.onShowTasks} />
         <button className="link-button quiet contents-read" onClick={props.onShowDrafts}>
           {t("Utkast")}
         </button>
-        <TasksLink project={props.project} onOpen={props.onShowTasks} />
+        <button className="link-button quiet contents-read" onClick={props.onReadBook}>
+          {t("Läs hela boken")}
+        </button>
+        {props.pageMap && <ShareBook project={props.project} pageMap={props.pageMap} />}
       </span>
       {props.pageMap && (
         <PageGrid project={props.project} pageMap={props.pageMap} onOpenScene={props.onOpenScene} />
@@ -98,104 +74,22 @@ function ContentsHeader(props: ContentsProps) {
   );
 }
 
-// Rows without the person, place or label asked for fade, so the rest of the book stays in view.
-function ContentsFilter(props: { query: string; onQuery: (query: string) => void }) {
-  return (
-    <label className="contents-filter">
-      <input
-        aria-label={t("Filtrera")}
-        placeholder={t("Visa var en person, plats eller label finns")}
-        value={props.query}
-        onChange={(event) => props.onQuery(event.target.value)}
-      />
-      {props.query && (
-        <button
-          className="icon-button"
-          aria-label={t("Rensa filtret")}
-          onClick={() => props.onQuery("")}
-        >
-          ×
-        </button>
-      )}
-    </label>
-  );
-}
-
-function useFolds() {
-  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
-  const toggle = (id: string) =>
-    setOpen((current) => {
-      const next = new Set(current);
-      if (!next.delete(id)) next.add(id);
-      return next;
-    });
-  return { isOpen: (id: string) => open.has(id), toggle };
-}
-
-// A chapter's row, and its scenes' rows under it once it is unfolded.
-function ChapterRows(
-  props: ContentsProps & {
-    row: ContentsRow;
-    dragProps: object;
-    sceneDrag: SceneDrag;
-    folds: ReturnType<typeof useFolds>;
-    isShown: (row: ContentsRow) => boolean;
-  },
-) {
-  const { row, folds } = props;
-  const isOpen = folds.isOpen(row.id);
-  const fold = row.number === null ? undefined : { isOpen, onToggle: () => folds.toggle(row.id) };
-  return (
-    <>
-      <Row
-        {...props}
-        pages={props.pageMap?.chapterPages.get(row.id) ?? null}
-        isDimmed={!props.isShown(row)}
-        fold={fold}
-      />
-      {isOpen && <SceneRows {...props} chapterId={row.id} drag={props.sceneDrag} />}
-    </>
-  );
-}
-
-function ContentsList(props: ContentsProps & { isTimeOrder: boolean; query: string }) {
-  const { project, isTimeOrder, query } = props;
-  const sources = { tree: project.tree, fields: project.fields, ...props.notes };
-  const isShown = (row: ContentsRow) => rowMatches(sources, row, query);
-  const rows = contentsRows(project.tree, project.summaries);
-  const shown = isTimeOrder ? inTimeOrder(rows, timeOrderOf(project.fields)) : rows;
-  const drag = useRowDrag(shown, (timeOrder) => props.onSaveFields({ timeOrder }));
-  const sceneDrag = useSceneDrag(project, props.onChangeTree);
-  const folds = useFolds();
-  if (rows.length === 0) return <p className="contents-empty">{t("Inga kapitel än.")}</p>;
-  return (
-    <div className="contents-list">
-      {shown.map((row) => (
-        <ChapterRows
-          key={row.id}
-          {...props}
-          row={row}
-          dragProps={isTimeOrder ? drag.propsFor(row.id) : sceneDrag.forChapter(row.id)}
-          sceneDrag={sceneDrag}
-          folds={folds}
-          isShown={isShown}
-        />
-      ))}
-    </div>
-  );
-}
-
+/** Innehåll: the book at a glance, its pages, and its chapters by part to plan in. */
 export function ContentsView(props: ContentsProps) {
   const [isTimeOrder, setTimeOrder] = useState(false);
   const [query, setQuery] = useState("");
+  const rows = contentsRows(props.project.tree, props.project.summaries);
   return (
     <main className="contents-view">
       <div className="contents-column">
         <ContentsHeader {...props} />
-        <div className="contents-bar">
-          <ContentsFilter query={query} onQuery={setQuery} />
-          <OrderSwitch isTimeOrder={isTimeOrder} onChange={setTimeOrder} />
-        </div>
+        <ContentsBar
+          rows={rows}
+          query={query}
+          onQuery={setQuery}
+          isTimeOrder={isTimeOrder}
+          onTimeOrder={setTimeOrder}
+        />
         <ContentsList {...props} isTimeOrder={isTimeOrder} query={query} />
       </div>
     </main>

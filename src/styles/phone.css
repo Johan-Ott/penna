@@ -463,12 +463,16 @@
 }
 
 .phone-view .contents-row {
-  grid-template-columns: auto auto 1fr auto;
-  gap: 4px 16px;
+  grid-template-columns: 16px auto auto 1fr;
+  gap: 4px 12px;
 }
 
 .phone-view .contents-main {
-  grid-column: 1 / -1;
+  grid-column: 2 / -1;
+}
+
+.phone-view .contents-pov {
+  grid-column: 2;
 }
 
 /* Publicera on a phone: the choices first, the preview under them, all in one scroll. */

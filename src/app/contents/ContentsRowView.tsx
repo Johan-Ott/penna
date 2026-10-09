@@ -77,11 +77,16 @@ function StatusButton(props: RowProps) {
     onSelect: () => props.onSetStatus(row.sceneIds, status),
   }));
   const menu = useMenuButton(t("Status"), items);
+  const step = statusSteps(props.project.fields)[row.status];
   return (
     <>
-      <button className="contents-status" onClick={menu.open}>
-        <StatusDot step={statusSteps(props.project.fields)[row.status]} />
-        {statusSteps(props.project.fields)[row.status].name}
+      <button
+        className="contents-status"
+        aria-label={t("Status: {step}", { step: step.name })}
+        title={step.name}
+        onClick={menu.open}
+      >
+        <StatusDot step={step} />
       </button>
       {menu.menu}
     </>
@@ -156,7 +161,7 @@ function pageText(pages: RowProps["pages"]) {
 /** One chapter in Innehåll: its title, what happens, when, its length and its status. */
 const WordsCell = ({ row, pages }: RowProps) => (
   <span className="contents-words">
-    {format(row.words)}
+    {row.words > 0 ? format(row.words) : ""}
     {pages && <span className="contents-pages">{pageText(pages)}</span>}
   </span>
 );
@@ -176,6 +181,7 @@ export function Row(props: RowProps) {
     props.onChangeTree(withNodeText(project.tree, row.id, field, text));
   return (
     <div className={rowClass(props)} {...props.dragProps}>
+      <StatusButton {...props} />
       <div className="contents-main">
         <TitleLine {...props} />
         <InlineText
@@ -196,7 +202,6 @@ export function Row(props: RowProps) {
         />
       ))}
       <WordsCell {...props} />
-      <StatusButton {...props} />
     </div>
   );
 }

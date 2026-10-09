@@ -52,6 +52,31 @@ function walk(nodes: TreeNode[], numbers: Map<string, number>, summaries: Summar
   });
 }
 
+/** A part of the book and its chapters' rows; chapters outside any part have no part. */
+export interface ContentsGroup {
+  part: { id: string; title: string } | null;
+  rows: ContentsRow[];
+}
+
+const partOf = (node: TreeNode) =>
+  node.kind === "part" ? { id: node.id, title: node.title ?? "" } : null;
+
+const inBook = (node: TreeNode) => node.kind !== "sort" && node.id !== TRASH_ID;
+
+/** The book in parts, as Innehåll lists it in reading order. */
+export function contentsGroups(tree: TreeNode[], summaries: Summaries): ContentsGroup[] {
+  const numbers = numberNodes(tree, "chapter");
+  const groups: ContentsGroup[] = [];
+  for (const node of tree.filter(inBook)) {
+    const part = partOf(node);
+    const rows = walk(part ? (node.children ?? []) : [node], numbers, summaries);
+    const last = groups[groups.length - 1];
+    if (!part && last?.part === null) last.rows.push(...rows);
+    else groups.push({ part, rows });
+  }
+  return groups;
+}
+
 export function contentsRows(tree: TreeNode[], summaries: Summaries): ContentsRow[] {
   const book = tree.filter((node) => node.kind !== "sort" && node.id !== TRASH_ID);
   return walk(book, numberNodes(tree, "chapter"), summaries);

@@ -1003,5 +1003,8 @@
   "Boktypografi": "Book typography",
   "Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener.": "Justified, a drop cap where the chapter opens and an ornament between scenes.",
   "s. {page} av {count}": "p. {page} of {count}",
-  "s. {first}–{last} av {count}": "pp. {first}–{last} of {count}"
+  "s. {first}–{last} av {count}": "pp. {first}–{last} of {count}",
+  "Dela hela boken": "Share the whole book",
+  "Kapitel {span} · {count} ord": "Chapters {span} · {count} words",
+  "Status: {step}": "Status: {step}"
 }
