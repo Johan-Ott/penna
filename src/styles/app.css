@@ -3054,19 +3054,22 @@ button.book-cover:hover {
   display: contents;
 }
 
+/* The margins shrink with the room, so the text keeps its width beside an open panel. */
 .page.paper {
-  padding: 40px 48px;
+  container-type: inline-size;
+  padding: 40px min(48px, 3vw);
   background: color-mix(in srgb, var(--bg-preview), #000 4%);
 }
 
 /* A sheet below peeks out at the edge, as in a pile of paper. */
 .page.paper > .sheet {
+  --sheet-margin: min(88px, 9cqi);
   position: relative;
   box-sizing: border-box;
   width: min(calc(var(--prose-width, 600px) + 176px), 100%);
   min-height: calc(100% - 80px);
   margin: 0 auto;
-  padding: 104px 88px 128px;
+  padding: 104px var(--sheet-margin) 128px;
   background: var(--bg);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
@@ -3078,8 +3081,8 @@ button.book-cover:hover {
 .sheet-head {
   position: absolute;
   top: 44px;
-  right: 88px;
-  left: 88px;
+  right: var(--sheet-margin);
+  left: var(--sheet-margin);
   display: flex;
   justify-content: space-between;
   gap: 24px;

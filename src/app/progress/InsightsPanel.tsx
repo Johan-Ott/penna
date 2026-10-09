@@ -10,6 +10,7 @@ import { Heatmap } from "./Heatmap.js";
 import { DayCard, TowardsGoal, WeekCard } from "./InsightCards.js";
 import { insightNumbers } from "./insightNumbers.js";
 import { NoStats } from "./NoStats.js";
+import { Colophon } from "./Colophon.js";
 import { journeySummary } from "../../project/inkwell.js";
 import type { Journey } from "../../project/journey.js";
 import { JourneyCard } from "../journey/JourneyCard.js";
@@ -78,6 +79,24 @@ const InsightsHead = ({ onClose }: { onClose: () => void }) => (
   </div>
 );
 
+function ShownAs(props: { isColophon: boolean; onChange: (isColophon: boolean) => void }) {
+  const option = (label: string, isColophon: boolean) => (
+    <button
+      role="radio"
+      aria-checked={props.isColophon === isColophon}
+      onClick={() => props.onChange(isColophon)}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div className="segmented small" role="radiogroup" aria-label={t("Visa som")}>
+      {option(t("Kort"), false)}
+      {option(t("Kolofon"), true)}
+    </div>
+  );
+}
+
 type PanelProps = {
   project: Project;
   stats: Stats;
@@ -118,18 +137,25 @@ function InsightDialogs(props: PanelProps & { open: Open; onOpen: (open: Open) =
 /** Insikter: beside the text, how the day, the week and the book are going. */
 export function InsightsPanel(props: PanelProps) {
   const [open, setOpen] = useState<Open>(null);
+  const [isColophon, setColophon] = useState(false);
   useEscape(() => !open && props.onClose());
+  const hasStats = Object.keys(props.stats).length > 0;
   return (
     <aside className="insights-panel" aria-label={t("Insikter")}>
       <InsightsHead onClose={props.onClose} />
-      {Object.keys(props.stats).length === 0 && <NoStats onWrite={props.onClose} />}
-      <InsightsBody
-        project={props.project}
-        stats={props.stats}
-        journey={props.journey}
-        onGoals={() => setOpen("day")}
-        onJourney={() => setOpen("journey")}
-      />
+      {hasStats && <ShownAs isColophon={isColophon} onChange={setColophon} />}
+      {!hasStats && <NoStats onWrite={props.onClose} />}
+      {isColophon ? (
+        <Colophon project={props.project} stats={props.stats} />
+      ) : (
+        <InsightsBody
+          project={props.project}
+          stats={props.stats}
+          journey={props.journey}
+          onGoals={() => setOpen("day")}
+          onJourney={() => setOpen("journey")}
+        />
+      )}
       <button className="link-button quiet" onClick={() => setOpen("goals")}>
         {t("Ändra mål och deadline")}
       </button>
