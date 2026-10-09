@@ -27,6 +27,8 @@ export interface WritingSettings {
   paper: boolean;
   /** Justified text, a drop cap where a chapter opens and an ornament for scene breaks. */
   bookType: boolean;
+  /** The sidebar as a printed table of contents: dotted leaders to each chapter's page. */
+  tableOfContents: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -45,6 +47,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   showPages: false,
   paper: true,
   bookType: false,
+  tableOfContents: false,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -88,6 +91,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     showPages: pick("showPages", isBoolean),
     paper: pick("paper", isBoolean),
     bookType: pick("bookType", isBoolean),
+    tableOfContents: pick("tableOfContents", isBoolean),
   };
 }
 

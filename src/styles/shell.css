@@ -2619,3 +2619,24 @@
 .contents-row.scene .contents-title {
   font: 500 13px var(--font-ui);
 }
+
+/* Sidomenyn som innehållsförteckning: dotted leaders to the page each part, chapter or scene
+   starts on. */
+.tree-leader {
+  flex-grow: 1;
+  min-width: 12px;
+  margin: 0 4px;
+  border-bottom: 1px dotted var(--text-dim);
+  transform: translateY(4px);
+}
+
+.tree-page {
+  flex-shrink: 0;
+  color: var(--text-label);
+  font: 11px var(--font-ui);
+}
+
+.tree-row.toc .tree-label {
+  flex-grow: 0;
+  flex-shrink: 1;
+}

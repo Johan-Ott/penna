@@ -8,6 +8,7 @@ import { bookMaterial, chosenExtras, printInput } from "./exporting/bookMaterial
 import type { ExportChoices } from "./exporting/useExport.js";
 import { appTypst } from "./typstAssets.js";
 import type { Project } from "./useProject.js";
+import { findNode, type TreeNode } from "../project/tree.js";
 import { t } from "../i18n/i18n.js";
 
 // Waits for a pause in the writing; setting the whole book takes about 0.1 s once Typst is warm.
@@ -54,6 +55,19 @@ export function folioOf(sceneId: string | null, map: PageMap | null) {
   return first === last
     ? t("s. {page} av {count}", { page: first, count: map.pages })
     : t("s. {first}–{last} av {count}", { first, last, count: map.pages });
+}
+
+/** Where a part, chapter or scene starts in the printed book, for the table of contents. */
+export function pageFinder(map: PageMap | null, tree: TreeNode[]) {
+  return (id: string): number | null => {
+    if (!map) return null;
+    const chapter = map.chapterPages.get(id);
+    if (chapter) return chapter.first;
+    const scene = map.blockPages.get(id)?.find((page) => page !== undefined);
+    if (scene !== undefined) return scene;
+    const children = findNode(tree, id)?.node.children ?? [];
+    return children.map((child) => map.chapterPages.get(child.id)?.first).find(Boolean) ?? null;
+  };
 }
 
 /** The book set as printed, in the background, while something on screen shows its pages. */

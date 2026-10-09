@@ -26,6 +26,8 @@ import { t } from "../../i18n/i18n.js";
 export interface TreeViewProps {
   project: Project;
   openSceneId: string | null;
+  /** Set when the sidebar is a table of contents: where each node starts in the printed book. */
+  pageOf?: ((id: string) => number | null) | undefined;
   /** A node just created; the tree shows it and starts renaming it. */
   renameRequestId: string | null;
   onOpenScene: (id: string) => void;
@@ -199,6 +201,9 @@ function sceneStatusOf(project: Project, node: TreeNode) {
   return status ? { id: status, ...statusSteps(project.fields)[status] } : null;
 }
 
+// Undefined unless the sidebar is a table of contents.
+const pageIn = ({ pageOf }: TreeViewProps, id: string) => (pageOf ? pageOf(id) : undefined);
+
 export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<string>) {
   const { node } = row;
   const summary = props.project.summaries[node.id];
@@ -214,5 +219,6 @@ export function rowView(row: Row, props: TreeViewProps, collapsed: ReadonlySet<s
     isActive: node.id === props.openSceneId,
     isExpanded: node.kind === "scene" ? null : !collapsed.has(node.id),
     isMissing: node.kind === "scene" && !summary,
+    page: pageIn(props, node.id),
   };
 }

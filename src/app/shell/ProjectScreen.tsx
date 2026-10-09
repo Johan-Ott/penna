@@ -16,7 +16,7 @@ import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookVie
 import { ReviewPill, Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
-import { folioOf, scenePagesOf, usePageMap } from "../usePageMap.js";
+import { folioOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
 import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { t } from "../../i18n/i18n.js";
@@ -76,11 +76,16 @@ const pageParts = (app: AppState, project: Project, pageMap: PageMap | null) => 
   opensChapter: app.scene ? chapterOf(project.tree, app.scene.id)?.isFirstScene === true : false,
 });
 
-function MainCard({ app, project }: ScreenProps) {
+// The printed book's pages, counted while Innehåll, the sheet or the table of contents shows them.
+function useScreenPages({ app, project }: ScreenProps) {
+  const { view, settings } = app.writingMode;
+  const isCounting =
+    view === "innehall" || settings.showPages || settings.paper || settings.tableOfContents;
+  return usePageMap(project, app.startup.preferences.authorName, isCounting);
+}
+
+function MainCard({ app, project, pageMap }: ScreenProps & { pageMap: PageMap | null }) {
   const { writingMode } = app;
-  const { showPages, paper } = writingMode.settings;
-  const isCounting = writingMode.view === "innehall" || showPages || paper;
-  const pageMap = usePageMap(project, app.startup.preferences.authorName, isCounting);
   const views = { app, project, onBack: () => writingMode.setView("skriv") };
   return (
     <div className={writingMode.view === "publicera" ? "main-card hidden" : "main-card"}>
@@ -124,6 +129,10 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   useShortcut("enter", app.sceneSplit.split, { shift: true });
   useShortcut("r", () => app.writingMode.read(null));
   const isPublishing = writingMode.view === "publicera";
+  const pageMap = useScreenPages({ app, project });
+  const pageOf = writingMode.settings.tableOfContents
+    ? pageFinder(pageMap, project.tree)
+    : undefined;
   const classes = [
     "app",
     writingMode.isFocusMode && "focus-mode",
@@ -133,9 +142,9 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   return (
     <div className={classes.filter(Boolean).join(" ")} style={themeStyle(project.fields)}>
       <ScreenTopbar app={app} project={project} onMenu={menu.open} />
-      {!isPublishing && <Sidebar {...sidebarProps(app, project)} />}
+      {!isPublishing && <Sidebar {...sidebarProps(app, project)} pageOf={pageOf} />}
       <div className="sidebar-backdrop" onClick={() => writingMode.setSidebarOpen(false)} />
-      <MainCard app={app} project={project} />
+      <MainCard app={app} project={project} pageMap={pageMap} />
       {isPublishing && (
         <PublishScreen app={app} project={project} onBack={() => writingMode.setView("skriv")} />
       )}

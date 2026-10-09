@@ -17,6 +17,8 @@ export interface TreeRowProps {
   /** A scene's step, as a dot before its labels; null for anything else. */
   status: (StatusStep & { id: SceneStatus }) | null;
   isActive: boolean;
+  /** In a table of contents, the printed page it starts on; undefined when the sidebar is not one. */
+  page?: number | null | undefined;
   isExpanded: boolean | null;
   isRenaming: boolean;
   isMissing: boolean;
@@ -71,6 +73,7 @@ const rowClass = (props: TreeRowProps) =>
     props.isActive ? "active" : "",
     props.status?.id === "idé" ? "planned" : "",
     props.isMissing ? "missing" : "",
+    props.page !== undefined ? "toc" : "",
     props.dropHint ? `drop-${props.dropHint}` : "",
   ]
     .filter(Boolean)
@@ -124,6 +127,26 @@ function LabelDots({ dots }: { dots: Label[] }) {
   );
 }
 
+// Dots to the page number, as a printed table of contents lines them up.
+const PageLeader = ({ page }: { page: number | null }) => (
+  <>
+    <span className="tree-leader" aria-hidden="true" />
+    <span className="tree-page">{page ?? ""}</span>
+  </>
+);
+
+// The words, or in a table of contents the page; then the menu for a tap.
+const RowEnd = (props: TreeRowProps) => (
+  <>
+    {props.page === undefined ? (
+      <span className="tree-meta">{props.meta}</span>
+    ) : (
+      <PageLeader page={props.page} />
+    )}
+    <MoreButton label={props.label} onOpen={props.onContextMenu} />
+  </>
+);
+
 export function TreeRow(props: TreeRowProps) {
   return (
     <div
@@ -149,8 +172,7 @@ export function TreeRow(props: TreeRowProps) {
         <span className="tree-label">{props.label}</span>
       )}
       <LabelDots dots={props.dots} />
-      <span className="tree-meta">{props.meta}</span>
-      <MoreButton label={props.label} onOpen={props.onContextMenu} />
+      <RowEnd {...props} />
     </div>
   );
 }

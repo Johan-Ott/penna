@@ -47,13 +47,19 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
   );
 }
 
-type EditorSwitch = "paper" | "bookType" | "typewriter" | "spellcheck" | "typography" | "review";
+type EditorSwitch =
+  "paper" | "bookType" | "tableOfContents" | "typewriter" | "spellcheck" | "typography" | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
   [
     "bookType",
     t("Boktypografi"),
     t("Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener."),
+  ],
+  [
+    "tableOfContents",
+    t("Sidomenyn som innehållsförteckning"),
+    t("Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok."),
   ],
   [
     "typewriter",

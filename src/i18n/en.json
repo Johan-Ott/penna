@@ -1007,5 +1007,7 @@
   "Kapitel {span} · {count} ord": "Chapters {span} · {count} words",
   "Status: {step}": "Status: {step}",
   "Dagens mål nått · {count} ord": "Today's goal reached · {count} words",
-  "Insikter och mål": "Insights and goals"
+  "Insikter och mål": "Insights and goals",
+  "Sidomenyn som innehållsförteckning": "The sidebar as a table of contents",
+  "Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok.": "Dotted leaders to the page number at each chapter, as in a printed book."
 }
