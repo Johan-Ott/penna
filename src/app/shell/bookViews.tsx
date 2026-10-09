@@ -76,6 +76,7 @@ export function ReadScreen({ app, project, onBack }: ViewProps) {
   return (
     <ReadView
       project={project}
+      author={app.startup.preferences.authorName}
       startScene={startScene(app, project)}
       saving={{
         dir: project.dir,

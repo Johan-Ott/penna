@@ -1020,5 +1020,7 @@
   "Visa som": "Show as",
   "Kort": "Cards",
   "Kolofon": "Colophon",
-  "{title} har skrivits sedan den {date}.": "{title} has been written since {date}."
+  "{title} har skrivits sedan den {date}.": "{title} has been written since {date}.",
+  "Titelsidan": "The title page",
+  "Satt med {font}": "Set in {font}"
 }

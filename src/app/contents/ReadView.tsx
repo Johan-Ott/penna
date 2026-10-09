@@ -9,10 +9,13 @@ import { ReadSelection, type ReadSaving } from "./ReadSelection.js";
 import { ShareSpreadButton } from "./ShareSpreadButton.js";
 import { SceneText, useSceneDocs, type Docs } from "./sceneDocs.js";
 import { chapterLabel } from "../bookLook.js";
+import { FRONT_PAGES, ReadFront } from "./ReadFront.js";
 import { t } from "../../i18n/i18n.js";
 
 interface ReadViewProps {
   project: Project;
+  /** The general author name, for the title page when the book has none of its own. */
+  author: string;
   /** The book opens on this scene's page. */
   startScene: string | null;
   saving: ReadSaving;
@@ -57,8 +60,12 @@ function chapterAt(scenes: ReadingScene[], layout: PageLayout, page: number) {
 
 function placeText(scenes: ReadingScene[], layout: PageLayout, pages: number[]) {
   const chapter = chapterAt(scenes, layout, pages[0] ?? 0);
-  const numbers = pages.filter((page) => page < layout.count).map((page) => page + 1);
-  const page = t("sida {pages} av {count}", { pages: numbers.join("–"), count: layout.count });
+  const numbers = pages
+    .filter((page) => page >= FRONT_PAGES && page < layout.count)
+    .map((page) => page - FRONT_PAGES + 1);
+  const count = layout.count - FRONT_PAGES;
+  if (numbers.length === 0) return t("Titelsidan");
+  const page = t("sida {pages} av {count}", { pages: numbers.join("–"), count });
   return chapter ? `${chapter.number}. ${chapter.title} · ${page}` : page;
 }
 
@@ -71,12 +78,13 @@ function PageChrome(props: {
 }) {
   const heads = (page: number) =>
     page % 2 === 0 ? (chapterAt(props.scenes, props.layout, page)?.title ?? "") : props.title;
+  const isText = (page: number) => page >= FRONT_PAGES && page < props.layout.count;
   return props.pages.map((page) => (
     <div key={page} className="read-page" aria-hidden="true">
-      {page < props.layout.count && !props.layout.chapterStarts.has(page) && (
+      {isText(page) && !props.layout.chapterStarts.has(page) && (
         <span className="read-page-head">{heads(page)}</span>
       )}
-      {page < props.layout.count && <span className="read-page-number">{page + 1}</span>}
+      {isText(page) && <span className="read-page-number">{page - FRONT_PAGES + 1}</span>}
     </div>
   ));
 }
@@ -126,7 +134,7 @@ function ReadFoot(props: {
         value={props.first}
         onChange={(event) => props.goTo(Number(event.target.value))}
       />
-      <span>{props.count}</span>
+      <span>{props.count - FRONT_PAGES}</span>
     </footer>
   );
 }
@@ -153,7 +161,8 @@ function BookFlow(props: {
   scenes: ReadingScene[];
   docs: Docs | null;
   first: number;
-  fields: Project["fields"];
+  project: Project;
+  author: string;
 }) {
   return (
     <div
@@ -161,13 +170,14 @@ function BookFlow(props: {
       className="manuscript read-flow"
       style={{ "--first": props.first } as object}
     >
+      <ReadFront project={props.project} author={props.author} />
       {props.scenes.length === 0 && <p>{t("Inga scener än.")}</p>}
       {props.scenes.map((scene) => (
         <ReadScene
           key={scene.sceneId}
           scene={scene}
           doc={props.docs?.[scene.sceneId]}
-          fields={props.fields}
+          fields={props.project.fields}
         />
       ))}
     </div>
@@ -194,7 +204,7 @@ export function ReadView(props: ReadViewProps) {
         <TurnButton step={-1} onTurn={turn} />
         <div className={perSpread === 1 ? "read-spread single" : "read-spread"}>
           <PageChrome pages={pages} layout={layout} scenes={scenes} title={project.name} />
-          <BookFlow {...{ flow, scenes, docs, first }} fields={project.fields} />
+          <BookFlow {...{ flow, scenes, docs, first, project }} author={props.author} />
         </div>
         <TurnButton step={1} onTurn={turn} />
       </div>

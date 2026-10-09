@@ -1617,6 +1617,54 @@
   break-before: column;
 }
 
+/* The title page and its back each fill a page of their own. */
+.read-front {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  break-after: column;
+  break-inside: avoid;
+}
+
+.read-title-page {
+  align-items: center;
+  justify-content: center;
+  gap: 1.2em;
+  text-align: center;
+}
+
+.read-title-author {
+  color: var(--text-label);
+  font-size: 0.8em;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.read-title {
+  margin: 0;
+  color: var(--text);
+  font: 600 2em/1.2 var(--font-heading, var(--font-prose));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.read-title-kind {
+  font-style: italic;
+}
+
+.read-imprint {
+  justify-content: flex-end;
+  padding-bottom: 2em;
+  font-size: 0.7em;
+  line-height: 1.6;
+}
+
+.read-flow .read-imprint p {
+  margin: 0;
+  text-indent: 0;
+}
+
 .read-scene:not(.opens-chapter) + .read-scene:not(.opens-chapter)::before,
 .read-scene.opens-chapter + .read-scene:not(.opens-chapter)::before {
   content: "* * *";
