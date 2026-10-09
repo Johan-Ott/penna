@@ -8,6 +8,7 @@ import { useBookPages, type PageLayout } from "./bookPages.js";
 import { ReadSelection, type ReadSaving } from "./ReadSelection.js";
 import { ShareSpreadButton } from "./ShareSpreadButton.js";
 import { SceneText, useSceneDocs, type Docs } from "./sceneDocs.js";
+import { chapterLabel } from "../bookLook.js";
 import { t } from "../../i18n/i18n.js";
 
 interface ReadViewProps {
@@ -23,7 +24,12 @@ interface ReadViewProps {
   beforeRead: () => Promise<unknown>;
 }
 
-function ReadScene({ scene, doc }: { scene: ReadingScene; doc: Node | undefined }) {
+function ReadScene(props: {
+  scene: ReadingScene;
+  doc: Node | undefined;
+  fields: Project["fields"];
+}) {
+  const { scene, doc } = props;
   const opens = scene.chapter?.isFirstScene === true;
   return (
     <section
@@ -33,7 +39,7 @@ function ReadScene({ scene, doc }: { scene: ReadingScene; doc: Node | undefined 
       {opens && scene.chapter && (
         <header className="read-chapter">
           <span className="read-chapter-number">
-            {t("Kapitel {number}", { number: scene.chapter.number })}
+            {chapterLabel(props.fields, scene.chapter.number, scene.chapter.title)}
           </span>
           <h2 className="read-chapter-title">{scene.chapter.title}</h2>
         </header>
@@ -147,6 +153,7 @@ function BookFlow(props: {
   scenes: ReadingScene[];
   docs: Docs | null;
   first: number;
+  fields: Project["fields"];
 }) {
   return (
     <div
@@ -156,7 +163,12 @@ function BookFlow(props: {
     >
       {props.scenes.length === 0 && <p>{t("Inga scener än.")}</p>}
       {props.scenes.map((scene) => (
-        <ReadScene key={scene.sceneId} scene={scene} doc={props.docs?.[scene.sceneId]} />
+        <ReadScene
+          key={scene.sceneId}
+          scene={scene}
+          doc={props.docs?.[scene.sceneId]}
+          fields={props.fields}
+        />
       ))}
     </div>
   );
@@ -182,7 +194,7 @@ export function ReadView(props: ReadViewProps) {
         <TurnButton step={-1} onTurn={turn} />
         <div className={perSpread === 1 ? "read-spread single" : "read-spread"}>
           <PageChrome pages={pages} layout={layout} scenes={scenes} title={project.name} />
-          <BookFlow flow={flow} scenes={scenes} docs={docs} first={first} />
+          <BookFlow {...{ flow, scenes, docs, first }} fields={project.fields} />
         </div>
         <TurnButton step={1} onTurn={turn} />
       </div>
