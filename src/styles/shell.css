@@ -2460,3 +2460,43 @@
   gap: 14px;
   min-width: 0;
 }
+
+/* Dagens mål: the day's words on library green, like the design's dialog. */
+.dialog.day-dialog {
+  width: 340px;
+  gap: 14px;
+  background: linear-gradient(180deg, #2f4f3a 0%, #1c2620 70%);
+  color: #f2f0eb;
+}
+
+.day-dialog .dialog-title {
+  color: #f2f0eb;
+}
+
+.day-dialog-quiet {
+  color: #b9c4bc;
+}
+
+.day-dialog-words {
+  font: 600 26px/1.2 var(--font-prose);
+}
+
+.day-dialog-ink {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 500;
+}
+
+.day-dialog .button.day-dialog-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: #f2f0eb;
+}
+
+.day-dialog .button.day-dialog-solid {
+  border: 0;
+  background: #f2f0eb;
+  color: #1c2620;
+}

@@ -893,7 +893,6 @@
   "Byt bild": "Change picture",
   "Författarnamn för {book}": "Author name for {book}",
   "Pseudonym, valfritt": "Pen name, optional",
-  "Några meningar om dig. Används på delningskort.": "A few sentences about you. Used on share cards.",
   "Länk till din sida eller ditt nyhetsbrev": "Link to your site or newsletter",
   "Författarprofil": "Author profile",
   "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.": "The profile is kept in your Penna folder and the name in the settings. No account, no sign-in.",
@@ -975,5 +974,18 @@
   "Första utkastet": "First draft",
   "{words} ord · {pages} sidor · {days} skrivdagar": "{words} words · {pages} pages · {days} writing days",
   "Milstolpe": "Milestone",
-  "Första utkastet, eller det du vill fira": "The first draft, or what you want to celebrate"
+  "Första utkastet, eller det du vill fira": "The first draft, or what you want to celebrate",
+  "Du är i farten. {count} dagar i rad nu.": "You are on a roll. {count} days in a row now.",
+  "Första dagen i rad. Bra början.": "The first day in a row. A good start.",
+  "Skriv några rader, så börjar bläckhornet fyllas.": "Write a few lines, and the inkwell starts to fill.",
+  "+ {count} bläck idag": "+ {count} ink today",
+  "Dagens mål": "Today's goal",
+  "{count} ord skrivna": "{count} words written",
+  "Ändra mål": "Change goal",
+  "Några meningar om dig. De står under kapitel du skickar som nyhetsbrev.": "A few sentences about you. They go under chapters you send as a newsletter.",
+  "Omslaget": "The cover",
+  "är här.": "is here.",
+  "Ute {day}.": "Out {day}.",
+  "Omslaget är här": "The cover is here",
+  "Visa omslaget": "Show the cover"
 }

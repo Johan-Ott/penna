@@ -100,6 +100,7 @@ export function PublishScreen({ app, project, onBack }: ViewProps) {
         stats={app.stats}
         journey={app.journey.journey}
         link={app.profile.profile.link}
+        about={app.profile.profile.about}
         onSaveFields={saveFields}
         onBack={() => setStudio(false)}
       />

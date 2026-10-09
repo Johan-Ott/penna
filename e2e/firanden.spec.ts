@@ -68,3 +68,13 @@ test("a chapter is shown alone in the sidebar, and Hela boken brings the book ba
   await page.getByRole("button", { name: "← Hela boken" }).click();
   await expect(tree).toContainText("1. Brevet");
 });
+
+test("today's card opens Dagens mål, and Ändra mål goes on to the goals", async ({ page }) => {
+  await page.locator(".day-progress").click();
+  await page.locator(".insight-day").click();
+
+  const day = page.getByRole("dialog", { name: "Dagens mål" });
+  await expect(day).toContainText("0 ord skrivna");
+  await day.getByRole("button", { name: "Ändra mål" }).click();
+  await expect(page.getByRole("dialog", { name: "Mål för projektet" })).toBeVisible();
+});

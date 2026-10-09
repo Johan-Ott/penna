@@ -35,14 +35,30 @@ function htmlOf(blocks: Node[], style: (tag: string) => string) {
 }
 
 const escape = (text: string) =>
-  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** Plain HTML for Substack and Patreon, which take their own type. */
 export const simpleHtml = (title: string, blocks: Node[]) =>
   `<h2>${escape(title)}</h2>${htmlOf(blocks, () => "")}`;
 
+/** About the author, from the profile, under the chapter; nothing when the profile is empty. */
+export interface Signature {
+  about: string;
+  link: string;
+}
+
+function signatureHtml({ about, link }: Signature) {
+  const style = "font-family:system-ui,sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;";
+  const linked = link
+    ? ` <a href="${escape(link)}" style="color:#3f6b4e;">${escape(link)}</a>`
+    : "";
+  return about || link
+    ? `<p style="${style}border-top:1px solid #e7e5e1;padding-top:14px;margin-top:24px;">${escape(about)}${linked}</p>`
+    : "";
+}
+
 /** HTML with its type set inline, as a mail program keeps it. */
-export function mailHtml(title: string, intro: string, blocks: Node[]) {
+export function mailHtml(title: string, intro: string, blocks: Node[], signature: Signature) {
   const prose = "font-family:Georgia,serif;font-size:16px;line-height:1.75;color:#1a1a1a;margin:0;";
   const body = htmlOf(blocks, (tag) =>
     tag === "P" ? `${prose}text-indent:1.5em;` : "margin:12px 0;",
@@ -52,6 +68,7 @@ export function mailHtml(title: string, intro: string, blocks: Node[]) {
     `<p style="font-family:system-ui,sans-serif;font-size:14px;color:#3d3d3d;">${escape(intro)}</p>`,
     `<h2 style="font-family:Georgia,serif;font-size:24px;">${escape(title)}</h2>`,
     body,
+    signatureHtml(signature),
     `</div>`,
   ].join("");
 }

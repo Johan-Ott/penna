@@ -127,3 +127,25 @@ export function drawMilestone(card: Card, milestone: Milestone) {
   text(card, milestone.date, { x: 250, y: middle + 56 }, { ...centred, size: 15 });
   text(card, milestone.facts, { x: 250, y: middle + 78 }, { ...centred, size: 13, alpha: 0.65 });
 }
+
+// Without a cover picture the book is drawn as a dark cover with its title.
+function bookFace(card: Card, cover: ImageBitmap | null, book: string) {
+  const place = { x: 70, y: (card.height - 290) / 2, width: 190, height: 290 };
+  if (cover) return void card.context.drawImage(cover, place.x, place.y, place.width, place.height);
+  bar(card, place, "#1c1c1c");
+  lines(
+    card,
+    book,
+    { x: place.x + 18, y: place.y + 70, width: 154 },
+    { size: 26, weight: 600, font: PROSE, colour: "#f2f2f2" },
+  );
+}
+
+/** Omslaget är här: the cover beside a few words, and when the book is out. */
+export function drawCover(card: Card, cover: ImageBitmap | null, book: string, out: string) {
+  bookFace(card, cover, book);
+  const middle = card.height / 2;
+  text(card, t("Omslaget"), { x: 296, y: middle - 40 }, KICKER);
+  text(card, t("är här."), { x: 296, y: middle }, { size: 30, weight: 600, font: PROSE });
+  if (out) text(card, out, { x: 296, y: middle + 28 }, { size: 13, alpha: 0.75 });
+}

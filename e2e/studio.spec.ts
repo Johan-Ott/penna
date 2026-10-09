@@ -38,3 +38,18 @@ test("a milestone is named and kept with the book", async ({ page }) => {
   await page.getByRole("button", { name: /Milstolpe/ }).click();
   await expect(page.getByLabel("Milstolpe")).toHaveValue("Halvvägs");
 });
+
+test("the newsletter is signed with Om författaren from the profile", async ({ page }) => {
+  await page.getByRole("button", { name: "← Publicera" }).click();
+  await page.getByRole("button", { name: /Tillbaka till texten/ }).click();
+  await page.getByRole("button", { name: "Din profil" }).click();
+  await page.getByRole("textbox", { name: "Om författaren" }).fill("Skriver om is och fyrar.");
+  await page.getByRole("button", { name: "Klar" }).click();
+  await runCommand(page, "Publicera");
+  await page.getByRole("button", { name: /Studio/ }).click();
+  await page.getByRole("button", { name: /Kapitel till nyhetsbrev/ }).click();
+
+  await expect(page.locator(".studio-mail")).toContainText("Skriver om is och fyrar.");
+  await page.getByRole("button", { name: /Omslaget är här/ }).click();
+  await expect(page.locator("canvas.studio-card")).toBeVisible();
+});

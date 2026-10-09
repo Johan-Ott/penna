@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { findCover } from "../../project/cover.js";
+import type { Signature } from "./newsletter.js";
 import { recordFailure } from "../errorLog.js";
+import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import {
   bookField,
@@ -15,7 +18,9 @@ import { t } from "../../i18n/i18n.js";
 
 type CardId = ImageCardId | "nyhetsbrev";
 
-interface StudioProps extends StudioData {
+interface StudioProps extends Omit<StudioData, "cover"> {
+  /** Om författaren, from the profile, signs the newsletter. */
+  about: string;
   onSaveFields: (fields: Record<string, unknown>) => void;
   onBack: () => void;
 }
@@ -33,6 +38,7 @@ function groups(): [string, [CardId, string, string][]][] {
     [
       t("Lansering"),
       [
+        ["omslag", t("Omslaget är här"), t("Visa omslaget")],
         ["nedrakning", t("Nedräkning"), t("Dagar kvar till release")],
         ["handeln", t("Nu i handeln"), t("Med ett citat ur boken")],
       ],
@@ -109,13 +115,27 @@ function useCardCanvas(card: ImageCardId, choices: ImageChoices, data: StudioDat
   return canvas;
 }
 
+// The cover is read once, as a picture the canvas can draw.
+function useCoverBitmap(project: Project) {
+  const [cover, setCover] = useState<ImageBitmap | null>(null);
+  const { dir } = project;
+  useEffect(() => {
+    void findCover(platform.fileSystem, dir)
+      .then((found) => (found ? createImageBitmap(new Blob([found.bytes.slice()])) : null))
+      .then(setCover)
+      .catch(() => setCover(null));
+  }, [dir]);
+  return cover;
+}
+
 function ImageCard(props: StudioProps & { card: ImageCardId }) {
   const [choices, setChoices] = useState<ImageChoices>({
     look: "papper",
     format: "kvadrat",
     isMarked: true,
   });
-  const canvas = useCardCanvas(props.card, choices, props);
+  const cover = useCoverBitmap(props.project);
+  const canvas = useCardCanvas(props.card, choices, { ...props, cover });
   const run = (action: (element: HTMLCanvasElement) => Promise<void>) =>
     canvas.current && void action(canvas.current).catch(recordFailure("Bilden kunde inte göras"));
   const name = `${props.project.name} – ${props.card}`;
@@ -138,8 +158,8 @@ function ImageCard(props: StudioProps & { card: ImageCardId }) {
 }
 
 // The mail as the reader gets it; the HTML is the writer's own text, so it is shown as HTML.
-function Newsletter({ project }: { project: Project }) {
-  const letter = useNewsletter(project);
+function Newsletter({ project, signature }: { project: Project; signature: Signature }) {
+  const letter = useNewsletter(project, signature);
   return (
     <>
       <div className="studio-stage">
@@ -165,7 +185,10 @@ export function StudioView(props: StudioProps) {
       <StudioNav card={card} onCard={setCard} onBack={props.onBack} />
       <main className="studio-main">
         {card === "nyhetsbrev" ? (
-          <Newsletter project={props.project} />
+          <Newsletter
+            project={props.project}
+            signature={{ about: props.about, link: props.link }}
+          />
         ) : (
           <ImageCard {...props} card={card} />
         )}

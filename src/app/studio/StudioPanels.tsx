@@ -4,7 +4,7 @@ import { manuscriptNodes } from "../../project/tree.js";
 import { Choice, Switch } from "../controls.js";
 import { recordFailure } from "../errorLog.js";
 import type { Project } from "../useProject.js";
-import { chapterBlocks, copyHtml, mailHtml, simpleHtml } from "./newsletter.js";
+import { chapterBlocks, copyHtml, mailHtml, simpleHtml, type Signature } from "./newsletter.js";
 import type { CardFormat, Look } from "./studioCanvas.js";
 import type { ImageChoices } from "./studioDraw.js";
 import { t } from "../../i18n/i18n.js";
@@ -111,7 +111,7 @@ function useChapter(project: Project, chapterId: string, isExcerpt: boolean) {
 }
 
 /** Kapitel till nyhetsbrev: the chapter as HTML on the clipboard; Penna sends nothing itself. */
-export function useNewsletter(project: Project) {
+export function useNewsletter(project: Project, signature: Signature) {
   const chapters = manuscriptNodes(project.tree, "chapter");
   const [chapterId, setChapterId] = useState(chapters[0]?.id ?? "");
   const [isExcerpt, setExcerpt] = useState(true);
@@ -121,7 +121,7 @@ export function useNewsletter(project: Project) {
     "Hej! Här är {chapter}, precis som det ser ut i mitt utkast just nu. Säg gärna vad du tycker.",
     { chapter: title },
   );
-  const html = mailHtml(title, intro, blocks);
+  const html = mailHtml(title, intro, blocks, signature);
   return { chapters, chapterId, setChapterId, isExcerpt, setExcerpt, blocks, title, html };
 }
 

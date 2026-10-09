@@ -6,13 +6,20 @@ import { daysToRelease, weekFigures, yearFigures } from "../../project/studio.js
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import { penMark, startCard, type Card, type CardFormat, type Look } from "./studioCanvas.js";
-import { drawCountdown, drawMilestone, drawRelease, drawWeek, drawYear } from "./studioCards.js";
+import {
+  drawCountdown,
+  drawCover,
+  drawMilestone,
+  drawRelease,
+  drawWeek,
+  drawYear,
+} from "./studioCards.js";
 import { bookOutline, estimatedPages } from "../../export/book.js";
 import { KIND_LABELS } from "../../project/shelf.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
-export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "nedrakning" | "handeln";
+export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "omslag" | "nedrakning" | "handeln";
 
 export interface StudioData {
   project: Project;
@@ -20,6 +27,8 @@ export interface StudioData {
   journey: Journey;
   /** The link from the writer's profile. */
   link: string;
+  /** The book's cover picture, when it has one. */
+  cover: ImageBitmap | null;
 }
 
 export const bookField = (project: Project, key: string) => {
@@ -61,6 +70,11 @@ const DRAWERS: Record<ImageCardId, (card: Card, data: StudioData, today: string)
     ),
   skrivar: (card, data, today) => drawYear(card, yearFigures(data.journey, today)),
   milstolpe: milestone,
+  omslag: (card, data) => {
+    const release = bookField(data.project, "releaseDate");
+    const out = release ? t("Ute {day}.", { day: shortDay(release) }) : "";
+    drawCover(card, data.cover, data.project.name, out);
+  },
   nedrakning: countdown,
   handeln: (card, data) =>
     drawRelease(card, data.project.name, bookField(data.project, "quote"), data.link),

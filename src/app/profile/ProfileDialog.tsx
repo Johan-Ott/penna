@@ -86,7 +86,7 @@ function AboutField(props: { value: string; onChange: (value: string) => void })
       <span className="field-label">{t("Om författaren")}</span>
       <textarea
         value={props.value}
-        placeholder={t("Några meningar om dig. Används på delningskort.")}
+        placeholder={t("Några meningar om dig. De står under kapitel du skickar som nyhetsbrev.")}
         onChange={(event) => props.onChange(event.target.value)}
       />
     </label>

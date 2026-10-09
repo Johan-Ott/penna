@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { dayKey, type Stats } from "../../project/stats.js";
+import { dailyGoalOf, dayKey, type Stats } from "../../project/stats.js";
 import { chapterWords } from "../../project/treeLabels.js";
 import type { AppState } from "../App.js";
 import type { Project } from "../useProject.js";
@@ -14,6 +14,7 @@ import { journeySummary } from "../../project/inkwell.js";
 import type { Journey } from "../../project/journey.js";
 import { JourneyCard } from "../journey/JourneyCard.js";
 import { JourneyDialog } from "../journey/JourneyDialog.js";
+import { DayDialog } from "../journey/DayDialog.js";
 import { t, numberLocale } from "../../i18n/i18n.js";
 
 const format = (words: number) => words.toLocaleString(numberLocale());
@@ -86,7 +87,19 @@ type PanelProps = {
   onClose: () => void;
 };
 
-function InsightDialogs(props: PanelProps & { open: "goals" | "journey" | null }) {
+type Open = "goals" | "journey" | "day" | null;
+
+function InsightDialogs(props: PanelProps & { open: Open; onOpen: (open: Open) => void }) {
+  if (props.open === "day")
+    return (
+      <DayDialog
+        words={props.stats[dayKey(Date.now())] ?? 0}
+        goal={dailyGoalOf(props.project.fields)}
+        journey={props.journey}
+        onGoals={() => props.onOpen("goals")}
+        onClose={() => props.onOpen(null)}
+      />
+    );
   if (props.open === "goals")
     return (
       <GoalsDialog
@@ -104,7 +117,7 @@ function InsightDialogs(props: PanelProps & { open: "goals" | "journey" | null }
 
 /** Insikter: beside the text, how the day, the week and the book are going. */
 export function InsightsPanel(props: PanelProps) {
-  const [open, setOpen] = useState<"goals" | "journey" | null>(null);
+  const [open, setOpen] = useState<Open>(null);
   useEscape(() => !open && props.onClose());
   return (
     <aside className="insights-panel" aria-label={t("Insikter")}>
@@ -114,13 +127,13 @@ export function InsightsPanel(props: PanelProps) {
         project={props.project}
         stats={props.stats}
         journey={props.journey}
-        onGoals={() => setOpen("goals")}
+        onGoals={() => setOpen("day")}
         onJourney={() => setOpen("journey")}
       />
       <button className="link-button quiet" onClick={() => setOpen("goals")}>
         {t("Ändra mål och deadline")}
       </button>
-      <InsightDialogs {...props} open={open} onClose={() => setOpen(null)} />
+      <InsightDialogs {...props} open={open} onOpen={setOpen} onClose={() => setOpen(null)} />
     </aside>
   );
 }
