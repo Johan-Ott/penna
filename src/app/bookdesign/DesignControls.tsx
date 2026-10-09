@@ -15,9 +15,8 @@ import { HeadingControls, type ControlProps } from "./HeadingControls.js";
 import { OpeningList } from "./OpeningList.js";
 import { PictureRow } from "./PictureRow.js";
 import { TrimRow } from "./TrimRow.js";
-import { MarginRow, SizeRows } from "./SpacingRows.js";
+import { FolioRows, MarginRow, SizeRows, SwitchRow } from "./LayoutRows.js";
 import { t } from "../../i18n/i18n.js";
-import { Switch } from "../controls.js";
 
 const THEME_NAMES: Record<BookTheme, string> = {
   klassisk: t("Klassisk"),
@@ -86,6 +85,7 @@ function PageRows({ design, save }: ControlProps) {
         choices={HEADER_CHOICES}
         onChoose={(headerRight) => save({ headerRight: headerRight as HeaderContent })}
       />
+      <FolioRows design={design} save={save} />
     </>
   );
 }
@@ -141,15 +141,6 @@ function SceneBreaks({ design, save, dir }: ControlProps) {
           onChange={(breakPicture) => save({ breakPicture })}
         />
       )}
-    </div>
-  );
-}
-
-function SwitchRow(props: { label: string; isOn: boolean; onFlip: () => void }) {
-  return (
-    <div className="design-row">
-      <span>{props.label}</span>
-      <Switch {...props} />
     </div>
   );
 }

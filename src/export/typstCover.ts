@@ -1,5 +1,5 @@
 import { trimSize } from "./bookDesign.js";
-import { BLEED_MM, millimetres } from "./typstTemplate.js";
+import { BLEED_MM, millimetres } from "./typstPage.js";
 import { escapeTypst, typstString } from "./typstText.js";
 
 /** The paper the book is printed on decides how thick its spine is. */

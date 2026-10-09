@@ -95,13 +95,15 @@ describe("typstSource", () => {
     expect(svg).toContain("<svg");
   }, 30_000);
 
-  it("compiles with chapters on right-hand pages and the chapter's title in the header", async () => {
+  it("compiles with right-hand chapters, the chapter in the header and numbers at the top", async () => {
     const design = {
       ...DEFAULT_DESIGN,
       bodyFont: "Source Serif 4",
       chapterStart: "hoger" as const,
       headerLeft: "forfattare" as const,
       headerRight: "kapitel" as const,
+      folio: "overst" as const,
+      openingFolio: true,
     };
 
     const source = typstSource({ ...(await input()), design });

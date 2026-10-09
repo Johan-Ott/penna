@@ -1084,5 +1084,10 @@
   "Smala": "Narrow",
   "Normala": "Normal",
   "Breda": "Wide",
-  "Marginaler": "Margins"
+  "Marginaler": "Margins",
+  "Nederst i mitten": "Bottom centre",
+  "Nederst i yttre hörnet": "Bottom outer corner",
+  "Överst i yttre hörnet": "Top outer corner",
+  "Sidnummer": "Page numbers",
+  "Nummer på kapitlets första sida": "Number on a chapter's first page"
 }

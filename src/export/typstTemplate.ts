@@ -1,23 +1,12 @@
-import {
-  LEADING_EM,
-  marginsOf,
-  trimSize,
-  type BookDesign,
-  type BookTheme,
-  type Margins,
-} from "./bookDesign.js";
+import { LEADING_EM, type BookDesign, type BookTheme } from "./bookDesign.js";
 import { escapeTypst, typstString } from "./typstText.js";
+import { BLEED_MM, CHAPTER_STARTS, PAGE_PARTS, pageSetup } from "./typstPage.js";
 
 const HEADINGS: Record<BookTheme, string> = {
   klassisk: `weight: 600, style: "normal"`,
   modern: `weight: 600, style: "normal"`,
   luftig: `weight: 400, style: "italic"`,
 };
-
-/** What printers ask for beyond the trim when a picture reaches the edge of the paper. */
-export const BLEED_MM = 3;
-
-export const millimetres = (value: number) => `${Math.round(value * 10) / 10}mm`;
 
 // Typst measures how many words fit beside the two-line anfang.
 const ANFANG = `#let leadin(words) = text(size: 0.8em, tracking: 0.06em, upper(words))
@@ -114,49 +103,6 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
 #let pagemark(scene, block) = context [#metadata((scene: scene, block: block, page: counter(page).get().first())) <pm>]
 #let kapitel(label, title, toc, layout: plain-layout, extra: no-extra) = opening(label, title, toc, layout, extra)
 #let del(label, title, toc, extra: no-extra) = opening(label, title, toc, part-layout, extra)`;
-
-// A page is left blank when a chapter must open on the right: no header or number goes on it.
-const PAGE_PARTS = `#let pages-of(label) = query(label).map(found => found.location().page())
-#let is-plain-page() = {
-  let here-page = here().page()
-  let opens = pages-of(<opening>)
-  let blank = (here-page + 1) in opens and not (here-page in pages-of(<chapter-end>))
-  not in-story.get() or here-page in opens or blank
-}
-#let running-head(content) = {
-  let shown = if content == "titel" { book-title } else if content == "forfattare" { book-author } else if content == "kapitel" { chapter-title.get() } else { none }
-  if shown != none { align(center, text(size: 0.65em, tracking: 0.25em, upper(shown))) }
-}`;
-
-const CHAPTER_STARTS: Record<BookDesign["chapterStart"], string> = {
-  valfri: "none",
-  hoger: `"odd"`,
-};
-
-const SIDES: (keyof Margins)[] = ["inside", "outside", "top", "bottom"];
-const marginList = (margins: Margins, extra: number) =>
-  `(${SIDES.map((side) => `${side}: ${millimetres(margins[side] + extra)}`).join(", ")})`;
-
-// With bleed the paper grows on every side and the margins with it, so the text stays put.
-function pageSetup(design: BookDesign, bleed: number) {
-  const { width, height } = trimSize(design.trim);
-  const margins = marginsOf(design);
-  const sides = `if calc.odd(here().page()) { ${typstString(design.headerRight)} } else { ${typstString(design.headerLeft)} }`;
-  return `#let margin = ${marginList(margins, 0)}
-#let trim-width = ${millimetres(width)}
-#set page(
-  width: ${millimetres(width + 2 * bleed)},
-  height: ${millimetres(height + 2 * bleed)},
-  margin: ${marginList(margins, bleed)},
-  header: context {
-    [#metadata(counter(page).get().first()) <sheet>]
-    if not is-plain-page() { running-head(${sides}) }
-  },
-  footer: context {
-    if not is-plain-page() { align(center, text(size: 0.75em, counter(page).display())) }
-  },
-)`;
-}
 
 /** What setting the book needs beyond its design. */
 export interface TemplateOptions {

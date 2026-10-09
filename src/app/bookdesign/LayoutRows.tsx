@@ -1,4 +1,10 @@
-import { BODY_SIZES, type Leading, type MarginSize } from "../../export/bookDesign.js";
+import {
+  BODY_SIZES,
+  type FolioPlace,
+  type Leading,
+  type MarginSize,
+} from "../../export/bookDesign.js";
+import { Switch } from "../controls.js";
 import { ChoiceRow } from "./ChoiceRow.js";
 import type { ControlProps } from "./HeadingControls.js";
 import { t } from "../../i18n/i18n.js";
@@ -48,6 +54,39 @@ export function SizeRows({ design, save }: RowProps) {
         value={design.leading}
         choices={leadings}
         onChoose={(leading) => save({ leading: leading as Leading })}
+      />
+    </>
+  );
+}
+
+export function SwitchRow(props: { label: string; isOn: boolean; onFlip: () => void }) {
+  return (
+    <div className="design-row">
+      <span>{props.label}</span>
+      <Switch {...props} />
+    </div>
+  );
+}
+
+/** Where the page number stands, and whether a chapter's first page has one. */
+export function FolioRows({ design, save }: RowProps) {
+  const places: [FolioPlace, string][] = [
+    ["mitten", t("Nederst i mitten")],
+    ["ytterhorn", t("Nederst i yttre hörnet")],
+    ["overst", t("Överst i yttre hörnet")],
+  ];
+  return (
+    <>
+      <ChoiceRow
+        label={t("Sidnummer")}
+        value={design.folio}
+        choices={places}
+        onChoose={(folio) => save({ folio: folio as FolioPlace })}
+      />
+      <SwitchRow
+        label={t("Nummer på kapitlets första sida")}
+        isOn={design.openingFolio}
+        onFlip={() => save({ openingFolio: !design.openingFolio })}
       />
     </>
   );

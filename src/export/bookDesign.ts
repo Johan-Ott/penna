@@ -13,6 +13,8 @@ export type TitleCase = "vanlig" | "kapitaler" | "versaler";
 /** Space between the lines, and between the text and the paper's edges. */
 export type Leading = "tatt" | "normalt" | "luftigt";
 export type MarginSize = "smala" | "normala" | "breda";
+/** Where the page number stands; the outer corner is right on a right-hand page. */
+export type FolioPlace = "mitten" | "ytterhorn" | "overst";
 
 export interface BookDesign {
   theme: BookTheme;
@@ -29,6 +31,9 @@ export interface BookDesign {
   chapterStart: ChapterStart;
   headerLeft: HeaderContent;
   headerRight: HeaderContent;
+  folio: FolioPlace;
+  /** A number at the foot of a chapter's first page too, which has no running head. */
+  openingFolio: boolean;
   chapterLabel: ChapterLabel;
   headingFont: string;
   titleCase: TitleCase;
@@ -70,6 +75,7 @@ export const BODY_FONTS = [
 export const HEADING_FONTS = [...BODY_FONTS, "Geist"];
 export const BODY_SIZES = [10, 10.5, 11, 11.5, 12, 13, 14, 16];
 export const LEADINGS: Leading[] = ["tatt", "normalt", "luftigt"];
+export const FOLIO_PLACES: FolioPlace[] = ["mitten", "ytterhorn", "overst"];
 export const MARGIN_SIZES: MarginSize[] = ["smala", "normala", "breda"];
 /** Lines apart in em, and how much of the theme's margins are kept. */
 export const LEADING_EM: Record<Leading, number> = { tatt: 0.5, normalt: 0.62, luftigt: 0.78 };
@@ -99,6 +105,8 @@ export const DEFAULT_DESIGN: BookDesign = {
   chapterStart: "valfri",
   headerLeft: "titel",
   headerRight: "titel",
+  folio: "mitten",
+  openingFolio: false,
   chapterLabel: "ord",
   headingFont: THEME_FONTS.klassisk,
   titleCase: "vanlig",
@@ -157,6 +165,8 @@ export function designOf(fields: Record<string, unknown>): BookDesign {
     chapterStart: oneOf(stored["chapterStart"], CHAPTER_STARTS, DEFAULT_DESIGN.chapterStart),
     headerLeft: oneOf(stored["headerLeft"], HEADER_CONTENTS, DEFAULT_DESIGN.headerLeft),
     headerRight: oneOf(stored["headerRight"], HEADER_CONTENTS, DEFAULT_DESIGN.headerRight),
+    folio: oneOf(stored["folio"], FOLIO_PLACES, DEFAULT_DESIGN.folio),
+    openingFolio: isOn(stored["openingFolio"], DEFAULT_DESIGN.openingFolio),
     ...heading,
   };
 }
