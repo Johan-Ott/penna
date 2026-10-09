@@ -3113,8 +3113,66 @@ button.book-cover:hover {
   font: 13px var(--font-prose);
 }
 
-.chapter-number {
+.chapter-number,
+.part-page {
   display: none;
+}
+
+/* The part's own page, set apart as a spread of its own before its first chapter. */
+.page.book-type .part-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 420px;
+  margin: 24px 0 40px;
+  padding: 48px 24px;
+  border-block: 1px solid var(--border-card);
+  font-family: var(--font-prose);
+  text-align: center;
+}
+
+.part-page-edit {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  font: 12px var(--font-ui);
+}
+
+.part-page-label {
+  color: var(--text-label);
+  font-size: 13px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+
+.part-page-title {
+  color: var(--text);
+  font-size: 52px;
+  font-style: italic;
+  line-height: 1.1;
+}
+
+.part-page-rule {
+  width: 40px;
+  height: 1px;
+  margin: 18px 0;
+  background: var(--text-dim);
+}
+
+.part-page-epigraph {
+  max-width: 340px;
+  color: var(--text-tree);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.part-page-by {
+  color: var(--text-label);
+  font-size: 13px;
 }
 
 /* Boktypografi: justified with hyphens, and the rest as the book's design in Publicera sets it. */
