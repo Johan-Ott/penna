@@ -16,6 +16,7 @@ export const STYLE_LABELS: Record<StyleChoice, string> = {
   centrerat: t("Centrerat"),
   hoger: t("Högerställt"),
   "utan-indrag": t("Utan indrag"),
+  kapitaler: t("Kapitäler"),
 };
 
 export const toggleBold = toggleMark(schema.marks.bold);

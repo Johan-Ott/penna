@@ -53,14 +53,21 @@
 /* Centrerat, Högerställt and Utan indrag lie in the text itself, with no inset. */
 .manuscript .style-centrerat,
 .manuscript .style-hoger,
-.manuscript .style-utan-indrag {
+.manuscript .style-utan-indrag,
+.manuscript .style-kapitaler {
   margin: 0;
 }
 
 .manuscript .style-centrerat p,
 .manuscript .style-hoger p,
-.manuscript .style-utan-indrag p {
+.manuscript .style-utan-indrag p,
+.manuscript .style-kapitaler p {
   text-indent: 0;
+}
+
+.manuscript .style-kapitaler {
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
 }
 
 .manuscript .style-centrerat {

@@ -18,6 +18,7 @@ const STYLE_ORDER: StyleChoice[] = [
   "centrerat",
   "hoger",
   "utan-indrag",
+  "kapitaler",
 ];
 
 function ChevronDown() {

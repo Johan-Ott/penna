@@ -85,11 +85,12 @@ const centeredOptions = (text: string): ParagraphOptions => ({
 const centered = (text: string, extra: object = {}) =>
   new Paragraph({ ...centeredOptions(text), ...extra });
 
-// Centrerat, Högerställt and Utan indrag only set the line; the other styles are inset.
+// Centrerat, Högerställt, Utan indrag and Kapitäler only set the line; the others are inset.
+// A manuscript for agents keeps no small capitals.
 function paragraphLayout(isFirst: boolean, style: string | null) {
   if (style === "centrerat") return { alignment: AlignmentType.CENTER };
   if (style === "hoger") return { alignment: AlignmentType.RIGHT };
-  if (style === "utan-indrag") return { indent: { firstLine: 0 } };
+  if (style === "utan-indrag" || style === "kapitaler") return { indent: { firstLine: 0 } };
   if (style) return { indent: { left: INDENT } };
   return { indent: { firstLine: isFirst ? 0 : INDENT } };
 }

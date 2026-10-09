@@ -8,6 +8,7 @@ export const STYLE_NAMES = [
   "centrerat",
   "hoger",
   "utan-indrag",
+  "kapitaler",
 ] as const;
 export type StyleName = (typeof STYLE_NAMES)[number];
 

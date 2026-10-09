@@ -67,6 +67,7 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
   else if name == "centrerat" { set par(justify: false); align(center, body) }
   else if name == "hoger" { set par(justify: false); align(right, body) }
   else if name == "utan-indrag" { body }
+  else if name == "kapitaler" { text(size: 0.82em, tracking: 0.06em, upper(body)) }
   else { block(inset: sides, above: 1.2em, below: 1.2em, body) }
 }
 // Small capitals drawn the same in every typeface: lower-case letters as smaller capitals.
