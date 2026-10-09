@@ -13,7 +13,7 @@ export interface Theme {
 const LITERATA = '"Literata", Georgia, serif';
 export const HEADING_FONTS: [string, string][] = [
   ["Literata", LITERATA],
-  ["Garamond", '"Cormorant Garamond", Garamond, Georgia, serif'],
+  ["Garamond", '"EB Garamond", Garamond, Georgia, serif'],
   ["Geist", '"Geist Sans", system-ui, sans-serif'],
 ];
 
@@ -23,7 +23,7 @@ export const THEMES: Theme[] = [
     background: "#fffaf8",
     text: "#3a2226",
     accent: "#b5546b",
-    heading: '"Cormorant Garamond", Garamond, Georgia, serif',
+    heading: '"EB Garamond", Garamond, Georgia, serif',
     isItalicHeading: true,
   },
   {
@@ -31,7 +31,7 @@ export const THEMES: Theme[] = [
     background: "#161414",
     text: "#e8e2dc",
     accent: "#a83232",
-    heading: '"IBM Plex Serif", Georgia, serif',
+    heading: '"Source Serif 4", Georgia, serif',
   },
   {
     id: "thriller",
