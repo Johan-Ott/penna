@@ -990,5 +990,6 @@
   "Visa omslaget": "Show the cover",
   "Boken väntade. Du slutade i {chapter}.": "The book waited. You stopped in {chapter}.",
   "Första utkastet är klart.": "The first draft is done.",
-  "{count} ord i {book}.": "{count} words in {book}."
+  "{count} ord i {book}.": "{count} words in {book}.",
+  "Scener i {chapter}": "Scenes in {chapter}"
 }

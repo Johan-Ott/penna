@@ -4,8 +4,10 @@ import {
   inTimeOrder,
   leastFinished,
   movedInTime,
+  sceneRows,
   withNodeFields,
   withNodeText,
+  withSceneMoved,
 } from "../src/project/contents";
 import { CHARACTERS_ID, findNode, withSpecialFolders, type TreeNode } from "../src/project/tree";
 
@@ -108,5 +110,30 @@ describe("withNodeFields", () => {
 
     expect(findNode(changed, "kap1")?.node.subtitle).toBe("Elin");
     expect(JSON.stringify(findNode(changed, "kap1")?.node)).not.toContain("epigraph");
+  });
+});
+
+describe("scene rows", () => {
+  it("lists a chapter's scenes, each with its own title, words and status", () => {
+    const rows = sceneRows(tree, summaries, "kap1");
+
+    expect(rows.map((row) => [row.title, row.words, row.status])).toEqual([
+      ["Färjan", 100, "klar"],
+      ["Huset", 50, "utkast"],
+    ]);
+  });
+
+  it("moves a scene into another chapter, before a scene or last", () => {
+    const before = withSceneMoved(tree, "huset", "kap2", "viken");
+    const last = withSceneMoved(tree, "farjan", "kap2", null);
+
+    expect(findNode(before, "kap2")?.node.children?.map((node) => node.id)).toEqual([
+      "huset",
+      "viken",
+    ]);
+    expect(findNode(last, "kap2")?.node.children?.map((node) => node.id)).toEqual([
+      "viken",
+      "farjan",
+    ]);
   });
 });

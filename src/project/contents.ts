@@ -1,6 +1,6 @@
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import type { SceneSummary } from "./sceneSummaries.js";
-import { numberNodes, TRASH_ID, type TreeNode } from "./tree.js";
+import { findNode, moveNode, numberNodes, TRASH_ID, type TreeNode } from "./tree.js";
 
 type Summaries = Record<string, SceneSummary>;
 
@@ -55,6 +55,28 @@ function walk(nodes: TreeNode[], numbers: Map<string, number>, summaries: Summar
 export function contentsRows(tree: TreeNode[], summaries: Summaries): ContentsRow[] {
   const book = tree.filter((node) => node.kind !== "sort" && node.id !== TRASH_ID);
   return walk(book, numberNodes(tree, "chapter"), summaries);
+}
+
+/** A chapter's scenes, each as a row of its own. */
+export function sceneRows(tree: TreeNode[], summaries: Summaries, chapterId: string) {
+  const children = findNode(tree, chapterId)?.node.children ?? [];
+  return children
+    .filter((node) => node.kind === "scene")
+    .map((node) => rowOf(node, null, summaries));
+}
+
+/** The scene moved into a chapter, just before another scene, or last when there is none. */
+export function withSceneMoved(
+  tree: TreeNode[],
+  sceneId: string,
+  chapterId: string,
+  beforeId: string | null,
+) {
+  const siblings = (findNode(tree, chapterId)?.node.children ?? []).filter(
+    (node) => node.id !== sceneId,
+  );
+  const index = siblings.findIndex((node) => node.id === beforeId);
+  return moveNode(tree, sceneId, chapterId, index < 0 ? siblings.length : index);
 }
 
 const byWhen = (first: ContentsRow, second: ContentsRow) =>

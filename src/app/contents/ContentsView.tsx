@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { PageMap } from "../../project/pageMap.js";
 import { Row } from "./ContentsRowView.js";
+import { SceneRows, useSceneDrag, type SceneDrag } from "./SceneRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import {
   contentsRows,
@@ -120,23 +121,64 @@ function ContentsFilter(props: { query: string; onQuery: (query: string) => void
   );
 }
 
+function useFolds() {
+  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
+  const toggle = (id: string) =>
+    setOpen((current) => {
+      const next = new Set(current);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  return { isOpen: (id: string) => open.has(id), toggle };
+}
+
+// A chapter's row, and its scenes' rows under it once it is unfolded.
+function ChapterRows(
+  props: ContentsProps & {
+    row: ContentsRow;
+    dragProps: object;
+    sceneDrag: SceneDrag;
+    folds: ReturnType<typeof useFolds>;
+    isShown: (row: ContentsRow) => boolean;
+  },
+) {
+  const { row, folds } = props;
+  const isOpen = folds.isOpen(row.id);
+  const fold = row.number === null ? undefined : { isOpen, onToggle: () => folds.toggle(row.id) };
+  return (
+    <>
+      <Row
+        {...props}
+        pages={props.pageMap?.chapterPages.get(row.id) ?? null}
+        isDimmed={!props.isShown(row)}
+        fold={fold}
+      />
+      {isOpen && <SceneRows {...props} chapterId={row.id} drag={props.sceneDrag} />}
+    </>
+  );
+}
+
 function ContentsList(props: ContentsProps & { isTimeOrder: boolean; query: string }) {
   const { project, isTimeOrder, query } = props;
   const sources = { tree: project.tree, fields: project.fields, ...props.notes };
+  const isShown = (row: ContentsRow) => rowMatches(sources, row, query);
   const rows = contentsRows(project.tree, project.summaries);
   const shown = isTimeOrder ? inTimeOrder(rows, timeOrderOf(project.fields)) : rows;
   const drag = useRowDrag(shown, (timeOrder) => props.onSaveFields({ timeOrder }));
+  const sceneDrag = useSceneDrag(project, props.onChangeTree);
+  const folds = useFolds();
   if (rows.length === 0) return <p className="contents-empty">{t("Inga kapitel än.")}</p>;
   return (
     <div className="contents-list">
       {shown.map((row) => (
-        <Row
+        <ChapterRows
           key={row.id}
           {...props}
           row={row}
-          pages={props.pageMap?.chapterPages.get(row.id) ?? null}
-          dragProps={isTimeOrder ? drag.propsFor(row.id) : {}}
-          isDimmed={!rowMatches(sources, row, query)}
+          dragProps={isTimeOrder ? drag.propsFor(row.id) : sceneDrag.forChapter(row.id)}
+          sceneDrag={sceneDrag}
+          folds={folds}
+          isShown={isShown}
         />
       ))}
     </div>

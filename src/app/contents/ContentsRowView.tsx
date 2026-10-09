@@ -17,6 +17,10 @@ export interface RowProps {
   dragProps: object;
   /** Faded by the filter: it holds nothing asked for. */
   isDimmed?: boolean;
+  /** A scene's own row under its unfolded chapter. */
+  isScene?: boolean;
+  /** A chapter folds out to its scenes. */
+  fold?: { isOpen: boolean; onToggle: () => void } | undefined;
   onOpenScene: (id: string) => void;
   onChangeTree: (tree: TreeNode[]) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
@@ -121,9 +125,21 @@ function HeadingButton(props: RowProps) {
   );
 }
 
+const FoldButton = ({ fold, title }: { fold: NonNullable<RowProps["fold"]>; title: string }) => (
+  <button
+    className={fold.isOpen ? "contents-fold open" : "contents-fold"}
+    aria-expanded={fold.isOpen}
+    aria-label={t("Scener i {chapter}", { chapter: title })}
+    onClick={fold.onToggle}
+  >
+    ›
+  </button>
+);
+
 function TitleLine(props: RowProps) {
   return (
     <span className="contents-title-line">
+      {props.fold && <FoldButton fold={props.fold} title={props.row.title} />}
       <RowTitle row={props.row} onOpenScene={props.onOpenScene} />
       {props.row.number !== null && <HeadingButton {...props} />}
     </span>
@@ -151,12 +167,15 @@ const SHORT_FIELDS: ["pov" | "when", string][] = [
   ["when", t("När?")],
 ];
 
+const rowClass = ({ isDimmed, isScene }: RowProps) =>
+  ["contents-row", isScene && "scene", isDimmed && "dimmed"].filter(Boolean).join(" ");
+
 export function Row(props: RowProps) {
   const { row, project } = props;
   const save = (field: "summary" | "when" | "pov") => (text: string) =>
     props.onChangeTree(withNodeText(project.tree, row.id, field, text));
   return (
-    <div className={props.isDimmed ? "contents-row dimmed" : "contents-row"} {...props.dragProps}>
+    <div className={rowClass(props)} {...props.dragProps}>
       <div className="contents-main">
         <TitleLine {...props} />
         <InlineText

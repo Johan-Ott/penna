@@ -2506,3 +2506,38 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+/* Innehåll: a chapter folds out to its scenes, set in under it. */
+.contents-fold {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-label);
+  font: 16px/1 var(--font-ui);
+  transition: transform var(--quick, 120ms) ease-out;
+}
+
+.contents-fold.open {
+  transform: rotate(90deg);
+}
+
+.contents-fold:hover {
+  background: var(--surface-hover);
+}
+
+.contents-row.scene .contents-main {
+  padding-left: 28px;
+}
+
+.contents-row.scene .contents-title {
+  color: var(--text-tree);
+  font-weight: 400;
+}
+
+.contents-row.scene[draggable="true"] {
+  cursor: grab;
+}
