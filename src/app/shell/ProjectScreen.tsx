@@ -20,6 +20,7 @@ import { firstPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap
 import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { pagesAtGoal } from "../contents/ShareSpreadButton.js";
+import { bookLook, runningHead } from "../bookLook.js";
 import { t } from "../../i18n/i18n.js";
 
 type ScreenProps = { app: AppState; project: Project };
@@ -70,18 +71,24 @@ function OverTheText({ app, project }: ScreenProps) {
   );
 }
 
+function folioOf(project: Project, sceneId: string | null, pageMap: PageMap | null) {
+  const page = firstPageOf(sceneId, pageMap);
+  return page !== null && pageMap ? { page, total: pagesAtGoal(project, pageMap.pages) } : null;
+}
+
 // The open scene's pages in the margin, and the sheet around it: book and chapter above, page below.
 function pageParts(app: AppState, project: Project, pageMap: PageMap | null) {
   const sceneId = app.scene?.id ?? null;
   const chapter = sceneId ? chapterOf(project.tree, sceneId) : null;
-  const page = firstPageOf(sceneId, pageMap);
   return {
     scenePages: scenePagesOf(app, pageMap),
-    runningHead: {
-      book: project.name,
-      chapter: chapter ? `${chapter.number}. ${chapter.title}` : "",
-    },
-    folio: page !== null && pageMap ? { page, total: pagesAtGoal(project, pageMap.pages) } : null,
+    runningHead: runningHead(project.fields, {
+      title: project.name,
+      author: app.startup.preferences.authorName,
+      chapter: chapter?.title ?? "",
+    }),
+    bookLook: bookLook(project.fields),
+    folio: folioOf(project, sceneId, pageMap),
     opensChapter: chapter?.isFirstScene === true,
   };
 }

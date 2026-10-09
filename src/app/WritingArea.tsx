@@ -4,12 +4,7 @@ import { refreshPageMarks } from "../editor/pageMarks.js";
 import { refreshRepetitions } from "../editor/repetitionMarks.js";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
-import {
-  changeSize,
-  DEFAULT_SETTINGS,
-  proseStyle,
-  type WritingSettings,
-} from "../editor/writingSettings.js";
+import { changeSize, DEFAULT_SETTINGS, type WritingSettings } from "../editor/writingSettings.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
@@ -20,6 +15,7 @@ import { useEscape, useShortcut } from "./useShortcut.js";
 import type { SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { SheetEdges, type SheetProps } from "./SheetEdges.js";
+import { pageClass, pageStyle, type BookLook } from "./bookLook.js";
 import { t } from "../i18n/i18n.js";
 import { useTextMenu } from "./spelling/useTextMenu.js";
 
@@ -30,6 +26,8 @@ interface WritingAreaProps {
   folio?: SheetProps["folio"];
   /** The open scene starts its chapter, so book type gives it a drop cap. */
   opensChapter?: boolean;
+  /** How the book's design in Publicera sets the text, used by book type. */
+  bookLook?: BookLook;
   aside: ReactNode;
   /** Another text, or a version of this one, read beside it. */
   beside: ReactNode;
@@ -102,28 +100,16 @@ function EmptyScene({ onNewScene }: { onNewScene: () => void }) {
   );
 }
 
-// The editor stays mounted in both modes, so undo history and cursor survive the switch.
-function pageClass({ settings, isFocusMode, opensChapter }: WritingAreaProps) {
-  const isPaper = settings.paper && !isFocusMode;
-  return [
-    "page",
-    isPaper && "paper",
-    settings.bookType && "book-type",
-    opensChapter && "opens-chapter",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
 const isOnPaper = (props: WritingAreaProps) =>
   props.hasScene && props.settings.paper && !props.isFocusMode;
 
+// The editor stays mounted in both modes, so undo history and cursor survive the switch.
 // On paper the text, its header and its footer lie on one sheet, with its pages at the foot.
 function Page(props: WritingAreaProps) {
   const { editor, settings, isFocusMode, hasScene } = props;
   const textMenu = useTextMenu(editor);
   return (
-    <div className={pageClass(props)} style={proseStyle(settings) as CSSProperties}>
+    <div className={pageClass(props)} style={pageStyle(props) as CSSProperties}>
       <div className="sheet">
         {!hasScene && <EmptyScene onNewScene={props.onNewScene} />}
         {hasScene && !isFocusMode && props.header}

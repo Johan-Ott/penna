@@ -3091,6 +3091,10 @@ button.book-cover:hover {
   white-space: nowrap;
 }
 
+.sheet-head:has(span:empty) {
+  justify-content: center;
+}
+
 .sheet-folio {
   position: absolute;
   right: 0;
@@ -3113,8 +3117,7 @@ button.book-cover:hover {
   display: none;
 }
 
-/* Boktypografi: justified with hyphens, a drop cap where the chapter opens, an ornament between
-   scenes. */
+/* Boktypografi: justified with hyphens, and the rest as the book's design in Publicera sets it. */
 .page.book-type .ProseMirror {
   text-align: justify;
   hyphens: auto;
@@ -3131,12 +3134,28 @@ button.book-cover:hover {
   text-transform: uppercase;
 }
 
+.page.book-type .chapter-number.bare {
+  color: var(--text-dim);
+  font: 300 112px/0.9 var(--font-prose);
+  letter-spacing: 0;
+}
+
 .page.book-type .chapter-title {
   margin: 10px 0 40px;
   text-align: center;
 }
 
-.page.book-type.opens-chapter .ProseMirror > p:first-child::first-letter {
+.page.book-type.title-kapitaler .chapter-title {
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+.page.book-type.title-versaler .chapter-title {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page.book-type.drop-cap.opens-chapter .ProseMirror > p:first-child::first-letter {
   float: left;
   margin: 0.06em 0.1em 0 0;
   font-size: 3.4em;
@@ -3144,14 +3163,24 @@ button.book-cover:hover {
   line-height: 0.85;
 }
 
-.page.book-type.opens-chapter .ProseMirror > p:first-child::first-line {
+.page.book-type.drop-cap.opens-chapter .ProseMirror > p:first-child::first-line,
+.page.book-type.lead-in.opens-chapter .ProseMirror > p:first-child::first-line {
   font-variant: small-caps;
   letter-spacing: 0.04em;
 }
 
 .page.book-type .scene-break {
+  font-size: 0;
+}
+
+.page.book-type .scene-break::after {
+  content: var(--break-sign);
+  color: var(--text-label);
+  font-size: var(--prose-size, 18px);
+}
+
+.page.book-type.break-picture .scene-break {
   height: 14px;
-  color: transparent;
   background: center / 44px 14px no-repeat
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='14' fill='none' stroke='%238a8a8a' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M2 7h12M30 7h12M22 2c-3 2-3 8 0 10c3-2 3-8 0-10z'/%3E%3C/svg%3E");
 }

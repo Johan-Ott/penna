@@ -2,6 +2,7 @@ import { withNodeText } from "../project/contents.js";
 import { findNode, type TreeNode } from "../project/tree.js";
 import { chapterOf, type SceneChapter } from "../project/treeLabels.js";
 import type { Project } from "./useProject.js";
+import { chapterLabel, isBareNumber } from "./bookLook.js";
 import { t } from "../i18n/i18n.js";
 
 interface TextHeaderProps {
@@ -40,11 +41,16 @@ function headingOf(project: Project, sceneId: string) {
   return { chapter, place, whenId, when: findNode(project.tree, whenId)?.node.when ?? "" };
 }
 
-// The number shows only with book type, above the title as on a printed chapter's first page.
-function ChapterOpening({ chapter }: { chapter: SceneChapter }) {
+// The number shows only with book type, as the printed book numbers it above the title.
+function ChapterOpening({ chapter, fields }: { chapter: SceneChapter; fields: Project["fields"] }) {
+  const label = chapterLabel(fields, chapter.number, chapter.title);
   return (
     <>
-      <span className="chapter-number">{t("Kapitel {number}", { number: chapter.number })}</span>
+      {label && (
+        <span className={isBareNumber(fields) ? "chapter-number bare" : "chapter-number"}>
+          {label}
+        </span>
+      )}
       <h1 className="chapter-title">{chapter.title}</h1>
     </>
   );
@@ -72,7 +78,7 @@ export function TextHeader(props: TextHeaderProps) {
           onSave={(text) => onChangeTree(withNodeText(project.tree, whenId, "when", text))}
         />
       </div>
-      {chapter?.isFirstScene && <ChapterOpening chapter={chapter} />}
+      {chapter?.isFirstScene && <ChapterOpening chapter={chapter} fields={project.fields} />}
     </header>
   );
 }
