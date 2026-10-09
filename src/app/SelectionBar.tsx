@@ -53,7 +53,9 @@ function useIsBarWanted(editor: Editor) {
   useEffect(() => {
     if (!element) return;
     const onFocus = () => setFocus(true);
-    const onBlur = () => setFocus(false);
+    // The style menu takes the focus while it is open; the bar it belongs to stays.
+    const onBlur = (event: FocusEvent) =>
+      setFocus(event.relatedTarget instanceof Element && !!event.relatedTarget.closest(".menu"));
     element.addEventListener("focus", onFocus);
     element.addEventListener("blur", onBlur);
     return () => {

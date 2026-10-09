@@ -9,7 +9,16 @@ interface StylePickerProps {
   run: (command: Command) => void;
 }
 
-const STYLE_ORDER: StyleChoice[] = ["brodtext", "brev", "citat", "dikt", "meddelande"];
+const STYLE_ORDER: StyleChoice[] = [
+  "brodtext",
+  "brev",
+  "citat",
+  "dikt",
+  "meddelande",
+  "centrerat",
+  "hoger",
+  "utan-indrag",
+];
 
 function ChevronDown() {
   return (

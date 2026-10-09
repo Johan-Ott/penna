@@ -88,6 +88,19 @@ describe("parseMarkdown", () => {
     ]);
   });
 
+  it("keeps a centred, a right-aligned and an unindented paragraph as written", () => {
+    const scene =
+      "::: centrerat\nStockholm, 1912\n:::\n\n::: hoger\nDin Henrik\n:::\n\n::: utan-indrag\nSå.\n:::\n";
+    const doc = parseMarkdown(scene);
+
+    expect([0, 1, 2].map((index) => doc.child(index).attrs["style"])).toEqual([
+      "centrerat",
+      "hoger",
+      "utan-indrag",
+    ]);
+    expect(roundTrip(scene)).toBe(scene);
+  });
+
   it("reads a scene break and a style block", () => {
     const doc = parseMarkdown("* * *\n\n::: brev\nKära Elin.\n:::\n");
 

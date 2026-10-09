@@ -71,6 +71,9 @@ div.scene-break img { height: 1.5em; max-width: 40%; }
 hr.scene-break { border: 0; text-align: center; margin: 1.5em 0; }
 div.brev, div.citat, div.dikt, div.meddelande { margin: 1em 2em; }
 div.brev p, div.citat p, div.dikt p, div.meddelande p { text-indent: 0; }
+div.centrerat p, div.hoger p, div.utan-indrag p { text-indent: 0; }
+div.centrerat { text-align: center; }
+div.hoger { text-align: right; }
 .title-page, .copyright { text-align: center; text-indent: 0; }
 .title-page h1 { font-size: 2em; margin-top: 30%; }
 .dedication { text-align: center; text-indent: 0; font-style: italic; margin-top: 30%; }

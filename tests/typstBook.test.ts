@@ -48,7 +48,7 @@ const FILES = {
   "/bok/scenes/koket.md": scene("koket", `Brevet låg på *bordet*(alltid).\n\n${TRICKY}\n`),
   "/bok/scenes/isen.md": scene(
     "isen",
-    ":::brev\nKära Elin.\n:::\n\n:::meddelande\nKom hem.\n:::\n\nHon sa ”nej”.\n",
+    ":::brev\nKära Elin.\n:::\n\n:::meddelande\nKom hem.\n:::\n\n:::centrerat\nStockholm, 1912\n:::\n\n:::hoger\nDin Henrik\n:::\n\n:::utan-indrag\nUtan indrag.\n:::\n\nHon sa ”nej”.\n",
   ),
 };
 

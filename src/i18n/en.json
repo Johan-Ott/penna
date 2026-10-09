@@ -1068,5 +1068,8 @@
   "{done} av {count}": "{done} of {count}",
   "Utmärkelser": "Badges",
   "Visa som löptext": "Show as running text",
-  "Visa som ark": "Show as sheets"
+  "Visa som ark": "Show as sheets",
+  "Centrerat": "Centred",
+  "Högerställt": "Right-aligned",
+  "Utan indrag": "No indent"
 }

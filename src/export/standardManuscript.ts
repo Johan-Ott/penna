@@ -85,14 +85,18 @@ const centeredOptions = (text: string): ParagraphOptions => ({
 const centered = (text: string, extra: object = {}) =>
   new Paragraph({ ...centeredOptions(text), ...extra });
 
-function paragraphIndent(isFirst: boolean, isInStyle: boolean) {
-  if (isInStyle) return { left: INDENT };
-  return { firstLine: isFirst ? 0 : INDENT };
+// Centrerat, Högerställt and Utan indrag only set the line; the other styles are inset.
+function paragraphLayout(isFirst: boolean, style: string | null) {
+  if (style === "centrerat") return { alignment: AlignmentType.CENTER };
+  if (style === "hoger") return { alignment: AlignmentType.RIGHT };
+  if (style === "utan-indrag") return { indent: { firstLine: 0 } };
+  if (style) return { indent: { left: INDENT } };
+  return { indent: { firstLine: isFirst ? 0 : INDENT } };
 }
 
 function blockParagraphs(
   block: Node,
-  place: { isFirst: boolean; isInStyle: boolean },
+  place: { isFirst: boolean; style: string | null },
   settings: TextSettings,
 ): ParagraphOptions[] {
   const name = block.type.name;
@@ -105,12 +109,14 @@ function blockParagraphs(
   if (name === "styleBlock") {
     const inner: ParagraphOptions[] = [];
     block.forEach((child) =>
-      inner.push(...blockParagraphs(child, { isFirst: true, isInStyle: true }, settings)),
+      inner.push(
+        ...blockParagraphs(child, { isFirst: true, style: String(block.attrs["style"]) }, settings),
+      ),
     );
     return inner;
   }
   const children = runs(block, settings);
-  return [{ children, indent: paragraphIndent(place.isFirst, place.isInStyle) }];
+  return [{ children, ...paragraphLayout(place.isFirst, place.style) }];
 }
 
 // Invisible, at the start of the scene's first paragraph and the end of its last.
@@ -128,7 +134,7 @@ function sceneParagraphs(doc: Node, settings: TextSettings): ParagraphOptions[] 
   const paragraphs: ParagraphOptions[] = [];
   let isFirst = true;
   doc.forEach((block) => {
-    paragraphs.push(...blockParagraphs(block, { isFirst, isInStyle: false }, settings));
+    paragraphs.push(...blockParagraphs(block, { isFirst, style: null }, settings));
     isFirst = block.type.name === "sceneBreak";
   });
   return paragraphs;

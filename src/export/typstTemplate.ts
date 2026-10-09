@@ -64,6 +64,9 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
   if name == "brev" { block(inset: sides, above: 1.2em, below: 1.2em, emph(body)) }
   else if name == "dikt" { set par(justify: false); block(inset: (left: 2.4em), above: 1.2em, below: 1.2em, body) }
   else if name == "meddelande" { set text(font: "Geist", size: 0.85em); block(inset: sides, above: 1.2em, below: 1.2em, body) }
+  else if name == "centrerat" { set par(justify: false); align(center, body) }
+  else if name == "hoger" { set par(justify: false); align(right, body) }
+  else if name == "utan-indrag" { body }
   else { block(inset: sides, above: 1.2em, below: 1.2em, body) }
 }
 // Small capitals drawn the same in every typeface: lower-case letters as smaller capitals.

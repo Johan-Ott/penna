@@ -1,6 +1,14 @@
 import { Schema } from "prosemirror-model";
 
-export const STYLE_NAMES = ["brev", "citat", "dikt", "meddelande"] as const;
+export const STYLE_NAMES = [
+  "brev",
+  "citat",
+  "dikt",
+  "meddelande",
+  "centrerat",
+  "hoger",
+  "utan-indrag",
+] as const;
 export type StyleName = (typeof STYLE_NAMES)[number];
 
 /** How wide a picture in the text is printed: narrower than the text, as wide, or a page of its own. */

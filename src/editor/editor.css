@@ -50,6 +50,27 @@
   text-indent: 0;
 }
 
+/* Centrerat, Högerställt and Utan indrag lie in the text itself, with no inset. */
+.manuscript .style-centrerat,
+.manuscript .style-hoger,
+.manuscript .style-utan-indrag {
+  margin: 0;
+}
+
+.manuscript .style-centrerat p,
+.manuscript .style-hoger p,
+.manuscript .style-utan-indrag p {
+  text-indent: 0;
+}
+
+.manuscript .style-centrerat {
+  text-align: center;
+}
+
+.manuscript .style-hoger {
+  text-align: right;
+}
+
 .manuscript .style-meddelande {
   font-family: var(--font-ui);
   font-size: 15px;
