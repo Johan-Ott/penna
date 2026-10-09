@@ -2987,6 +2987,14 @@
   align-self: stretch;
 }
 
+.piece-row {
+  flex-wrap: wrap;
+}
+
+.piece-row .chip {
+  white-space: nowrap;
+}
+
 .piece-row .chip[aria-pressed="true"] {
   border-color: var(--text);
   background: var(--text);
