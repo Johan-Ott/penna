@@ -2869,3 +2869,39 @@
     opacity: 0.3;
   }
 }
+
+/* Till förlag: a roomy text for the synopsis and letter, and a row per submission. */
+.submit-dialog {
+  width: min(620px, calc(100vw - 48px));
+  gap: 12px;
+}
+
+.submit-text {
+  min-height: 280px;
+  resize: vertical;
+}
+
+.submit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.submit-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 130px 28px;
+  gap: 6px;
+  align-items: center;
+}
+
+.submit-row.ja select {
+  color: var(--status-klar);
+  font-weight: 600;
+}
+
+.submit-row.nej select {
+  color: var(--text-label);
+}

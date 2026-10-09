@@ -14,6 +14,7 @@ import {
   type ExportFormat,
 } from "../exporting/useExport.js";
 import { Choice } from "../controls.js";
+import { SubmitLink } from "./SubmitDialog.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -156,6 +157,17 @@ function PublishPreview({ props, publishing }: { props: PublishProps; publishing
   );
 }
 
+// Beside the steps: Studio for sharing, and what goes to publishers apart from the manuscript.
+const PublishLinks = (props: PublishProps) => (
+  <>
+    <button className="studio-link" onClick={props.onStudio}>
+      <span className="studio-item-name">{t("Studio")}</span>
+      <span className="insight-muted">{t("Bilder att dela och kapitel till nyhetsbrev")}</span>
+    </button>
+    <SubmitLink {...props} />
+  </>
+);
+
 export function PublishView(props: PublishProps) {
   const publishing = usePublishing(props);
   const { choices, exporter } = publishing;
@@ -166,10 +178,7 @@ export function PublishView(props: PublishProps) {
         <button className="link-button quiet publish-back" onClick={props.onBack}>
           {t("← Tillbaka till texten")}
         </button>
-        <button className="studio-link" onClick={props.onStudio}>
-          <span className="studio-item-name">{t("Studio")}</span>
-          <span className="insight-muted">{t("Bilder att dela och kapitel till nyhetsbrev")}</span>
-        </button>
+        <PublishLinks {...props} />
         <Steps props={props} publishing={publishing} />
         <button
           className="button primary publish-button"
