@@ -38,7 +38,6 @@ function IconButton(props: {
   label: string;
   onClick: (event: MouseEvent<HTMLElement>) => void;
   isDisabled?: boolean;
-  isPressed?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -46,7 +45,6 @@ function IconButton(props: {
       className="topbar-button"
       aria-label={props.label}
       title={props.label}
-      aria-pressed={props.isPressed}
       disabled={props.isDisabled}
       onClick={props.onClick}
     >
@@ -162,6 +160,14 @@ export function ReviewButton({ review, onReview }: ReviewProps) {
   );
 }
 
+// Sheets or running text belong to Skriv, so Publicera has no such button.
+const SheetButton = ({ view, isPaper, onPaper }: TopbarProps) =>
+  view === "publicera" ? null : (
+    <IconButton label={isPaper ? t("Visa som löptext") : t("Visa som ark")} onClick={onPaper}>
+      <SheetIcon />
+    </IconButton>
+  );
+
 export function Topbar(props: TopbarProps) {
   return (
     <header className="topbar">
@@ -172,13 +178,7 @@ export function Topbar(props: TopbarProps) {
         <span className="topbar-title">{props.title}</span>
       )}
       <div className="topbar-end">
-        <IconButton
-          label={props.isPaper ? t("Visa som löptext") : t("Visa som ark")}
-          isPressed={props.isPaper}
-          onClick={props.onPaper}
-        >
-          <SheetIcon />
-        </IconButton>
+        <SheetButton {...props} />
         <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
           <ReadIcon />
         </IconButton>

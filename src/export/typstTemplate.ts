@@ -1,30 +1,18 @@
-import { trimSize, type BookDesign, type BookTheme } from "./bookDesign.js";
+import {
+  LEADING_EM,
+  marginsOf,
+  trimSize,
+  type BookDesign,
+  type BookTheme,
+  type Margins,
+} from "./bookDesign.js";
 import { escapeTypst, typstString } from "./typstText.js";
 
-/** Millimetres from the paper's edges to the text. */
-export interface Margins {
-  inside: number;
-  outside: number;
-  top: number;
-  bottom: number;
-}
-
-const THEMES: Record<BookTheme, { heading: string; margins: Margins }> = {
-  klassisk: {
-    heading: `weight: 600, style: "normal"`,
-    margins: { inside: 20, outside: 15, top: 18, bottom: 20 },
-  },
-  modern: {
-    heading: `weight: 600, style: "normal"`,
-    margins: { inside: 20, outside: 15, top: 18, bottom: 20 },
-  },
-  luftig: {
-    heading: `weight: 400, style: "italic"`,
-    margins: { inside: 24, outside: 19, top: 24, bottom: 24 },
-  },
+const HEADINGS: Record<BookTheme, string> = {
+  klassisk: `weight: 600, style: "normal"`,
+  modern: `weight: 600, style: "normal"`,
+  luftig: `weight: 400, style: "italic"`,
 };
-
-export const marginsOf = (design: BookDesign) => THEMES[design.theme].margins;
 
 /** What printers ask for beyond the trim when a picture reaches the edge of the paper. */
 export const BLEED_MM = 3;
@@ -181,7 +169,7 @@ export interface TemplateOptions {
 }
 
 function headingSetup(design: BookDesign, options: TemplateOptions) {
-  const style = `font: ${typstString(design.headingFont)}, ${THEMES[design.theme].heading}`;
+  const style = `font: ${typstString(design.headingFont)}, ${HEADINGS[design.theme]}`;
   return `#let heading-style = (${style}, case: ${typstString(design.titleCase)})
 #let plain-layout = ${options.plainLayout}
 #let part-layout = ${options.partLayout}`;
@@ -207,7 +195,7 @@ ${pageSetup(design, options.hasBleed ? BLEED_MM : 0)}
 #set text(font: ${typstString(design.bodyFont)}, size: ${design.bodySize}pt, lang: ${typstString(language.slice(0, 2))}, hyphenate: true)
 // A paragraph's single first or last line alone on a page (orphan, widow) is avoided harder.
 #set text(costs: (widow: 300%, orphan: 300%))
-#set par(justify: true, leading: 0.62em, spacing: 0.62em, first-line-indent: 1.2em)
+#set par(justify: true, leading: ${LEADING_EM[design.leading]}em, spacing: ${LEADING_EM[design.leading]}em, first-line-indent: 1.2em)
 #show heading: none
 
 ${ANFANG}

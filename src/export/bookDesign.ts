@@ -10,14 +10,19 @@ export type HeaderContent = "titel" | "forfattare" | "kapitel" | "inget";
 /** How a chapter is numbered above its title: "Kapitel 1", "1", "I" or not at all. */
 export type ChapterLabel = "ord" | "siffra" | "romersk" | "ingen";
 export type TitleCase = "vanlig" | "kapitaler" | "versaler";
+/** Space between the lines, and between the text and the paper's edges. */
+export type Leading = "tatt" | "normalt" | "luftigt";
+export type MarginSize = "smala" | "normala" | "breda";
 
 export interface BookDesign {
   theme: BookTheme;
   /** Width × height in millimetres, as "130x200". */
   trim: string;
   bodyFont: string;
-  /** Points. */
+  /** Points; 14 and up is large print. */
   bodySize: number;
+  leading: Leading;
+  margins: MarginSize;
   dropCap: boolean;
   sceneBreak: string;
   /** "hoger": every part and chapter opens on a right-hand page. */
@@ -63,7 +68,12 @@ export const BODY_FONTS = [
   "Source Serif 4",
 ];
 export const HEADING_FONTS = [...BODY_FONTS, "Geist"];
-export const BODY_SIZES = [10, 10.5, 11, 11.5];
+export const BODY_SIZES = [10, 10.5, 11, 11.5, 12, 13, 14, 16];
+export const LEADINGS: Leading[] = ["tatt", "normalt", "luftigt"];
+export const MARGIN_SIZES: MarginSize[] = ["smala", "normala", "breda"];
+/** Lines apart in em, and how much of the theme's margins are kept. */
+export const LEADING_EM: Record<Leading, number> = { tatt: 0.5, normalt: 0.62, luftigt: 0.78 };
+export const MARGIN_SCALE: Record<MarginSize, number> = { smala: 0.8, normala: 1, breda: 1.25 };
 // The marks the design offers between scenes: stars, an asterism and a long dash.
 const LONG_DASH = String.fromCharCode(0x2014);
 export const SCENE_BREAKS = ["* * *", "⁂", LONG_DASH];
@@ -82,6 +92,8 @@ export const DEFAULT_DESIGN: BookDesign = {
   trim: "130x200",
   bodyFont: "Literata",
   bodySize: 10.5,
+  leading: "normalt",
+  margins: "normala",
   dropCap: true,
   sceneBreak: "* * *",
   chapterStart: "valfri",
@@ -138,6 +150,8 @@ export function designOf(fields: Record<string, unknown>): BookDesign {
     trim: isPrintableTrim(stored["trim"]) ? String(stored["trim"]) : DEFAULT_DESIGN.trim,
     bodyFont: oneOf(stored["bodyFont"], BODY_FONTS, DEFAULT_DESIGN.bodyFont),
     bodySize: oneOf(stored["bodySize"], BODY_SIZES, DEFAULT_DESIGN.bodySize),
+    leading: oneOf(stored["leading"], LEADINGS, DEFAULT_DESIGN.leading),
+    margins: oneOf(stored["margins"], MARGIN_SIZES, DEFAULT_DESIGN.margins),
     dropCap: isOn(stored["dropCap"], DEFAULT_DESIGN.dropCap),
     sceneBreak: oneOf(stored["sceneBreak"], breaks, DEFAULT_DESIGN.sceneBreak),
     chapterStart: oneOf(stored["chapterStart"], CHAPTER_STARTS, DEFAULT_DESIGN.chapterStart),
@@ -145,6 +159,28 @@ export function designOf(fields: Record<string, unknown>): BookDesign {
     headerRight: oneOf(stored["headerRight"], HEADER_CONTENTS, DEFAULT_DESIGN.headerRight),
     ...heading,
   };
+}
+
+/** Millimetres from the paper's edges to the text. */
+export interface Margins {
+  inside: number;
+  outside: number;
+  top: number;
+  bottom: number;
+}
+
+const THEME_MARGINS: Record<BookTheme, Margins> = {
+  klassisk: { inside: 20, outside: 15, top: 18, bottom: 20 },
+  modern: { inside: 20, outside: 15, top: 18, bottom: 20 },
+  luftig: { inside: 24, outside: 19, top: 24, bottom: 24 },
+};
+
+// Smala and Breda scale the theme's margins, to the half millimetre.
+export function marginsOf(design: BookDesign): Margins {
+  const scale = MARGIN_SCALE[design.margins];
+  const round = (size: number) => Math.round(size * scale * 2) / 2;
+  const { inside, outside, top, bottom } = THEME_MARGINS[design.theme];
+  return { inside: round(inside), outside: round(outside), top: round(top), bottom: round(bottom) };
 }
 
 export function trimSize(trim: string) {

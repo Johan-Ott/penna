@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_DESIGN, designOf, previewOutline, trimSize } from "../src/export/bookDesign";
+import {
+  DEFAULT_DESIGN,
+  designOf,
+  marginsOf,
+  previewOutline,
+  trimSize,
+} from "../src/export/bookDesign";
 
 describe("designOf", () => {
   it("reads the book design from project.json", () => {
@@ -37,6 +43,14 @@ describe("designOf", () => {
 });
 
 describe("designOf with the print options", () => {
+  it("reads large print, the space between lines and the margins", () => {
+    const design = designOf({ design: { bodySize: 16, leading: "luftigt", margins: "breda" } });
+
+    expect([design.bodySize, design.leading, design.margins]).toEqual([16, "luftigt", "breda"]);
+    expect(marginsOf(design)).toEqual({ inside: 25, outside: 19, top: 22.5, bottom: 25 });
+    expect(designOf({ design: { leading: "x", margins: 3 } }).margins).toBe("normala");
+  });
+
   it("accepts a custom page size within what printers handle", () => {
     expect(designOf({ design: { trim: "140x220" } }).trim).toBe("140x220");
     expect(designOf({ design: { trim: "40x500" } }).trim).toBe(DEFAULT_DESIGN.trim);

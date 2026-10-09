@@ -7,7 +7,8 @@ import {
   type OpeningTemplate,
   type PictureArea,
 } from "./openings.js";
-import { BLEED_MM, marginsOf, millimetres, textMark } from "./typstTemplate.js";
+import { marginsOf } from "./bookDesign.js";
+import { BLEED_MM, millimetres, textMark } from "./typstTemplate.js";
 import { typstString } from "./typstText.js";
 
 /** Where Typst finds a picture: the compiler is handed each one under this path. */

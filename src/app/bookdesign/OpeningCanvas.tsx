@@ -1,7 +1,7 @@
 import { useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { trimSize, type BookDesign } from "../../export/bookDesign.js";
 import type { OpeningTemplate, PictureArea } from "../../export/openings.js";
-import { marginsOf } from "../../export/typstTemplate.js";
+import { marginsOf } from "../../export/bookDesign.js";
 import { usePictureUrl } from "./PictureRow.js";
 import { t } from "../../i18n/i18n.js";
 

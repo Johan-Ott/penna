@@ -1,6 +1,5 @@
 import {
   BODY_FONTS,
-  BODY_SIZES,
   BOOK_THEMES,
   HEADER_CONTENTS,
   BREAK_PICTURE,
@@ -16,6 +15,7 @@ import { HeadingControls, type ControlProps } from "./HeadingControls.js";
 import { OpeningList } from "./OpeningList.js";
 import { PictureRow } from "./PictureRow.js";
 import { TrimRow } from "./TrimRow.js";
+import { MarginRow, SizeRows } from "./SpacingRows.js";
 import { t } from "../../i18n/i18n.js";
 import { Switch } from "../controls.js";
 
@@ -24,8 +24,6 @@ const THEME_NAMES: Record<BookTheme, string> = {
   modern: t("Modern"),
   luftig: t("Luftig"),
 };
-
-const sizeLabel = (size: number) => `${String(size).replace(".", ",")} pt`;
 
 function ThemeCards({ design, save }: ControlProps) {
   return (
@@ -50,7 +48,6 @@ function ThemeCards({ design, save }: ControlProps) {
 }
 
 const FONT_CHOICES: [string, string][] = BODY_FONTS.map((font) => [font, font]);
-const SIZE_CHOICES: [string, string][] = BODY_SIZES.map((size) => [String(size), sizeLabel(size)]);
 const START_CHOICES: [ChapterStart, string][] = [
   ["valfri", t("Där förra slutar")],
   ["hoger", t("Alltid på högersida")],
@@ -70,6 +67,7 @@ function PageRows({ design, save }: ControlProps) {
   return (
     <>
       <TrimRow trim={design.trim} trims={TRIMS} onChange={(trim) => save({ trim })} />
+      <MarginRow design={design} save={save} />
       <ChoiceRow
         label={t("Kapitel börjar")}
         value={design.chapterStart}
@@ -101,12 +99,7 @@ function BodyRows({ design, save }: ControlProps) {
         choices={FONT_CHOICES}
         onChoose={(bodyFont) => save({ bodyFont })}
       />
-      <ChoiceRow
-        label={t("Storlek")}
-        value={String(design.bodySize)}
-        choices={SIZE_CHOICES}
-        onChoose={(size) => save({ bodySize: Number(size) })}
-      />
+      <SizeRows design={design} save={save} />
       <SwitchRow
         label={t("Anfang vid kapitelstart")}
         isOn={design.dropCap}
