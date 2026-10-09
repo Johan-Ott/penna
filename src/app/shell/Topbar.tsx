@@ -10,6 +10,7 @@ import {
   MenuIcon,
   PenIcon,
   ReadIcon,
+  SheetIcon,
   ReviewIcon,
   SearchIcon,
   SidebarIcon,
@@ -28,12 +29,16 @@ export interface TopbarProps {
   onSearch: () => void;
   onFocus: () => void;
   onRead: () => void;
+  /** The text on sheets of paper, or as one running text. */
+  isPaper: boolean;
+  onPaper: () => void;
 }
 
 function IconButton(props: {
   label: string;
   onClick: (event: MouseEvent<HTMLElement>) => void;
   isDisabled?: boolean;
+  isPressed?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -41,6 +46,7 @@ function IconButton(props: {
       className="topbar-button"
       aria-label={props.label}
       title={props.label}
+      aria-pressed={props.isPressed}
       disabled={props.isDisabled}
       onClick={props.onClick}
     >
@@ -166,6 +172,13 @@ export function Topbar(props: TopbarProps) {
         <span className="topbar-title">{props.title}</span>
       )}
       <div className="topbar-end">
+        <IconButton
+          label={props.isPaper ? t("Visa som löptext") : t("Visa som ark")}
+          isPressed={props.isPaper}
+          onClick={props.onPaper}
+        >
+          <SheetIcon />
+        </IconButton>
         <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
           <ReadIcon />
         </IconButton>

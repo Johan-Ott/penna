@@ -36,20 +36,23 @@ async function buildPageMap(project: Project, generalAuthor: string): Promise<Pa
 
 /** The open scene's block pages, while page breaks are shown in the margin. */
 export function scenePagesOf(
-  app: { scene: { id: string } | null; writingMode: { settings: { showPages: boolean } } },
+  app: {
+    scene: { id: string } | null;
+    writingMode: { settings: { showPages: boolean; paper: boolean } };
+  },
   map: PageMap | null,
 ) {
-  if (!app.writingMode.settings.showPages || !app.scene) return null;
+  const { showPages, paper } = app.writingMode.settings;
+  if (!(showPages || paper) || !app.scene) return null;
   return map?.blockPages.get(app.scene.id) ?? null;
 }
 
-/** The open scene's printed pages, for the foot of the sheet; null until they are counted. */
-/** The page the open scene starts on, for the foot of the sheet. */
-export function firstPageOf(sceneId: string | null, map: PageMap | null) {
+/** The page the open scene ends on, for the foot of the sheet; null until they are counted. */
+export function lastPageOf(sceneId: string | null, map: PageMap | null) {
   const pages = (sceneId ? (map?.blockPages.get(sceneId) ?? []) : []).filter(
     (page): page is number => page !== undefined,
   );
-  return pages.length === 0 ? null : Math.min(...pages);
+  return pages.length === 0 ? null : Math.max(...pages);
 }
 
 /** Where a part, chapter or scene starts in the printed book, for the table of contents. */

@@ -2,10 +2,12 @@ import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey, type Command } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
-// A dashed line between blocks, with the page number at its right end.
-function pageMark(page: number) {
+// A dashed line between blocks, with the page number at its right end. On a sheet the page that
+// ends is numbered at its foot instead, from data-ending.
+function pageMark(page: number, ending: number | undefined) {
   const mark = document.createElement("div");
   mark.className = "page-mark";
+  if (ending !== undefined) mark.dataset["ending"] = String(ending);
   mark.contentEditable = "false";
   const label = document.createElement("span");
   label.className = "page-mark-label";
@@ -20,9 +22,10 @@ export function pageDecorations(doc: Node, pages: (number | undefined)[]) {
   let previous: number | undefined;
   doc.forEach((_block, offset, index) => {
     const page = pages[index];
+    const ending = previous;
     if (page !== undefined && page !== previous) {
       decorations.push(
-        Decoration.widget(offset, () => pageMark(page), { side: -1, key: `p${page}` }),
+        Decoration.widget(offset, () => pageMark(page, ending), { side: -1, key: `p${page}` }),
       );
     }
     if (page !== undefined) previous = page;

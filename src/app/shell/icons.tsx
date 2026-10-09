@@ -68,6 +68,13 @@ export const ReadIcon = () => (
   </Icon>
 );
 
+export const SheetIcon = () => (
+  <Icon>
+    <path d="M6 3h9l4 4v14H6z" />
+    <path d="M9 11h7M9 15h7" />
+  </Icon>
+);
+
 export const SearchIcon = () => (
   <Icon>
     <circle cx="11" cy="11" r="7" />

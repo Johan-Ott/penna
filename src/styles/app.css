@@ -3103,22 +3103,58 @@ button.book-cover:hover {
   right: 0;
   bottom: 40px;
   left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 8px;
-  color: var(--text-label);
-  font: 11px var(--font-ui);
-}
-
-.sheet-page {
   color: var(--text-muted);
   font: 13px var(--font-prose);
+  text-align: center;
+}
+
+/* Where the printed book turns a page, the sheet parts and the desk shows between two pages. */
+.page.paper > .sheet {
+  overflow: clip;
+}
+
+.page.paper .ProseMirror .page-mark {
+  width: auto;
+  height: 14px;
+  margin: 64px 0 40px;
+  border: 0;
+}
+
+.page.paper .ProseMirror .page-mark::before {
+  content: "";
+  position: absolute;
+  inset: 0 -100vw;
+  background: color-mix(in srgb, var(--bg-preview), #000 4%);
+  box-shadow:
+    inset 0 5px 6px -6px rgba(0, 0, 0, 0.2),
+    inset 0 -5px 6px -6px rgba(0, 0, 0, 0.14);
+}
+
+/* The page that ends is numbered at its foot, as the sheet's last page is. */
+.page.paper .ProseMirror .page-mark::after {
+  content: attr(data-ending);
+  position: absolute;
+  bottom: calc(100% + 28px);
+  left: 0;
+  width: 100%;
+  color: var(--text-muted);
+  font: 13px var(--font-prose);
+  text-align: center;
+}
+
+.page.paper .ProseMirror .page-mark-label {
+  display: none;
+}
+
+/* Before the scene's first block the sheet already is that page. */
+.page.paper .ProseMirror .page-mark:not([data-ending]) {
+  display: none;
 }
 
 /* Kommentarer i marginalen: pencilled notes beside the text, placed by MarginNotes. */
 .page:has(> .margin-notes) {
   position: relative;
+  padding-right: 248px;
 }
 
 .margin-notes {

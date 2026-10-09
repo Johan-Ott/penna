@@ -1008,7 +1008,6 @@
   "Insikter och mål": "Insights and goals",
   "Sidomenyn som innehållsförteckning": "The sidebar as a table of contents",
   "Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok.": "Dotted leaders to the page number at each chapter, as in a printed book.",
-  "av cirka {count}": "of about {count}",
   "Ändra delsidan": "Edit the part page",
   "{title} har skrivits sedan den {date}, på {days} dagar av {span}.": "{title} has been written since {date}, on {days} days of {span}.",
   "Den har {words} ord. Den längsta dagen gav {best} av dem, en {weekday} i {month}.": "It has {words} words. The longest day gave {best} of them, a {weekday} in {month}.",
@@ -1067,5 +1066,7 @@
   "Ny utmärkelse: {name}": "New badge: {name}",
   "Första resan": "First steps",
   "{done} av {count}": "{done} of {count}",
-  "Utmärkelser": "Badges"
+  "Utmärkelser": "Badges",
+  "Visa som löptext": "Show as running text",
+  "Visa som ark": "Show as sheets"
 }

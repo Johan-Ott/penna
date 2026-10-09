@@ -166,10 +166,11 @@ function useEditorModes(props: WritingAreaProps) {
   modes.isSpellcheckOn = settings.spellcheck;
   if (props.isReadOnly) modes.isEditable = false;
   modes.repeatWindow = settings.review ? settings.repeatWindow : null;
-  modes.pageMarks = props.scenePages ?? null;
+  const showsMarks = settings.showPages || (settings.paper && !props.isFocusMode);
+  modes.pageMarks = showsMarks ? (props.scenePages ?? null) : null;
   const { run } = editor;
   useEffect(() => run(refreshRepetitions, false), [settings.review, settings.repeatWindow, run]);
-  useEffect(() => run(refreshPageMarks, false), [props.scenePages, run]);
+  useEffect(() => run(refreshPageMarks, false), [props.scenePages, showsMarks, run]);
   // ProseMirror reads the spellcheck attribute only when the view updates.
   useEffect(
     () => editor.viewRef.current?.setProps({}),

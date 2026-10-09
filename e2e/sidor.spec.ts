@@ -21,7 +21,7 @@ test("page breaks of the printed book show in the text, and Innehåll counts the
     }
   });
 
-  await expect(editor(page).locator(".page-mark").first()).toBeVisible({ timeout: 40_000 });
+  await expect(editor(page).locator(".page-mark").last()).toBeVisible({ timeout: 40_000 });
   await page.keyboard.press("Control+k");
   await page.keyboard.type("Gå till Innehåll");
   await page.keyboard.press("Enter");

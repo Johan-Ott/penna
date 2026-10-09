@@ -16,10 +16,9 @@ import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookVie
 import { ReviewPill, Topbar } from "./Topbar.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
-import { firstPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
+import { lastPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
 import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
-import { pagesAtGoal } from "../contents/ShareSpreadButton.js";
 import { bookLook, runningHead } from "../bookLook.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -54,6 +53,8 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       // The button took the cursor from the text; it goes back there, where the writer was.
       onFocus={() => (writingMode.onToggleFocus(), app.editor.requestFocus())}
       onRead={() => writingMode.read(null)}
+      isPaper={writingMode.settings.paper}
+      onPaper={() => writingMode.onChangeSettings((now) => ({ ...now, paper: !now.paper }))}
     />
   );
 }
@@ -71,10 +72,10 @@ function OverTheText({ app, project }: ScreenProps) {
   );
 }
 
-function folioOf(project: Project, sceneId: string | null, pageMap: PageMap | null) {
-  const page = firstPageOf(sceneId, pageMap);
-  return page !== null && pageMap ? { page, total: pagesAtGoal(project, pageMap.pages) } : null;
-}
+const folioOf = (sceneId: string | null, pageMap: PageMap | null) => {
+  const page = lastPageOf(sceneId, pageMap);
+  return page === null ? null : { page };
+};
 
 // The open scene's pages in the margin, and the sheet around it: book and chapter above, page below.
 function pageParts(app: AppState, project: Project, pageMap: PageMap | null) {
@@ -88,7 +89,7 @@ function pageParts(app: AppState, project: Project, pageMap: PageMap | null) {
       chapter: chapter?.title ?? "",
     }),
     bookLook: bookLook(project.fields),
-    folio: folioOf(project, sceneId, pageMap),
+    folio: folioOf(sceneId, pageMap),
     opensChapter: chapter?.isFirstScene === true,
   };
 }

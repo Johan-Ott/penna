@@ -1,10 +1,8 @@
-import { t } from "../i18n/i18n.js";
-
 export interface SheetProps {
   /** The book's name and the chapter, at the head of the sheet. */
   runningHead?: { book: string; chapter: string } | undefined;
-  /** "192 av cirka 320" at the foot of the sheet, once the pages are counted. */
-  folio?: { page: number; total: number } | null | undefined;
+  /** The page the scene ends on, at the foot of the sheet, once the pages are counted. */
+  folio?: { page: number } | null | undefined;
 }
 
 function SheetHead({ runningHead }: SheetProps) {
@@ -19,12 +17,7 @@ function SheetHead({ runningHead }: SheetProps) {
 
 function Folio({ folio }: SheetProps) {
   if (!folio) return null;
-  return (
-    <span className="sheet-folio">
-      <span className="sheet-page">{folio.page}</span>
-      {t("av cirka {count}", { count: folio.total })}
-    </span>
-  );
+  return <span className="sheet-folio">{folio.page}</span>;
 }
 
 /** Only on paper does the text lie on a sheet with a head and a foot. */
