@@ -11,7 +11,17 @@ describe("labels", () => {
     const fields = { labels: [{ id: "a", name: "Elin", color: "#d4483b" }, { id: "b" }, "x"] };
 
     expect(labelsOf(fields)).toEqual([{ id: "a", name: "Elin", color: "#d4483b" }]);
-    expect(labelsOf({})).toEqual([]);
+    expect(labelsOf({ labels: [] })).toEqual([]);
+  });
+
+  it("gives a book the standard labels until it keeps its own list", () => {
+    expect(labelsOf({}).map((label) => label.id)).toEqual([
+      "skriv-om",
+      "kolla-fakta",
+      "lucka",
+      "favorit",
+      "stryk",
+    ]);
   });
 
   it("puts a label on a scene and takes it off, leaving no empty list behind", () => {

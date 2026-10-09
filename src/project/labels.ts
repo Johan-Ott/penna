@@ -1,4 +1,5 @@
 import { findNode, type TreeNode } from "./tree.js";
+import { t } from "../i18n/i18n.js";
 
 /** One of the book's own labels, kept in project.json and put on nodes in the tree. */
 export interface Label {
@@ -27,8 +28,19 @@ const isLabel = (value: unknown): value is Label => {
   );
 };
 
+/** What most writers mark scenes with; a book has them until it keeps a list of its own. */
+export const defaultLabels = (): Label[] => [
+  { id: "skriv-om", name: t("Skriv om"), color: "#e08a1e" },
+  { id: "kolla-fakta", name: t("Kolla fakta"), color: "#c9a400" },
+  { id: "lucka", name: t("Lucka"), color: "#d4483b" },
+  { id: "favorit", name: t("Favorit"), color: "#3f9a4f" },
+  { id: "stryk", name: t("Stryk?"), color: "#7d7d7d" },
+];
+
+// Saved the first time a label is changed, so removing them all leaves an empty list behind.
 export function labelsOf(fields: Record<string, unknown>): Label[] {
   const stored = fields["labels"];
+  if (stored === undefined) return defaultLabels();
   return Array.isArray(stored) ? stored.filter(isLabel) : [];
 }
 

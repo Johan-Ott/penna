@@ -28,9 +28,9 @@
   --accent: #3f6b4e;
   --danger: #c62828;
   --focus-ring: rgba(17, 17, 17, 0.12);
-  --status-utkast: #b5b5b5;
-  --status-redigering: #6b6b6b;
-  --status-klar: #2a2a2a;
+  --status-utkast: #d9a53a;
+  --status-redigering: #2f86c9;
+  --status-klar: #3f9a4f;
 
   --font-ui: "Geist Sans", system-ui, sans-serif;
   --font-prose: "Literata", Georgia, serif;
@@ -79,9 +79,9 @@
   --accent: #7fae8d;
   --danger: #ef7a7a;
   --focus-ring: rgba(242, 240, 235, 0.15);
-  --status-utkast: #6a6a6a;
-  --status-redigering: #a0a0a0;
-  --status-klar: #d8d8d8;
+  --status-utkast: #d9a94f;
+  --status-redigering: #5ea3dc;
+  --status-klar: #6bbd78;
   --shadow-low: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-dialog: 0 8px 24px rgba(0, 0, 0, 0.45);
   --shadow-high: 0 18px 48px rgba(0, 0, 0, 0.6);
