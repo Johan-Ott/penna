@@ -6,7 +6,7 @@ import { useEditorView } from "../editor/useEditorView.js";
 import type { SaveStatus } from "../storage/autosave.js";
 import { errorLog } from "./errorLog.js";
 import { platform } from "./platform.js";
-import { placeIn, showResume } from "./resume/lastPlace.js";
+import { greetBack, placeIn, showResume } from "./resume/lastPlace.js";
 import {
   closeScene,
   createSceneSession,
@@ -95,7 +95,7 @@ export function useOpenFirstScene(
     const { firstScene, place } = startOf(project);
     if (!firstScene) return void closeScene(session);
     void openScene(session, project.dir, firstScene).then(() =>
-      place ? showResume(place) : focusEditor(),
+      place ? (showResume(place), greetBack(project, place)) : focusEditor(),
     );
   }, [project, session, focusEditor, seriesDir]);
 }

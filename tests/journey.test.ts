@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { crossesGoal } from "../src/app/journey/useMilestone";
 import {
   celebrationsBetween,
   inkTotal,
@@ -80,10 +81,18 @@ describe("celebrations", () => {
     expect(celebrationsBetween(after, after)).toEqual([]);
   });
 
-  it("welcomes the writer back after three days away", () => {
-    const journey = written({ "2026-10-01": 300 });
+  it("welcomes the writer back after three days away, with the chapter they stopped in", () => {
+    expect(welcomeBack("2026-10-01", "2026-10-04", "8. Brevet")?.text).toBe(
+      "Boken väntade. Du slutade i 8. Brevet.",
+    );
+    expect(welcomeBack("2026-10-01", "2026-10-03", "8. Brevet")).toBeNull();
+  });
+});
 
-    expect(welcomeBack(journey, "2026-10-04")?.kind).toBe("back");
-    expect(welcomeBack(journey, "2026-10-03")).toBeNull();
+describe("crossesGoal", () => {
+  it("is true only for the change that reaches the book's goal", () => {
+    expect(crossesGoal(79_900, 80_100, 80_000)).toBe(true);
+    expect(crossesGoal(80_100, 80_300, 80_000)).toBe(false);
+    expect(crossesGoal(1000, 2000, null)).toBe(false);
   });
 });

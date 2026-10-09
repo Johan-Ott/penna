@@ -1,4 +1,9 @@
 import { useSyncExternalStore } from "react";
+import { welcomeBack } from "../../project/inkwell.js";
+import { dayKey } from "../../project/stats.js";
+import { chapterOf } from "../../project/treeLabels.js";
+import { celebrate } from "../journey/journeyEvents.js";
+import type { Project } from "../useProject.js";
 
 /** Where the writer last wrote in a book: the scene, the cursor and when. */
 export interface Place {
@@ -49,4 +54,12 @@ export function useResume() {
     (listener) => (listeners.add(listener), () => listeners.delete(listener)),
     () => shown,
   );
+}
+
+/** Back after three days or more: the book opens with a welcome that says where they stopped. */
+export function greetBack(project: Project, place: Place) {
+  const chapter = chapterOf(project.tree, place.sceneId);
+  const where = chapter ? `${chapter.number}. ${chapter.title}` : null;
+  const back = welcomeBack(dayKey(place.writtenAt), dayKey(Date.now()), where);
+  if (back) celebrate(back);
 }

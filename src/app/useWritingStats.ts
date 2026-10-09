@@ -14,6 +14,7 @@ import { recordFailure } from "./errorLog.js";
 import { platform } from "./platform.js";
 import { snapshotOnSave } from "../project/snapshots.js";
 import { rememberPlace } from "./resume/lastPlace.js";
+import { recordText } from "./journey/todayTexts.js";
 import type { EditorState } from "prosemirror-state";
 import { textBefore } from "../editor/documentText.js";
 import type { useSceneSession } from "./useSceneSession.js";
@@ -107,6 +108,7 @@ export function listenToSaves(
 ) {
   savedRef.current = (scene, before, after) => {
     recordSave(scene.dir, before, after);
+    recordText(`${scene.dir}/${scene.id}`, after, wordsAdded(before, after));
     const state = editor.viewRef.current?.state;
     if (state) rememberPlace(scene.dir, placeOf(scene.id, state));
     if (!isAutoSnapshotOn) return;

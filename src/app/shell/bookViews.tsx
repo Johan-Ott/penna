@@ -5,6 +5,7 @@ import { cursorAtBlock } from "../../editor/commands.js";
 import { sidebarProps } from "../paneProps.js";
 import { PublishView } from "../publish/PublishView.js";
 import { StudioView } from "../studio/StudioView.js";
+import { useStudioRequest } from "../studio/studioRequest.js";
 import { useState } from "react";
 import { openScene, writeOverScene } from "../sceneSession.js";
 import { SyncView } from "../sync/SyncReview.js";
@@ -91,7 +92,9 @@ export function ReadScreen({ app, project, onBack }: ViewProps) {
 }
 
 export function PublishScreen({ app, project, onBack }: ViewProps) {
+  const requested = useStudioRequest();
   const [isStudio, setStudio] = useState(false);
+  if (requested && !isStudio) setStudio(true);
   const saveFields = (fields: Record<string, unknown>) => void app.updateFields(fields);
   if (isStudio)
     return (

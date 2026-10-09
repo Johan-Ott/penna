@@ -61,7 +61,7 @@ export function journeySummary(journey: Journey, today: string) {
 export type Summary = ReturnType<typeof journeySummary>;
 
 export interface Celebration {
-  kind: "goal" | "streak" | "level" | "rank" | "best" | "back";
+  kind: "goal" | "streak" | "level" | "rank" | "best" | "back" | "milestone";
   title: string;
   text: string;
 }
@@ -107,12 +107,15 @@ export const goalReached = (words: number): Celebration => ({
   text: t("{count} ord. Resten av dagen är din.", { count: format(words) }),
 });
 
-/** Three days or more since the last words: the writer is welcomed back. */
-export function welcomeBack(journey: Journey, today: string): Celebration | null {
-  const last = Object.keys(journey.words)
-    .filter((day) => day < today && wordsOn(journey, day) > 0)
-    .sort()
-    .pop();
-  if (!last || daysBetween(last, today) < 3) return null;
-  return { kind: "back", title: t("Välkommen tillbaka."), text: t("Boken väntade på dig.") };
+/** Three days or more since the writer was last here: welcomed back, told where they stopped. */
+export function welcomeBack(
+  lastDay: string,
+  today: string,
+  chapter: string | null,
+): Celebration | null {
+  if (daysBetween(lastDay, today) < 3) return null;
+  const text = chapter
+    ? t("Boken väntade. Du slutade i {chapter}.", { chapter })
+    : t("Boken väntade på dig.");
+  return { kind: "back", title: t("Välkommen tillbaka."), text };
 }

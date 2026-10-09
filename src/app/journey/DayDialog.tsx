@@ -2,6 +2,7 @@ import { journeySummary } from "../../project/inkwell.js";
 import { INK, type Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
 import { Dialog } from "../controls.js";
+import { textsToday } from "./todayTexts.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 const format = (count: number) => count.toLocaleString(numberLocale());
@@ -34,6 +35,17 @@ function Drop({ isDone }: { isDone: boolean }) {
   );
 }
 
+// The texts that got the most words today, as the design lists them under the day's total.
+function TodayTexts() {
+  const texts = textsToday().slice(0, 4);
+  return texts.map((text) => (
+    <div key={text.title} className="day-dialog-text">
+      <span>{text.title || t("Namnlös scen")}</span>
+      <span className="day-dialog-quiet">{format(text.words)}</span>
+    </div>
+  ));
+}
+
 function InkLine({ journey }: { journey: Journey }) {
   const today = dayKey(Date.now());
   const summary = journeySummary(journey, today);
@@ -42,6 +54,7 @@ function InkLine({ journey }: { journey: Journey }) {
   return (
     <>
       <span className="day-dialog-quiet">{paceText(summary.days)}</span>
+      <TodayTexts />
       <div className="day-dialog-ink">
         <span>{t("+ {count} bläck idag", { count: format(inkToday) })}</span>
         <span className="day-dialog-quiet">{`${summary.rank.name} · ${format(summary.ink)}`}</span>

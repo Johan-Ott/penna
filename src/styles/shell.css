@@ -2500,3 +2500,9 @@
   background: #f2f0eb;
   color: #1c2620;
 }
+
+.day-dialog-text {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}

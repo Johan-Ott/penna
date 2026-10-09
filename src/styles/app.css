@@ -3037,3 +3037,14 @@ button.book-cover:hover {
     bottom: calc(84px + env(safe-area-inset-bottom));
   }
 }
+
+.celebration-share {
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #cfcfcf;
+  font: 12px var(--font-ui);
+  text-decoration: underline;
+  pointer-events: auto;
+}

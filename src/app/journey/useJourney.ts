@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  celebrationsBetween,
-  goalReached,
-  journeySummary,
-  welcomeBack,
-} from "../../project/inkwell.js";
+import { celebrationsBetween, goalReached, journeySummary } from "../../project/inkwell.js";
 import {
   INK,
   mergedJourney,
@@ -38,8 +33,6 @@ function useLoadedJourney(libraryDir: string | null) {
       loaded.current = { library, own, others };
       const all = mergedJourney([own, others]);
       setJourney(all);
-      const back = welcomeBack(all, dayKey(Date.now()));
-      if (back) celebrate(back);
     })().catch(recordFailure("Skrivresan kunde inte läsas"));
   }, [libraryDir]);
   return { loaded, journey, setJourney };

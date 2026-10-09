@@ -23,6 +23,7 @@ import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSess
 import { useWritingMode } from "./useWritingMode.js";
 import { useJourney } from "./journey/useJourney.js";
 import { useProfile } from "./profile/useProfile.js";
+import { useMilestone } from "./journey/useMilestone.js";
 import { listenToSaves, useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
 import { StartScreen } from "./StartScreen.js";
@@ -96,6 +97,7 @@ function useCoreState() {
 function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const { projectState, sceneState, writingMode } = core;
   const { project } = projectState;
+  useMilestone(project, projectState.updateFields);
   const { series } = core.seriesState;
   const homes = useMemo(() => (project ? homesOf(project, series) : []), [project, series]);
   const noteId = sceneState.scene?.id ?? null;

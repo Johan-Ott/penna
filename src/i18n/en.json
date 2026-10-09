@@ -987,5 +987,8 @@
   "är här.": "is here.",
   "Ute {day}.": "Out {day}.",
   "Omslaget är här": "The cover is here",
-  "Visa omslaget": "Show the cover"
+  "Visa omslaget": "Show the cover",
+  "Boken väntade. Du slutade i {chapter}.": "The book waited. You stopped in {chapter}.",
+  "Första utkastet är klart.": "The first draft is done.",
+  "{count} ord i {book}.": "{count} words in {book}."
 }
