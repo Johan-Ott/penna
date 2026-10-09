@@ -1,1 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.bmp binary
+*.icns binary
+*.apk binary
+*.ttf binary
+*.woff2 binary
 src-tauri/dictionaries/* -text
