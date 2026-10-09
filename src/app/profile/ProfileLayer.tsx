@@ -1,6 +1,8 @@
 import type { AppState } from "../App.js";
 import type { Project } from "../useProject.js";
 import { Avatar } from "./Avatar.js";
+import { bookBadgesHeld } from "../../project/bookBadges.js";
+import { latestBadges } from "../../project/badges.js";
 import { ProfileDialog, type ProfileForm } from "./ProfileDialog.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -28,6 +30,7 @@ export function ProfileLayer({ app, project }: { app: AppState; project: Project
       initial={initial}
       bookName={project.name}
       journey={app.journey.journey}
+      bookBadges={bookBadgesHeld(project.fields) ?? {}}
       onSave={(form) => save(app, project, form)}
       onClose={app.profile.close}
     />
@@ -41,6 +44,13 @@ export function ProfileRow({ app }: { app: AppState }) {
     <button className="profile-row" onClick={app.profile.open}>
       <Avatar name={name} picture={app.profile.profile.picture} size={22} />
       <span className="profile-row-name">{name || t("Din profil")}</span>
+      <span className="profile-row-medals" aria-hidden="true">
+        {latestBadges(app.journey.journey.badges, 3).map((badge) => (
+          <span key={badge.id} className="profile-row-medal" title={badge.name}>
+            {badge.name.charAt(0)}
+          </span>
+        ))}
+      </span>
     </button>
   );
 }

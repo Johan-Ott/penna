@@ -131,6 +131,8 @@ export function ProfileDialog(props: {
   initial: Form;
   bookName: string;
   journey: Journey;
+  /** The open book's badges, by the day each was reached. */
+  bookBadges: Record<string, string>;
   onSave: (form: Form) => void;
   onClose: () => void;
 }) {
@@ -141,7 +143,7 @@ export function ProfileDialog(props: {
     <Dialog label={t("Författarprofil")} className="profile-dialog" onClose={done}>
       <ProfileHead form={form} journey={props.journey} onPicture={(picture) => set({ picture })} />
       <ProfileFields form={form} bookName={props.bookName} set={set} />
-      <Badges journey={props.journey} />
+      <Badges journey={props.journey} book={{ name: props.bookName, held: props.bookBadges }} />
       <div className="profile-foot">
         <span className="setting-hint">
           {t(

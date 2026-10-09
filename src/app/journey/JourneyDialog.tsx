@@ -5,6 +5,8 @@ import { Dialog } from "../controls.js";
 import { InkRules } from "./InkRules.js";
 import { Inkwell } from "./Inkwell.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
+import { latestBadges } from "../../project/badges.js";
+import { Medal } from "../profile/Badges.js";
 
 const format = (count: number) => count.toLocaleString(numberLocale());
 
@@ -83,6 +85,23 @@ function LevelShelf({ summary }: { summary: Summary }) {
 }
 
 /** The whole journey: levels in words, the inkwell of days in a row, and the ink. */
+// The newest badges under the journey; all of them are in the profile.
+function RecentBadges({ held }: { held: Record<string, string> }) {
+  const latest = latestBadges(held, 3);
+  if (latest.length === 0) return null;
+  return (
+    <div className="journey-badges">
+      <span className="field-label">{t("Senaste utmärkelserna")}</span>
+      <ul className="badge-grid">
+        {latest.map((badge) => (
+          <Medal key={badge.id} badge={badge} day={held[badge.id]} />
+        ))}
+      </ul>
+      <span className="setting-hint">{t("Alla utmärkelser finns i din profil.")}</span>
+    </div>
+  );
+}
+
 export function JourneyDialog(props: {
   journey: Journey;
   onHoliday: (isOn: boolean) => void;
@@ -102,6 +121,7 @@ export function JourneyDialog(props: {
         />
         <InkRules summary={summary} />
       </div>
+      <RecentBadges held={props.journey.badges} />
     </Dialog>
   );
 }

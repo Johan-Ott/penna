@@ -109,3 +109,10 @@ export function badgeForHour(hour: number) {
   if (hour < 5) return "nattuggla";
   return hour < 7 ? "morgonpigg" : null;
 }
+
+/** The last badges unlocked, newest first. */
+export const latestBadges = (held: Record<string, string>, count: number) =>
+  badges()
+    .filter((badge) => held[badge.id])
+    .sort((first, second) => (held[second.id] ?? "").localeCompare(held[first.id] ?? ""))
+    .slice(0, count);

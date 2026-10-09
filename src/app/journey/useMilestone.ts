@@ -4,6 +4,7 @@ import { dayKey } from "../../project/stats.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import { celebrate, earnBadge } from "./journeyEvents.js";
+import { bookBadgesHeld, reachedBookBadges, type BookBadge } from "../../project/bookBadges.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 /** True when a change took the book from under its goal to it or past it. */
@@ -33,5 +34,39 @@ export function useMilestone(
     });
     updateFields({ firstDraftDone: dayKey(Date.now()) });
     earnBadge("forsta-utkastet");
+  }, [project, updateFields]);
+}
+
+// Each badge is celebrated once, also while the book's fields are on their way to the disk.
+const celebrated = new Set<string>();
+
+function celebrateBook(project: Project, badges: BookBadge[]) {
+  for (const badge of badges) {
+    const key = `${project.dir}:${badge.id}`;
+    if (celebrated.has(key)) continue;
+    celebrated.add(key);
+    celebrate({
+      kind: "badge",
+      title: t("Ny utmärkelse: {name}", { name: badge.name }),
+      text: t("{book} · {hint}", { book: project.name, hint: badge.hint }),
+    });
+  }
+}
+
+/** The book's badges, counted as it changes; a book never counted keeps what it holds quietly. */
+export function useBookBadges(
+  project: Project | null,
+  updateFields: (fields: Record<string, unknown>) => void,
+) {
+  useEffect(() => {
+    if (!project || project.isReadOnly) return;
+    const held = bookBadgesHeld(project.fields);
+    const fresh = reachedBookBadges(project, held ?? {});
+    if (held !== null && fresh.length === 0) return;
+    if (held !== null) celebrateBook(project, fresh);
+    const today = dayKey(Date.now());
+    updateFields({
+      badges: { ...held, ...Object.fromEntries(fresh.map((each) => [each.id, today])) },
+    });
   }, [project, updateFields]);
 }

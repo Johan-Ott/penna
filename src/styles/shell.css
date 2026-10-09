@@ -2905,3 +2905,32 @@
 .submit-row.nej select {
   color: var(--text-label);
 }
+
+/* The three newest badges, small beside the writer's name and under the journey. */
+.profile-row-medals {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+}
+
+.profile-row-medal {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent, #3f6b4e);
+  color: #ffffff;
+  font: 600 9px var(--font-prose);
+}
+
+.journey-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.journey-badges .badge-grid {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
