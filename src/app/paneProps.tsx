@@ -16,6 +16,7 @@ import type { OpenScene } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
 import { ProfileRow } from "./profile/ProfileLayer.js";
+import { speechContext } from "./ReadAloud.js";
 
 const openText = (app: AppState) => (id: string) => {
   app.writingMode.setView("skriv");
@@ -125,6 +126,17 @@ export function seriesTreeProps(app: AppState, series: Project) {
   };
 }
 
+const selectionBarOf = (app: AppState, project: Project) => (
+  <>
+    <SelectionBar
+      editor={app.editor}
+      onComment={app.comments.start}
+      onReadAloud={speechContext(app, project).readAloud ?? undefined}
+    />
+    <FootnotePopover editor={app.editor} />
+  </>
+);
+
 export function writingAreaProps(app: AppState, project: Project) {
   return {
     editor: app.editor,
@@ -141,12 +153,7 @@ export function writingAreaProps(app: AppState, project: Project) {
     aside: <ReviewLayer app={app} project={project} />,
     margin: <MarginNotes app={app} />,
     beside: <BesidePane app={app} project={project} />,
-    selectionBar: (
-      <>
-        <SelectionBar editor={app.editor} onComment={app.comments.start} />
-        <FootnotePopover editor={app.editor} />
-      </>
-    ),
+    selectionBar: selectionBarOf(app, project),
     onRetrySave: () => void app.session.autosave.flush(),
     onSaveNow: app.session.autosave.flush,
     onNewScene: () => void app.actions.newItem("scene"),

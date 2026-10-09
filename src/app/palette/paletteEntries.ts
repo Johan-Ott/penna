@@ -62,6 +62,8 @@ export interface PaletteContext {
   /** A chapter, or the whole book when null. Null on a phone, which has no reading view. */
   read: ((chapterId: string | null) => void) | null;
   openChapterId: string | null;
+  /** Null without a text, or where the computer has no voice. */
+  readAloud: (() => void) | null;
 }
 
 export const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({

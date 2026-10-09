@@ -82,8 +82,37 @@ const selectedText = (editor: Editor) => {
   return state ? state.doc.textBetween(state.selection.from, state.selection.to, "\n") : "";
 };
 
+interface BarProps {
+  editor: Editor;
+  onComment: () => void;
+  /** Left out where the computer has no voice. */
+  onReadAloud?: (() => void) | undefined;
+}
+
+function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { isPhone: boolean }) {
+  return (
+    <>
+      <button className="icon-button" onClick={onComment}>
+        {t("Kommentera")}
+      </button>
+      <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
+        {t("Fotnot")}
+      </button>
+      {onReadAloud && (
+        <button className="icon-button" onClick={onReadAloud}>
+          {t("Läs upp")}
+        </button>
+      )}
+      <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
+        {isPhone ? t("Dela") : t("Dela som bild")}
+      </button>
+    </>
+  );
+}
+
 /** Marks, a comment or a footnote for the selected words, and the words as a picture to share. */
-export function SelectionBar({ editor, onComment }: { editor: Editor; onComment: () => void }) {
+export function SelectionBar(props: BarProps) {
+  const { editor } = props;
   const isWanted = useIsBarWanted(editor);
   const isPhone = usePhone();
   const position = isWanted ? barPosition(editor, isPhone) : null;
@@ -100,15 +129,7 @@ export function SelectionBar({ editor, onComment }: { editor: Editor; onComment:
       <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
       {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
-      <button className="icon-button" onClick={onComment}>
-        {t("Kommentera")}
-      </button>
-      <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
-        {t("Fotnot")}
-      </button>
-      <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
-        {isPhone ? t("Dela") : t("Dela som bild")}
-      </button>
+      <BarActions {...props} isPhone={isPhone} />
       {!isPhone && <SelectedWords editorState={editor.editorState} />}
     </div>
   );

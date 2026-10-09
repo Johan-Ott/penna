@@ -1100,5 +1100,8 @@
   "Fyll i från bokhyllan": "Fill in from the bookshelf",
   "Inga andra böcker på hyllan.": "No other books on the shelf.",
   "Bok att ta utdraget ur": "Book to take the excerpt from",
-  "Välj bok…": "Choose a book…"
+  "Välj bok…": "Choose a book…",
+  "Läser upp · Stoppa": "Reading aloud · Stop",
+  "Läs upp": "Read aloud",
+  "Läs upp från markören": "Read aloud from the cursor"
 }

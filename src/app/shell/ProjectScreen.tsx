@@ -21,6 +21,7 @@ import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { bookLook, runningHead } from "../bookLook.js";
 import { t } from "../../i18n/i18n.js";
+import { ReadAloud } from "../ReadAloud.js";
 
 type ScreenProps = { app: AppState; project: Project };
 
@@ -68,6 +69,7 @@ function OverTheText({ app, project }: ScreenProps) {
         <ReviewPill review={writingMode.review} onReview={() => writingMode.setReviewOpen(true)} />
       )}
       <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
+      <ReadAloud app={app} project={project} />
     </>
   );
 }

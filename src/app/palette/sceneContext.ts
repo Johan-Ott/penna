@@ -5,11 +5,13 @@ import type { TreeNode } from "../../project/tree.js";
 import { recordFailure } from "../errorLog.js";
 import { choosePicture } from "../pictureFiles.js";
 import type { PaletteContext } from "./paletteEntries.js";
+import type { AppState } from "../App.js";
+import { speechContext } from "../ReadAloud.js";
 
 type SceneParts = {
   scene: { id: string } | null;
-  project: { dir: string; tree: TreeNode[] };
-  editor: { run: (command: Command) => void };
+  project: { dir: string; tree: TreeNode[]; fields: Record<string, unknown> };
+  editor: AppState["editor"];
   snapshots: { show: (id: string) => void };
   drafts: { show: (chapterId: string | null) => void };
   sceneSplit: { split: () => void; merge: () => void; canMerge: boolean };
@@ -34,5 +36,6 @@ export function sceneContext(app: SceneParts) {
     read: app.writingMode.read,
     openChapterId: scene ? (chapterOf(project.tree, scene.id)?.id ?? null) : null,
     insertPicture: scene ? () => void insertChosenPicture(project.dir, app.editor.run) : null,
+    ...speechContext(app, project),
   };
 }

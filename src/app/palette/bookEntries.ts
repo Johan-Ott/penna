@@ -4,8 +4,9 @@ import { command, type PaletteContext } from "./paletteEntries.js";
 import { t } from "../../i18n/i18n.js";
 
 export function sceneEntries(context: PaletteContext): PaletteEntry[] {
-  const { splitScene, mergeScene, read, openChapterId } = context;
+  const { splitScene, mergeScene, read, openChapterId, readAloud } = context;
   return [
+    ...(readAloud ? [command(t("Läs upp från markören"), readAloud, "Ctrl+Shift+U")] : []),
     ...(read && openChapterId ? [command(t("Läs kapitlet"), () => read(openChapterId))] : []),
     ...(read ? [command(t("Läs hela boken"), () => read(null))] : []),
     ...(splitScene ? [command(t("Dela scenen vid markören"), splitScene, "Ctrl+Shift+Enter")] : []),

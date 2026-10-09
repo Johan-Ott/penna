@@ -33,6 +33,7 @@ function context() {
     splitScene: null,
     mergeScene: null,
     insertPicture: null,
+    readAloud: null,
     read: () => undefined,
     openChapterId: null,
     chooseFolder: () => undefined,
