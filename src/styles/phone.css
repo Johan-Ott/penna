@@ -687,3 +687,10 @@
   border: 0;
   border-radius: 0;
 }
+
+/* Nämns i: the chapter above the line it is named in, as the narrow screen has room for. */
+.phone-app .note-mention {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding: 10px 0;
+}
