@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
+import type { ProseNote } from "../../manuscript/prose.js";
 import type { Card } from "../../project/cards.js";
 import type { useReview } from "./useReview.js";
 import { t } from "../../i18n/i18n.js";
@@ -70,9 +71,17 @@ function SpellingItem(
   );
 }
 
+const ProseItems = ({ notes }: { notes: ProseNote[] }) =>
+  notes.map((note) => (
+    <div key={`${note.kind}${note.text}`} className="review-item">
+      <span className="review-title">{note.title}</span>
+      <span className="review-text">{note.text}</span>
+    </div>
+  ));
+
 function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useReview> }) {
-  const { suspects, repeats } = props.review;
-  if (suspects.length + repeats.length === 0) {
+  const { suspects, repeats, prose } = props.review;
+  if (suspects.length + repeats.length + prose.length === 0) {
     return <p className="review-empty">{t("Inget att se över i den här scenen.")}</p>;
   }
   return (
@@ -93,6 +102,7 @@ function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useRevie
           </span>
         </div>
       ))}
+      <ProseItems notes={prose} />
     </section>
   );
 }
@@ -115,7 +125,7 @@ function useCountInTopbar(count: number, onCount: (count: number | null) => void
 
 export function ReviewPanel(props: ReviewPanelProps) {
   const { review } = props;
-  const found = review ? review.suspects.length + review.repeats.length : 0;
+  const found = review ? review.suspects.length + review.repeats.length + review.prose.length : 0;
   const count = found + props.commentCount + props.revisionCount;
   useCountInTopbar(count, props.onCount);
   const isShown = props.isOpen || props.isPinnedOpen;

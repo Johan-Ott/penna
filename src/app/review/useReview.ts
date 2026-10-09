@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { nameSuspects } from "../../manuscript/review.js";
+import { proseNotes } from "../../manuscript/prose.js";
+import { bookLanguage } from "../../project/bookLanguage.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { mentionPattern, type Card } from "../../project/cards.js";
 import { findNode } from "../../project/tree.js";
@@ -68,5 +70,7 @@ export function useReview({ project, scene, doc: current, cards, repeatWindow }:
     return nameSuspects({ [scene.id]: sceneText }, names, ignoredNames(project));
   }, [cards, sceneText, scene.id, project]);
   const repeats = useMemo(() => sceneRepetitions(doc, repeatWindow), [doc, repeatWindow]);
-  return { inChapter, suspects, repeats, ignored: ignoredNames(project) };
+  const language = bookLanguage(project.fields);
+  const prose = useMemo(() => proseNotes(sceneText, language), [sceneText, language]);
+  return { inChapter, suspects, repeats, prose, ignored: ignoredNames(project) };
 }

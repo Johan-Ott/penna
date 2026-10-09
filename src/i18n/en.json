@@ -1103,5 +1103,10 @@
   "Välj bok…": "Choose a book…",
   "Läser upp · Stoppa": "Reading aloud · Stop",
   "Läs upp": "Read aloud",
-  "Läs upp från markören": "Read aloud from the cursor"
+  "Läs upp från markören": "Read aloud from the cursor",
+  "Lång mening": "Long sentence",
+  "”{start} …” har {count} ord.": "“{start} …” has {count} words.",
+  "Utfyllnadsord": "Filler words",
+  "Anföringsverb": "Speech verbs",
+  "{tags}. Ett enkelt ”sa” syns minst.": "{tags}. A plain “said” shows least."
 }
