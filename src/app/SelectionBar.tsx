@@ -130,7 +130,7 @@ export function SelectionBar(props: BarProps) {
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
       {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
       <BarActions {...props} isPhone={isPhone} />
-      {!isPhone && <SelectedWords editorState={editor.editorState} />}
+      <SelectedWords editorState={editor.editorState} />
     </div>
   );
 }

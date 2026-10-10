@@ -29,6 +29,8 @@ interface PanelProps {
   onChange: (change: SettingsChange) => void;
   /** Focus and typewriter only act in the focus mode, so they are shown only there. */
   showsFocusOptions: boolean;
+  /** On a phone, which has no shortcut or topbar button for it, the focus mode is a switch here. */
+  focusMode?: { isOn: boolean; onFlip: () => void };
 }
 
 const WIDTH_LABELS = { smal: t("Smal"), normal: t("Normal"), bred: t("Bred") } as const;
@@ -167,12 +169,19 @@ function FocusSettings({ settings, onChange }: PanelProps) {
   );
 }
 
+function FocusSwitch({ focusMode }: { focusMode: PanelProps["focusMode"] | undefined }) {
+  if (!focusMode) return null;
+  const hint = t("Bara stycket eller meningen du skriver syns tydligt");
+  return <Toggle label={t("Fokusläge")} hint={hint} {...focusMode} />;
+}
+
 export function WritingSettingsPanel(props: PanelProps) {
   const { settings, onChange } = props;
   return (
     <div className="settings-panel" role="dialog" aria-label={t("Skrivinställningar")}>
       <TypographySettings {...props} />
       <div className="settings-divider" />
+      <FocusSwitch focusMode={props.focusMode} />
       {props.showsFocusOptions && <FocusSettings {...props} />}
       <Toggle
         label={t("Indrag första rad")}

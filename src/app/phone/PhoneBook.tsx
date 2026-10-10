@@ -15,6 +15,7 @@ import { useMenuButton, type MenuItem } from "../Menu.js";
 import { sidebarProps } from "../paneProps.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
+import { HELP_TAB } from "../settings/SettingsDialog.js";
 import { SyncNotices } from "../SyncLayer.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { TreeView } from "../tree/TreeView.js";
@@ -155,6 +156,7 @@ function phoneMenu(
       separatorBefore: true,
       onSelect: () => app.writingMode.settingsDialog.open(),
     },
+    { label: t("Hjälp"), onSelect: () => app.writingMode.settingsDialog.open(HELP_TAB) },
     { label: t("Skicka feedback…"), onSelect: dialogs.feedback.open },
   ];
 }

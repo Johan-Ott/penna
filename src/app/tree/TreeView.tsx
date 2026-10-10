@@ -108,12 +108,15 @@ function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tre
   );
 }
 
-// On a phone: adding is a button, not a right click, and the trash stays in reach.
+// On a phone: adding and folding are a button, not a right click, and the trash stays in reach.
 function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
   const menuFor = menuActions(tree.actions, props, tree.view);
   return (
     <>
-      <button className="tree-add" onClick={(event) => tree.openMenu(event, addMenu(menuFor))}>
+      <button
+        className="tree-add"
+        onClick={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(tree.view)])}
+      >
         {t("+ Lägg till")}
       </button>
       <div className="tree-bottom">

@@ -9,6 +9,7 @@ import type { PreferenceChange } from "../useStartup.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import { Choice, Row, Switch } from "../controls.js";
 import type { DriveSync } from "../useDriveSync.js";
+import { usePhone } from "../phone/usePhone.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TabProps {
@@ -114,8 +115,13 @@ function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
   );
 }
 
+// A phone shows the text without the sheet and keeps comments in Granska, so those switch nothing.
+const COMPUTER_ONLY: EditorSwitch[] = ["paper", "commentsInMargin"];
+
 function SwitchRows({ settings, onChangeSettings }: TabProps) {
-  return EDITOR_SWITCHES.map(([key, label, hint]) => (
+  const isPhone = usePhone();
+  const switches = EDITOR_SWITCHES.filter(([key]) => !isPhone || !COMPUTER_ONLY.includes(key));
+  return switches.map(([key, label, hint]) => (
     <Row key={key} label={label} hint={hint}>
       <Switch
         label={label}

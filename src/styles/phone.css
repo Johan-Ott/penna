@@ -681,18 +681,22 @@
   color: var(--text-muted);
 }
 
-/* Läs som bok on a phone: one page, and only the way back and where you are above it. */
+/* Läs som bok on a phone: one page, with the way back, where you are and Dela uppslag above it. */
 .phone-app .read-head {
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
 }
 
 .phone-app .read-key,
-.phone-app .read-head-end {
+.phone-app .read-head-end .link-button {
   display: none;
 }
 
 .phone-app .read-place {
   justify-self: end;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .phone-app .read-stage {
@@ -810,4 +814,39 @@
     max-height: 100%;
     overflow-y: auto;
   }
+
+  /* Text fields fill the dialog instead of keeping the computer's fixed width. */
+  .dialog-backdrop .dialog .settings-text,
+  .dialog-backdrop .dialog textarea {
+    width: 100%;
+  }
+
+  /* The last twelve weeks fill the card, each day a square. */
+  .phone-app .heatmap {
+    grid-template-rows: repeat(7, auto);
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  .phone-app .heat {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .profile-head .button {
+    white-space: nowrap;
+  }
+}
+
+/* A chapter's synopsis stays on one line in Innehåll, and ends in … where it is cut. */
+.phone-view .contents-summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The phone's own bar names the chapter and its Aa holds the focus switch, so the computer's
+   focus header is not needed. */
+.phone-app .focus-header {
+  display: none;
 }

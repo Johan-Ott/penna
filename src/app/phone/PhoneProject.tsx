@@ -8,6 +8,7 @@ import { Overlays } from "../Overlays.js";
 import { writingAreaProps } from "../paneProps.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
+import { ReadAloud } from "../ReadAloud.js";
 import { useBookTheme } from "../themes/themeStyle.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
@@ -163,6 +164,7 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
       <TextBar app={app} project={project} onBack={screens.back} />
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       <PhoneToolbar app={app} project={project} />
+      <ReadAloud app={app} project={project} />
     </div>
   );
 }

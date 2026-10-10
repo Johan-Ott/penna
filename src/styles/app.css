@@ -729,10 +729,12 @@ select:focus-visible {
   border-bottom: 1px solid var(--border-soft);
 }
 
-.palette-search input {
+.palette-search input,
+.palette-search input:focus-visible {
   flex-grow: 1;
   border: 0;
   outline: 0;
+  box-shadow: none;
   background: transparent;
   font-size: 15px;
 }
