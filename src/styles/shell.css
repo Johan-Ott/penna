@@ -3090,3 +3090,72 @@
   flex-direction: column;
   gap: 8px;
 }
+
+/* Innehåll's Tempo: a row per chapter with its length, talk and sentence length as bars. */
+.tempo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 12px;
+}
+
+.tempo-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr) 44px);
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+}
+
+.tempo-head {
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr) 44px);
+}
+
+.tempo-head .tempo-heading {
+  grid-column: span 2;
+  color: var(--text-label);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tempo-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tempo-flag {
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--bg-subtle);
+  color: var(--text-label);
+  font-size: 11px;
+}
+
+.tempo-bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--bg-subtle);
+}
+
+.tempo-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--text-label);
+}
+
+.tempo-row.slow .tempo-bar > span {
+  background: var(--text);
+}
+
+.tempo-value {
+  color: var(--text-label);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}

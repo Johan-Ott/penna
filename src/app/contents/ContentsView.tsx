@@ -8,7 +8,8 @@ import type { TreeNode } from "../../project/tree.js";
 import { ShareSpreadDialog } from "../share/ShareSpreadDialog.js";
 import type { Project } from "../useProject.js";
 import { BookMeta, PageGrid, TasksLink } from "./BookOverview.js";
-import { ContentsBar } from "./ContentsBar.js";
+import { ContentsBar, type ContentsShown } from "./ContentsBar.js";
+import { TempoView } from "./TempoView.js";
 import { ContentsList } from "./ContentsList.js";
 import { pagesAtGoal } from "./ShareSpreadButton.js";
 import { t } from "../../i18n/i18n.js";
@@ -29,7 +30,7 @@ export interface ContentsProps {
   /** The words of each day, for when the first draft is done at this pace. */
   stats: Stats;
   /** The notes and where they are named, for the filter. */
-  notes: Pick<FilterSources, "cards" | "mentions">;
+  notes: Pick<FilterSources, "cards" | "mentions"> & { manuscript: Record<string, string> };
 }
 
 // The whole book's pages as a picture: what is written, and outlined pages for what is left.
@@ -76,7 +77,7 @@ function ContentsHeader(props: ContentsProps) {
 
 /** Innehåll: the book at a glance, its pages, and its chapters by part to plan in. */
 export function ContentsView(props: ContentsProps) {
-  const [isTimeOrder, setTimeOrder] = useState(false);
+  const [shown, setShown] = useState<ContentsShown>("las");
   const [query, setQuery] = useState("");
   const rows = contentsRows(props.project.tree, props.project.summaries);
   return (
@@ -87,10 +88,14 @@ export function ContentsView(props: ContentsProps) {
           rows={rows}
           query={query}
           onQuery={setQuery}
-          isTimeOrder={isTimeOrder}
-          onTimeOrder={setTimeOrder}
+          shown={shown}
+          onShown={setShown}
         />
-        <ContentsList {...props} isTimeOrder={isTimeOrder} query={query} />
+        {shown === "tempo" ? (
+          <TempoView project={props.project} texts={props.notes.manuscript} />
+        ) : (
+          <ContentsList {...props} isTimeOrder={shown === "tid"} query={query} />
+        )}
       </div>
     </main>
   );

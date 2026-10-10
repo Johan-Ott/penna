@@ -48,20 +48,20 @@ function PovChips(props: { rows: ContentsRow[]; query: string; onQuery: (query: 
   });
 }
 
-function OrderSwitch(props: { isTimeOrder: boolean; onChange: (isTimeOrder: boolean) => void }) {
-  const option = (label: string, isTimeOrder: boolean) => (
-    <button
-      role="radio"
-      aria-checked={props.isTimeOrder === isTimeOrder}
-      onClick={() => props.onChange(isTimeOrder)}
-    >
+/** The chapters in reading order, in the story's time order, or as their tempo. */
+export type ContentsShown = "las" | "tid" | "tempo";
+
+function OrderSwitch(props: { shown: ContentsShown; onChange: (shown: ContentsShown) => void }) {
+  const option = (label: string, shown: ContentsShown) => (
+    <button role="radio" aria-checked={props.shown === shown} onClick={() => props.onChange(shown)}>
       {label}
     </button>
   );
   return (
     <div className="segmented small" role="radiogroup" aria-label={t("Ordning")}>
-      {option(t("Läsordning"), false)}
-      {option(t("Tidsordning"), true)}
+      {option(t("Läsordning"), "las")}
+      {option(t("Tidsordning"), "tid")}
+      {option(t("Tempo"), "tempo")}
     </div>
   );
 }
@@ -71,8 +71,8 @@ export function ContentsBar(props: {
   rows: ContentsRow[];
   query: string;
   onQuery: (query: string) => void;
-  isTimeOrder: boolean;
-  onTimeOrder: (isTimeOrder: boolean) => void;
+  shown: ContentsShown;
+  onShown: (shown: ContentsShown) => void;
 }) {
   return (
     <div className="contents-bar">
@@ -80,7 +80,7 @@ export function ContentsBar(props: {
         <ContentsFilter query={props.query} onQuery={props.onQuery} />
         <PovChips rows={props.rows} query={props.query} onQuery={props.onQuery} />
       </span>
-      <OrderSwitch isTimeOrder={props.isTimeOrder} onChange={props.onTimeOrder} />
+      <OrderSwitch shown={props.shown} onChange={props.onShown} />
     </div>
   );
 }

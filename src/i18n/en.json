@@ -1260,5 +1260,13 @@
   "Särskrivning?": "Written apart?",
   "{pairs}. Skrivs ihop om det är ett ord.": "{pairs}. Joined if it is one word.",
   "Ordförslag": "Word suggestions",
-  "Resten av ett namn eller ett långt ord ur scenen visas i grått. Tab fyller i.": "The rest of a name or a long word from the scene shows in grey. Tab fills it in."
+  "Resten av ett namn eller ett långt ord ur scenen visas i grått. Tab fyller i.": "The rest of a name or a long word from the scene shows in grey. Tab fills it in.",
+  "Tempo": "Pace",
+  "{share} % dialog": "{share} % dialogue",
+  "{count} ord per mening": "{count} words per sentence",
+  "Långsamt?": "Slow?",
+  "Längd": "Length",
+  "Dialog": "Dialogue",
+  "Meningslängd": "Sentence length",
+  "Långsamt? betyder längre än de flesta kapitel, med mindre dialog och längre meningar.": "Slow? means longer than most chapters, with less dialogue and longer sentences."
 }
