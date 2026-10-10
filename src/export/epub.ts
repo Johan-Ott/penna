@@ -69,8 +69,12 @@ figure.picture-smal img { max-width: 60%; }
 figure.picture figcaption { font-size: 0.85em; font-style: italic; margin-top: 0.4em; }
 div.scene-break img { height: 1.5em; max-width: 40%; }
 hr.scene-break { border: 0; text-align: center; margin: 1.5em 0; }
-div.brev, div.citat, div.dikt, div.meddelande { margin: 1em 2em; }
-div.brev p, div.citat p, div.dikt p, div.meddelande p { text-indent: 0; }
+div.brev, div.citat, div.dikt { margin: 1em 2em; }
+div.brev p, div.citat p, div.dikt p, div.motto p { text-indent: 0; }
+div.meddelande, div.meddelande-ut { margin: 1em 0; font-family: sans-serif; font-size: 0.9em; }
+div.meddelande p, div.meddelande-ut p { text-indent: 0; padding: 0.3em 0.8em; border-radius: 0.8em; background: #eee; margin: 0.4em 25% 0.4em 0; }
+div.meddelande-ut p { margin: 0.4em 0 0.4em 25%; background: #ddd; }
+div.motto { margin: 1em 0 2em 30%; text-align: right; font-style: italic; }
 div.centrerat p, div.hoger p, div.utan-indrag p, div.kapitaler p { text-indent: 0; }
 div.kapitaler { font-variant: small-caps; letter-spacing: 0.05em; }
 div.centrerat { text-align: center; }

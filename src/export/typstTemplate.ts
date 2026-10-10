@@ -40,7 +40,13 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
   let sides = (left: 1.6em, right: 1.6em)
   if name == "brev" { block(inset: sides, above: 1.2em, below: 1.2em, emph(body)) }
   else if name == "dikt" { set par(justify: false); block(inset: (left: 2.4em), above: 1.2em, below: 1.2em, body) }
-  else if name == "meddelande" { set text(font: "Geist", size: 0.85em); block(inset: sides, above: 1.2em, below: 1.2em, body) }
+  else if name == "meddelande" or name == "meddelande-ut" {
+    set text(font: "Geist", size: 0.85em)
+    show par: it => block(fill: if name == "meddelande" { luma(238) } else { luma(222) }, inset: (x: 8pt, y: 5pt), radius: 6pt, above: 0.5em, below: 0.5em, it)
+    let inset = if name == "meddelande" { (right: 25%) } else { (left: 25%) }
+    block(inset: inset, above: 1.2em, below: 1.2em, body)
+  }
+  else if name == "motto" { set par(justify: false); align(right, block(width: 70%, above: 1.2em, below: 2em, align(right, emph(body)))) }
   else if name == "centrerat" { set par(justify: false); align(center, body) }
   else if name == "hoger" { set par(justify: false); align(right, body) }
   else if name == "utan-indrag" { body }

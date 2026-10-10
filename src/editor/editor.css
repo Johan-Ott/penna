@@ -46,7 +46,7 @@
 .manuscript .style-dikt p + p,
 .manuscript .style-brev p + p,
 .manuscript .style-citat p + p,
-.manuscript .style-meddelande p + p {
+.manuscript .style-motto p + p {
   text-indent: 0;
 }
 
@@ -78,10 +78,45 @@
   text-align: right;
 }
 
-.manuscript .style-meddelande {
+/* A text thread: each message a bubble, the writer's own to the right, as on a phone. */
+.manuscript .style-meddelande,
+.manuscript .style-meddelande-ut {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 0;
   font-family: var(--font-ui);
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.45;
+}
+
+.manuscript .style-meddelande {
+  align-items: flex-start;
+}
+
+.manuscript .style-meddelande-ut {
+  align-items: flex-end;
+}
+
+.manuscript .style-meddelande p,
+.manuscript .style-meddelande-ut p {
+  max-width: 75%;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: var(--bg-subtle);
+  text-indent: 0;
+}
+
+.manuscript .style-meddelande-ut p {
+  background: var(--surface-selected);
+}
+
+/* Motto: a quotation set apart where a chapter opens, to the right. */
+.manuscript .style-motto {
+  width: 70%;
+  margin: 1em 0 1.6em auto;
+  font-style: italic;
+  text-align: right;
 }
 
 .manuscript .raw-block {

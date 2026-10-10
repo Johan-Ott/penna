@@ -5,6 +5,8 @@ export const STYLE_NAMES = [
   "citat",
   "dikt",
   "meddelande",
+  "meddelande-ut",
+  "motto",
   "centrerat",
   "hoger",
   "utan-indrag",

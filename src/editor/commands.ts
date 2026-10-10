@@ -13,6 +13,8 @@ export const STYLE_LABELS: Record<StyleChoice, string> = {
   citat: t("Citat"),
   dikt: t("Dikt"),
   meddelande: t("Meddelande"),
+  "meddelande-ut": t("Mitt meddelande"),
+  motto: t("Motto"),
   centrerat: t("Centrerat"),
   hoger: t("Högerställt"),
   "utan-indrag": t("Utan indrag"),
