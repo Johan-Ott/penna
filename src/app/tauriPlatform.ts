@@ -3,8 +3,10 @@ import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
+  cancel,
   isPermissionGranted,
   requestPermission,
+  Schedule,
   sendNotification,
 } from "@tauri-apps/plugin-notification";
 import { relaunch } from "@tauri-apps/plugin-process";
@@ -87,9 +89,19 @@ async function saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind
   return withForwardSlashes(path);
 }
 
+const canNotify = async () =>
+  (await isPermissionGranted()) || (await requestPermission()) === "granted";
+
 async function notify(title: string, body: string) {
-  const isGranted = (await isPermissionGranted()) || (await requestPermission()) === "granted";
-  if (isGranted) sendNotification({ title, body });
+  if (await canNotify()) sendNotification({ title, body });
+}
+
+const REMINDER_ID = 1;
+
+async function scheduleReminder(when: Date | null, title: string, body: string) {
+  await cancel([REMINDER_ID]);
+  if (when && (await canNotify()))
+    sendNotification({ id: REMINDER_ID, title, body, schedule: Schedule.at(when, false, true) });
 }
 
 async function checkForUpdate() {
@@ -151,6 +163,7 @@ export const tauriPlatform: Platform = {
   ...(isPhone ? {} : { readClipboard: readText }),
   checkForUpdate: isPhone ? async () => null : checkForUpdate,
   notify,
+  ...(isPhone ? { scheduleReminder } : {}),
   ...(isPhone ? {} : { showInFolder: (path: string) => revealItemInDir(path) }),
   knownFolders: isPhone ? phoneFolders : computerFolders,
   ...googleSignInHere(),

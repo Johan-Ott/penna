@@ -19,8 +19,31 @@ export function isReminderDue(parts: {
   return new Date(now).getHours() >= hour;
 }
 
-/** Needs Penna to be open. */
+/** Today at the hour, or tomorrow once she has written today or the hour has passed. */
+export function nextReminder(hour: number | null, now: number, todayWords: number) {
+  if (hour === null) return null;
+  const when = new Date(now);
+  when.setHours(hour, 0, 0, 0);
+  if (todayWords > 0 || when.getTime() <= now) when.setDate(when.getDate() + 1);
+  return when;
+}
+
+// On a phone Penna is mostly closed, so the phone itself keeps the next reminder.
+function useScheduledReminder(hour: number | null, hasWritten: boolean) {
+  useEffect(() => {
+    const when = nextReminder(hour, Date.now(), hasWritten ? 1 : 0);
+    const body = t("Du har inte skrivit något idag än.");
+    void platform.scheduleReminder?.(when, t("Dags att skriva"), body);
+  }, [hour, hasWritten]);
+}
+
 export function useReminder(hour: number | null, todayWords: number) {
+  useScheduledReminder(hour, todayWords > 0);
+  useOpenReminder(platform.scheduleReminder ? null : hour, todayWords);
+}
+
+/** On a computer: needs Penna to be open. */
+function useOpenReminder(hour: number | null, todayWords: number) {
   const lastReminded = useRef<string | null>(null);
   const words = useRef(todayWords);
   words.current = todayWords;

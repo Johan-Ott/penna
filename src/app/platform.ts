@@ -25,6 +25,8 @@ export interface Platform {
   showInFolder?: (path: string) => Promise<void>;
   /** Asks for permission the first time. */
   notify(title: string, body: string): Promise<void>;
+  /** The phone's own alarm for the reminder, which fires while Penna is closed; null cancels it. */
+  scheduleReminder?: (when: Date | null, title: string, body: string) => Promise<void>;
   /** Missing where Penna cannot sign in: the browser, and iPad for now. */
   googleSignIn?: GoogleSignIn;
   /** Asks first; true when the book was removed. Missing in the browser version. */
