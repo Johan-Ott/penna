@@ -1,4 +1,6 @@
 import { numberLocale, t } from "../i18n/i18n.js";
+import { surfaceNotes } from "./cliches.js";
+import { dialogueNotes } from "./dialogue.js";
 
 /** Something in a scene's prose worth a second look: a long sentence, a filler word, a loud tag. */
 export interface ProseNote {
@@ -12,7 +14,15 @@ export interface ProseNote {
     | "feeling"
     | "head"
     | "tense"
-    | "fading";
+    | "fading"
+    | "dash"
+    | "heads"
+    | "adverb"
+    | "cliche"
+    | "wall"
+    | "marks"
+    | "gesture"
+    | "names";
   title: string;
   text: string;
 }
@@ -109,6 +119,8 @@ export function proseNotes(text: string, language: string): ProseNote[] {
   return [
     ...longSentences(text),
     ...sameStarts(text),
+    ...dialogueNotes(text, language),
+    ...surfaceNotes(text, language),
     ...(fillers.length
       ? [{ kind: "filler" as const, title: t("Utfyllnadsord"), text: listed(fillers) }]
       : []),

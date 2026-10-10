@@ -7,6 +7,8 @@ import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
 import { narrationOf } from "../../manuscript/narration.js";
 import { fadingPeople } from "../../project/fadingPeople.js";
+import { gestureNotes, similarNames } from "../../project/bookNotes.js";
+import { bookLanguage } from "../../project/bookLanguage.js";
 import { NarrationPicker } from "./NarrationPicker.js";
 import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
@@ -73,6 +75,13 @@ function useOpening(app: AppState, isWriting: boolean) {
   }, [isWriting, hasRevision, setReviewOpen, settings.commentsInMargin]);
 }
 
+// About the whole book, beside the open scene: people who fade out, names alike, worn gestures.
+const bookNotesOf = (app: AppState, project: Project) => [
+  ...fadingPeople(app.notes.cards, app.notes.mentions, project.tree),
+  ...similarNames(app.notes.cards),
+  ...gestureNotes(Object.values(app.notes.manuscript), bookLanguage(project.fields)),
+];
+
 function NarrationSection({ app, fields }: { app: AppState; fields: Record<string, unknown> }) {
   const narration = narrationOf(fields);
   return (
@@ -101,7 +110,7 @@ function ShownReview(props: ShownProps) {
       review={isReviewOn ? review : null}
       commentsSection={<CommentsAndTasks {...props} />}
       narrationSection={<NarrationSection app={app} fields={props.project.fields} />}
-      bookNotes={fadingPeople(app.notes.cards, app.notes.mentions, props.project.tree)}
+      bookNotes={bookNotesOf(app, props.project)}
       revisionSection={
         <>
           <SuggestStart app={app} />

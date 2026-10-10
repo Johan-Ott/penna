@@ -78,6 +78,8 @@ export function useNotes(homes: Project[], book: Project | null, areMentionsWant
   return {
     cards,
     mentions,
+    /** The book's scenes as text, keyed by scene id, read while mentions are wanted. */
+    manuscript,
     descriptionOf: (id: string) => firstSentence(noteTexts[id] ?? ""),
     mention,
     showMention: (id: string, box: DOMRect) => setMention({ id, box }),
