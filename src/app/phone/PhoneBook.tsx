@@ -21,6 +21,7 @@ import { collaborationItems } from "../exporting/collaboration.js";
 import { TreeView } from "../tree/TreeView.js";
 import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import type { Project } from "../useProject.js";
+import { checkForUpdates } from "../updates.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 interface PhoneBookProps {
@@ -158,6 +159,7 @@ function phoneMenu(
     },
     { label: t("Hjälp"), onSelect: () => app.writingMode.settingsDialog.open(HELP_TAB) },
     { label: t("Skicka feedback…"), onSelect: dialogs.feedback.open },
+    { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
   ];
 }
 

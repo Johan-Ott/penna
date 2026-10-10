@@ -1,4 +1,5 @@
 import type { MenuItem } from "../Menu.js";
+import { checkForUpdates } from "../updates.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface AppMenuActions {
@@ -50,5 +51,6 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
     },
     { label: t("Hjälp och kortkommandon"), shortcut: "?", onSelect: actions.openShortcuts },
     { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
+    { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
   ];
 }

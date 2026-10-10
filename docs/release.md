@@ -48,4 +48,13 @@ npm run version -- 0.1.0
 git commit -am "Penna 0.1.0" && git tag v0.1.0 && git push --follow-tags
 ```
 
-Publicera sedan utkastet under Releases på GitHub.
+Bygg Android-appen och lägg den på utkastet innan det publiceras. Telefonerna letar efter en
+`.apk` i den senaste publicerade releasen och erbjuder den under Sök efter uppdateringar:
+
+```bash
+npm run build:android
+gh release upload v0.1.0 out/Penna.apk
+```
+
+Publicera sedan utkastet under Releases på GitHub. Datorerna och telefonerna ser det från
+och med nu, vid start och var sjätte timme.

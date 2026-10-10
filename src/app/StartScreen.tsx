@@ -8,6 +8,7 @@ import { ShelfTopbar } from "./shell/Topbar.js";
 import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
+import { checkForUpdates } from "./updates.js";
 import { t } from "../i18n/i18n.js";
 import { copyExampleProject } from "../project/newProject.js";
 import type { ShelfBook } from "../project/shelf.js";
@@ -77,6 +78,7 @@ const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
   { label: t("Inställningar"), separatorBefore: true, onSelect: actions.openSettings },
   { label: t("Hjälp"), onSelect: actions.openShortcuts },
   { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
+  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
 ];
 
 // The shelf's menu, with the dialogs it opens.

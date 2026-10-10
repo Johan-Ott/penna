@@ -68,6 +68,8 @@ export interface GoogleSignIn {
 export interface AppUpdate {
   version: string;
   install(): Promise<void>;
+  /** A phone's update is a file Android installs, not a restart. */
+  isDownload?: boolean;
 }
 
 export interface PickKind {

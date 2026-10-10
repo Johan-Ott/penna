@@ -262,3 +262,10 @@ test("autocorrect gives a sentence its capital and HEj its case, and Backspace t
   await page.keyboard.press("Backspace");
   await expect(editor(page)).toContainText("Hejsan då. d");
 });
+
+test("Sök efter uppdateringar says so when this is the newest Penna", async ({ page }) => {
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
+
+  await expect(page.getByText("Du har den senaste versionen av Penna.")).toBeVisible();
+});

@@ -1221,5 +1221,8 @@
   "Skriv förslag": "Suggest changes",
   "Redaktörens ändringar": "The editor's changes",
   "Autokorrigering": "Autocorrect",
-  "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.": "A capital where a sentence starts, HEllo becomes Hello and obvious misspellings are fixed. Backspace undoes it."
+  "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.": "A capital where a sentence starts, HEllo becomes Hello and obvious misspellings are fixed. Backspace undoes it.",
+  "Sök efter uppdateringar…": "Check for updates…",
+  "Hämta": "Download",
+  "Du har den senaste versionen av Penna.": "You have the latest version of Penna."
 }

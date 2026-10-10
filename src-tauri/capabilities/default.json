@@ -11,6 +11,7 @@
     "fs:allow-read-text-file",
     "process:allow-restart",
     "opener:allow-reveal-item-in-dir",
+    "opener:default",
     "notification:default",
     "fs:allow-read-file",
     "fs:allow-mkdir",
@@ -33,6 +34,9 @@
         },
         {
           "url": "https://formspree.io/f/*"
+        },
+        {
+          "url": "https://api.github.com/repos/Johan-Ott/penna/releases/latest"
         }
       ]
     }
