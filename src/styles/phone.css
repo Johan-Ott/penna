@@ -878,3 +878,8 @@
 .phone-text .suggesting-bar {
   top: calc(max(28px, var(--safe-top)) + 52px);
 }
+
+/* Above the tools over the keyboard. */
+.phone-text .sprint-bar {
+  bottom: 64px;
+}

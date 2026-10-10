@@ -28,6 +28,7 @@ import { cardEntries, labelled, sceneEntries } from "./bookEntries.js";
 import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
 import { insertFootnote } from "../../editor/footnoteEditing.js";
+import { startSprint } from "../sprint/sprint.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
@@ -121,6 +122,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     ...sceneEntries(context),
     command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
     command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),
+    command(t("Skrivsprint, 25 minuter"), () => startSprint(25)),
     ...(context.showSnapshots
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
       : []),

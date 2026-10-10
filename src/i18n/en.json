@@ -1248,5 +1248,13 @@
   "Gester som kommer ofta": "Gestures that come back often",
   "{pairs} liknar varandra och kan blandas ihop av läsaren.": "{pairs} look alike and a reader may mix them up.",
   "Namn som liknar varandra": "Names that look alike",
-  "{first} och {second}": "{first} and {second}"
+  "{first} och {second}": "{first} and {second}",
+  "Skrivsprint, 25 minuter": "Writing sprint, 25 minutes",
+  "{words} ord på {minutes} minuter.": "{words} words in {minutes} minutes.",
+  "Sprinten är klar": "The sprint is done",
+  "{words} ord": "{words} words",
+  "Avsluta": "End",
+  "Sprinten är klar: {words} ord på {minutes} minuter.": "The sprint is done: {words} words in {minutes} minutes.",
+  "Skrivsprint": "Writing sprint",
+  "{minutes} min": "{minutes} min"
 }

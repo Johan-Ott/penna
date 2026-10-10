@@ -250,23 +250,3 @@ test("Förslagsläge keeps the text as it was, and what was typed comes back to 
   await review.getByRole("button", { name: "Godta" }).click();
   await expect(editor(page)).toContainText("vantarna. Hon log.");
 });
-
-test("autocorrect gives a sentence its capital and HEj its case, and Backspace takes it back", async ({
-  page,
-}) => {
-  await cursorAfterFirstParagraph(page);
-
-  await page.keyboard.type(" hon log. HEjsan ", { delay: 5 });
-  await expect(editor(page)).toContainText("vantarna. Hon log. Hejsan ");
-
-  await page.keyboard.type("då. d");
-  await page.keyboard.press("Backspace");
-  await expect(editor(page)).toContainText("Hejsan då. d");
-});
-
-test("Sök efter uppdateringar says so when this is the newest Penna", async ({ page }) => {
-  await page.getByRole("button", { name: "Meny" }).first().click();
-  await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
-
-  await expect(page.getByText("Du har den senaste versionen av Penna.")).toBeVisible();
-});

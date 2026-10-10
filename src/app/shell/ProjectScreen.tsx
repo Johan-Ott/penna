@@ -4,7 +4,6 @@ import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
-import { SuggestingBar } from "../review/Suggesting.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
@@ -22,7 +21,7 @@ import type { PageMap } from "../../project/pageMap.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { bookLook, runningHead } from "../bookLook.js";
 import { t } from "../../i18n/i18n.js";
-import { ReadAloud } from "../ReadAloud.js";
+import { TextBands } from "../TextBands.js";
 
 type ScreenProps = { app: AppState; project: Project };
 
@@ -70,8 +69,7 @@ function OverTheText({ app, project }: ScreenProps) {
         <ReviewPill review={writingMode.review} onReview={() => writingMode.setReviewOpen(true)} />
       )}
       <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
-      <ReadAloud app={app} project={project} />
-      <SuggestingBar app={app} />
+      <TextBands app={app} project={project} />
     </>
   );
 }

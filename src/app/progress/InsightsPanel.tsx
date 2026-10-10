@@ -16,6 +16,7 @@ import type { Journey } from "../../project/journey.js";
 import { JourneyCard } from "../journey/JourneyCard.js";
 import { JourneyDialog } from "../journey/JourneyDialog.js";
 import { DayDialog } from "../journey/DayDialog.js";
+import { SprintChoices } from "../sprint/SprintBar.js";
 import { t, numberLocale } from "../../i18n/i18n.js";
 
 const format = (words: number) => words.toLocaleString(numberLocale());
@@ -143,6 +144,7 @@ export function InsightsPanel(props: PanelProps) {
   return (
     <aside className="insights-panel" aria-label={t("Insikter")}>
       <InsightsHead onClose={props.onClose} />
+      <SprintChoices onStart={props.onClose} />
       {hasStats && <ShownAs isColophon={isColophon} onChange={setColophon} />}
       {!hasStats && <NoStats onWrite={props.onClose} />}
       {isColophon ? (
