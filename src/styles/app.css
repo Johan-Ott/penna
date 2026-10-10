@@ -2174,7 +2174,8 @@ button.book-cover:hover {
 }
 
 /* Sidan, Kapitelrubrik, Brödtext: a quiet heading above each group of rows */
-.design-details {
+/* Flex only while open: a closed part would still give its hidden content a gap. */
+.design-details[open] {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -2183,6 +2184,8 @@ button.book-cover:hover {
 .design-details > summary {
   display: flex;
   justify-content: space-between;
+  margin-top: 0;
+  padding: 12px 0 0;
   cursor: pointer;
   list-style: none;
 }
@@ -3004,11 +3007,12 @@ button.book-cover:hover {
   color: var(--danger);
 }
 
-/* Celebrations: dark cards down in the left corner, gone after four seconds. */
+/* Celebrations: dark cards up in the right corner, clear of the tools at the foot, gone after
+   four seconds. */
 .celebrations {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
+  top: 60px;
+  right: 20px;
   z-index: 70;
   display: flex;
   flex-direction: column;
