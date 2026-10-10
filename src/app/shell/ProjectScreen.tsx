@@ -4,6 +4,7 @@ import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
+import { SuggestingBar } from "../review/Suggesting.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
@@ -70,6 +71,7 @@ function OverTheText({ app, project }: ScreenProps) {
       )}
       <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
       <ReadAloud app={app} project={project} />
+      <SuggestingBar app={app} />
     </>
   );
 }

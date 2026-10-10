@@ -34,6 +34,7 @@ function context() {
     mergeScene: null,
     insertPicture: null,
     readAloud: null,
+    toggleSuggesting: null,
     read: () => undefined,
     openChapterId: null,
     chooseFolder: () => undefined,

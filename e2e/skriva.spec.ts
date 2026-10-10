@@ -232,3 +232,20 @@ test("the focus mode button keeps the cursor in the text, so nothing typed is lo
 
   await expect(editor(page).locator("p").nth(1)).toHaveText("Vädret håller.");
 });
+
+test("Förslagsläge keeps the text as it was, and what was typed comes back to accept", async ({
+  page,
+}) => {
+  await runCommand(page, "Förslagsläge");
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.type(" Hon log.");
+  await expect(page.getByRole("status").filter({ hasText: "Förslagsläge" })).toBeVisible();
+
+  await page.getByRole("status").getByRole("button", { name: "Klar" }).click();
+
+  await expect(editor(page)).not.toContainText("Hon log.");
+  const review = page.getByRole("complementary", { name: "Granskning" });
+  await expect(review).toContainText("Ändringar att gå igenom (1)");
+  await review.getByRole("button", { name: "Godta" }).click();
+  await expect(editor(page)).toContainText("vantarna. Hon log.");
+});

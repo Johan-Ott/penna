@@ -49,7 +49,7 @@ export function RevisionSection({ revision }: { revision: Revision }) {
   return (
     <section className="review-section">
       <span className="review-heading">
-        {t("Redaktörens ändringar")} {changes.length > 0 && `(${changes.length})`}
+        {t("Ändringar att gå igenom")} {changes.length > 0 && `(${changes.length})`}
       </span>
       {changes.length === 0 && (
         <p className="review-empty">{t("Alla ändringar är genomgångna.")}</p>

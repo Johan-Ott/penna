@@ -868,3 +868,8 @@
 .phone-app .focus-header {
   display: none;
 }
+
+/* Under the phone's own bar, where the title is. */
+.phone-text .suggesting-bar {
+  top: calc(max(28px, var(--safe-top)) + 52px);
+}

@@ -16,6 +16,7 @@ import { createAutosave, type SaveStatus } from "../storage/autosave.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { takeSnapshot } from "../project/snapshots.js";
+import { writeSuggestion } from "../project/revisions.js";
 import { decideExternalChange } from "../storage/syncFiles.js";
 import { t } from "../i18n/i18n.js";
 
@@ -47,6 +48,8 @@ export interface SceneSession {
   hooks: SceneSessionHooks;
   autosave: ReturnType<typeof createAutosave>;
   scene: OpenScene | null;
+  /** Förslagsläge: what is typed is saved beside the scene as changes to accept, not in it. */
+  isSuggesting: boolean;
 }
 
 const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);
@@ -55,11 +58,16 @@ const textOf = (session: SceneSession, doc: Node) =>
   joinSceneFile({ frontMatter: session.scene?.frontMatter ?? "", body: serializeMarkdown(doc) });
 
 export function createSceneSession(fileSystem: FileSystem, hooks: SceneSessionHooks) {
-  const current: { scene: OpenScene | null } = { scene: null };
+  const current: { scene: OpenScene | null; isSuggesting: boolean } = {
+    scene: null,
+    isSuggesting: false,
+  };
   const autosave = createAutosave({
     write: async (text) => {
       const scene = current.scene;
       if (!scene) return;
+      if (current.isSuggesting)
+        return writeSuggestion(fileSystem, scene.dir, scene.id, splitSceneFile(text).body);
       const before = autosave.lastSavedText();
       await writeAtomic(fileSystem, scenePath(scene.dir, scene.id), text);
       hooks.onSaved?.(scene, before, text);
@@ -105,8 +113,11 @@ export async function openScene(session: SceneSession, dir: string, id: string) 
 }
 
 // Dropped when another scene opened meanwhile; keeping "mine" would write the wrong text.
+// While suggesting, the file on disk is meant to differ from the editor, so it is not watched.
+const watchedScene = (session: SceneSession) => (session.isSuggesting ? null : session.scene);
+
 export async function checkDisk(session: SceneSession) {
-  const scene = session.scene;
+  const scene = watchedScene(session);
   if (!scene) return;
   const diskText = await session.fileSystem
     .readText(scenePath(scene.dir, scene.id))

@@ -46,7 +46,7 @@ test("a manuscript goes to the editor in Word and comes back with changes to tak
   await page.getByRole("button", { name: "Stäng", exact: true }).click();
 
   const panel = page.getByRole("complementary", { name: "Granskning" });
-  await expect(panel.getByText("Redaktörens ändringar")).toBeVisible();
+  await expect(panel.getByText("Ändringar att gå igenom")).toBeVisible();
   await panel.getByRole("button", { name: "Godta", exact: true }).first().click();
   await panel.getByRole("button", { name: "Avvisa", exact: true }).first().click();
 

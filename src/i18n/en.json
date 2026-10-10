@@ -699,7 +699,6 @@
   "Redaktören har ändrat i {count} scener. Öppna en och gå igenom ändringarna under Granska.": "The editor changed {count} scenes. Open one and go through the changes under Review.",
   "Filen saknar Pennas markeringar. Läs in ett manus som exporterats från Penna och redigerats i Word.": "The file has none of Penna's marks. Read in a manuscript exported from Penna and edited in Word.",
   "Redaktören har inte ändrat något i texten.": "The editor did not change anything in the text.",
-  "Redaktörens ändringar": "The editor's changes",
   "Godta": "Accept",
   "Avvisa": "Reject",
   "Godta alla": "Accept all",
@@ -1213,5 +1212,12 @@
   "Samma början": "Same opening",
   "Tre meningar i rad börjar med ”{word}”.": "Three sentences in a row begin with “{word}”.",
   "{name} nämns senast i kapitel {last} av {total}.": "{name} is last named in chapter {last} of {total}.",
-  "Försvinner ur boken": "Fades out of the book"
+  "Försvinner ur boken": "Fades out of the book",
+  "Förslagsläge": "Suggestion mode",
+  "Ändringar att gå igenom": "Changes to go through",
+  "Förslagsläge: det du skriver blir förslag": "Suggestion mode: what you type becomes suggestions",
+  "Förslag": "Suggestions",
+  "Skriv ändringar som förslag och godta eller avvisa dem sedan, en i taget.": "Type changes as suggestions, then accept or reject them one at a time.",
+  "Skriv förslag": "Suggest changes",
+  "Redaktörens ändringar": "The editor's changes"
 }

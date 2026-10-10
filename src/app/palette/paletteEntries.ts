@@ -64,6 +64,8 @@ export interface PaletteContext {
   openChapterId: string | null;
   /** Null without a text, or where the computer has no voice. */
   readAloud: (() => void) | null;
+  /** Förslagsläge on or off; null when no text is open. */
+  toggleSuggesting: (() => void) | null;
 }
 
 export const command = (label: string, run: () => void, shortcut?: string): PaletteEntry => ({

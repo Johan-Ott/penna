@@ -16,6 +16,7 @@ type SceneParts = {
   drafts: { show: (chapterId: string | null) => void };
   sceneSplit: { split: () => void; merge: () => void; canMerge: boolean };
   writingMode: { read: PaletteContext["read"] };
+  suggesting: { isSuggesting: boolean; start: () => void; stop: () => void };
 };
 
 // The picture is copied into the book first, then placed where the cursor is.
@@ -23,6 +24,9 @@ export async function insertChosenPicture(dir: string, run: (command: Command) =
   const name = await choosePicture(dir).catch(recordFailure("Bild"));
   if (name) run(insertPicture(name));
 }
+
+const suggestToggle = ({ scene, suggesting }: SceneParts) =>
+  scene ? () => (suggesting.isSuggesting ? suggesting.stop() : suggesting.start()) : null;
 
 /** The commands that work on the open text; null where no text is open. */
 export function sceneContext(app: SceneParts) {
@@ -37,5 +41,6 @@ export function sceneContext(app: SceneParts) {
     openChapterId: scene ? (chapterOf(project.tree, scene.id)?.id ?? null) : null,
     insertPicture: scene ? () => void insertChosenPicture(project.dir, app.editor.run) : null,
     ...speechContext(app, project),
+    toggleSuggesting: suggestToggle(app),
   };
 }

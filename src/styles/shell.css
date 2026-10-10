@@ -3015,3 +3015,23 @@
   background: var(--text);
   color: var(--bg);
 }
+
+/* Förslagsläge: a band over the text for as long as what is typed becomes suggestions. */
+.suggesting-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 6;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid var(--border-control);
+  border-radius: 18px;
+  background: var(--bg-subtle);
+  box-shadow: var(--shadow-low);
+  color: var(--text);
+  font: 500 13px var(--font-ui);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}

@@ -16,6 +16,7 @@ import { BookTasks } from "./BookTasks.js";
 import { SceneSecretWarnings } from "../notes/SecretPanel.js";
 import { sidebarProps } from "../paneProps.js";
 import { RevisionSection } from "./RevisionSection.js";
+import { SuggestStart } from "./Suggesting.js";
 import type { useComments } from "./useComments.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -101,7 +102,12 @@ function ShownReview(props: ShownProps) {
       commentsSection={<CommentsAndTasks {...props} />}
       narrationSection={<NarrationSection app={app} fields={props.project.fields} />}
       bookNotes={fadingPeople(app.notes.cards, app.notes.mentions, props.project.tree)}
-      revisionSection={<RevisionSection revision={app.revision} />}
+      revisionSection={
+        <>
+          <SuggestStart app={app} />
+          <RevisionSection revision={app.revision} />
+        </>
+      }
       revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}
       onOpenCard={app.cards.open}

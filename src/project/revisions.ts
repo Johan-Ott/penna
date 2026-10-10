@@ -1,3 +1,5 @@
+import { documentText } from "../editor/documentText.js";
+import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { setAside } from "../storage/setAside.js";
@@ -25,3 +27,11 @@ export async function writeRevision(
 /** Done with: moved to trash/ like everything Penna stops using, never deleted. */
 export const finishRevision = (fileSystem: FileSystem, dir: string, sceneId: string) =>
   setAside(fileSystem, dir, revisionPath(dir, sceneId), `redigering-${sceneId}.txt`);
+
+/** Förslagsläge's text, kept as an editor's version so Granska shows it the same way. */
+export const writeSuggestion = (
+  fileSystem: FileSystem,
+  dir: string,
+  sceneId: string,
+  body: string,
+) => writeRevision(fileSystem, dir, sceneId, documentText(parseMarkdown(body)).text);
