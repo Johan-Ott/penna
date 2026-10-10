@@ -1,4 +1,5 @@
 import type { ProjectDetails } from "../../project/newProject.js";
+import { NarrationPicker } from "../review/NarrationPicker.js";
 import { PieceToggles, TemplateSuggestion } from "../templates/TemplateChoices.js";
 import { BOOK_STEPS, continueFrom, type OnboardingState } from "./useOnboarding.js";
 import { t, numberLocale } from "../../i18n/i18n.js";
@@ -66,6 +67,14 @@ function StoryPieces({ details, onChange }: FieldProps) {
         chosen={details.pieces}
         onChange={(pieces) => onChange({ ...details, pieces })}
       />
+      <span className="field-label">{t("Hur berättas den?")}</span>
+      <NarrationPicker
+        value={details.narration}
+        onChange={(narration) => onChange({ ...details, narration })}
+      />
+      <span className="setting-hint">
+        {t("Granska håller koll på att texten följer det, till exempel filterord i deep POV.")}
+      </span>
     </>
   );
 }

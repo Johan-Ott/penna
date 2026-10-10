@@ -9,6 +9,7 @@ interface ReviewPanelProps {
   /** Null when Granskning is off and only comments are shown. */
   review: ReturnType<typeof useReview> | null;
   commentsSection: ReactNode;
+  narrationSection: ReactNode;
   revisionSection: ReactNode;
   revisionCount: number;
   repeatWindow: number;
@@ -133,6 +134,7 @@ export function ReviewPanel(props: ReviewPanelProps) {
     <aside className={isShown ? "review-panel open" : "review-panel"} aria-label={t("Granskning")}>
       <ReviewHeader onClose={() => props.onOpenChange(false)} />
       {props.revisionSection}
+      {review && props.narrationSection}
       {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
       {review && <ToLookAt {...props} review={review} />}
       {props.commentsSection}

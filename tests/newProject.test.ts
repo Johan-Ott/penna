@@ -23,7 +23,17 @@ describe("createProject", () => {
     pieces: [],
     dailyGoal: 1000,
     deadline: "",
+    narration: null,
   };
+
+  it("keeps how the book is told, for Granska to watch", async () => {
+    const files = createMemoryFileSystem({});
+    const narration = { voice: "nara", tense: "dåtid" } as const;
+
+    const created = await createProject(files, "/Penna", { ...details, narration });
+
+    expect((await readProjectFile(files, created.dir, [])).fields["narration"]).toEqual(narration);
+  });
 
   it("makes a project folder with a first chapter and scene, ready to write in", async () => {
     const files = createMemoryFileSystem({});

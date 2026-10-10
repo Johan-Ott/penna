@@ -5,6 +5,8 @@ import type { NameSuspect } from "../../manuscript/review.js";
 import type { AppState } from "../App.js";
 import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
+import { narrationOf } from "../../manuscript/narration.js";
+import { NarrationPicker } from "./NarrationPicker.js";
 import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
 import { documentText } from "../../editor/documentText.js";
@@ -14,6 +16,7 @@ import { SceneSecretWarnings } from "../notes/SecretPanel.js";
 import { sidebarProps } from "../paneProps.js";
 import { RevisionSection } from "./RevisionSection.js";
 import type { useComments } from "./useComments.js";
+import { t } from "../../i18n/i18n.js";
 
 type Comments = ReturnType<typeof useComments>;
 
@@ -68,6 +71,24 @@ function useOpening(app: AppState, isWriting: boolean) {
   }, [isWriting, hasRevision, setReviewOpen, settings.commentsInMargin]);
 }
 
+function NarrationSection({ app, fields }: { app: AppState; fields: Record<string, unknown> }) {
+  const narration = narrationOf(fields);
+  return (
+    <section className="review-section">
+      <span className="review-heading">{t("Berättarröst")}</span>
+      <NarrationPicker
+        value={narration}
+        onChange={(next) => void app.updateFields({ narration: next })}
+      />
+      {!narration && (
+        <span className="setting-hint">
+          {t("Välj hur boken berättas, så ser Granska till att texten håller sig till det.")}
+        </span>
+      )}
+    </section>
+  );
+}
+
 function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
@@ -77,6 +98,7 @@ function ShownReview(props: ShownProps) {
     <ReviewPanel
       review={isReviewOn ? review : null}
       commentsSection={<CommentsAndTasks {...props} />}
+      narrationSection={<NarrationSection app={app} fields={props.project.fields} />}
       revisionSection={<RevisionSection revision={app.revision} />}
       revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}

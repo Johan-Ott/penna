@@ -29,6 +29,7 @@ const START_DETAILS: ProjectDetails = {
   pieces: [],
   dailyGoal: 1000,
   deadline: "",
+  narration: null,
 };
 
 async function availableLibraries(): Promise<LibraryCandidate[]> {

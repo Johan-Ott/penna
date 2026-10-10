@@ -3,11 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { nameSuspects } from "../../manuscript/review.js";
+import { narrationNotes, narrationOf } from "../../manuscript/narration.js";
 import { proseNotes } from "../../manuscript/prose.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { mentionPattern, type Card } from "../../project/cards.js";
-import { findNode } from "../../project/tree.js";
+import { CHARACTERS_ID, findNode } from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
@@ -47,6 +48,15 @@ function useChapterTexts(project: Project, sceneId: string) {
   return texts;
 }
 
+// The people whose eyes the chapter is not seen through; none when no one is named under Vems ögon.
+function othersThan(project: Project, sceneId: string, cards: Card[]) {
+  const chapter = chapterOf(project.tree, sceneId);
+  const pov = (chapter ? findNode(project.tree, chapter.id)?.node.pov : "") ?? "";
+  if (!pov.trim()) return [];
+  const people = cards.filter((card) => card.sortId === CHARACTERS_ID);
+  return people.map((card) => card.name).filter((name) => !pov.includes(name));
+}
+
 // The text as it was at the writer's last pause, so Granska does not count on every key.
 function useSettled(doc: Node) {
   const [settled, setSettled] = useState(doc);
@@ -71,6 +81,13 @@ export function useReview({ project, scene, doc: current, cards, repeatWindow }:
   }, [cards, sceneText, scene.id, project]);
   const repeats = useMemo(() => sceneRepetitions(doc, repeatWindow), [doc, repeatWindow]);
   const language = bookLanguage(project.fields);
-  const prose = useMemo(() => proseNotes(sceneText, language), [sceneText, language]);
+  const prose = useMemo(() => {
+    const narration = narrationOf(project.fields);
+    const others = othersThan(project, scene.id, cards);
+    return [
+      ...proseNotes(sceneText, language),
+      ...narrationNotes(sceneText, language, narration, others),
+    ];
+  }, [sceneText, language, project, scene.id, cards]);
   return { inChapter, suspects, repeats, prose, ignored: ignoredNames(project) };
 }

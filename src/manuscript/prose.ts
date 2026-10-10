@@ -2,7 +2,7 @@ import { numberLocale, t } from "../i18n/i18n.js";
 
 /** Something in a scene's prose worth a second look: a long sentence, a filler word, a loud tag. */
 export interface ProseNote {
-  kind: "long" | "filler" | "tag";
+  kind: "long" | "filler" | "tag" | "voice" | "filter" | "head" | "tense";
   title: string;
   text: string;
 }

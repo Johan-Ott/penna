@@ -6,6 +6,7 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
+import type { Narration } from "../manuscript/narration.js";
 import { manuscriptSceneIds, withSpecialFolders, type TreeNode } from "./tree.js";
 import { readOwnTemplates, OWN_PREFIX } from "./ownTemplates.js";
 import { composeTemplate, structures, templateBook, type BookTemplate } from "./templates.js";
@@ -21,6 +22,8 @@ export interface ProjectDetails {
   dailyGoal: number;
   /** YYYY-MM-DD, or "" when the writer has no deadline. */
   deadline: string;
+  /** How the book is told, which Granska then watches for; null until chosen. */
+  narration: Narration | null;
 }
 
 // Characters Windows, macOS or a cloud service refuses in a folder name.
@@ -111,6 +114,7 @@ export async function createProject(
     type: details.type,
     dailyGoal: details.dailyGoal,
     ...(details.deadline ? { deadline: details.deadline } : {}),
+    ...(details.narration ? { narration: details.narration } : {}),
     ...fromTemplate.fields,
   };
   await writeProjectFile(
