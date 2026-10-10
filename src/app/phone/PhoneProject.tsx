@@ -9,6 +9,7 @@ import { writingAreaProps } from "../paneProps.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { ReadAloud } from "../ReadAloud.js";
+import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { useBookTheme } from "../themes/themeStyle.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
@@ -149,6 +150,7 @@ function usePhoneScreens({ app, project }: Props) {
 const isTextShown = (screen: PhoneScreen, view: View) =>
   (screen.kind === "text" || screen.kind === "view") && view === "skriv";
 
+// Du slutade här waits until the text shows, so it greets Fortsätt skriva, not Boken.
 function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens> }) {
   const { app, project, screens } = props;
   const { authorName } = app.startup.preferences;
@@ -165,6 +167,7 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       <PhoneToolbar app={app} project={project} />
       <ReadAloud app={app} project={project} />
+      {isShown && <ResumeScreen project={project} stats={app.stats} editor={app.editor} />}
     </div>
   );
 }

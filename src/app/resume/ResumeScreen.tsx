@@ -6,6 +6,7 @@ import { daysBetween, lastWeek } from "../../project/progress.js";
 import { dayKey, type Stats } from "../../project/stats.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { useEditorView } from "../../editor/useEditorView.js";
+import { usePhone } from "../phone/usePhone.js";
 import type { Project } from "../useProject.js";
 import { showResume, useResume, type Place } from "./lastPlace.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
@@ -56,7 +57,9 @@ function ResumeText(props: { project: Project; stats: Stats; place: Place; sente
       </p>
       <span className="resume-when">{whenText(place.writtenAt, words)}</span>
       <WeekLine stats={props.stats} />
-      <span className="resume-hint">{t("Börja skriva så fortsätter du här")}</span>
+      <span className="resume-hint">
+        {usePhone() ? t("Tryck så fortsätter du här") : t("Börja skriva så fortsätter du här")}
+      </span>
     </>
   );
 }
