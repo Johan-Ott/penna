@@ -4,30 +4,42 @@ import type { ProseNote } from "./prose.js";
 // The book's way of telling, chosen when it is made or in Granska, and what Granska then watches
 // for in the narration: the text outside the lines spoken.
 
-export type Voice = "jag" | "nara" | "tredje" | "allvetande";
+export type Voice = "jag" | "tredje" | "allvetande";
 export type Tense = "dåtid" | "nutid";
 export interface Narration {
   voice: Voice;
   tense: Tense;
+  /** Inside the person's head, in first or third person: no filter words, feelings shown. */
+  deep: boolean;
 }
 
 export const VOICES: [Voice, string][] = [
   ["jag", t("Jag-form")],
-  ["nara", t("Tredje person nära (deep POV)")],
   ["tredje", t("Tredje person")],
   ["allvetande", t("Allvetande")],
 ];
+
+/** The all-knowing narrator stands outside every head, so deep POV is for the other two. */
+export const canBeDeep = (voice: Voice) => voice !== "allvetande";
 export const TENSES: [Tense, string][] = [
   ["dåtid", t("Dåtid")],
   ["nutid", t("Nutid")],
 ];
 
+type Stored = { voice?: string; tense?: string; deep?: unknown } | null | undefined;
+
+// "nara" is how close third person was first stored, before deep POV had a switch of its own.
+const voiceOf = (stored: Stored) =>
+  VOICES.find(([id]) => id === (stored?.voice === "nara" ? "tredje" : stored?.voice))?.[0];
+const wasDeep = (stored: Stored) => stored?.deep === true || stored?.voice === "nara";
+
 /** Null until the writer has chosen. */
 export function narrationOf(fields: Record<string, unknown>): Narration | null {
-  const value = fields["narration"] as Partial<Narration> | undefined;
-  const voice = VOICES.find(([id]) => id === value?.voice)?.[0];
-  const tense = TENSES.find(([id]) => id === value?.tense)?.[0];
-  return voice && tense ? { voice, tense } : null;
+  const stored = fields["narration"] as Stored;
+  const voice = voiceOf(stored);
+  const tense = TENSES.find(([id]) => id === stored?.tense)?.[0];
+  if (!voice || !tense) return null;
+  return { voice, tense, deep: canBeDeep(voice) && wasDeep(stored) };
 }
 
 interface Words {
@@ -101,8 +113,8 @@ const quoted = (found: string[]) =>
     .join(", ");
 
 // Filter words and named feelings matter where the reader is meant to be inside the head.
-function closeNotes(narration: string, words: Words, voice: Voice): ProseNote[] {
-  if (voice !== "nara" && voice !== "jag") return [];
+function closeNotes(narration: string, words: Words, isDeep: boolean): ProseNote[] {
+  if (!isDeep) return [];
   const filters = narration.match(words.filters) ?? [];
   const feelings = narration.match(words.feelings) ?? [];
   return [
@@ -111,7 +123,7 @@ function closeNotes(narration: string, words: Words, voice: Voice): ProseNote[] 
           {
             kind: "filter" as const,
             title: t("Filterord"),
-            text: t("{words}. Nära perspektiv visar det direkt i stället.", {
+            text: t("{words}. I deep POV visas det direkt i stället.", {
               words: quoted(filters),
             }),
           },
@@ -171,7 +183,7 @@ export function narrationNotes(
   const all = wordsOf(told);
   return [
     ...voiceNote(all, words, narration),
-    ...closeNotes(told, words, narration.voice),
+    ...closeNotes(told, words, narration.deep),
     ...headNote(told, words, others, narration.voice),
     ...tenseNote(all, words, narration.tense),
   ];

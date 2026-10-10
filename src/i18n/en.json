@@ -1192,14 +1192,12 @@
   "Tempus": "Tense",
   "Välj hur boken berättas, så ser Granska till att texten håller sig till det.": "Choose how the book is told, and Review keeps the text to it.",
   "Jag-form": "First person",
-  "Tredje person nära (deep POV)": "Close third (deep POV)",
   "Tredje person": "Third person",
   "Allvetande": "Omniscient",
   "Dåtid": "Past",
   "Nutid": "Present",
   "{words} utanför replikerna, men boken berättas i tredje person.": "{words} outside the dialogue, but the book is told in third person.",
   "Jag i berättartexten": "First person in the narration",
-  "{words}. Nära perspektiv visar det direkt i stället.": "{words}. A close point of view shows it directly instead.",
   "Filterord": "Filter words",
   "{names} tänker eller känner här, fast kapitlet ses genom någon annans ögon.": "{names} thinks or feels here, though the chapter is seen through someone else's eyes.",
   "Huvudhopp": "Head-hopping",
@@ -1224,5 +1222,8 @@
   "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.": "A capital where a sentence starts, HEllo becomes Hello and obvious misspellings are fixed. Backspace undoes it.",
   "Sök efter uppdateringar…": "Check for updates…",
   "Hämta": "Download",
-  "Du har den senaste versionen av Penna.": "You have the latest version of Penna."
+  "Du har den senaste versionen av Penna.": "You have the latest version of Penna.",
+  "Deep POV": "Deep POV",
+  "Läsaren är i personens huvud, som om man vore hen.": "The reader is inside the person's head, as if they were them.",
+  "{words}. I deep POV visas det direkt i stället.": "{words}. Deep POV shows it directly instead."
 }

@@ -6,7 +6,7 @@ import {
   type Narration,
 } from "../src/manuscript/narration";
 
-const deep: Narration = { voice: "nara", tense: "dåtid" };
+const deep: Narration = { voice: "tredje", tense: "dåtid", deep: true };
 const kinds = (text: string, narration: Narration = deep, others: string[] = []) =>
   narrationNotes(text, "sv-SE", narration, others).map((note) => [note.kind, note.text]);
 
@@ -21,12 +21,14 @@ describe("narration", () => {
     expect(kinds("Hon gick hem. Min väg var lång.\n– Jag kommer, sa hon.")).toEqual([
       ["voice", "”min” 1 utanför replikerna, men boken berättas i tredje person."],
     ]);
-    expect(kinds("Jag gick hem. Min väg var lång.", { voice: "jag", tense: "dåtid" })).toEqual([]);
+    expect(kinds("Jag gick hem. Min väg var lång.", { ...deep, voice: "jag" })).toEqual([]);
   });
 
-  it("names the filter words deep POV leaves out", () => {
+  it("names the filter words deep POV leaves out, in first person too, but not when it is off", () => {
+    expect(kinds("Jag såg att isen sprack.", { ...deep, voice: "jag" })).toHaveLength(1);
+    expect(kinds("Hon såg att isen sprack.", { ...deep, deep: false })).toEqual([]);
     expect(kinds("Hon såg att isen sprack. Det verkade kallt.")).toEqual([
-      ["filter", "”hon såg att”, ”verkade”. Nära perspektiv visar det direkt i stället."],
+      ["filter", "”hon såg att”, ”verkade”. I deep POV visas det direkt i stället."],
     ]);
   });
 
@@ -54,9 +56,17 @@ describe("narration", () => {
 
   it("is quiet until the writer has chosen a way of telling", () => {
     expect(narrationOf({})).toBeNull();
-    expect(narrationOf({ narration: { voice: "jag", tense: "nutid" } })).toEqual({
+    expect(narrationOf({ narration: { voice: "jag", tense: "nutid", deep: true } })).toEqual({
       voice: "jag",
       tense: "nutid",
+      deep: true,
     });
+  });
+
+  it("reads close third person as first stored, and keeps deep POV from the omniscient", () => {
+    expect(narrationOf({ narration: { voice: "nara", tense: "dåtid" } })).toEqual(deep);
+    expect(narrationOf({ narration: { voice: "allvetande", tense: "dåtid", deep: true } })).toEqual(
+      { voice: "allvetande", tense: "dåtid", deep: false },
+    );
   });
 });

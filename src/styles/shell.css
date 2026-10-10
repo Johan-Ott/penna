@@ -3038,3 +3038,23 @@
   white-space: nowrap;
   transform: translateX(-50%);
 }
+
+/* Berättarröst: the voice, the tense and whether the reader is inside the person's head. */
+.narration-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.narration-deep {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.narration-deep-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

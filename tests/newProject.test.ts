@@ -28,7 +28,7 @@ describe("createProject", () => {
 
   it("keeps how the book is told, for Granska to watch", async () => {
     const files = createMemoryFileSystem({});
-    const narration = { voice: "nara", tense: "dåtid" } as const;
+    const narration = { voice: "tredje", tense: "dåtid", deep: true } as const;
 
     const created = await createProject(files, "/Penna", { ...details, narration });
 
