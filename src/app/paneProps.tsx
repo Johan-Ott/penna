@@ -5,6 +5,7 @@ import { CHARACTERS_ID, SECRETS_ID, type TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./notes/NotePage.js";
+import { NoteVoice } from "./notes/NoteVoice.js";
 import { MarginNotes } from "./review/MarginNotes.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
 import { FootnotePopover } from "./FootnotePopover.js";
@@ -71,6 +72,7 @@ function textParts(app: AppState, project: Project) {
     footer: (
       <>
         {!isInSeries && <SecretParts {...noteProps} sortId={sortId} app={app} />}
+        {sortId === CHARACTERS_ID && <NoteVoice {...noteProps} />}
         <NoteMentions {...noteProps} />
       </>
     ),

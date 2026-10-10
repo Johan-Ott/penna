@@ -1268,5 +1268,8 @@
   "Längd": "Length",
   "Dialog": "Dialogue",
   "Meningslängd": "Sentence length",
-  "Långsamt? betyder längre än de flesta kapitel, med mindre dialog och längre meningar.": "Slow? means longer than most chapters, with less dialogue and longer sentences."
+  "Långsamt? betyder längre än de flesta kapitel, med mindre dialog och längre meningar.": "Slow? means longer than most chapters, with less dialogue and longer sentences.",
+  "Repliker": "Lines spoken",
+  "Repliker · {count}": "Lines spoken · {count}",
+  "Kap. {number}": "Ch. {number}"
 }

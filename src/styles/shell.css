@@ -3159,3 +3159,8 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+
+/* Repliker sits above Nämns i, so it keeps only a little room under it. */
+.note-mentions.note-voice {
+  margin-bottom: 24px;
+}
