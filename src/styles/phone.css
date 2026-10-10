@@ -758,18 +758,16 @@
   overflow-y: auto;
 }
 
+/* All the cards show at once, wrapping onto more rows instead of running off the screen. */
 .phone-app .studio-nav {
-  flex-direction: row;
+  flex-flow: row wrap;
   flex-shrink: 0;
   gap: 4px;
   padding: 8px 12px;
-  overflow-x: auto;
 }
 
 .phone-app .studio-group {
-  flex-direction: row;
-  flex-shrink: 0;
-  align-items: center;
+  display: contents;
 }
 
 .phone-app .studio-item {
@@ -805,8 +803,8 @@
 
 .phone-app .studio-nav .publish-back {
   display: block;
-  flex-shrink: 0;
-  white-space: nowrap;
+  flex-basis: 100%;
+  text-align: left;
 }
 
 .phone-app .studio-group .sidebar-heading {

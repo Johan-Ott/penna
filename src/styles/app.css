@@ -2174,6 +2174,34 @@ button.book-cover:hover {
 }
 
 /* Sidan, Kapitelrubrik, Brödtext: a quiet heading above each group of rows */
+.design-details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.design-details > summary {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+
+.design-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.design-details > summary::after {
+  content: "›";
+  font-size: 15px;
+  line-height: 1;
+  transform: rotate(90deg);
+}
+
+.design-details:not([open]) > summary::after {
+  transform: none;
+}
+
 .design-section {
   margin-top: 10px;
   padding-top: 14px;

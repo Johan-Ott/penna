@@ -10,6 +10,8 @@ import {
   type ChapterStart,
   type HeaderContent,
 } from "../../export/bookDesign.js";
+import type { ReactNode } from "react";
+import { usePhone } from "../phone/usePhone.js";
 import { ChoiceRow } from "./ChoiceRow.js";
 import { HeadingControls, type ControlProps } from "./HeadingControls.js";
 import { OpeningList } from "./OpeningList.js";
@@ -145,19 +147,33 @@ function SceneBreaks({ design, save, dir }: ControlProps) {
   );
 }
 
+// Each part folds; on a phone they start folded, so the whole design is not one long scroll.
+function Section({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <details className="design-details" open={!usePhone()}>
+      <summary className="design-section">{label}</summary>
+      {children}
+    </details>
+  );
+}
+
 export function DesignControls(props: ControlProps) {
   return (
     <div className="design-controls">
       <ThemeCards {...props} />
-      <span className="design-section">{t("Sidan")}</span>
-      <PageRows {...props} />
-      <span className="design-section">{t("Kapitelrubrik")}</span>
-      <HeadingControls {...props} />
-      <span className="design-section">{t("Kapitelöppningar")}</span>
-      <OpeningList {...props} />
-      <span className="design-section">{t("Brödtext")}</span>
-      <BodyRows {...props} />
-      <SceneBreaks {...props} />
+      <Section label={t("Sidan")}>
+        <PageRows {...props} />
+      </Section>
+      <Section label={t("Kapitelrubrik")}>
+        <HeadingControls {...props} />
+      </Section>
+      <Section label={t("Kapitelöppningar")}>
+        <OpeningList {...props} />
+      </Section>
+      <Section label={t("Brödtext")}>
+        <BodyRows {...props} />
+        <SceneBreaks {...props} />
+      </Section>
     </div>
   );
 }
