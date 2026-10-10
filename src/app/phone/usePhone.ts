@@ -14,3 +14,18 @@ export function usePhone() {
   }, []);
   return isPhone;
 }
+
+/** True while the phone's keyboard is up: the page is then much shorter than its tallest. */
+export function useKeyboardUp() {
+  const [isUp, setUp] = useState(false);
+  useEffect(() => {
+    let tallest = window.innerHeight;
+    const onResize = () => {
+      tallest = Math.max(tallest, window.innerHeight);
+      setUp(window.innerHeight < tallest * 0.8);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return isUp;
+}

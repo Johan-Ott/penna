@@ -8,8 +8,8 @@ import type { View } from "../useWritingMode.js";
 import type { PhoneScreen } from "./usePhoneNavigation.js";
 import { t } from "../../i18n/i18n.js";
 
-// The phone's four places, as tabs along the bottom. Writing has the whole screen, so the
-// tabs hide while a text is open.
+// The phone's four places, as tabs along the bottom. While the keyboard is up in Skriv they
+// step aside, so the text has the room.
 
 export type Tab = "boken" | "skriv" | "innehall" | "publicera";
 
@@ -22,6 +22,7 @@ const TABS: [Tab, string, ReactNode][] = [
 
 /** Which tab the screen belongs to; Läs is part of Innehåll, Från synken of Boken. */
 export function tabOf(screen: PhoneScreen, view: View): Tab {
+  if (screen.kind === "text" && view === "skriv") return "skriv";
   if (screen.kind !== "view") return "boken";
   if (view === "las") return "innehall";
   if (view === "synk" || view === "skriv") return "boken";

@@ -22,6 +22,7 @@ import { PhoneToolbar } from "./PhoneToolbar.js";
 import type { View } from "../useWritingMode.js";
 import { TabBar, tabOf, ViewScreen, type Tab } from "./PhoneTabs.js";
 import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
+import { useKeyboardUp } from "./usePhone.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -205,11 +206,13 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
   useBookTheme(project.fields);
+  const isKeyboardUp = useKeyboardUp();
+  const hasTabs = !isTextShown(screens.screen, app.writingMode.view) || !isKeyboardUp;
   return (
-    <div className="phone-app">
+    <div className={hasTabs ? "phone-app with-tabs" : "phone-app"}>
       <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
-      {!isTextShown(screens.screen, app.writingMode.view) && (
+      {hasTabs && (
         <TabBar tab={tabOf(screens.screen, app.writingMode.view)} onTab={screens.onTab} />
       )}
       <Floating app={app} project={project} />

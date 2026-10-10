@@ -199,6 +199,11 @@
   background: var(--bg);
 }
 
+/* With the keyboard down the tabs show under the text, as on the other screens. */
+.phone-app.with-tabs .phone-text {
+  bottom: var(--phone-tabs);
+}
+
 .phone-text.hidden {
   display: none;
 }
