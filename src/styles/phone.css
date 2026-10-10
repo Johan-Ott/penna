@@ -892,3 +892,9 @@
     width: calc(100vw - 24px);
   }
 }
+
+/* The day's words open Insikter, so they show that they lead somewhere. */
+.phone-today-more {
+  margin-left: 6px;
+  color: var(--text-label);
+}

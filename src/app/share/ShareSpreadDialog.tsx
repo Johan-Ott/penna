@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { Choice, Dialog, Switch } from "../controls.js";
 import { recordFailure } from "../errorLog.js";
 import { penMark, startCard, type CardFormat, type Look } from "../studio/studioCanvas.js";
+import { ImageActions } from "./ImageActions.js";
 import { copyPng, savePng } from "../studio/studioDraw.js";
 import { drawSpread, drawWholeBook } from "./spreadImage.js";
 import type { PageBlock } from "./spreadPages.js";
@@ -103,17 +104,10 @@ function ShareActions({
   const run = (action: (element: HTMLCanvasElement) => Promise<void>) =>
     canvas.current && void action(canvas.current).catch(recordFailure("Bilden kunde inte göras"));
   return (
-    <div className="studio-actions">
-      <button className="button primary" onClick={() => run(copyPng)}>
-        {t("Kopiera bild")}
-      </button>
-      <button
-        className="button secondary"
-        onClick={() => run((element) => savePng(element, `${title} – uppslag`))}
-      >
-        {t("Spara bild")}
-      </button>
-    </div>
+    <ImageActions
+      onCopy={() => run(copyPng)}
+      onSave={() => run((element) => savePng(element, `${title} – uppslag`))}
+    />
   );
 }
 

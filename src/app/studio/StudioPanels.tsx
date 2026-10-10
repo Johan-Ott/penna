@@ -7,6 +7,7 @@ import type { Project } from "../useProject.js";
 import { chapterBlocks, copyHtml, mailHtml, simpleHtml, type Signature } from "./newsletter.js";
 import type { CardFormat, Look } from "./studioCanvas.js";
 import type { ImageChoices } from "./studioDraw.js";
+import { ImageActions } from "../share/ImageActions.js";
 import { t } from "../../i18n/i18n.js";
 
 const looks = (): [Look, string][] => [
@@ -67,14 +68,7 @@ export function ImagePanel(props: {
         />
       </div>
       {props.extra}
-      <div className="studio-actions">
-        <button className="button primary" onClick={props.onCopy}>
-          {t("Kopiera bild")}
-        </button>
-        <button className="button secondary" onClick={props.onSave}>
-          {t("Spara bild")}
-        </button>
-      </div>
+      <ImageActions onCopy={props.onCopy} onSave={props.onSave} />
     </>
   );
 }

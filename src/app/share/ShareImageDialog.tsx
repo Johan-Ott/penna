@@ -81,7 +81,7 @@ function SharePicture({ excerpt }: { excerpt: Excerpt }) {
       </span>
       <div className="dialog-actions">
         <button className="button primary" onClick={save}>
-          {t("Spara bild")}
+          {platform.shareFile ? t("Dela bild") : t("Spara bild")}
         </button>
       </div>
     </>

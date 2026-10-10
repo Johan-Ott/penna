@@ -1,6 +1,8 @@
 mod backups;
 mod books;
 mod google;
+#[cfg(mobile)]
+mod share;
 mod spelling;
 
 use tauri::WebviewWindowBuilder;
@@ -47,12 +49,14 @@ pub fn run() {
     #[cfg(mobile)]
     let builder = builder
         .plugin(google::init())
+        .plugin(share::init())
         .invoke_handler(tauri::generate_handler![
             spelling::misspelled_words,
             spelling::spelling_suggestions,
             books::remove_book,
             backups::remove_backup,
-            google::google_access_token
+            google::google_access_token,
+            share::share_file
         ]);
     builder
         .manage(spelling::Dictionaries::default())

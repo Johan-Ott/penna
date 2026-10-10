@@ -7,6 +7,14 @@ export type PhoneScreen =
   /** Innehåll, Läs, Publicera or Från synken, as the writing mode's view says. */
   | { kind: "view" };
 
+// A screen opened anew starts at its top; going back keeps the place it was left at.
+function toTop() {
+  window.scrollTo(0, 0);
+  document.querySelectorAll(".phone-app .page, .phone-view").forEach((scroller) => {
+    scroller.scrollTop = 0;
+  });
+}
+
 /** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {
   const [stack, setStack] = useState<PhoneScreen[]>([{ kind: "book" }]);
@@ -19,6 +27,7 @@ export function usePhoneNavigation() {
   const show = useCallback((screen: PhoneScreen) => {
     window.history.pushState({ penna: screen.kind }, "");
     setStack((current) => [...current, screen]);
+    requestAnimationFrame(toTop);
   }, []);
   const back = useCallback(() => window.history.back(), []);
   return { screen: stack[stack.length - 1] ?? { kind: "book" }, show, back };

@@ -52,6 +52,11 @@ function todayFacts(app: AppState, project: Project) {
   ].filter(Boolean);
 }
 
+const dayWords = (today: AppState["today"]) =>
+  today.goal
+    ? t("{words} / {goal} ord idag", { words: format(today.words), goal: format(today.goal) })
+    : t("{count} ord idag", { count: format(today.words) });
+
 // The day's words open Insikter; Dela opens the week as a picture in Studio.
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const { today } = app;
@@ -61,12 +66,10 @@ function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
     <div className="phone-today">
       <span className="phone-today-head">
         <button className="phone-today-words" onClick={() => app.writingMode.setProgressOpen(true)}>
-          {today.goal
-            ? t("{words} / {goal} ord idag", {
-                words: format(today.words),
-                goal: format(today.goal),
-              })
-            : t("{count} ord idag", { count: format(today.words) })}
+          {dayWords(today)}
+          <span className="phone-today-more" aria-hidden="true">
+            ›
+          </span>
         </button>
         <button className="link-button quiet" onClick={shareWeek}>
           {t("Dela")}
@@ -142,6 +145,7 @@ function phoneMenu(
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
     { label: t("Profil"), onSelect: app.profile.open },
+    { label: t("Insikter"), onSelect: () => app.writingMode.setProgressOpen(true) },
     { label: t("Tema…"), onSelect: book.theme.open },
     { label: t("Mallar och bitar…"), onSelect: book.templates.open },
     ...versionsItem(app),

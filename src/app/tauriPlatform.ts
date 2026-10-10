@@ -1,8 +1,7 @@
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
-import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
-import { getVersion } from "@tauri-apps/api/app";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
   cancel,
   isPermissionGranted,
@@ -17,14 +16,15 @@ import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
 import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
-import type { AppUpdate, FileKind, PickKind, Platform, Spelling } from "./platform.js";
-import { isNewer } from "./versions.js";
+import type { FileKind, PickKind, Platform, Spelling } from "./platform.js";
+import { checkForAndroidUpdate, shareAsSave, shareFile } from "./androidPlatform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { isTestBuild, testAsk, testPath } from "./testMode.js";
 import { t } from "../i18n/i18n.js";
 
 // On a phone the books live in the app's own folder and updates come from the app store.
 const isPhone = /Android|iPhone|iPad/i.test(navigator.userAgent);
+const isAndroid = /Android/i.test(navigator.userAgent);
 
 function googleSignInHere() {
   if (/Android/i.test(navigator.userAgent)) return { googleSignIn: androidSignIn };
@@ -106,28 +106,10 @@ async function scheduleReminder(when: Date | null, title: string, body: string) 
     sendNotification({ id: REMINDER_ID, title, body, schedule: Schedule.at(when, false, true) });
 }
 
-const LATEST_RELEASE = "https://api.github.com/repos/Johan-Ott/penna/releases/latest";
-
-interface Release {
-  tag_name: string;
-  assets: { name: string; browser_download_url: string }[];
-}
-
-// Installed from the APK, an Android phone gets a newer one from the latest GitHub release.
-async function checkForAndroidUpdate(): Promise<AppUpdate | null> {
-  const response = await appFetch(LATEST_RELEASE);
-  if (!response.ok) return null;
-  const release = (await response.json()) as Release;
-  const apk = release.assets.find((asset) => asset.name.endsWith(".apk"));
-  if (!apk || !isNewer(release.tag_name, await getVersion())) return null;
-  const version = release.tag_name.replace(/^v/, "");
-  return { version, isDownload: true, install: () => openUrl(apk.browser_download_url) };
-}
-
 // The computer updates itself; an Android phone fetches the APK; an iPhone has its App Store.
 function updateCheck() {
   if (!isPhone) return checkForUpdate;
-  if (/Android/i.test(navigator.userAgent)) return checkForAndroidUpdate;
+  if (isAndroid) return checkForAndroidUpdate;
   return async () => null;
 }
 
@@ -183,7 +165,8 @@ export const tauriPlatform: Platform = {
   webFetch: appFetch as typeof fetch,
   removeBook,
   backups,
-  saveFile,
+  saveFile: isAndroid ? shareAsSave : saveFile,
+  ...(isAndroid ? { shareFile } : {}),
   pickFile,
   fileSystem: tauriFileSystem,
   spelling,
