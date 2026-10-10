@@ -89,15 +89,33 @@ interface BarProps {
   onReadAloud?: (() => void) | undefined;
 }
 
+// The phone's own menu over a selection is turned off (MainActivity.kt), so copying is here; the
+// footnote is in the tools over the keyboard.
+function PhoneClipboard() {
+  return (
+    <>
+      <button className="icon-button" onClick={() => document.execCommand("copy")}>
+        {t("Kopiera")}
+      </button>
+      <button className="icon-button" onClick={() => document.execCommand("cut")}>
+        {t("Klipp ut")}
+      </button>
+    </>
+  );
+}
+
 function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { isPhone: boolean }) {
   return (
     <>
+      {isPhone && <PhoneClipboard />}
       <button className="icon-button" onClick={onComment}>
         {t("Kommentera")}
       </button>
-      <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
-        {t("Fotnot")}
-      </button>
+      {!isPhone && (
+        <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
+          {t("Fotnot")}
+        </button>
+      )}
       {onReadAloud && (
         <button className="icon-button" onClick={onReadAloud}>
           {t("Läs upp")}

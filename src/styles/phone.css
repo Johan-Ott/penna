@@ -332,8 +332,13 @@
 }
 
 /* The selection bar on a phone: dark, under the selected words, in the middle of the screen */
+/* The bar breaks onto a second row rather than past the screen's edge. */
 .selection-bar.phone {
   left: 50%;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100vw - 24px);
   gap: 0;
   padding: 4px;
   border: 0;
@@ -701,6 +706,21 @@
 
 .phone-app .read-stage {
   gap: 0;
+}
+
+/* The printed page shrunk to a phone is too small to read, so the page takes the screen's
+   shape with text at a reading size; the book gets more pages than in print. */
+.phone-app .read-spread.single {
+  --page-w: calc(100vw - 64px);
+  --page-h: calc(100dvh - 190px - var(--safe-top) - var(--safe-bottom));
+  --pad-top: 40px;
+  --pad-side: 20px;
+  --pad-bottom: 48px;
+  font-size: 17px;
+}
+
+.phone-app .read-turn {
+  width: 32px;
 }
 
 .phone-app .insights-panel {

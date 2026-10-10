@@ -1,7 +1,13 @@
 package se.penna.app
 
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
 import android.webkit.WebView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
@@ -49,10 +55,47 @@ class MainActivity : TauriActivity() {
     safeAreaScript = WebViewCompat.addDocumentStartJavaScript(view, script, setOf("*"))
   }
 
+  // Wry hands the WebView over here; the frame around it sees every menu the WebView starts.
+  override fun setContentView(view: View?) {
+    super.setContentView(SelectionMenuFrame(this).apply { addView(view) })
+  }
+
   // Tauri cannot recreate a destroyed activity in the same process (it hangs on the splash), so
   // back on the shelf moves the app to the background instead of finishing it.
   @Deprecated("Tauri's back handling calls this when the page has nowhere to go back to.")
   override fun onBackPressed() {
     moveTaskToBack(true)
+  }
+}
+
+private class SelectionMenuFrame(context: Context) : FrameLayout(context) {
+  override fun startActionModeForChild(originalView: View, callback: ActionMode.Callback, type: Int): ActionMode? =
+    super.startActionModeForChild(originalView, WithoutSelectionMenu(callback, context.getString(android.R.string.copy)), type)
+}
+
+// Penna's own bar holds what a selection needs, so the system's menu over it is emptied. The
+// caret's menu, with paste, has no Copy and stays.
+private class WithoutSelectionMenu(
+  private val inner: ActionMode.Callback,
+  private val copy: String,
+) : ActionMode.Callback2() {
+  override fun onCreateActionMode(mode: ActionMode, menu: Menu) =
+    inner.onCreateActionMode(mode, menu).also { emptyIfSelection(menu) }
+
+  override fun onPrepareActionMode(mode: ActionMode, menu: Menu) =
+    inner.onPrepareActionMode(mode, menu).also { emptyIfSelection(menu) }
+
+  override fun onActionItemClicked(mode: ActionMode, item: MenuItem) = inner.onActionItemClicked(mode, item)
+
+  override fun onDestroyActionMode(mode: ActionMode) = inner.onDestroyActionMode(mode)
+
+  override fun onGetContentRect(mode: ActionMode, view: View, outRect: Rect) {
+    if (inner is ActionMode.Callback2) inner.onGetContentRect(mode, view, outRect)
+    else super.onGetContentRect(mode, view, outRect)
+  }
+
+  private fun emptyIfSelection(menu: Menu) {
+    val hasCopy = (0 until menu.size()).any { menu.getItem(it).title?.toString() == copy }
+    if (hasCopy || menu.findItem(android.R.id.copy) != null) menu.clear()
   }
 }
