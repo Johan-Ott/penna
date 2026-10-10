@@ -9,6 +9,7 @@ import {
   createProject,
   type ProjectDetails,
 } from "../../project/newProject.js";
+import { suggestedStructure } from "../../project/templates.js";
 import { importManuscript } from "../../import/importManuscript.js";
 import { ImportError } from "../../import/markdownImport.js";
 import { platform, type PickedFile } from "../platform.js";
@@ -17,6 +18,9 @@ import { t } from "../../i18n/i18n.js";
 export type ProjectMode = "new" | "import" | "open";
 
 export const LAST_STEP = 5;
+
+/** A new book is four questions: what kind, which pieces, Penna's suggestion, title and goal. */
+export const BOOK_STEPS = 4;
 
 const START_DETAILS: ProjectDetails = {
   title: "",
@@ -59,13 +63,9 @@ export interface OnboardingStart {
   defaultDailyGoal: number;
 }
 
-export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: OnboardingStart) {
-  const [step, setStep] = useState(startStep);
-  const [mode, setMode] = useState<ProjectMode>("new");
-  const [details, setDetails] = useState({ ...START_DETAILS, dailyGoal: defaultDailyGoal });
-  const [projectDir, setProjectDir] = useState<string | null>(null);
+// Work that writes to disk; what went wrong is shown on the step instead of thrown.
+function useAttempt() {
   const [problem, setProblem] = useState<string | null>(null);
-  const library = useLibraryChoice(knownLibraryDir);
   const attempt = async (work: () => Promise<void>, failure: string) => {
     setProblem(null);
     try {
@@ -74,26 +74,59 @@ export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: 
       setProblem(error instanceof ImportError ? error.message : failure);
     }
   };
+  return { problem, attempt };
+}
+
+export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: OnboardingStart) {
+  const [step, setStep] = useState(startStep);
+  const [mode, setMode] = useState<ProjectMode>("new");
+  const [bookStep, setBookStep] = useState(1);
+  const [details, setDetails] = useState({ ...START_DETAILS, dailyGoal: defaultDailyGoal });
+  const [projectDir, setProjectDir] = useState<string | null>(null);
+  const library = useLibraryChoice(knownLibraryDir);
   return {
     step,
     setStep,
     mode,
     setMode,
+    bookStep,
+    setBookStep,
     details,
     setDetails,
     projectDir,
     setProjectDir,
-    problem,
-    attempt,
+    ...useAttempt(),
     ...library,
   };
 }
 
 export type OnboardingState = ReturnType<typeof useOnboarding>;
 
+const isAsking = (state: OnboardingState) => state.step === 4 && state.mode === "new";
+
+// A fackbok has no story for the pieces, so it skips that question. The suggestion is made as
+// the writer reaches it, from what they answered so far.
+function nextBookStep(state: OnboardingState) {
+  const { bookStep, details } = state;
+  const skipsPieces = bookStep === 1 && details.type === "fackbok";
+  const pieces = skipsPieces ? [] : details.pieces;
+  const next = skipsPieces ? 3 : bookStep + 1;
+  if (next === 3)
+    state.setDetails({ ...details, pieces, structure: suggestedStructure(details.type, pieces) });
+  state.setBookStep(next);
+}
+
+/** Back one question in the new book, or one step in the onboarding. */
+export function goBack(state: OnboardingState) {
+  if (!isAsking(state) || state.bookStep === 1) return state.setStep(state.step - 1);
+  const skipped = state.bookStep === 3 && state.details.type === "fackbok";
+  state.setBookStep(skipped ? 1 : state.bookStep - 1);
+}
+
 /** The folder and project steps write to disk before moving on. */
 export async function continueFrom(state: OnboardingState) {
   const { step, libraryDir } = state;
+  if (isAsking(state) && state.bookStep < BOOK_STEPS) return nextBookStep(state);
   if (step === 3 && libraryDir) {
     await state.attempt(async () => {
       await platform.fileSystem.makeDir(libraryDir);

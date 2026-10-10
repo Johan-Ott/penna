@@ -1,93 +1,15 @@
 import { useState, type DragEvent, type ReactNode } from "react";
 import { MANUSCRIPT_FILES } from "../../import/importManuscript.js";
-import type { ProjectDetails } from "../../project/newProject.js";
-import { TemplateChoices } from "../templates/TemplateChoices.js";
+import { BookQuestion } from "./BookQuestions.js";
 import { platform } from "../platform.js";
 import {
-  continueFrom,
   importFile,
   openExample,
   openExisting,
   type OnboardingState,
   type ProjectMode,
 } from "./useOnboarding.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
-
-type FieldProps = { details: ProjectDetails; onChange: (details: ProjectDetails) => void };
-
-const TYPES: [string, string][] = [
-  ["roman", t("Roman")],
-  ["noveller", t("Noveller")],
-  ["fackbok", t("Fackbok")],
-  ["annat", t("Annat")],
-];
-
-function GoalFields({ details, onChange }: FieldProps) {
-  return (
-    <div className="field-pair">
-      <label className="onboarding-field">
-        <span className="field-label">{t("Dagligt ordmål")}</span>
-        <input
-          inputMode="numeric"
-          value={details.dailyGoal.toLocaleString(numberLocale())}
-          onChange={(event) =>
-            onChange({ ...details, dailyGoal: Number(event.target.value.replace(/\D/g, "")) })
-          }
-        />
-      </label>
-      <label className="onboarding-field">
-        <span className="field-label">{t("Deadline (valfritt)")}</span>
-        <input
-          type="date"
-          value={details.deadline}
-          onChange={(event) => onChange({ ...details, deadline: event.target.value })}
-        />
-      </label>
-    </div>
-  );
-}
-
-function TypeChips({ details, onChange }: FieldProps) {
-  return (
-    <div className="chip-row" role="radiogroup" aria-label={t("Sorts bok")}>
-      {TYPES.map(([type, label]) => (
-        <button
-          key={type}
-          role="radio"
-          className="chip"
-          aria-checked={details.type === type}
-          onClick={() => onChange({ ...details, type })}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function NewProjectFields(props: FieldProps & { onSubmit: () => void; libraryDir: string | null }) {
-  return (
-    <div
-      className="onboarding-form"
-      onKeyDown={(event) => {
-        if (event.key === "Enter" && event.target instanceof HTMLInputElement) props.onSubmit();
-      }}
-    >
-      <label className="onboarding-field">
-        <span className="field-label">{t("Titel")}</span>
-        <input
-          autoFocus
-          placeholder={t("Arbetstitel duger")}
-          value={props.details.title}
-          onChange={(event) => props.onChange({ ...props.details, title: event.target.value })}
-        />
-      </label>
-      <GoalFields {...props} />
-      <TypeChips {...props} />
-      <TemplateChoices {...props} />
-    </div>
-  );
-}
+import { t } from "../../i18n/i18n.js";
 
 function OpenProjectChoices({ state }: { state: OnboardingState }) {
   return (
@@ -145,14 +67,7 @@ function ImportChoices({ state }: { state: OnboardingState }) {
 }
 
 const CHOICES: Record<ProjectMode, (state: OnboardingState) => ReactNode> = {
-  new: (state) => (
-    <NewProjectFields
-      details={state.details}
-      onChange={state.setDetails}
-      onSubmit={() => void continueFrom(state)}
-      libraryDir={state.libraryDir}
-    />
-  ),
+  new: (state) => <BookQuestion state={state} />,
   import: (state) => <ImportChoices state={state} />,
   open: (state) => <OpenProjectChoices state={state} />,
 };
@@ -164,6 +79,7 @@ const MODES: [ProjectMode, string][] = [
 ];
 
 export function ProjectStep({ state, isFirst }: { state: OnboardingState; isFirst: boolean }) {
+  if (state.mode === "new" && state.bookStep > 1) return <BookQuestion state={state} />;
   return (
     <>
       <h1 className="onboarding-title">{isFirst ? t("Ditt första projekt") : t("Nytt projekt")}</h1>

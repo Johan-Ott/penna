@@ -18,8 +18,10 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.getByText("Välkommen till Penna.")).toBeVisible({ timeout: 50_000 });
   for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("radio", { name: /Annat/ }).click();
+  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Saltet");
-  await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "Skapa boken" }).click();
   await page.getByRole("button", { name: "Börja skriva" }).click();
   await page.keyboard.type("Sigrid kom till ön i mars.", { delay: 2 });
 

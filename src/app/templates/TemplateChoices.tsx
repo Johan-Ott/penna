@@ -55,29 +55,56 @@ export function PieceToggles(props: { chosen: string[]; onChange: (pieces: strin
   );
 }
 
-/** Börja från: one structure, built in or the writer's own, and any pieces on top. */
-export function TemplateChoices(props: Props) {
-  const { own, reload } = useOwnTemplates(props.libraryDir);
+function Suggested(props: { structure: BookTemplate | undefined; onSwap: () => void }) {
+  return (
+    <div className="template-choice suggested">
+      <span className="template-name">{props.structure?.name}</span>
+      <span className="choice-hint">{props.structure?.hint || t("Din egen mall")}</span>
+      <button className="link-button" onClick={props.onSwap}>
+        {t("Byt struktur")}
+      </button>
+    </div>
+  );
+}
+
+function ImportLink(props: { libraryDir: string | null; onImported: () => void }) {
   const [problem, setProblem] = useState("");
   const importOne = () =>
     void importTemplateFile(props.libraryDir)
-      .then(() => (setProblem(""), reload()))
+      .then(() => (setProblem(""), props.onImported()))
       .catch((error: unknown) =>
         setProblem(error instanceof Error ? error.message : String(error)),
       );
   return (
     <>
-      <span className="field-label">{t("Börja från")}</span>
-      <StructureList {...props} own={own} />
-      <span className="field-label">{t("Lägg till bitar")}</span>
-      <PieceToggles
-        chosen={props.details.pieces}
-        onChange={(pieces) => props.onChange({ ...props.details, pieces })}
-      />
       <button className="link-button quiet" onClick={importOne}>
         {t("Importera mall…")}
       </button>
       {problem && <span className="setting-hint">{problem}</span>}
+    </>
+  );
+}
+
+/** Vårt förslag: the structure Penna suggests, or another one, and the pieces on top. */
+export function TemplateSuggestion(props: Props) {
+  const { own, reload } = useOwnTemplates(props.libraryDir);
+  const [isSwapping, setSwapping] = useState(false);
+  const structure = [...structures(), ...own].find((each) => each.id === props.details.structure);
+  const choose = (details: ProjectDetails) => (setSwapping(false), props.onChange(details));
+  return (
+    <>
+      <span className="field-label">{t("Struktur")}</span>
+      {isSwapping ? (
+        <StructureList {...props} onChange={choose} own={own} />
+      ) : (
+        <Suggested structure={structure} onSwap={() => setSwapping(true)} />
+      )}
+      <span className="field-label">{t("Bitar")}</span>
+      <PieceToggles
+        chosen={props.details.pieces}
+        onChange={(pieces) => props.onChange({ ...props.details, pieces })}
+      />
+      <ImportLink libraryDir={props.libraryDir} onImported={() => (setSwapping(true), reload())} />
     </>
   );
 }

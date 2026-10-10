@@ -4,7 +4,14 @@ import { DoneStep, FolderStep, PromisesStep, WelcomeStep } from "./OnboardingSte
 import { ProjectStep } from "./ProjectStep.js";
 import { PhoneWelcome } from "./PhoneWelcome.js";
 import { usePhone } from "../phone/usePhone.js";
-import { continueFrom, LAST_STEP, useOnboarding, type OnboardingState } from "./useOnboarding.js";
+import {
+  BOOK_STEPS,
+  continueFrom,
+  goBack,
+  LAST_STEP,
+  useOnboarding,
+  type OnboardingState,
+} from "./useOnboarding.js";
 import { t } from "../../i18n/i18n.js";
 
 interface OnboardingProps {
@@ -57,9 +64,10 @@ function PrimaryButton({
     );
   }
   if (state.step === 4 && state.mode !== "new") return null;
+  const creates = state.step === 4 && state.bookStep === BOOK_STEPS;
   return (
     <button className="button primary large" onClick={() => void continueFrom(state)}>
-      {t("Fortsätt")}
+      {creates ? t("Skapa boken") : t("Fortsätt")}
     </button>
   );
 }
@@ -70,15 +78,16 @@ function Navigation({
   onFinish,
   onCancel,
 }: { state: OnboardingState } & Omit<OnboardingProps, "knownLibraryDir" | "defaultDailyGoal">) {
+  const isBack = state.step > startStep || (state.step === 4 && state.bookStep > 1);
   return (
     <div className="onboarding-nav">
-      {state.step === startStep && startStep > 1 && (
+      {!isBack && startStep > 1 && (
         <button className="link-button quiet" onClick={onCancel}>
           {t("Avbryt")}
         </button>
       )}
-      {state.step > startStep && (
-        <button className="link-button quiet" onClick={() => state.setStep(state.step - 1)}>
+      {isBack && (
+        <button className="link-button quiet" onClick={() => goBack(state)}>
           {t("Tillbaka")}
         </button>
       )}

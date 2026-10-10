@@ -2960,6 +2960,21 @@
   box-shadow: inset 0 0 0 1px var(--text);
 }
 
+.template-choice.suggested {
+  border-color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+
+.template-choice.suggested .link-button {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 0;
+}
+
+.onboarding-body > .link-button.quiet {
+  align-self: flex-start;
+}
+
 .template-name {
   font-weight: 600;
 }

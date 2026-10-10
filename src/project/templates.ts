@@ -37,6 +37,16 @@ const texts = () => (uiLanguage() === "en" ? english : swedish);
 export const structures = (): BookTemplate[] => texts().structures;
 export const templatePieces = (): TemplatePiece[] => texts().pieces;
 
+/** The structure Penna suggests for a kind of book and the pieces the writer picked. */
+export function suggestedStructure(type: string, pieces: string[]): string {
+  if (type === "noveller") return "novell";
+  if (type !== "roman") return "tom";
+  if (pieces.includes("deckare")) return "deckare";
+  if (pieces.includes("romans")) return "romantasy";
+  if (pieces.includes("magi")) return "hjaltens-resa";
+  return "tre-akter";
+}
+
 const unique = (values: string[]) => [...new Set(values)];
 
 // Penna's standard labels stay, with the pieces' own after them.

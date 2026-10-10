@@ -7,8 +7,10 @@ test("the first start makes a new book and opens a scene to write in", async ({ 
   await expect(page.getByText("Välkommen till Penna.")).toBeVisible({ timeout: 50_000 });
 
   for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("radio", { name: /Annat/ }).click();
+  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Isen");
-  await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "Skapa boken" }).click();
   await page.getByRole("button", { name: "Börja skriva" }).click();
   await page.keyboard.type("Det var kallt.");
 

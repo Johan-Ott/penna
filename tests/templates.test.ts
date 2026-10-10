@@ -5,7 +5,7 @@ import {
   saveOwnTemplate,
   templateFromBook,
 } from "../src/project/ownTemplates";
-import { composeTemplate, structures } from "../src/project/templates";
+import { composeTemplate, structures, suggestedStructure } from "../src/project/templates";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
@@ -35,6 +35,14 @@ describe("structures and pieces", () => {
     expect(book.parts.at(-1)?.chapters).toEqual([
       ["Kroken", "Ett nytt hot eller en hemlighet som leder till nästa bok."],
     ]);
+  });
+
+  it("are suggested from the kind of book and its pieces", () => {
+    expect(suggestedStructure("roman", ["romans", "deckare", "urban"])).toBe("deckare");
+    expect(suggestedStructure("roman", ["romans", "magi"])).toBe("romantasy");
+    expect(suggestedStructure("roman", [])).toBe("tre-akter");
+    expect(suggestedStructure("noveller", ["deckare"])).toBe("novell");
+    expect(suggestedStructure("fackbok", [])).toBe("tom");
   });
 
   it("keep Penna's standard labels to themselves when no piece adds any", () => {
