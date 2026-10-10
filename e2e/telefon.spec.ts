@@ -50,13 +50,15 @@ test("Granska opens over the whole text and closes again", async ({ page }) => {
   await expect(page.getByRole("complementary", { name: "Granskning" })).toBeHidden();
 });
 
-test("selecting a word shows the bar with Fotnot", async ({ page }) => {
+test("selecting a word shows the bar with Kopiera, since the phone's own menu is turned off", async ({
+  page,
+}) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
 
   await selectFirstWord(page);
 
   await expect(page.getByRole("toolbar", { name: "Markering" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Fotnot", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Kopiera", exact: true })).toBeVisible();
 });
 
 test("the tabs go to Innehåll and Publicera, and back to Boken", async ({ page }) => {
