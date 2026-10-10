@@ -898,3 +898,35 @@
   margin-left: 6px;
   color: var(--text-label);
 }
+
+/* Insikter on a phone: the same cards with less room around them, so more of it fits at once. */
+.phone-app .insights-panel {
+  gap: 10px;
+}
+
+.phone-app .insight-card,
+.phone-app .insights-panel .progress-section,
+.phone-app .insights-panel .progress-card {
+  gap: 8px;
+  padding: 12px;
+}
+
+.phone-app .insight-day svg {
+  width: 44px;
+  height: 44px;
+}
+
+.phone-app .insight-day-bar .bar-room {
+  height: 36px;
+}
+
+.phone-app .heatmap {
+  max-width: 240px;
+  margin: 0 auto;
+}
+
+/* Skriv with the keyboard down and the text not in use shows only the tabs; the tools come
+   back as soon as the text has the cursor. */
+.phone-app.with-tabs .phone-text:not(:focus-within) .phone-toolbar {
+  display: none;
+}

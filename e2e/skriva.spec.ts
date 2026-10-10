@@ -96,13 +96,14 @@ test("the palette's chips narrow the search to the kinds chosen", async ({ page 
 });
 
 test("Insikter shows today's page, the week and the book's words per step", async ({ page }) => {
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.type(" Hon log.");
   await page
-    .getByText(/^0 \/ 500 ord$/)
+    .getByText(/^2 \/ 500 ord$/)
     .first()
     .click();
 
   const progress = page.getByRole("complementary", { name: "Insikter" });
-  await expect(progress.getByText("Dagens sida väntar")).toBeVisible();
   await expect(progress.getByText("Den här veckan")).toBeVisible();
   await expect(progress.getByText("Ord per steg")).toBeVisible();
   await expect(progress.getByText("Utkast 145")).toBeVisible();

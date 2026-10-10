@@ -41,15 +41,19 @@ function Chapters({ project }: { project: Project }) {
   );
 }
 
-function InsightsBody(props: {
+interface BodyProps {
   project: Project;
   stats: Stats;
   journey: Journey;
   onGoals: () => void;
   onJourney: () => void;
-}) {
+}
+
+function InsightsBody(props: BodyProps) {
   const { project, stats } = props;
   const numbers = insightNumbers(project, stats, dayKey(Date.now()));
+  // The week and the last twelve weeks show once there is something in them.
+  const hasWritten = Object.keys(stats).length > 0;
   return (
     <>
       <DayCard
@@ -58,12 +62,14 @@ function InsightsBody(props: {
         onGoals={props.onGoals}
       />
       <TowardsGoal numbers={numbers} />
-      <WeekCard stats={stats} numbers={numbers} />
       <JourneyCard
         summary={journeySummary(props.journey, numbers.today)}
         onOpen={props.onJourney}
       />
-      <Heatmap stats={stats} today={numbers.today} dailyGoal={numbers.goals.dailyGoal} />
+      {hasWritten && <WeekCard stats={stats} numbers={numbers} />}
+      {hasWritten && (
+        <Heatmap stats={stats} today={numbers.today} dailyGoal={numbers.goals.dailyGoal} />
+      )}
       <Chapters project={project} />
       <WordsByStatus project={project} />
       <WordsByLabel project={project} />

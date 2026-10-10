@@ -40,12 +40,15 @@ export function WordsByStatus({ project }: { project: Project }) {
 
 /** The words under each of the book's labels; a scene can count under several. */
 export function WordsByLabel({ project }: { project: Project }) {
-  const labels = labelsOf(project.fields);
-  if (labels.length === 0) return null;
+  // Only the labels in use; a label on no text says nothing here.
+  const used = wordsByLabel(project.tree, project.summaries, labelsOf(project.fields)).filter(
+    ({ words }) => words > 0,
+  );
+  if (used.length === 0) return null;
   return (
     <section className="progress-section">
       <span className="progress-label">{t("Ord per label")}</span>
-      {wordsByLabel(project.tree, project.summaries, labels).map(({ label, words }) => (
+      {used.map(({ label, words }) => (
         <div key={label.id} className="chapter-bar">
           <span className="chapter-name">
             <span className="tree-dot" style={{ background: label.color }} /> {label.name}
