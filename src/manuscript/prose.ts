@@ -22,7 +22,8 @@ export interface ProseNote {
     | "wall"
     | "marks"
     | "gesture"
-    | "names";
+    | "names"
+    | "compound";
   title: string;
   text: string;
 }

@@ -1256,5 +1256,7 @@
   "Avsluta": "End",
   "Sprinten är klar: {words} ord på {minutes} minuter.": "The sprint is done: {words} words in {minutes} minutes.",
   "Skrivsprint": "Writing sprint",
-  "{minutes} min": "{minutes} min"
+  "{minutes} min": "{minutes} min",
+  "Särskrivning?": "Written apart?",
+  "{pairs}. Skrivs ihop om det är ett ord.": "{pairs}. Joined if it is one word."
 }

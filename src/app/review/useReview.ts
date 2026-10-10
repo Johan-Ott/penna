@@ -4,7 +4,8 @@ import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { nameSuspects } from "../../manuscript/review.js";
 import { narrationNotes, narrationOf } from "../../manuscript/narration.js";
-import { proseNotes } from "../../manuscript/prose.js";
+import { proseNotes, type ProseNote } from "../../manuscript/prose.js";
+import { splitCompounds } from "../../manuscript/compounds.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { mentionPattern, type Card } from "../../project/cards.js";
@@ -67,6 +68,21 @@ function useSettled(doc: Node) {
   return settled;
 }
 
+// Asked of Penna's own dictionary at each pause, so only where the platform has one.
+function useSplitCompounds(text: string, language: string) {
+  const [notes, setNotes] = useState<ProseNote[]>([]);
+  useEffect(() => {
+    const spelling = platform.spelling;
+    if (!spelling) return setNotes([]);
+    let isCurrent = true;
+    void splitCompounds(text, language, (words) => spelling.misspelled(language, words)).then(
+      (found) => isCurrent && setNotes(found),
+    );
+    return () => void (isCurrent = false);
+  }, [text, language]);
+  return notes;
+}
+
 export function useReview({ project, scene, doc: current, cards, repeatWindow }: ReviewInput) {
   const doc = useSettled(current);
   const chapterTexts = useChapterTexts(project, scene.id);
@@ -89,5 +105,11 @@ export function useReview({ project, scene, doc: current, cards, repeatWindow }:
       ...narrationNotes(sceneText, language, narration, others),
     ];
   }, [sceneText, language, project, scene.id, cards]);
-  return { inChapter, suspects, repeats, prose, ignored: ignoredNames(project) };
+  return {
+    inChapter,
+    suspects,
+    repeats,
+    prose: [...prose, ...useSplitCompounds(sceneText, language)],
+    ignored: ignoredNames(project),
+  };
 }
