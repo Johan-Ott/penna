@@ -10,6 +10,8 @@ interface ReviewPanelProps {
   review: ReturnType<typeof useReview> | null;
   commentsSection: ReactNode;
   narrationSection: ReactNode;
+  /** About the whole book rather than the scene, such as people who fade out of it. */
+  bookNotes: ProseNote[];
   revisionSection: ReactNode;
   revisionCount: number;
   repeatWindow: number;
@@ -108,6 +110,16 @@ function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useRevie
   );
 }
 
+function InBook({ notes }: { notes: ProseNote[] }) {
+  if (notes.length === 0) return null;
+  return (
+    <section className="review-section">
+      <span className="review-heading">{t("I boken")}</span>
+      <ProseItems notes={notes} />
+    </section>
+  );
+}
+
 function ReviewHeader(props: { onClose: () => void }) {
   return (
     <div className="review-header">
@@ -137,6 +149,7 @@ export function ReviewPanel(props: ReviewPanelProps) {
       {review && props.narrationSection}
       {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
       {review && <ToLookAt {...props} review={review} />}
+      {review && <InBook notes={props.bookNotes} />}
       {props.commentsSection}
     </aside>
   );

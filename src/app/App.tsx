@@ -101,10 +101,9 @@ function useNotesParts(core: ReturnType<typeof useCoreState>) {
   useBookBadges(project, projectState.updateFields);
   const { series } = core.seriesState;
   const homes = useMemo(() => (project ? homesOf(project, series) : []), [project, series]);
-  const noteId = sceneState.scene?.id ?? null;
-  const isNoteOpen = noteId !== null && homes.some((home) => noteSortOf(home, noteId) !== null);
-  // Innehåll's filter also needs to know where each note is named.
-  const notes = useNotes(homes, project, isNoteOpen || writingMode.view === "innehall");
+  const isNoteOpen = homes.some((home) => noteSortOf(home, sceneState.scene?.id ?? "") !== null);
+  const { view, isReviewOpen } = writingMode;
+  const notes = useNotes(homes, project, isNoteOpen || view === "innehall" || isReviewOpen);
   useMentionLinks(sceneState.editor, notes);
   useSpelling(sceneState.editor, project, notes, {
     isOn: writingMode.settings.spellcheck,

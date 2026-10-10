@@ -34,6 +34,8 @@ interface Words {
   firstPerson: string[];
   /** Seeing, hearing and feeling told instead of shown, which deep POV leaves out. */
   filters: RegExp;
+  /** A feeling named instead of shown in the body or in what the person does. */
+  feelings: RegExp;
   /** A mind's verbs, for whose head the narration is in. */
   minds: string;
   present: string[];
@@ -44,7 +46,9 @@ const WORDS: Record<string, Words> = {
   "sv-SE": {
     firstPerson: ["jag", "mig", "min", "mitt", "mina"],
     filters:
-      /(?<!\p{L})(?:(?:jag|hon|han|hen)\s+(?:såg|hörde|kände|tänkte|undrade|insåg|märkte|förstod)(?:\s+att)?|verkade|kändes som)(?!\p{L})/giu,
+      /(?<!\p{L})(?:(?:jag|hon|han|hen)\s+(?:såg|hörde|kände(?!\s+sig)|tänkte|undrade|insåg|märkte|förstod)(?:\s+att)?|verkade|kändes som)(?!\p{L})/giu,
+    feelings:
+      /(?<!\p{L})(?:jag|hon|han|hen)\s+(?:var|blev|kände\s+sig)\s+(?:så\s+|väldigt\s+|helt\s+)?(?:arg|ledsen|rädd|glad|nervös|orolig|förvånad|besviken|irriterad|lycklig|svartsjuk|stolt|skamsen)(?!\p{L})/giu,
     minds: "tänkte|kände|undrade|insåg|visste|mindes|önskade|fruktade|hoppades",
     present: ["är", "har", "går", "ser", "kommer", "säger", "tar", "står", "sitter", "vet", "blir"],
     past: ["var", "hade", "gick", "såg", "kom", "sa", "tog", "stod", "satt", "visste", "blev"],
@@ -53,6 +57,8 @@ const WORDS: Record<string, Words> = {
     firstPerson: ["i", "me", "my", "mine"],
     filters:
       /(?<!\p{L})(?:(?:i|she|he|they)\s+(?:saw|heard|felt|thought|wondered|realized|noticed|knew)(?:\s+that)?|seemed)(?!\p{L})/giu,
+    feelings:
+      /(?<!\p{L})(?:i|she|he|they)\s+(?:was|were|became|got)\s+(?:so\s+|very\s+)?(?:angry|sad|afraid|scared|happy|nervous|worried|surprised|disappointed|annoyed|jealous|proud|ashamed)(?!\p{L})/giu,
     minds: "thought|felt|wondered|realized|knew|remembered|wished|feared|hoped",
     present: ["is", "has", "goes", "sees", "comes", "says", "takes", "stands", "knows"],
     past: ["was", "had", "went", "saw", "came", "said", "took", "stood", "knew"],
@@ -89,14 +95,40 @@ function voiceNote(all: string[], words: Words, narration: Narration): ProseNote
   return [{ kind: "voice", title: t("Jag i berättartexten"), text }];
 }
 
-function filterNote(narration: string, words: Words, voice: Voice): ProseNote[] {
+const quoted = (found: string[]) =>
+  [...new Set(found.map((each) => each.toLocaleLowerCase(numberLocale())))]
+    .map((each) => `”${each}”`)
+    .join(", ");
+
+// Filter words and named feelings matter where the reader is meant to be inside the head.
+function closeNotes(narration: string, words: Words, voice: Voice): ProseNote[] {
   if (voice !== "nara" && voice !== "jag") return [];
-  const found = [...new Set(narration.match(words.filters) ?? [])];
-  if (found.length === 0) return [];
-  const text = t("{words}. Nära perspektiv visar det direkt i stället.", {
-    words: found.map((each) => `”${each.toLocaleLowerCase(numberLocale())}”`).join(", "),
-  });
-  return [{ kind: "filter", title: t("Filterord"), text }];
+  const filters = narration.match(words.filters) ?? [];
+  const feelings = narration.match(words.feelings) ?? [];
+  return [
+    ...(filters.length
+      ? [
+          {
+            kind: "filter" as const,
+            title: t("Filterord"),
+            text: t("{words}. Nära perspektiv visar det direkt i stället.", {
+              words: quoted(filters),
+            }),
+          },
+        ]
+      : []),
+    ...(feelings.length
+      ? [
+          {
+            kind: "feeling" as const,
+            title: t("Berättad känsla"),
+            text: t("{words}. Visa känslan i kroppen eller i det personen gör.", {
+              words: quoted(feelings),
+            }),
+          },
+        ]
+      : []),
+  ];
 }
 
 const escaped = (name: string) => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -139,7 +171,7 @@ export function narrationNotes(
   const all = wordsOf(told);
   return [
     ...voiceNote(all, words, narration),
-    ...filterNote(told, words, narration.voice),
+    ...closeNotes(told, words, narration.voice),
     ...headNote(told, words, others, narration.voice),
     ...tenseNote(all, words, narration.tense),
   ];

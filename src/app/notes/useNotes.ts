@@ -63,6 +63,7 @@ function noteCards(homes: Project[]): NoteCard[] {
 const firstSentence = (text: string) => (text.trim().match(/^[^.!?\n]*/)?.[0] ?? "").trim();
 
 /** `homes` must keep its identity between renders (useMemo), or the texts are read every time. */
+/** Mentions are counted for an open note, Innehåll's filter and Granska's people in the book. */
 export function useNotes(homes: Project[], book: Project | null, areMentionsWanted: boolean) {
   const cards = useMemo(() => noteCards(homes), [homes]);
   const [mention, setMention] = useState<ShownMention | null>(null);

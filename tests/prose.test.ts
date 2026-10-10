@@ -22,6 +22,14 @@ describe("proseNotes", () => {
     ]);
   });
 
+  it("notices three sentences in a row that open with the same word", () => {
+    const notes = proseNotes("Hon gick. Hon stannade. Hon vände. Isen sprack.", "sv-SE");
+
+    expect(notes).toEqual([
+      { kind: "starts", title: "Samma början", text: "Tre meningar i rad börjar med ”hon”." },
+    ]);
+  });
+
   it("knows only the long sentences in a language it has no lists for", () => {
     expect(proseNotes("bara bara bara. utbrast", "fi-FI")).toEqual([]);
   });

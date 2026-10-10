@@ -1206,5 +1206,12 @@
   "Huvudhopp": "Head-hopping",
   "{words} i berättartexten, men boken skrivs i {tense}.": "{words} in the narration, but the book is written in the {tense}.",
   "dåtid": "past tense",
-  "nutid": "present tense"
+  "nutid": "present tense",
+  "I boken": "In the book",
+  "Berättad känsla": "Feeling told",
+  "{words}. Visa känslan i kroppen eller i det personen gör.": "{words}. Show the feeling in the body or in what the person does.",
+  "Samma början": "Same opening",
+  "Tre meningar i rad börjar med ”{word}”.": "Three sentences in a row begin with “{word}”.",
+  "{name} nämns senast i kapitel {last} av {total}.": "{name} is last named in chapter {last} of {total}.",
+  "Försvinner ur boken": "Fades out of the book"
 }

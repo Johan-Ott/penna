@@ -6,6 +6,7 @@ import type { AppState } from "../App.js";
 import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
 import { narrationOf } from "../../manuscript/narration.js";
+import { fadingPeople } from "../../project/fadingPeople.js";
 import { NarrationPicker } from "./NarrationPicker.js";
 import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
@@ -99,6 +100,7 @@ function ShownReview(props: ShownProps) {
       review={isReviewOn ? review : null}
       commentsSection={<CommentsAndTasks {...props} />}
       narrationSection={<NarrationSection app={app} fields={props.project.fields} />}
+      bookNotes={fadingPeople(app.notes.cards, app.notes.mentions, props.project.tree)}
       revisionSection={<RevisionSection revision={app.revision} />}
       revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}

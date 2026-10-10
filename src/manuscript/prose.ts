@@ -2,7 +2,17 @@ import { numberLocale, t } from "../i18n/i18n.js";
 
 /** Something in a scene's prose worth a second look: a long sentence, a filler word, a loud tag. */
 export interface ProseNote {
-  kind: "long" | "filler" | "tag" | "voice" | "filter" | "head" | "tense";
+  kind:
+    | "long"
+    | "filler"
+    | "tag"
+    | "starts"
+    | "voice"
+    | "filter"
+    | "feeling"
+    | "head"
+    | "tense"
+    | "fading";
   title: string;
   text: string;
 }
@@ -59,6 +69,27 @@ function longSentences(text: string): ProseNote[] {
   });
 }
 
+const SAME_STARTS = 3;
+
+// Three sentences in a row that open with the same word ("Hon … Hon … Hon …").
+function sameStarts(text: string): ProseNote[] {
+  const firsts = text
+    .split(/(?<=[.!?…])\s+|\n+/)
+    .map((sentence) => wordsOf(sentence)[0]?.toLocaleLowerCase(numberLocale()) ?? "");
+  const runOf = (index: number) => firsts.slice(index, index + SAME_STARTS);
+  const repeated = new Set(
+    firsts.filter(
+      (word, index) =>
+        word && runOf(index).length === SAME_STARTS && runOf(index).every((each) => each === word),
+    ),
+  );
+  return [...repeated].map((word) => ({
+    kind: "starts" as const,
+    title: t("Samma början"),
+    text: t("Tre meningar i rad börjar med ”{word}”.", { word }),
+  }));
+}
+
 const counted = (text: string, words: string[]) => {
   const all = wordsOf(text.toLocaleLowerCase(numberLocale()));
   return words
@@ -77,6 +108,7 @@ export function proseNotes(text: string, language: string): ProseNote[] {
   const tags = counted(text, LOUD_TAGS[language] ?? []);
   return [
     ...longSentences(text),
+    ...sameStarts(text),
     ...(fillers.length
       ? [{ kind: "filler" as const, title: t("Utfyllnadsord"), text: listed(fillers) }]
       : []),

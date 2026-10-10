@@ -30,6 +30,15 @@ describe("narration", () => {
     ]);
   });
 
+  it("names a feeling told instead of shown, apart from the filter words", () => {
+    expect(kinds("Hon kände sig så ledsen. Han var arg.")).toEqual([
+      [
+        "feeling",
+        "”hon kände sig så ledsen”, ”han var arg”. Visa känslan i kroppen eller i det personen gör.",
+      ],
+    ]);
+  });
+
   it("notices someone else's thoughts in a chapter seen through one person's eyes", () => {
     expect(kinds("Elin gick ut. Åsa tänkte på vintern.", deep, ["Åsa", "Arvid"])).toEqual([
       ["head", "Åsa tänker eller känner här, fast kapitlet ses genom någon annans ögon."],
