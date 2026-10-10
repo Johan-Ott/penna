@@ -36,3 +36,14 @@ test("a writing sprint counts the words written and can be ended", async ({ page
   await sprint.getByRole("button", { name: "Avsluta" }).click();
   await expect(page.getByText("Sprinten är klar: 4 ord på 25 minuter.")).toBeVisible();
 });
+
+test("a name from the notes is offered while typing, and Tab fills it in", async ({ page }) => {
+  await cursorAfterFirstParagraph(page);
+
+  await page.keyboard.type(" Arv");
+  await expect(editor(page).locator(".completion")).toHaveText("id");
+  await page.keyboard.press("Tab");
+
+  await expect(editor(page)).toContainText("vantarna. Arvid");
+  await expect(editor(page).locator(".completion")).toHaveCount(0);
+});

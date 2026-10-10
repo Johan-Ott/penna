@@ -20,6 +20,8 @@ export interface WritingSettings {
   typography: boolean;
   /** A capital where a sentence starts, HEj as Hej and obvious misspellings, on a computer. */
   autocorrect: boolean;
+  /** The rest of a name or long word, offered in grey while typing, on a computer. */
+  completion: boolean;
   review: boolean;
   /** A word used again within this many sentences is marked. */
   repeatWindow: number;
@@ -47,6 +49,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   spellcheck: true,
   typography: true,
   autocorrect: true,
+  completion: true,
   review: true,
   repeatWindow: 3,
   showPages: false,
@@ -93,6 +96,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     spellcheck: pick("spellcheck", isBoolean),
     typography: pick("typography", isBoolean),
     autocorrect: pick("autocorrect", isBoolean),
+    completion: pick("completion", isBoolean),
     review: pick("review", isBoolean),
     repeatWindow: pick("repeatWindow", (value) => REPEAT_WINDOWS.includes(value as number)),
     showPages: pick("showPages", isBoolean),

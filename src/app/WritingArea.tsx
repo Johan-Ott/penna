@@ -160,6 +160,7 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
 
 // A phone's keyboard corrects the words itself.
 const isAutocorrectOn = (settings: WritingSettings) => settings.autocorrect && !platform.isPhone;
+const isCompletionOn = (settings: WritingSettings) => settings.completion && !platform.isPhone;
 
 // ProseMirror reads the modes on every update, so no new editor state is needed.
 function useEditorModes(props: WritingAreaProps) {
@@ -168,6 +169,7 @@ function useEditorModes(props: WritingAreaProps) {
   modes.isTypewriterOn = props.isFocusMode && settings.typewriter;
   modes.isTypographyOn = settings.typography;
   modes.isAutocorrectOn = isAutocorrectOn(settings);
+  modes.isCompletionOn = isCompletionOn(settings);
   modes.isSpellcheckOn = settings.spellcheck;
   if (props.isReadOnly) modes.isEditable = false;
   modes.repeatWindow = settings.review ? settings.repeatWindow : null;

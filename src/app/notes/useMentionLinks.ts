@@ -11,6 +11,11 @@ export function useMentionLinks(editor: ReturnType<typeof useEditorView>, notes:
     [notes.cards],
   );
   editor.modes.current.mentionMatchers = matchers;
+  // Offered while typing too, the whole name and the first name alone: "Arvid Holm", "Arvid".
+  editor.modes.current.completionNames = useMemo(
+    () => [...new Set(notes.cards.flatMap((card) => [card.name, card.name.split(/\s+/)[0] ?? ""]))],
+    [notes.cards],
+  );
   editor.modes.current.onMention = notes.showMention;
   const { run } = editor;
   useEffect(() => run(refreshMentions, false), [matchers, run]);

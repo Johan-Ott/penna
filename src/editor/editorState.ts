@@ -8,6 +8,7 @@ import { EditorState, TextSelection, type Command } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
 import { autocorrectPlugin, autocorrectRules } from "./autocorrect.js";
+import { completionPlugin } from "./completion.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
 import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
@@ -44,6 +45,8 @@ export interface EditorSwitches {
   isTypewriterOn: () => boolean;
   isTypographyOn: () => boolean;
   isAutocorrectOn: () => boolean;
+  isCompletionOn: () => boolean;
+  completionNames: () => string[];
   mentionMatchers: () => MentionMatcher[];
   onMention: (id: string, box: DOMRect) => void;
   /** Null when the review is off. */
@@ -62,6 +65,8 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   isTypewriterOn: () => false,
   isTypographyOn: () => true,
   isAutocorrectOn: () => false,
+  isCompletionOn: () => false,
+  completionNames: () => [],
   mentionMatchers: () => [],
   onMention: () => undefined,
   repeatWindow: () => null,
@@ -111,6 +116,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
     plugins: [
       history(),
       search(),
+      completionPlugin(switches.isCompletionOn, switches.completionNames),
       autocorrectPlugin(switches.isAutocorrectOn, switches.spelling),
       writingRules(switches),
       writingKeys,

@@ -42,6 +42,8 @@ interface EditorModes {
   isTypewriterOn: boolean;
   isTypographyOn: boolean;
   isAutocorrectOn: boolean;
+  isCompletionOn: boolean;
+  completionNames: string[];
   isSpellcheckOn: boolean;
   isEditable: boolean;
   mentionMatchers: MentionMatcher[];
@@ -60,6 +62,8 @@ const START_MODES: EditorModes = {
   isTypewriterOn: false,
   isTypographyOn: true,
   isAutocorrectOn: false,
+  isCompletionOn: false,
+  completionNames: [],
   isSpellcheckOn: true,
   isEditable: false,
   mentionMatchers: [],
@@ -80,6 +84,8 @@ function useModeSwitches() {
     isTypewriterOn: () => modes.current.isTypewriterOn,
     isTypographyOn: () => modes.current.isTypographyOn,
     isAutocorrectOn: () => modes.current.isAutocorrectOn,
+    isCompletionOn: () => modes.current.isCompletionOn,
+    completionNames: () => modes.current.completionNames,
     isSpellcheckOn: () => modes.current.isSpellcheckOn,
     isEditable: () => modes.current.isEditable,
     mentionMatchers: () => modes.current.mentionMatchers,

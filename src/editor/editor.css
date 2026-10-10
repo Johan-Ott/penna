@@ -300,3 +300,9 @@
   text-decoration-color: #1a8f4a;
   user-select: none;
 }
+
+/* Ordförslag: the rest of the word, offered after the cursor until Tab takes it. */
+.manuscript .completion {
+  color: var(--text-dim);
+  pointer-events: none;
+}
