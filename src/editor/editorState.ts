@@ -7,6 +7,7 @@ import { search } from "prosemirror-search";
 import { EditorState, TextSelection, type Command } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
+import { autocorrectPlugin, autocorrectRules } from "./autocorrect.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
 import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
@@ -42,6 +43,7 @@ const sceneBreakRule = new InputRule(/^\*\*\*$/, (state, _match, start, end) => 
 export interface EditorSwitches {
   isTypewriterOn: () => boolean;
   isTypographyOn: () => boolean;
+  isAutocorrectOn: () => boolean;
   mentionMatchers: () => MentionMatcher[];
   onMention: (id: string, box: DOMRect) => void;
   /** Null when the review is off. */
@@ -59,6 +61,7 @@ export interface EditorSwitches {
 export const DEFAULT_SWITCHES: EditorSwitches = {
   isTypewriterOn: () => false,
   isTypographyOn: () => true,
+  isAutocorrectOn: () => false,
   mentionMatchers: () => [],
   onMention: () => undefined,
   repeatWindow: () => null,
@@ -91,6 +94,15 @@ const writingKeys = keymap({
   Backspace: undoInputRule,
 });
 
+const writingRules = (switches: EditorSwitches) =>
+  inputRules({
+    rules: [
+      sceneBreakRule,
+      ...typographyRules(switches.isTypographyOn),
+      ...autocorrectRules(switches.isAutocorrectOn),
+    ],
+  });
+
 export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): EditorState {
   const writableDoc =
     doc.childCount > 0 ? doc : doc.copy(Fragment.from(schema.nodes.paragraph.create()));
@@ -99,7 +111,8 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
     plugins: [
       history(),
       search(),
-      inputRules({ rules: [sceneBreakRule, ...typographyRules(switches.isTypographyOn)] }),
+      autocorrectPlugin(switches.isAutocorrectOn, switches.spelling),
+      writingRules(switches),
       writingKeys,
       uniqueFootnoteLabels,
       keymap(baseKeymap),

@@ -18,6 +18,8 @@ export interface WritingSettings {
   theme: Theme;
   spellcheck: boolean;
   typography: boolean;
+  /** A capital where a sentence starts, HEj as Hej and obvious misspellings, on a computer. */
+  autocorrect: boolean;
   review: boolean;
   /** A word used again within this many sentences is marked. */
   repeatWindow: number;
@@ -44,6 +46,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   theme: "system",
   spellcheck: true,
   typography: true,
+  autocorrect: true,
   review: true,
   repeatWindow: 3,
   showPages: false,
@@ -89,6 +92,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
       stored["darkTheme"] === true ? "mörkt" : pick("theme", (value) => isOneOf(value, THEMES)),
     spellcheck: pick("spellcheck", isBoolean),
     typography: pick("typography", isBoolean),
+    autocorrect: pick("autocorrect", isBoolean),
     review: pick("review", isBoolean),
     repeatWindow: pick("repeatWindow", (value) => REPEAT_WINDOWS.includes(value as number)),
     showPages: pick("showPages", isBoolean),

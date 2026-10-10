@@ -1219,5 +1219,7 @@
   "Förslag": "Suggestions",
   "Skriv ändringar som förslag och godta eller avvisa dem sedan, en i taget.": "Type changes as suggestions, then accept or reject them one at a time.",
   "Skriv förslag": "Suggest changes",
-  "Redaktörens ändringar": "The editor's changes"
+  "Redaktörens ändringar": "The editor's changes",
+  "Autokorrigering": "Autocorrect",
+  "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.": "A capital where a sentence starts, HEllo becomes Hello and obvious misspellings are fixed. Backspace undoes it."
 }

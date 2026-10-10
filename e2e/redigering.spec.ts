@@ -50,7 +50,7 @@ test("an editor's Word file is read back, and their changes are accepted or reje
   await page.getByRole("button", { name: "Stäng", exact: true }).click();
 
   const panel = page.getByRole("complementary", { name: "Granskning" });
-  await expect(panel.getByText("Redaktörens ändringar")).toBeVisible();
+  await expect(panel.getByText("Ändringar att gå igenom")).toBeVisible();
   await expect(editor(page).locator(".revision-removed").first()).toBeVisible();
   await panel.getByRole("button", { name: "Godta", exact: true }).click();
 

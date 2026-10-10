@@ -41,6 +41,7 @@ interface ViewSwitches extends EditorSwitches {
 interface EditorModes {
   isTypewriterOn: boolean;
   isTypographyOn: boolean;
+  isAutocorrectOn: boolean;
   isSpellcheckOn: boolean;
   isEditable: boolean;
   mentionMatchers: MentionMatcher[];
@@ -58,6 +59,7 @@ interface EditorModes {
 const START_MODES: EditorModes = {
   isTypewriterOn: false,
   isTypographyOn: true,
+  isAutocorrectOn: false,
   isSpellcheckOn: true,
   isEditable: false,
   mentionMatchers: [],
@@ -77,6 +79,7 @@ function useModeSwitches() {
   const [switches] = useState<ViewSwitches>(() => ({
     isTypewriterOn: () => modes.current.isTypewriterOn,
     isTypographyOn: () => modes.current.isTypographyOn,
+    isAutocorrectOn: () => modes.current.isAutocorrectOn,
     isSpellcheckOn: () => modes.current.isSpellcheckOn,
     isEditable: () => modes.current.isEditable,
     mentionMatchers: () => modes.current.mentionMatchers,

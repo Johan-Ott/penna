@@ -56,6 +56,7 @@ type EditorSwitch =
   | "typewriter"
   | "spellcheck"
   | "typography"
+  | "autocorrect"
   | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
@@ -89,6 +90,13 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     t("Svensk typografi medan du skriver"),
     t('Två bindestreck blir talstreck och "citat" blir ”citat”.'),
   ],
+  [
+    "autocorrect",
+    t("Autokorrigering"),
+    t(
+      "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.",
+    ),
+  ],
   ["review", t("Granskning"), t("Namnstavning och upprepningar, i texten och i en panel bredvid.")],
 ];
 
@@ -116,7 +124,7 @@ function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
 }
 
 // A phone shows the text without the sheet and keeps comments in Granska, so those switch nothing.
-const COMPUTER_ONLY: EditorSwitch[] = ["paper", "commentsInMargin"];
+const COMPUTER_ONLY: EditorSwitch[] = ["paper", "commentsInMargin", "autocorrect"];
 
 function SwitchRows({ settings, onChangeSettings }: TabProps) {
   const isPhone = usePhone();
