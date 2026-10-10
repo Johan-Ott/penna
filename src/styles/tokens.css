@@ -2,6 +2,9 @@
    what is shared, red only for errors. Values from the design canvas's Stilguide and Komponenter.
    data-theme is set by useWritingSettings: dark when the writer asks, otherwise as the system. */
 :root {
+  /* The Android app sets these itself, since its WebView reports the insets as 0. */
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
   --bg: #ffffff;
   --bg-subtle: #f6f5f2;
   --bg-panel: #faf9f6;

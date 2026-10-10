@@ -2679,7 +2679,7 @@ button.book-cover:hover {
 
 @media (max-width: 600px) {
   .app-toasts {
-    bottom: calc(76px + env(safe-area-inset-bottom));
+    bottom: calc(76px + var(--safe-bottom));
   }
 }
 
@@ -3034,7 +3034,7 @@ button.book-cover:hover {
 
 @media (max-width: 600px) {
   .celebrations {
-    bottom: calc(84px + env(safe-area-inset-bottom));
+    bottom: calc(84px + var(--safe-bottom));
   }
 }
 

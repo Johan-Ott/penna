@@ -1831,7 +1831,7 @@
     width: auto;
     height: auto;
     max-height: none;
-    padding-top: max(16px, env(safe-area-inset-top));
+    padding-top: max(16px, var(--safe-top));
     border: 0;
     border-radius: 0;
   }
