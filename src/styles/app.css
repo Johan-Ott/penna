@@ -3154,7 +3154,19 @@ button.book-cover:hover {
 /* Kommentarer i marginalen: pencilled notes beside the text, placed by MarginNotes. */
 .page:has(> .margin-notes) {
   position: relative;
-  padding-right: 248px;
+}
+
+/* On a phone there is no margin to spare; the comments stay in Granska there. */
+@media (min-width: 601px) {
+  .page:has(> .margin-notes) {
+    padding-right: 248px;
+  }
+}
+
+@media (max-width: 600px) {
+  .margin-notes {
+    display: none;
+  }
 }
 
 .margin-notes {

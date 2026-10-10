@@ -10,6 +10,8 @@ import { addMenu } from "./tree/treeMenus.js";
 import { TreeView, type TreeViewProps } from "./tree/TreeView.js";
 import { t } from "../i18n/i18n.js";
 
+type BookDialogProps = Pick<SidebarProps, "project" | "libraryDir" | "onUpdateProject">;
+
 interface SidebarProps extends TreeViewProps {
   profile: ReactNode;
   /** The Penna folder, where the writer's own templates are kept. */
@@ -37,7 +39,8 @@ function useSeriesDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
-function useThemeDialog(props: SidebarProps) {
+/** Tema…, shared with the phone's book menu. */
+export function useThemeDialog(props: BookDialogProps) {
   const [isOpen, setOpen] = useState(false);
   const dialog = isOpen && (
     <ThemeDialog
@@ -49,7 +52,8 @@ function useThemeDialog(props: SidebarProps) {
   return { open: () => setOpen(true), dialog };
 }
 
-function useTemplatesDialog(props: SidebarProps) {
+/** Mallar och bitar…, shared with the phone's book menu. */
+export function useTemplatesDialog(props: BookDialogProps) {
   const [isOpen, setOpen] = useState(false);
   const dialog = isOpen && props.onUpdateProject && (
     <TemplatesDialog

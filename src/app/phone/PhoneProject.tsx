@@ -7,7 +7,8 @@ import { openInHome } from "../notes/noteHomes.js";
 import { Overlays } from "../Overlays.js";
 import { writingAreaProps } from "../paneProps.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
-import { themeStyle } from "../themes/themeStyle.js";
+import { ProfileLayer } from "../profile/ProfileLayer.js";
+import { useBookTheme } from "../themes/themeStyle.js";
 import { BackIcon, SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
@@ -55,6 +56,7 @@ function Floating({ app, project }: Props) {
   return (
     <>
       <InsightsLayer app={app} project={project} />
+      <ProfileLayer app={app} project={project} />
       {app.newNoteSort !== false && (
         <NewNoteDialog
           project={project}
@@ -195,8 +197,9 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
 
 export function PhoneProject({ app, project }: Props) {
   const screens = usePhoneScreens({ app, project });
+  useBookTheme(project.fields);
   return (
-    <div className="phone-app" style={themeStyle(project.fields)}>
+    <div className="phone-app">
       <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
       {!isTextShown(screens.screen, app.writingMode.view) && (

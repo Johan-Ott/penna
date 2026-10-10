@@ -446,7 +446,7 @@
 /* Innehåll, Läs, Publicera and Från synken fill the screen above the tabs. */
 .phone-view {
   position: fixed;
-  inset: 0 0 var(--phone-tabs);
+  inset: env(safe-area-inset-top) 0 var(--phone-tabs);
   z-index: 10;
   overflow: hidden;
   background: var(--bg);
@@ -463,8 +463,22 @@
 }
 
 .phone-view .contents-row {
-  grid-template-columns: 16px auto auto 1fr;
+  grid-template-columns: 16px minmax(0, 1fr) auto auto;
   gap: 4px 12px;
+}
+
+/* The filter takes its own line above reading or time order, which has no room beside it. */
+.phone-view .contents-bar {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.phone-view .contents-bar-filter {
+  flex-basis: 100%;
+}
+
+.phone-view .contents-filter {
+  max-width: none;
 }
 
 .phone-view .contents-main {
@@ -709,4 +723,91 @@
 .phone-app .text-place > *,
 .phone-app .text-when {
   white-space: nowrap;
+}
+
+/* Studio on a phone: the cards as a row to swipe, the picture and its choices under each other. */
+.phone-app .studio {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.phone-app .studio-nav {
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 4px;
+  padding: 8px 12px;
+  overflow-x: auto;
+}
+
+.phone-app .studio-group {
+  flex-direction: row;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.phone-app .studio-item {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.phone-app .studio-item .insight-muted {
+  display: none;
+}
+
+.phone-app .studio-main {
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+}
+
+.phone-app .studio-stage {
+  padding: 12px;
+}
+
+.phone-app .studio-panel {
+  width: auto;
+}
+
+/* Insikter and Du slutade här cover the screen, so they keep clear of the status bar. */
+.phone-app .insights-panel,
+.phone-app .resume-screen {
+  padding-top: max(16px, env(safe-area-inset-top));
+}
+
+.phone-app .studio-nav .publish-back {
+  display: block;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.phone-app .studio-group .sidebar-heading {
+  display: none;
+}
+
+/* Till förlag on a phone: the publisher on its own line, the date and the answer under it. */
+@media (max-width: 600px) {
+  .submit-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 28px;
+  }
+
+  .submit-row > input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Dialogs on a phone stay clear of the status bar and the gesture bar, and scroll when tall. */
+@media (max-width: 600px) {
+  .dialog-backdrop {
+    padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .dialog-backdrop > .dialog {
+    max-height: 100%;
+    overflow-y: auto;
+  }
 }

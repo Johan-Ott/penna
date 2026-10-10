@@ -18,6 +18,7 @@ import { useMenuDialogs } from "../shell/useAppMenu.js";
 import { SyncNotices } from "../SyncLayer.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { TreeView } from "../tree/TreeView.js";
+import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -122,17 +123,26 @@ function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
 }
 
 // A phone has no keyboard shortcuts or folders to pick, so the menu is short.
-function phoneMenu(app: AppState, dialogs: ReturnType<typeof useMenuDialogs>): MenuItem[] {
+const versionsItem = (app: AppState): MenuItem[] => {
+  const sceneId = app.scene?.id;
+  return sceneId
+    ? [{ label: t("Versioner av den här texten"), onSelect: () => app.snapshots.show(sceneId) }]
+    : [];
+};
+
+type BookDialogs = Record<"theme" | "templates", { open: () => void }>;
+
+function phoneMenu(
+  app: AppState,
+  dialogs: ReturnType<typeof useMenuDialogs>,
+  book: BookDialogs,
+): MenuItem[] {
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
-    ...(app.scene
-      ? [
-          {
-            label: t("Versioner av den här texten"),
-            onSelect: () => app.snapshots.show(app.scene?.id ?? ""),
-          },
-        ]
-      : []),
+    { label: t("Profil"), onSelect: app.profile.open },
+    { label: t("Tema…"), onSelect: book.theme.open },
+    { label: t("Mallar och bitar…"), onSelect: book.templates.open },
+    ...versionsItem(app),
     ...(app.project ? collaborationItems(app.project, app.zip.run) : []),
     { label: t("Läs in redaktörens Word-fil…"), onSelect: dialogs.revision.open },
     { label: t("Serie…"), onSelect: dialogs.series.open },
@@ -151,7 +161,10 @@ function phoneMenu(app: AppState, dialogs: ReturnType<typeof useMenuDialogs>): M
 
 function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const dialogs = useMenuDialogs({ app, project });
-  const menu = useMenuButton(t("Meny"), phoneMenu(app, dialogs));
+  const bookProps = sidebarProps(app, project);
+  const theme = useThemeDialog(bookProps);
+  const templates = useTemplatesDialog(bookProps);
+  const menu = useMenuButton(t("Meny"), phoneMenu(app, dialogs, { theme, templates }));
   return (
     <header className="phone-bar">
       <button className="topbar-button" aria-label={t("Meny")} onClick={menu.open}>
@@ -163,6 +176,8 @@ function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project
       </button>
       {menu.menu}
       {dialogs.layers}
+      {theme.dialog}
+      {templates.dialog}
     </header>
   );
 }

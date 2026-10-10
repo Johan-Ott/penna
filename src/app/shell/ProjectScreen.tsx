@@ -5,7 +5,7 @@ import { Overlays } from "../Overlays.js";
 import { InsightsLayer } from "../progress/InsightsPanel.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
-import { themeStyle } from "../themes/themeStyle.js";
+import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
@@ -143,11 +143,17 @@ function Floating({ app, project }: ScreenProps) {
   );
 }
 
+// The book's theme on the page, and the keys that work on every view of it.
+function useScreenKeysAndTheme({ app, project }: ScreenProps) {
+  useShortcut("enter", app.sceneSplit.split, { shift: true });
+  useShortcut("r", () => app.writingMode.read(null));
+  useBookTheme(project.fields);
+}
+
 export function ProjectScreen({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const menu = useAppMenu({ app, project });
-  useShortcut("enter", app.sceneSplit.split, { shift: true });
-  useShortcut("r", () => app.writingMode.read(null));
+  useScreenKeysAndTheme({ app, project });
   const isPublishing = writingMode.view === "publicera";
   const pageMap = useScreenPages({ app, project });
   const pageOf = writingMode.settings.tableOfContents
@@ -160,7 +166,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
   ];
   return (
-    <div className={classes.filter(Boolean).join(" ")} style={themeStyle(project.fields)}>
+    <div className={classes.filter(Boolean).join(" ")}>
       <ScreenTopbar app={app} project={project} onMenu={menu.open} />
       {!isPublishing && <Sidebar {...sidebarProps(app, project)} pageOf={pageOf} />}
       <div className="sidebar-backdrop" onClick={() => writingMode.setSidebarOpen(false)} />
