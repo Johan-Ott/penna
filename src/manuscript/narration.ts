@@ -58,9 +58,9 @@ const WORDS: Record<string, Words> = {
   "sv-SE": {
     firstPerson: ["jag", "mig", "min", "mitt", "mina"],
     filters:
-      /(?<!\p{L})(?:(?:jag|hon|han|hen)\s+(?:såg|hörde|kände(?!\s+sig)|tänkte|undrade|insåg|märkte|förstod)(?:\s+att)?|verkade|kändes som)(?!\p{L})/giu,
+      /(?<!\p{L})(?:(?:jag|hon|han|hen)\s+(?:såg|hörde|kände(?!\s+[sm]ig)|tänkte|undrade|insåg|märkte|förstod|kunde\s+(?:se|höra|känna))(?:\s+(?:att|hur))?|verkade|kändes som)(?!\p{L})/giu,
     feelings:
-      /(?<!\p{L})(?:jag|hon|han|hen)\s+(?:var|blev|kände\s+sig)\s+(?:så\s+|väldigt\s+|helt\s+)?(?:arg|ledsen|rädd|glad|nervös|orolig|förvånad|besviken|irriterad|lycklig|svartsjuk|stolt|skamsen)(?!\p{L})/giu,
+      /(?<!\p{L})(?:jag|hon|han|hen)\s+(?:var|blev|kände\s+[sm]ig)\s+(?:så\s+|väldigt\s+|helt\s+)?(?:arg|ledsen|rädd|glad|nervös|orolig|förvånad|besviken|irriterad|lycklig|svartsjuk|stolt|skamsen)(?!\p{L})/giu,
     minds: "tänkte|kände|undrade|insåg|visste|mindes|önskade|fruktade|hoppades",
     present: ["är", "har", "går", "ser", "kommer", "säger", "tar", "står", "sitter", "vet", "blir"],
     past: ["var", "hade", "gick", "såg", "kom", "sa", "tog", "stod", "satt", "visste", "blev"],

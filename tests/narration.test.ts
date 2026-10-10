@@ -41,6 +41,17 @@ describe("narration", () => {
     ]);
   });
 
+  it("in first person deep POV, names jag kände and jag kunde se, and jag kände mig as told", () => {
+    const first = { ...deep, voice: "jag" } as const;
+
+    expect(kinds("Jag kände hur kylan kom. Jag kunde se isen. Jag kände mig rädd.", first)).toEqual(
+      [
+        ["filter", "”jag kände hur”, ”jag kunde se”. I deep POV visas det direkt i stället."],
+        ["feeling", "”jag kände mig rädd”. Visa känslan i kroppen eller i det personen gör."],
+      ],
+    );
+  });
+
   it("notices someone else's thoughts in a chapter seen through one person's eyes", () => {
     expect(kinds("Elin gick ut. Åsa tänkte på vintern.", deep, ["Åsa", "Arvid"])).toEqual([
       ["head", "Åsa tänker eller känner här, fast kapitlet ses genom någon annans ögon."],
