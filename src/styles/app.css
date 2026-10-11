@@ -24,7 +24,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 13px/1.4 var(--font-ui);
+  font: 14px/1.4 var(--font-ui);
 }
 
 button,
@@ -93,7 +93,7 @@ select:focus-visible {
   border-radius: var(--radius-card);
   background: var(--bg);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* Writing area */
@@ -177,7 +177,7 @@ select:focus-visible {
   border-radius: 14px;
   background: var(--bg);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .chip[aria-pressed="true"] {
@@ -203,7 +203,7 @@ select:focus-visible {
 
 .toast-meta {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -247,7 +247,7 @@ select:focus-visible {
 
 .search-count {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   white-space: nowrap;
 }
 
@@ -313,11 +313,11 @@ select:focus-visible {
 }
 
 .version-meta {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .version-excerpt {
-  font: 12px/1.5 var(--font-prose);
+  font: 13px/1.5 var(--font-prose);
   color: var(--text-prose);
 }
 
@@ -362,7 +362,7 @@ select:focus-visible {
 
 .tree-meta {
   color: var(--text-label);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -438,7 +438,7 @@ select:focus-visible {
   border-radius: var(--radius-card);
   background: var(--bg);
   box-shadow: var(--shadow-dialog);
-  font: 13px/1.4 var(--font-ui);
+  font: 14px/1.4 var(--font-ui);
   color: var(--text);
 }
 
@@ -478,7 +478,7 @@ select:focus-visible {
 .menu kbd {
   color: var(--text-label);
   font: inherit;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .menu-separator {
@@ -548,7 +548,7 @@ select:focus-visible {
 }
 
 .setting-hint {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .setting-row {
@@ -750,7 +750,7 @@ select:focus-visible {
   flex-shrink: 0;
   padding: 12px 10px 6px;
   color: var(--text-label);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -985,7 +985,7 @@ select:focus-visible {
 
 .choice-hint {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .chip-row {
@@ -997,7 +997,7 @@ select:focus-visible {
   height: 32px;
   padding: 0 12px;
   border-radius: 16px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .chip[aria-checked="true"] {
@@ -1020,7 +1020,7 @@ select:focus-visible {
   border: 1px solid var(--border-control);
   border-radius: var(--radius-button);
   color: var(--text-tree);
-  font: 12px var(--font-ui);
+  font: 13px var(--font-ui);
 }
 
 .button.large {
@@ -1129,7 +1129,7 @@ button.book-cover:hover {
 }
 
 .book-kind {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.75;
@@ -1141,7 +1141,7 @@ button.book-cover:hover {
 }
 
 .book-words {
-  font-size: 12px;
+  font-size: 13px;
   opacity: 0.75;
 }
 
@@ -1195,7 +1195,7 @@ button.book-cover:hover {
 }
 
 .book-updated {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .book-foot {
@@ -1318,7 +1318,7 @@ button.book-cover:hover {
 .snapshot-meta,
 .snapshot-empty {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .snapshot-empty {
@@ -1425,7 +1425,7 @@ button.book-cover:hover {
 .sync-badge {
   flex-shrink: 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .sync-badge.copy,
@@ -1618,7 +1618,7 @@ button.book-cover:hover {
   border-radius: var(--radius-button);
   color: var(--text-muted);
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .writing.hidden {
@@ -1640,7 +1640,7 @@ button.book-cover:hover {
 }
 
 .kpi-sub {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .progress-row {
@@ -1801,13 +1801,13 @@ button.book-cover:hover {
 
 .export-page-subtitle {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-style: italic;
 }
 
 .export-page-author {
   margin-top: 48px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
@@ -1906,7 +1906,7 @@ button.book-cover:hover {
   background: var(--bg);
   box-shadow: var(--shadow-dialog);
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.4;
 }
 
@@ -1958,7 +1958,7 @@ button.book-cover:hover {
 
 .review-heading {
   color: var(--text-label);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2210,7 +2210,7 @@ button.book-cover:hover {
   padding-top: 14px;
   border-top: 1px solid var(--border-soft);
   color: var(--text-label);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2255,7 +2255,7 @@ button.book-cover:hover {
   border-radius: var(--radius-card);
   background: var(--bg);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .theme-card[aria-checked="true"],
@@ -2451,7 +2451,7 @@ button.book-cover:hover {
   border: 1px dashed var(--primary);
   background: rgba(120, 140, 255, 0.12);
   color: #556;
-  font-size: 11px;
+  font-size: 12px;
   cursor: move;
 }
 
@@ -2595,7 +2595,7 @@ button.book-cover:hover {
   padding: 8px 10px;
   border-radius: var(--radius-card);
   background: var(--surface-hover);
-  font-size: 11px;
+  font-size: 12px;
   white-space: pre-wrap;
 }
 
@@ -2815,12 +2815,12 @@ button.book-cover:hover {
   display: flex;
   justify-content: space-between;
   color: var(--text-label);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .search-hit-text {
   overflow: hidden;
-  font-size: 13px;
+  font-size: 14px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2848,7 +2848,7 @@ button.book-cover:hover {
   flex-wrap: wrap;
   gap: 4px 12px;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .error-list {
@@ -2860,13 +2860,13 @@ button.book-cover:hover {
   padding: 0;
   overflow-y: auto;
   list-style: none;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .error-time,
 .error-list-empty {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .name-suggestions {
@@ -2887,7 +2887,7 @@ button.book-cover:hover {
   background: transparent;
   color: var(--text-muted);
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .draft-save {
@@ -2926,7 +2926,7 @@ button.book-cover:hover {
 
 .draft-meta {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .contents-links {
@@ -2968,7 +2968,7 @@ button.book-cover:hover {
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-card);
   font-family: var(--font-ui);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .secret-row,
@@ -3062,7 +3062,7 @@ button.book-cover:hover {
 
 .celebration-text {
   color: #a3a3a3;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -3127,7 +3127,7 @@ button.book-cover:hover {
   bottom: 40px;
   left: 0;
   color: var(--text-muted);
-  font: 13px var(--font-prose);
+  font: 14px var(--font-prose);
   text-align: center;
 }
 
@@ -3161,7 +3161,7 @@ button.book-cover:hover {
   left: 0;
   width: 100%;
   color: var(--text-muted);
-  font: 13px var(--font-prose);
+  font: 14px var(--font-prose);
   text-align: center;
 }
 
@@ -3219,11 +3219,11 @@ button.book-cover:hover {
   flex-wrap: wrap;
   gap: 4px 10px;
   color: var(--text-label);
-  font: 11px var(--font-ui);
+  font: 12px var(--font-ui);
 }
 
 .margin-note-by .link-button {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .chapter-number,
@@ -3251,12 +3251,12 @@ button.book-cover:hover {
   position: absolute;
   top: 12px;
   right: 0;
-  font: 12px var(--font-ui);
+  font: 13px var(--font-ui);
 }
 
 .part-page-label {
   color: var(--text-label);
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
 }
@@ -3285,7 +3285,7 @@ button.book-cover:hover {
 
 .part-page-by {
   color: var(--text-label);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* Boktypografi: justified with hyphens, and the rest as the book's design in Publicera sets it. */
@@ -3299,7 +3299,7 @@ button.book-cover:hover {
   display: block;
   margin-top: 64px;
   color: var(--text-label);
-  font: 11px var(--font-prose);
+  font: 12px var(--font-prose);
   letter-spacing: 0.3em;
   text-align: center;
   text-transform: uppercase;
