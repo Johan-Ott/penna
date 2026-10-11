@@ -562,7 +562,6 @@
   "Öppna": "Open",
   "Öppna anteckningen": "Open the note",
   "Öppna befintlig mapp…": "Open existing folder…",
-  "Öppna befintligt": "Open existing",
   "Öppna en bok för att synka den.": "Open a book to sync it.",
   "Öppna exempelprojektet": "Open the example project",
   "Öppna igen": "Reopen",
@@ -1278,5 +1277,6 @@
   "Om dig": "About you",
   "Tema, sidor och typsnitt": "Theme, pages and type",
   "Titel, författare och omslag": "Title, author and cover",
-  "Bilder och nyhetsbrev": "Pictures and newsletters"
+  "Bilder och nyhetsbrev": "Pictures and newsletters",
+  "Nytt": "New"
 }

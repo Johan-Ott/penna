@@ -31,5 +31,9 @@ test("a scene dragged onto another chapter moves into it", async ({ page }) => {
 
   await page.getByRole("button", { name: "Scener i Fyren" }).click();
   await expect(page.locator(".contents-row.scene", { hasText: "Isen" })).toHaveCount(1);
+  await page
+    .locator(".tree")
+    .getByRole("treeitem", { name: /2\. Fyren/ })
+    .click();
   await expect(page.locator(".tree")).toContainText(/2\. Fyren[\s\S]*Isen/);
 });

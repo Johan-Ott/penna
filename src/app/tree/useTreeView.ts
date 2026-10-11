@@ -7,7 +7,13 @@ import {
   type NodeKind,
   type TreeNode,
 } from "../../project/tree.js";
-import { sidebarSections, visibleRows, type TreeRow as Row } from "../../project/treeRows.js";
+import {
+  chapterIds,
+  foldableIds,
+  sidebarSections,
+  visibleRows,
+  type TreeRow as Row,
+} from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta } from "../../project/treeLabels.js";
 import { isLinkedByDefault } from "../../project/cards.js";
@@ -51,10 +57,11 @@ export type Actions = ReturnType<typeof useTreeActions>;
 type MenuState = { items: MenuItem[]; x: number; y: number } | null;
 export type View = ReturnType<typeof useTreeViewState>;
 
-// The sorts and Papperskorg start folded; the book starts open.
+// The sorts, the chapters and Papperskorg start folded, so the book reads as its chapters; the
+// open text's chapter unfolds by itself.
 function useCollapsed(tree: TreeNode[]) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(
-    () => new Set([...sortsOf(tree).map((sort) => sort.id), TRASH_ID]),
+    () => new Set([...sortsOf(tree).map((sort) => sort.id), ...chapterIds(tree), TRASH_ID]),
   );
   const toggle = (id: string) =>
     setCollapsed((current) => {
@@ -80,9 +87,6 @@ function useTreeViewState(tree: TreeNode[]) {
   const editing = { renamingId, setRenamingId, menu, setMenu, labelsFor, setLabelsFor };
   return { ...useCollapsed(tree), ...editing, filter, setFilter, focusId, setFocusId };
 }
-
-const foldableIds = (nodes: TreeNode[]): string[] =>
-  nodes.flatMap((node) => (node.children?.length ? [node.id, ...foldableIds(node.children)] : []));
 
 export function menuActions(actions: Actions, props: TreeViewProps, view: View): TreeMenuActions {
   const { summaries } = props.project;
@@ -145,7 +149,7 @@ export function useTreeView(props: TreeViewProps) {
     ...view,
     startRename: view.setRenamingId,
   });
-  const drag = useTreeDrag(project.tree, props.onChangeTree);
+  const drag = useTreeDrag(project.tree, { onChangeTree: props.onChangeTree, expand: view.expand });
   const dropAtBookEnd = () => {
     if (drag.draggedId)
       props.onChangeTree(moveNode(project.tree, drag.draggedId, null, Number.MAX_SAFE_INTEGER));

@@ -15,14 +15,13 @@ function positionInRow(event: DragEvent<HTMLElement>, node: TreeNode): DropPosit
   return offset < 0.5 ? "before" : "after";
 }
 
-/** A drop only changes the tree, never a scene file. */
-export function useTreeDrag(tree: TreeNode[], onChangeTree: (tree: TreeNode[]) => void) {
+type Changes = { onChangeTree: (tree: TreeNode[]) => void; expand: (ids: string[]) => void };
+
+/** A drop only changes the tree, never a scene file; a folded chapter dropped into unfolds. */
+export function useTreeDrag(tree: TreeNode[], { onChangeTree, expand }: Changes) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
-  const reset = () => {
-    setDraggedId(null);
-    setDropTarget(null);
-  };
+  const reset = () => (setDraggedId(null), setDropTarget(null));
   const rowDragProps = (row: TreeRow, isDraggable: boolean) => ({
     draggable: isDraggable,
     onDragStart: (event: DragEvent<HTMLElement>) => {
@@ -39,6 +38,7 @@ export function useTreeDrag(tree: TreeNode[], onChangeTree: (tree: TreeNode[]) =
       event.preventDefault();
       if (draggedId && dropTarget)
         onChangeTree(dropMove(tree, draggedId, row, dropTarget.position));
+      if (dropTarget?.position === "inside") expand([row.node.id]);
       reset();
     },
     onDragEnd: reset,

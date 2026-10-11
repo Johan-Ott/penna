@@ -60,7 +60,7 @@ function SettingsDialog(props: TabProps & { startTab: number; onClose: () => voi
         <div className="settings-content">
           <div className="settings-heading">
             <h1>{title}</h1>
-            <button className="link-button quiet" onClick={props.onClose}>
+            <button className="link-button quiet dialog-close" onClick={props.onClose}>
               {t("Stäng")}
             </button>
           </div>

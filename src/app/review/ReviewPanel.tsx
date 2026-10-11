@@ -120,11 +120,16 @@ function InBook({ notes }: { notes: ProseNote[] }) {
   );
 }
 
-function ReviewHeader(props: { onClose: () => void }) {
+function ReviewHeader(props: { isShown: boolean; onClose: () => void }) {
   return (
     <div className="review-header">
       <span className="progress-title">{t("Granska")}</span>
-      <button className="review-close" aria-label={t("Stäng granskning")} onClick={props.onClose}>
+      <button
+        className="review-close"
+        aria-label={t("Stäng granskning")}
+        data-phone-back={props.isShown || undefined}
+        onClick={props.onClose}
+      >
         ×
       </button>
     </div>
@@ -144,7 +149,7 @@ export function ReviewPanel(props: ReviewPanelProps) {
   const isShown = props.isOpen || props.isPinnedOpen;
   return (
     <aside className={isShown ? "review-panel open" : "review-panel"} aria-label={t("Granskning")}>
-      <ReviewHeader onClose={() => props.onOpenChange(false)} />
+      <ReviewHeader isShown={isShown} onClose={() => props.onOpenChange(false)} />
       {props.revisionSection}
       {review && props.narrationSection}
       {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}

@@ -173,13 +173,12 @@ function useAppState() {
   const journey = useJourney(startup.preferences.libraryDir);
   const { stats, today, recordSave } = useWritingStats(project, journey.record);
   useReminder(startup.preferences.reminderHour, today.words);
-  const isSearchOpen = writingMode.isSearchOpen;
+  const { isSearchOpen } = writingMode;
   const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
   const renameOffer = useRenameOffer(search.scope, project);
   const treeHandlers = useTreeHandlers(core.actions, renameOffer.noteRenamed);
   listenToSaves(sceneState, recordSave, startup.preferences.isAutoSnapshotOn);
-  const input = { project, session, editor: sceneState.editor, updateTree, refresh };
-  const sceneSplit = sceneSplitActions(input);
+  const sceneSplit = sceneSplitActions({ ...sceneState, project, updateTree, refresh });
   const zip = useExport(project, startup.preferences.authorName, projectState.updateFields);
   const parts = { ...core, ...sceneState, ...projectState, ...useNotesParts(core) };
   const newProjectAsked = useRef(false);
@@ -196,13 +195,13 @@ export type AppState = ReturnType<typeof useAppState>;
 // Outside both screens, so the update question is asked once per start.
 export function App() {
   const app = useAppState();
-  const isPhone = usePhone();
+  const Screen = usePhone() ? PhoneProject : ProjectScreen;
   const { project } = app;
-  if (app.startup.isStarting) return <div className="app-starting" />;
+  // Starting, or reading a book from the shelf: the start picture shows meanwhile.
+  if (app.startup.isStarting || app.opening) return <div className="app-starting" />;
   return (
     <>
-      {project && !isPhone && <ProjectScreen app={app} project={project} />}
-      {project && isPhone && <PhoneProject app={app} project={project} />}
+      {project && <Screen app={app} project={project} />}
       {project && <BookToasts app={app} />}
       {!project && <StartScreen app={app} />}
       <UpdateNotice session={app.session} />

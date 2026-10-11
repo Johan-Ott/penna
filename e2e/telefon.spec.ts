@@ -86,6 +86,20 @@ test("Android's back leaves Studio, then goes from Publicera to Innehåll", asyn
   await expect(page.locator(".contents-view")).toBeVisible();
 });
 
+test("Android's back closes Granska and stays in the text", async ({ page }) => {
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+  await page
+    .getByRole("button", { name: /^Granska/ })
+    .first()
+    .click();
+  await expect(page.locator(".review-panel.open")).toBeVisible();
+
+  await page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
+
+  await expect(page.locator(".review-panel.open")).toHaveCount(0);
+  await expect(editor(page)).toBeVisible();
+});
+
 test("the palette on the phone has no folder to pick", async ({ page }) => {
   await page.getByRole("button", { name: "Sök" }).first().click();
   await page.keyboard.type("mapp");

@@ -20,6 +20,8 @@ import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
 
 recordUncaughtErrors();
 keepWebMenuOut();
+// Android has a back button, so the page can leave out its own ways to close.
+document.documentElement.classList.toggle("android", /Android/i.test(navigator.userAgent));
 const root = document.getElementById("root");
 if (!root) throw new Error("index.html has no #root element for Penna to render into.");
 createRoot(root).render(

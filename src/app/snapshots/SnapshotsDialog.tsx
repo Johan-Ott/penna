@@ -141,7 +141,7 @@ function SnapshotsDialog(props: SnapshotsDialogProps) {
           <span id="snapshots-title" className="dialog-title">
             {t("Versioner av ”{title}”", { title: props.sceneTitle })}
           </span>
-          <button className="link-button quiet" onClick={state.close}>
+          <button className="link-button quiet dialog-close" onClick={state.close}>
             {t("Stäng")}
           </button>
         </div>

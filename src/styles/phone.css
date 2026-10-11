@@ -1032,3 +1032,10 @@
     font-size: 16px;
   }
 }
+
+/* Android's back closes these, so the phone needs no Stäng or × of its own. */
+.android .review-close,
+.android .insights-close,
+.android .dialog-close {
+  display: none;
+}

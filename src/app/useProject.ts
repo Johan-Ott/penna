@@ -91,6 +91,21 @@ export function useProjectUpdates(
   return { updateTree, updateFields, updateProject: update, treeFailure };
 }
 
+// The folder being read, so the start picture shows instead of a screen that seems stuck.
+function useOpen(setProject: (project: Project) => void) {
+  const [opening, setOpening] = useState<string | null>(null);
+  const open = useCallback(
+    (folder: string) => {
+      setOpening(folder);
+      return readProject(folder)
+        .then(setProject)
+        .finally(() => setOpening(null));
+    },
+    [setProject],
+  );
+  return { opening, open };
+}
+
 export function useProject(onFolderChange: () => void) {
   const [project, setProject] = useState<Project | null>(null);
   const projectRef = useRef<Project | null>(null);
@@ -98,7 +113,7 @@ export function useProject(onFolderChange: () => void) {
   const updates = useProjectUpdates(projectRef, setProject);
   const dir = project?.dir ?? null;
 
-  const open = useCallback(async (folder: string) => setProject(await readProject(folder)), []);
+  const { opening, open } = useOpen(setProject);
   // A read after the project closed is dropped; one that fails keeps what is shown. Given the
   // paths the folder watch saw, only those scenes are read again.
   const refresh = useCallback(
@@ -120,7 +135,7 @@ export function useProject(onFolderChange: () => void) {
   }, [open]);
   useFolderWatch(dir, refresh, onFolderChange);
   const close = useCallback(() => setProject(null), []);
-  return { project, open, close, choose, refresh, ...updates };
+  return { project, opening, open, close, choose, refresh, ...updates };
 }
 
 const GATHER_MS = 100;

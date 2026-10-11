@@ -49,7 +49,8 @@ test("a novel in Word moves into Penna on the first start, chapter by chapter", 
   await expect(sidebar).toContainText("Ett", { timeout: 30_000 });
   await expect(sidebar).toContainText("Två");
   await expect(sidebar).toContainText("Tre");
-  // Each scene is named by its first words until she names it.
+  // Each scene is named by its first words until she names it; chapters start folded.
+  await sidebar.getByRole("treeitem", { name: /Två/ }).click();
   await sidebar.getByRole("treeitem").filter({ hasText: "På morgonen var stranden" }).click();
   const editor = page.locator(".ProseMirror");
   await expect(editor).toContainText("stranden full av tång");

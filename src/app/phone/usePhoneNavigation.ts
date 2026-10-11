@@ -15,12 +15,14 @@ function toTop() {
   });
 }
 
-// What Android's back button closes before it leaves a screen: a menu, a dialog or a panel.
-const LAYERS = "[role=menu], [role=dialog], .insights-panel, .review-panel.open";
+// What Android's back button closes before anything else: a menu or a dialog.
+const LAYERS = "[role=menu], [role=dialog]";
 const openLayers = () => document.querySelectorAll(LAYERS).length;
 
-// A screen within a screen, such as Studio in Publicera, marks its way out for back to take.
-const innerBack = () => document.querySelector<HTMLElement>("[data-phone-back]");
+// A panel, or a screen within a screen such as Studio, marks its way out for back to take; the
+// last one is the one on top.
+const innerBack = () =>
+  Array.from(document.querySelectorAll<HTMLElement>("[data-phone-back]")).pop();
 
 /** Android's back: closes what lies on top, else the screen before; false when there is none. */
 function pennaBack(depth: number) {

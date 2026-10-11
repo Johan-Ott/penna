@@ -62,3 +62,13 @@ export function sidebarSections(rows: TreeRow[]) {
 
 export const withoutEmptySorts = (rows: TreeRow[]) =>
   rows.filter((row) => !(row.node.kind === "sort" && (row.node.children ?? []).length === 0));
+
+/** Every part, chapter or folder that has something to fold away. */
+export const foldableIds = (nodes: TreeNode[]): string[] =>
+  nodes.flatMap((node) => (node.children?.length ? [node.id, ...foldableIds(node.children)] : []));
+
+export const chapterIds = (nodes: TreeNode[]): string[] =>
+  nodes.flatMap((node) => [
+    ...(node.kind === "chapter" ? [node.id] : []),
+    ...chapterIds(node.children ?? []),
+  ]);

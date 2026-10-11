@@ -79,7 +79,12 @@ function InsightsBody(props: BodyProps) {
 const InsightsHead = ({ onClose }: { onClose: () => void }) => (
   <div className="insights-head">
     <span className="insights-title">{t("Insikter")}</span>
-    <button className="icon-button" aria-label={t("Stäng insikter")} onClick={onClose}>
+    <button
+      className="icon-button insights-close"
+      aria-label={t("Stäng insikter")}
+      data-phone-back
+      onClick={onClose}
+    >
       ×
     </button>
   </div>

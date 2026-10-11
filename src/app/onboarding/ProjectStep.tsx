@@ -73,9 +73,9 @@ const CHOICES: Record<ProjectMode, (state: OnboardingState) => ReactNode> = {
 };
 
 const MODES: [ProjectMode, string][] = [
-  ["new", t("Nytt projekt")],
+  ["new", t("Nytt")],
   ["import", t("Importera")],
-  ["open", t("Öppna befintligt")],
+  ["open", t("Öppna")],
 ];
 
 export function ProjectStep({ state, isFirst }: { state: OnboardingState; isFirst: boolean }) {
