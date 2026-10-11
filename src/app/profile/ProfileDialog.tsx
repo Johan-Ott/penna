@@ -1,3 +1,4 @@
+import { Choice } from "../controls.js";
 import { useState } from "react";
 import { journeySummary } from "../../project/inkwell.js";
 import type { Journey } from "../../project/journey.js";
@@ -126,6 +127,27 @@ function ProfileFields({
   );
 }
 
+function ProfileFoot({ onDone }: { onDone: () => void }) {
+  return (
+    <div className="profile-foot">
+      <span className="setting-hint">
+        {t(
+          "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.",
+        )}
+      </span>
+      <button className="button primary" onClick={onDone}>
+        {t("Klar")}
+      </button>
+    </div>
+  );
+}
+
+type Part = "om" | "utmarkelser";
+const PARTS: [Part, string][] = [
+  ["om", t("Om dig")],
+  ["utmarkelser", t("Utmärkelser")],
+];
+
 /** Författarprofil: who writes, kept in the Penna folder; no account, no sign-in. */
 export function ProfileDialog(props: {
   initial: Form;
@@ -138,22 +160,18 @@ export function ProfileDialog(props: {
 }) {
   const [form, setForm] = useState(props.initial);
   const set = (change: Partial<Form>) => setForm((current) => ({ ...current, ...change }));
+  const [part, setPart] = useState<Part>("om");
   const done = () => (props.onSave(form), props.onClose());
   return (
     <Dialog label={t("Författarprofil")} className="profile-dialog" onClose={done}>
       <ProfileHead form={form} journey={props.journey} onPicture={(picture) => set({ picture })} />
-      <ProfileFields form={form} bookName={props.bookName} set={set} />
-      <Badges journey={props.journey} book={{ name: props.bookName, held: props.bookBadges }} />
-      <div className="profile-foot">
-        <span className="setting-hint">
-          {t(
-            "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.",
-          )}
-        </span>
-        <button className="button primary" onClick={done}>
-          {t("Klar")}
-        </button>
-      </div>
+      <Choice label={t("Visa")} value={part} options={PARTS} onSelect={setPart} />
+      {part === "om" ? (
+        <ProfileFields form={form} bookName={props.bookName} set={set} />
+      ) : (
+        <Badges journey={props.journey} book={{ name: props.bookName, held: props.bookBadges }} />
+      )}
+      <ProfileFoot onDone={done} />
     </Dialog>
   );
 }
