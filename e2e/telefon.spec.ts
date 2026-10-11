@@ -16,7 +16,7 @@ test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page
 });
 
 test("Fortsätt skriva leads to the book's text, not a note looked at since", async ({ page }) => {
-  await page.getByRole("button", { name: /Personer/ }).click();
+  await page.getByRole("treeitem", { name: /^Personer/ }).click();
   await page.getByRole("treeitem").filter({ hasText: "Elin" }).click();
   await expect(editor(page)).toContainText("Trettioåtta");
   await page.evaluate(() => history.back());
@@ -30,8 +30,8 @@ test("Fortsätt skriva leads to the book's text, not a note looked at since", as
   await expect(editor(page)).not.toContainText("Trettioåtta");
 });
 
-test("a person opens from the Personer tile, and back returns to the list", async ({ page }) => {
-  await page.getByRole("button", { name: /Personer/ }).click();
+test("a person opens from Personer in the tree, and back returns to Boken", async ({ page }) => {
+  await page.getByRole("treeitem", { name: /^Personer/ }).click();
   await page.getByRole("treeitem").filter({ hasText: "Elin" }).click();
   await expect(editor(page)).toContainText("Trettioåtta");
 
@@ -106,8 +106,8 @@ test("the shelf on the phone has a menu with Inställningar, and no folder to pi
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
-test("a note is renamed from its menu in the list of its sort", async ({ page }) => {
-  await page.getByRole("button", { name: /Personer/ }).click();
+test("a note is renamed from its menu in the tree", async ({ page }) => {
+  await page.getByRole("treeitem", { name: /^Personer/ }).click();
   await page.getByRole("button", { name: "Meny för Elin" }).click();
 
   await expect(page.getByRole("menuitem", { name: "Byt namn" })).toBeVisible();
@@ -117,7 +117,7 @@ test("a note is renamed from its menu in the list of its sort", async ({ page })
 test("a person renamed is renamed in the manuscript too, and Ångra takes it back", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: /Personer/ }).click();
+  await page.getByRole("treeitem", { name: /^Personer/ }).click();
   await page.getByRole("button", { name: "Meny för Elin" }).click();
   await page.getByRole("menuitem", { name: "Byt namn" }).click();
   await page.keyboard.press("Control+a");

@@ -4,7 +4,6 @@ import type { View } from "../useWritingMode.js";
 export type PhoneScreen =
   | { kind: "book" }
   | { kind: "text"; sceneId: string }
-  | { kind: "sort"; sortId: string }
   /** Innehåll, Läs, Publicera or Från synken, as the writing mode's view says. */
   | { kind: "view"; view: View };
 

@@ -1,6 +1,5 @@
 import type { DragEvent, ReactNode } from "react";
-import { findNode, type TreeNode } from "../../project/tree.js";
-import { visibleRows, withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
+import { withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
 import { Menu } from "../Menu.js";
 import { addMenu, foldMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
@@ -89,8 +88,8 @@ function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: T
 }
 
 interface BookExtras {
-  /** On a phone the notes are tiles of their own. */
-  isBookOnly?: boolean;
+  /** On a phone, with no right click, adding to the book is a button. */
+  hasAddButton?: boolean;
   seriesNotes?: ReactNode;
 }
 
@@ -108,21 +107,15 @@ function NotesAndTrash({ props, tree }: { props: TreeViewProps & BookExtras; tre
   );
 }
 
-// On a phone: adding and folding are a button, not a right click, and the trash stays in reach.
-function BookOnlyEnd({ props, tree }: { props: TreeViewProps; tree: Tree }) {
+function AddButton({ props, tree }: { props: TreeViewProps; tree: Tree }) {
   const menuFor = menuActions(tree.actions, props, tree.view);
   return (
-    <>
-      <button
-        className="tree-add"
-        onClick={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(tree.view)])}
-      >
-        {t("+ Lägg till")}
-      </button>
-      <div className="tree-bottom">
-        <Rows rows={tree.sections.trash} props={props} tree={tree} />
-      </div>
-    </>
+    <button
+      className="tree-add"
+      onClick={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(tree.view)])}
+    >
+      {t("+ Lägg till")}
+    </button>
   );
 }
 
@@ -163,11 +156,8 @@ export function TreeView(props: TreeViewProps & BookExtras) {
     >
       <BookHeading props={props} tree={tree} />
       <Rows rows={sections.book} props={props} tree={tree} />
-      {props.isBookOnly ? (
-        <BookOnlyEnd props={props} tree={tree} />
-      ) : (
-        <NotesAndTrash props={props} tree={tree} />
-      )}
+      {props.hasAddButton && <AddButton props={props} tree={tree} />}
+      <NotesAndTrash props={props} tree={tree} />
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
       <LabelsLayer props={props} view={view} />
     </div>
@@ -185,28 +175,6 @@ export function SeriesNotes(props: TreeViewProps & { name: string }) {
       <SectionHeading label={t("Anteckningar · {name}", { name: props.name })} />
       <Rows rows={sections.notes} props={props} tree={tree} />
       <Rows rows={trash} props={props} tree={tree} />
-      {view.menu && <Menu {...view.menu} label={props.name} onClose={() => view.setMenu(null)} />}
-    </div>
-  );
-}
-
-// The notes inside one sort, even when the sort is folded up in the sidebar.
-function rowsUnder(tree: TreeNode[], sortId: string, collapsed: ReadonlySet<string>) {
-  const sort = findNode(tree, sortId)?.node;
-  return sort ? visibleRows(sort.children ?? [], collapsed, 0, sortId) : [];
-}
-
-/** One sort's notes with their menus, as on a phone's screen for that sort. */
-export function SortNotes(props: TreeViewProps & { sortId: string; name: string }) {
-  const tree = useTreeView(props);
-  const { view } = tree;
-  return (
-    <div role="tree" aria-label={props.name} className="tree">
-      <Rows
-        rows={rowsUnder(props.project.tree, props.sortId, view.collapsed)}
-        props={props}
-        tree={tree}
-      />
       {view.menu && <Menu {...view.menu} label={props.name} onClose={() => view.setMenu(null)} />}
     </div>
   );

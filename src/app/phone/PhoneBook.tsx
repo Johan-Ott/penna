@@ -6,8 +6,7 @@ import {
   shortDay,
 } from "../../project/progress.js";
 import { dayKey } from "../../project/stats.js";
-import { sceneIdsIn, sortsOf } from "../../project/tree.js";
-import { chapterOf, manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
+import { chapterOf, manuscriptWords } from "../../project/treeLabels.js";
 import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
 import { useMenuButton } from "../Menu.js";
@@ -26,7 +25,6 @@ interface PhoneBookProps {
   project: Project;
   onOpenText: (id: string) => void;
   onContinue: () => void;
-  onSort: (sortId: string) => void;
   /** The scene Fortsätt skriva opens. */
   continueId: string | null;
   onSync: () => void;
@@ -95,31 +93,6 @@ function ContinueButton({ project, continueId, onContinue }: PhoneBookProps) {
   );
 }
 
-function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
-  const sorts = app.homes.flatMap((home) =>
-    sortsOf(home.tree).map((sort) => ({
-      home,
-      sort,
-      count: sceneIdsIn(home.tree, sort.id).length,
-    })),
-  );
-  const shown = sorts.filter(({ home, count }) => count > 0 || home === app.homes[0]);
-  return (
-    <div className="phone-tiles">
-      {shown.map(({ home, sort, count }) => (
-        <button
-          key={`${home.dir}/${sort.id}`}
-          className="phone-tile"
-          onClick={() => onSort(sort.id)}
-        >
-          <span>{nodeLabel(sort, home.tree, home.summaries)}</span>
-          <span className="phone-tile-count">{count}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const dialogs = useMenuDialogs({ app, project });
   const bookProps = sidebarProps(app, project);
@@ -156,9 +129,7 @@ export function PhoneBook(props: PhoneBookProps) {
         />
         <TodayCard app={app} project={project} />
         <ContinueButton {...props} />
-        <TreeView {...sidebarProps(app, project)} onOpenScene={props.onOpenText} isBookOnly />
-        <div className="sidebar-heading">{t("Anteckningar")}</div>
-        <NoteTiles app={app} onSort={props.onSort} />
+        <TreeView {...sidebarProps(app, project)} onOpenScene={props.onOpenText} hasAddButton />
       </main>
     </div>
   );

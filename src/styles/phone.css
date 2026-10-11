@@ -166,29 +166,6 @@
   padding: 6px 0;
 }
 
-.phone-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.phone-tile {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--bg-subtle);
-  font-size: 15px;
-}
-
-.phone-tile-count {
-  color: var(--text-label);
-  font-size: 12px;
-}
-
 /* Skriv: the bar over the text, and the text the whole width */
 .phone-text {
   position: fixed;

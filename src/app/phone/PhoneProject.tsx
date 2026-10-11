@@ -14,7 +14,6 @@ import type { Project } from "../useProject.js";
 import { TextBar } from "./TextBar.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
-import { PhoneSort } from "./PhoneSort.js";
 import { PhoneToolbar } from "./PhoneToolbar.js";
 import type { View } from "../useWritingMode.js";
 import { TabBar, tabOf, ViewScreen, type Tab } from "./PhoneTabs.js";
@@ -155,10 +154,6 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
     const props = { app, project, onBack: back, onOpenText: openText };
     return <ViewScreen key={depth} {...props} />;
   }
-  if (screen.kind === "sort")
-    return (
-      <PhoneSort app={app} sortId={screen.sortId} onOpen={screens.openText} onBack={screens.back} />
-    );
   if (screen.kind !== "book") return null;
   return (
     <PhoneBook
@@ -167,7 +162,6 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
       onOpenText={screens.openText}
       onContinue={screens.continueWriting}
       continueId={screens.continueId}
-      onSort={(sortId) => screens.show({ kind: "sort", sortId })}
       onSync={() => screens.showView("synk")}
     />
   );
