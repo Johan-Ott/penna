@@ -1,5 +1,5 @@
 // `node scripts/penna.mjs <call> [args…]`: one call to window.penna in a running Penna, the
-// answer as JSON. Calls: state, tree, commands, run <command>, open <id>, text, type <text>.
+// answer as JSON. The calls are listed in CLAUDE.md, under Penna Test.
 import { chromium } from "@playwright/test";
 
 const [call, ...args] = process.argv.slice(2);

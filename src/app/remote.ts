@@ -4,6 +4,7 @@ import { nodeLabel } from "../project/treeLabels.js";
 import { openInHome } from "./notes/noteHomes.js";
 import { searchPalette } from "./palette/paletteSearch.js";
 import type { AppState } from "./App.js";
+import { bookCalls } from "./remoteBook.js";
 
 // window.penna: the app's own commands and open book, for a tool on this computer to drive
 // Penna with as a game's console does; everything goes through what the app already does.
@@ -47,6 +48,7 @@ function stateOf(app: AppState) {
 
 function api(current: () => AppState) {
   return {
+    ...bookCalls(current),
     state: () => stateOf(current()),
     tree: () => rows(current()),
     commands: () =>

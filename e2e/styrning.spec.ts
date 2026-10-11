@@ -5,6 +5,10 @@ test.beforeEach(async ({ page }) => openExample(page));
 
 // window.penna as a script on the computer would call it.
 interface Penna {
+  add: (kind: string, title?: string, afterId?: string) => Promise<string | null>;
+  note: (sort: string, name: string) => Promise<void>;
+  set: (id: string, field: string, text: string) => Promise<void>;
+  rename: (id: string, title: string) => Promise<void>;
   run: (name: string) => string | null;
   type: (text: string) => void;
   text: () => string;
@@ -35,4 +39,18 @@ test("window.penna opens a scene from the tree by its id", async ({ page }) => {
   });
 
   await expect(editor(page)).toContainText("Isen bar");
+});
+
+test("window.penna makes a named chapter, a person, and sets when a chapter happens", async ({
+  page,
+}) => {
+  await page.evaluate(async () => {
+    const api = (window as unknown as WithPenna).penna;
+    const id = await api.add("chapter", "Stormen");
+    if (id) await api.set(id, "när", "Mars");
+    await api.note("Personer", "Greta");
+  });
+
+  await expect(page.locator(".tree")).toContainText("Stormen");
+  await expect(page.locator(".tree")).toContainText("Greta");
 });
