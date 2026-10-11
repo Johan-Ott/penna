@@ -1,14 +1,5 @@
 import type { Command } from "prosemirror-state";
 import {
-  clearFormatting,
-  insertSceneBreak,
-  setStyle,
-  STYLE_LABELS,
-  toggleBold,
-  toggleItalic,
-  type StyleChoice,
-} from "../../editor/commands.js";
-import {
   changeSize,
   DEFAULT_SETTINGS,
   nextLineHeight,
@@ -27,7 +18,7 @@ import type { PaletteEntry } from "./paletteSearch.js";
 import { cardEntries, labelled, sceneEntries } from "./bookEntries.js";
 import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
-import { insertFootnote } from "../../editor/footnoteEditing.js";
+import { formatEntries } from "./formatEntries.js";
 import { startSprint } from "../sprint/sprint.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -109,10 +100,6 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
 }
 
 function writingEntries(context: PaletteContext): PaletteEntry[] {
-  const { run } = context;
-  const styles = (Object.keys(STYLE_LABELS) as StyleChoice[]).map((style) =>
-    command(t("Stil: {style}", { style: STYLE_LABELS[style] }), () => run(setStyle(style))),
-  );
   return [
     command(t("Ny scen"), () => context.add("scene"), "Ctrl+Alt+N"),
     command(t("Nytt kapitel"), () => context.add("chapter")),
@@ -122,6 +109,9 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     ...sceneEntries(context),
     command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
     command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),
+    command(t("Visa som ark eller löptext"), () =>
+      context.changeSettings((now) => ({ ...now, paper: !now.paper })),
+    ),
     command(t("Skrivsprint, 25 minuter"), () => startSprint(25)),
     ...(context.showSnapshots
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
@@ -129,13 +119,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Utkast…"), context.showDrafts),
     command(t("Inställningar"), context.openSettings, "Ctrl+,"),
     ...viewEntries(context.showView),
-    command(t("Fetstil"), () => run(toggleBold), "Ctrl+B"),
-    command(t("Kursiv"), () => run(toggleItalic), "Ctrl+I"),
-    command(t("Rensa formatering"), () => run(clearFormatting)),
-    command(t("Scenbrytning"), () => run(insertSceneBreak), "Ctrl+Enter"),
-    command(t("Infoga fotnot"), () => run(insertFootnote), "Ctrl+Alt+F"),
-    ...(context.insertPicture ? [command(t("Infoga bild…"), context.insertPicture)] : []),
-    ...styles,
+    ...formatEntries(context),
   ];
 }
 

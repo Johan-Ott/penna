@@ -68,13 +68,6 @@ export const ReadIcon = () => (
   </Icon>
 );
 
-export const SheetIcon = () => (
-  <Icon>
-    <path d="M6 3h9l4 4v14H6z" />
-    <path d="M9 11h7M9 15h7" />
-  </Icon>
-);
-
 export const SearchIcon = () => (
   <Icon>
     <circle cx="11" cy="11" r="7" />
@@ -128,5 +121,38 @@ export const TimerIcon = () => (
     <circle cx="12" cy="13" r="8" />
     <path d="M12 9v4l2 2" />
     <path d="M10 2h4" />
+  </Icon>
+);
+
+export const LocateIcon = () => (
+  <Icon size={15}>
+    <circle cx="12" cy="12" r="7" />
+    <circle cx="12" cy="12" r="2" />
+    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+  </Icon>
+);
+
+export const FollowIcon = () => (
+  <Icon size={15}>
+    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+    <circle cx="12" cy="12" r="3" />
+  </Icon>
+);
+
+export const UnfoldIcon = () => (
+  <Icon size={15}>
+    <path d="m7 9 5-5 5 5M7 15l5 5 5-5" />
+  </Icon>
+);
+
+export const FoldIcon = () => (
+  <Icon size={15}>
+    <path d="m7 4 5 5 5-5M7 20l5-5 5 5" />
+  </Icon>
+);
+
+export const FilterIcon = () => (
+  <Icon size={15}>
+    <path d="M3 5h18l-7 8v6l-4-2v-4z" />
   </Icon>
 );

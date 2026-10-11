@@ -142,7 +142,7 @@ export function useTreeView(props: TreeViewProps) {
   const { project } = props;
   const view = useTreeViewState(project.tree);
   useRenameRequest(props, view);
-  useFollowOpenScene(props, view);
+  const follow = useFollowOpenScene(props, view);
   const actions = useTreeActions({
     ...props,
     tree: project.tree,
@@ -161,7 +161,7 @@ export function useTreeView(props: TreeViewProps) {
   };
   const isFiltered = view.filter.length > 0;
   const { sections, focused } = sectionsOf(project.tree, view);
-  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered, focused };
+  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered, focused, follow };
 }
 
 export type Tree = ReturnType<typeof useTreeView>;

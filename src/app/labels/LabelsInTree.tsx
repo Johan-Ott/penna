@@ -1,3 +1,4 @@
+import { FilterIcon } from "../shell/icons.js";
 import { hasLabel, labelsOf, withLabel, type Label } from "../../project/labels.js";
 import type { TreeNode } from "../../project/tree.js";
 import type { MenuItem } from "../Menu.js";
@@ -28,14 +29,17 @@ export function FilterButton({ props, view }: { props: TreeViewProps; view: Tree
   const count = view.filter.length;
   return (
     <button
-      className="tree-filter"
+      className="tree-tool"
+      aria-label={count > 0 ? t("Filter · {count}", { count }) : t("Filtrera")}
+      title={t("Filtrera")}
       aria-pressed={count > 0}
       onClick={(event) => {
         const box = event.currentTarget.getBoundingClientRect();
         view.setMenu({ items: filterItems(labels, view), x: box.left, y: box.bottom + 4 });
       }}
     >
-      {count > 0 ? t("Filter · {count}", { count }) : t("Filtrera")}
+      <FilterIcon />
+      {count > 0 && <span className="tree-tool-count">{count}</span>}
     </button>
   );
 }

@@ -1061,8 +1061,6 @@
   "Första resan": "First steps",
   "{done} av {count}": "{done} of {count}",
   "Utmärkelser": "Badges",
-  "Visa som löptext": "Show as running text",
-  "Visa som ark": "Show as sheets",
   "Centrerat": "Centred",
   "Högerställt": "Right-aligned",
   "Utan indrag": "No indent",
@@ -1278,5 +1276,8 @@
   "Tema, sidor och typsnitt": "Theme, pages and type",
   "Titel, författare och omslag": "Title, author and cover",
   "Bilder och nyhetsbrev": "Pictures and newsletters",
-  "Nytt": "New"
+  "Nytt": "New",
+  "Visa som ark eller löptext": "Show as sheets or running text",
+  "Visa den öppna texten": "Show the open text",
+  "Följ den öppna texten": "Follow the open text"
 }

@@ -11,7 +11,6 @@ import {
   MenuIcon,
   PenIcon,
   ReadIcon,
-  SheetIcon,
   ReviewIcon,
   SearchIcon,
   SidebarIcon,
@@ -30,9 +29,6 @@ export interface TopbarProps {
   onSearch: () => void;
   onFocus: () => void;
   onRead: () => void;
-  /** The text on sheets of paper, or as one running text. */
-  isPaper: boolean;
-  onPaper: () => void;
 }
 
 function IconButton(props: {
@@ -161,26 +157,19 @@ export function ReviewButton({ review, onReview }: ReviewProps) {
   );
 }
 
-// Sheets or running text belong to Skriv, so Publicera has no such button.
-const SheetButton = ({ view, isPaper, onPaper }: TopbarProps) =>
-  view === "publicera" ? null : (
-    <IconButton label={isPaper ? t("Visa som löptext") : t("Visa som ark")} onClick={onPaper}>
-      <SheetIcon />
-    </IconButton>
-  );
-
 export function Topbar(props: TopbarProps) {
   return (
     <header className="topbar">
       <TopbarStart {...props} />
       {props.title === null ? (
-        <DayProgress today={props.today} onProgress={props.onProgress} />
+        <span className="topbar-day">
+          <DayProgress today={props.today} onProgress={props.onProgress} />
+          <SprintButton />
+        </span>
       ) : (
         <span className="topbar-title">{props.title}</span>
       )}
       <div className="topbar-end">
-        {props.view !== "publicera" && <SprintButton />}
-        <SheetButton {...props} />
         <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
           <ReadIcon />
         </IconButton>

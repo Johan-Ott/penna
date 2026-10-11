@@ -121,9 +121,11 @@ function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { is
           {t("Läs upp")}
         </button>
       )}
-      <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
-        {isPhone ? t("Dela") : t("Dela som bild")}
-      </button>
+      {!isPhone && (
+        <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
+          {t("Dela som bild")}
+        </button>
+      )}
     </>
   );
 }
@@ -148,7 +150,7 @@ export function SelectionBar(props: BarProps) {
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
       {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
       <BarActions {...props} isPhone={isPhone} />
-      <SelectedWords editorState={editor.editorState} />
+      {!isPhone && <SelectedWords editorState={editor.editorState} />}
     </div>
   );
 }

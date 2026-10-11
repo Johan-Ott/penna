@@ -12,8 +12,9 @@ import {
   type Tree,
   type TreeViewProps,
 } from "./useTreeView.js";
-import { manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
-import { FilterButton, LabelsLayer } from "../labels/LabelsInTree.js";
+import { nodeLabel } from "../../project/treeLabels.js";
+import { LabelsLayer } from "../labels/LabelsInTree.js";
+import { TreeTools } from "./TreeTools.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
@@ -123,15 +124,7 @@ function AddButton({ props, tree }: { props: TreeViewProps; tree: Tree }) {
 function BookHeading({ props, tree }: { props: TreeViewProps; tree: Tree }) {
   const { focused, view } = tree;
   const { project } = props;
-  if (!focused)
-    return (
-      <SectionHeading
-        label={t("Boken")}
-        onDrop={tree.dropAtBookEnd}
-        words={manuscriptWords(project.tree, project.summaries)}
-        filter={<FilterButton props={props} view={view} />}
-      />
-    );
+  if (!focused) return <TreeTools props={props} tree={tree} />;
   return (
     <>
       <button className="tree-whole-book" onClick={() => view.setFocusId(null)}>
