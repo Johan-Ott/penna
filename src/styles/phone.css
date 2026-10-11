@@ -530,9 +530,10 @@ body .selection-bar.phone .icon-button {
   border: 0;
   border-radius: 8px;
   background: transparent;
+  padding: 0 8px;
   color: var(--text);
   font: inherit;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .phone-tool:active {
@@ -759,6 +760,10 @@ body .selection-bar.phone .icon-button {
 .phone-app .text-place > *,
 .phone-app .text-when {
   white-space: nowrap;
+}
+
+body .phone-app .text-when input {
+  min-height: 0;
 }
 
 /* Studio on a phone: the cards as a row to swipe, the picture and its choices under each other. */

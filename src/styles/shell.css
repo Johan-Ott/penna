@@ -382,8 +382,11 @@
   gap: 4px;
 }
 
+/* As wide as what is written in it, so När's button hugs its words. */
 .text-when input {
-  width: 6.5em;
+  field-sizing: content;
+  min-width: 3em;
+  max-width: 14em;
   padding: 0;
   border: 0;
   background: transparent;
