@@ -3072,17 +3072,6 @@ button.book-cover:hover {
   }
 }
 
-.celebration-share {
-  flex-shrink: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #cfcfcf;
-  font: 12px var(--font-ui);
-  text-decoration: underline;
-  pointer-events: auto;
-}
-
 /* Skriv på ett ark: the text, its header and footer on one sheet, with its pages at the foot. */
 .page:not(.paper) > .sheet {
   display: contents;

@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
+import { Menu } from "../Menu.js";
+import { TimerIcon } from "../shell/icons.js";
 import type { AppState } from "../App.js";
 import { platform } from "../platform.js";
 import {
@@ -70,18 +72,30 @@ export function SprintBar({ app }: { app: Pick<AppState, "today"> }) {
   );
 }
 
-/** In Insikter: a sprint of fifteen, twenty-five or forty-five minutes. */
-export function SprintChoices({ onStart }: { onStart: () => void }) {
+/** In Skriv's bar: a sprint of fifteen, twenty-five or forty-five minutes. */
+export function SprintButton() {
+  const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
+  const items = SPRINT_LENGTHS.map((minutes) => ({
+    label: t("{minutes} min", { minutes }),
+    onSelect: () => startSprint(minutes),
+  }));
+  const open = (event: MouseEvent<HTMLButtonElement>) => {
+    const box = event.currentTarget.getBoundingClientRect();
+    setPlace({ x: box.left, y: box.bottom + 4 });
+  };
   return (
-    <section className="sprint-choices">
-      <span className="progress-label">{t("Skrivsprint")}</span>
-      <div className="chip-row">
-        {SPRINT_LENGTHS.map((minutes) => (
-          <button key={minutes} className="chip" onClick={() => (startSprint(minutes), onStart())}>
-            {t("{minutes} min", { minutes })}
-          </button>
-        ))}
-      </div>
-    </section>
+    <>
+      <button
+        className="topbar-button"
+        aria-label={t("Skrivsprint")}
+        title={t("Skrivsprint")}
+        onClick={open}
+      >
+        <TimerIcon />
+      </button>
+      {place && (
+        <Menu {...place} items={items} label={t("Skrivsprint")} onClose={() => setPlace(null)} />
+      )}
+    </>
   );
 }

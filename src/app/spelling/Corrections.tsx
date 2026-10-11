@@ -54,7 +54,7 @@ export function CorrectionsBar({
   };
   return (
     <div className="phone-corrections" aria-label={t("Rättningar")}>
-      {corrections.suggestions.slice(0, 4).map((word) => (
+      {corrections.suggestions.slice(0, 3).map((word) => (
         <button key={word} className="phone-correction" onClick={() => replace(word)}>
           {word}
         </button>

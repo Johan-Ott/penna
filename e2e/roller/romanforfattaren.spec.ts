@@ -44,11 +44,17 @@ test("a novelist starts a book on her phone and writes the first chapter", async
   await write(page, "Kvällen kom tidigt.");
 
   // Back to the book: a new scene after this one, named, and a look at Innehåll.
-  await page.getByRole("button", { name: "Tillbaka" }).click();
+  await page
+    .getByRole("navigation", { name: "Läge" })
+    .getByRole("button", { name: "Boken" })
+    .click();
   await page.getByRole("button", { name: "+ Lägg till" }).click();
   await page.getByRole("menuitem", { name: "Ny scen" }).click();
   await write(page, "Nästa dag var stormen över.");
-  await page.getByRole("button", { name: "Tillbaka" }).click();
+  await page
+    .getByRole("navigation", { name: "Läge" })
+    .getByRole("button", { name: "Boken" })
+    .click();
   await expect(page.locator(".tree")).toContainText(/Namnlös scen|Ny scen/);
 
   await page.getByRole("button", { name: "Innehåll" }).click();

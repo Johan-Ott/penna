@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
-  await expect(page.getByRole("button", { name: "Tillbaka" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Skrivsprint" })).toBeVisible();
 
   await page.evaluate(() => history.back());
 

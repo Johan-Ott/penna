@@ -8,7 +8,6 @@ import {
 import { dayKey } from "../../project/stats.js";
 import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import { chapterOf, manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
-import { requestStudio } from "../studio/studioRequest.js";
 import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
@@ -57,11 +56,10 @@ const dayWords = (today: AppState["today"]) =>
     ? t("{words} / {goal} ord idag", { words: format(today.words), goal: format(today.goal) })
     : t("{count} ord idag", { count: format(today.words) });
 
-// The day's words open Insikter; Dela opens the week as a picture in Studio.
+// The day's words open Insikter.
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
   const { today } = app;
   const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : 0;
-  const shareWeek = () => (requestStudio("vecka"), app.writingMode.setView("publicera"));
   return (
     <div className="phone-today">
       <span className="phone-today-head">
@@ -70,9 +68,6 @@ function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
           <span className="phone-today-more" aria-hidden="true">
             ›
           </span>
-        </button>
-        <button className="link-button quiet" onClick={shareWeek}>
-          {t("Dela")}
         </button>
       </span>
       {today.goal && (

@@ -671,11 +671,17 @@
   flex-grow: 1;
   gap: 6px;
   align-items: center;
-  overflow-x: auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
+/* Long words shorten instead of scrolling out of sight; Lägg till always shows. */
 .phone-correction {
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   height: 36px;
   padding: 0 12px;
   border: 1px solid var(--border-control);
@@ -687,22 +693,23 @@
 }
 
 .phone-correction.quiet {
+  flex-shrink: 0;
   border-color: transparent;
   color: var(--text-muted);
 }
 
-/* Läs som bok on a phone: one page, with the way back, where you are and Dela uppslag above it. */
+/* Läs som bok on a phone: one page, where you are and Dela uppslag above it; Skriv is the way back. */
 .phone-app .read-head {
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
 }
 
+.phone-app .read-back,
 .phone-app .read-key,
 .phone-app .read-head-end .link-button {
   display: none;
 }
 
 .phone-app .read-place {
-  justify-self: end;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -718,10 +725,23 @@
 .phone-app .read-spread.single {
   --page-w: calc(100vw - 64px);
   --page-h: calc(100dvh - 190px - var(--safe-top) - var(--safe-bottom));
-  --pad-top: 40px;
+  --pad-top: 52px;
   --pad-side: 20px;
   --pad-bottom: 48px;
   font-size: 17px;
+}
+
+.phone-app .read-page-head {
+  top: 20px;
+}
+
+.phone-app .read-head-end .button {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-decoration: underline;
 }
 
 .phone-app .read-turn {

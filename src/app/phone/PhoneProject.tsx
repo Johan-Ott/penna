@@ -11,9 +11,10 @@ import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { TextBands } from "../TextBands.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { useBookTheme } from "../themes/themeStyle.js";
-import { BackIcon, SearchIcon } from "../shell/icons.js";
+import { SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
+import { SprintButton } from "../sprint/SprintBar.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
@@ -28,15 +29,14 @@ import { numberLocale, t } from "../../i18n/i18n.js";
 type Props = { app: AppState; project: Project };
 
 // Android's back button puts the keyboard away, so the bar has no Klar.
-function TextBar({ app, project, onBack }: Props & { onBack: () => void }) {
+// The tabs below lead away, so the bar has no way back.
+function TextBar({ app, project }: Props) {
   const scene = app.scene;
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
   const words = app.today.words.toLocaleString(numberLocale());
   return (
     <header className="phone-bar">
-      <button className="topbar-button" aria-label={t("Tillbaka")} onClick={onBack}>
-        <BackIcon />
-      </button>
+      <SprintButton />
       <span className="phone-bar-title">
         <span>{chapter?.title ?? scene?.title ?? ""}</span>
         <span className="phone-bar-sub">{t("{count} ord idag", { count: words })}</span>
@@ -164,7 +164,7 @@ function TextScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens>
   }, [isShown, focusIfRequested]);
   return (
     <div className={isShown ? "phone-text" : "phone-text hidden"}>
-      <TextBar app={app} project={project} onBack={screens.back} />
+      <TextBar app={app} project={project} />
       <WritingArea {...writingAreaProps(app, project)} scenePages={scenePagesOf(app, pageMap)} />
       <PhoneToolbar app={app} project={project} />
       <TextBands app={app} project={project} />

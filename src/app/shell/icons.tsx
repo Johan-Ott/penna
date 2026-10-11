@@ -122,3 +122,11 @@ export const ContentsIcon = () => (
     <path d="M9 10v10" />
   </Icon>
 );
+
+export const TimerIcon = () => (
+  <Icon>
+    <circle cx="12" cy="13" r="8" />
+    <path d="M12 9v4l2 2" />
+    <path d="M10 2h4" />
+  </Icon>
+);
