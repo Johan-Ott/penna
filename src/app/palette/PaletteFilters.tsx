@@ -25,6 +25,8 @@ export function usePaletteFilter(entries: PaletteEntry[], labels: Label[]) {
     toggleGroup: (group: string) => setGroups(flip(groups, group)),
     toggleLabel: (id: string) => setLabelIds(flip(labelIds, id)),
     kept,
+    /** A kind or a label is chosen, so everything it keeps is shown before anything is typed. */
+    isNarrowed: groups.length > 0 || labelIds.length > 0,
   };
 }
 

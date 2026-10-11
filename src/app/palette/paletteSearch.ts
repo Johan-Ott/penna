@@ -36,19 +36,65 @@ function score(label: string, query: string): number {
   return query.length >= 3 && hasLettersInOrder(text, query) ? 1 : 0;
 }
 
-/** Best first; everything, in order, when the query is empty. */
-export function searchPalette(entries: PaletteEntry[], query: string): PaletteEntry[] {
+/** How often each entry has been chosen, by id. */
+export type Uses = Record<string, number>;
+
+const MOST_USED = 6;
+
+// Before anything is typed: what is used the most, then the commands; the scenes and notes
+// come once their names are typed.
+function startEntries(entries: PaletteEntry[], uses: Uses) {
+  const top = entries
+    .filter((entry) => (uses[entry.id] ?? 0) > 0)
+    .sort((first, second) => (uses[second.id] ?? 0) - (uses[first.id] ?? 0))
+    .slice(0, MOST_USED);
+  const rest = entries.filter((entry) => entry.group === "Kommandon" && !top.includes(entry));
+  return [...top.map((entry) => ({ ...entry, group: "Mest använda" })), ...rest];
+}
+
+/** Best first, and among equals the most used; what is used the most when nothing is typed. */
+export function searchPalette(entries: PaletteEntry[], query: string, uses: Uses = {}) {
   const folded = fold(query.trim());
-  if (folded === "") return entries;
+  if (folded === "") return startEntries(entries, uses);
+  const used = (entry: PaletteEntry) => uses[entry.id] ?? 0;
   return entries
     .map((entry, index) => ({ entry, index, points: score(entry.label, folded) }))
     .filter((match) => match.points > 0)
-    .sort((first, second) => second.points - first.points || first.index - second.index)
+    .sort(
+      (first, second) =>
+        second.points - first.points ||
+        used(second.entry) - used(first.entry) ||
+        first.index - second.index,
+    )
     .map((match) => match.entry);
 }
 
-// Notes come first, then scenes, chapters and commands.
-const GROUP_ORDER: Record<string, number> = { Scener: 1, Kapitel: 2, Kommandon: 3 };
+const USES_KEY = "penna.palette.uses";
+
+export function readUses(): Uses {
+  try {
+    return JSON.parse(localStorage.getItem(USES_KEY) ?? "{}") as Uses;
+  } catch {
+    return {};
+  }
+}
+
+export function recordUse(id: string) {
+  const uses = readUses();
+  try {
+    localStorage.setItem(USES_KEY, JSON.stringify({ ...uses, [id]: (uses[id] ?? 0) + 1 }));
+  } catch {
+    // Without storage the palette keeps its plain order.
+  }
+}
+
+// The most used come first, then notes, scenes, chapters and commands.
+const GROUP_ORDER: Record<string, number> = {
+  "Mest använda": -1,
+  Scener: 1,
+  Kapitel: 2,
+  Kommandon: 3,
+};
 const rank = (entry: PaletteEntry) => GROUP_ORDER[entry.group] ?? 0;
 
 export const inGroups = (found: PaletteEntry[]) =>

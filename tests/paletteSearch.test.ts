@@ -21,8 +21,17 @@ const ENTRIES = [
 const labels = (query: string) => searchPalette(ENTRIES, query).map((found) => found.label);
 
 describe("searchPalette", () => {
-  it("lists everything when nothing is typed", () => {
-    expect(labels("")).toHaveLength(ENTRIES.length);
+  it("lists the commands when nothing is typed, the most used first", () => {
+    expect(labels("")).toEqual(["Ny scen", "Fokusläge", "Större text", "Mörkt tema"]);
+    const used = searchPalette(ENTRIES, "", { Isen: 3, Fokusläge: 1 });
+    expect(used.map((found) => [found.label, found.group]).slice(0, 2)).toEqual([
+      ["Isen", "Mest använda"],
+      ["Fokusläge", "Mest använda"],
+    ]);
+  });
+
+  it("puts the more used first among equally good matches", () => {
+    expect(searchPalette(ENTRIES, "te", { "Mörkt tema": 2 })[0]?.label).toBe("Mörkt tema");
   });
 
   it("finds by the start of a word before a match inside a word", () => {

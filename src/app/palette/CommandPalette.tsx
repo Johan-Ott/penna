@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { inGroups, searchPalette, type PaletteEntry } from "./paletteSearch.js";
+import {
+  inGroups,
+  readUses,
+  recordUse,
+  searchPalette,
+  type PaletteEntry,
+} from "./paletteSearch.js";
 import { usePhone } from "../phone/usePhone.js";
 import type { Label } from "../../project/labels.js";
 import { PaletteFilters, usePaletteFilter } from "./PaletteFilters.js";
@@ -11,6 +17,7 @@ export const groupLabel = (group: string) =>
     Scener: t("Scener"),
     Kapitel: t("Kapitel"),
     Kommandon: t("Kommandon"),
+    "Mest använda": t("Mest använda"),
   })[group] ?? group;
 
 interface CommandPaletteProps {
@@ -23,11 +30,19 @@ interface CommandPaletteProps {
 
 const MAX_RESULTS = 40;
 
+// The uses are read once as the palette opens; a chosen kind or label shows all it keeps.
+function useMatches(filter: ReturnType<typeof usePaletteFilter>, query: string) {
+  const [uses] = useState(readUses);
+  const shown = filter.isNarrowed && !query.trim() ? filter.kept : null;
+  return (shown ?? searchPalette(filter.kept, query, uses)).slice(0, MAX_RESULTS);
+}
+
 function usePaletteSelection(found: PaletteEntry[], onClose: () => void) {
   const [selected, setSelected] = useState(0);
   const choose = (entry: PaletteEntry | undefined) => {
     if (!entry) return;
     onClose();
+    recordUse(entry.id);
     entry.run();
   };
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -144,7 +159,7 @@ function searchEntry(query: string, onSearch: (text: string) => void): PaletteEn
 export function CommandPalette({ entries, labels, onClose, onSearch }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const filter = usePaletteFilter(entries, labels);
-  const matches = searchPalette(filter.kept, query).slice(0, MAX_RESULTS);
+  const matches = useMatches(filter, query);
   const found = inGroups([...matches, ...searchEntry(query, onSearch)]);
   const selection = usePaletteSelection(found, onClose);
   return (
