@@ -25,7 +25,10 @@ test("a manuscript goes to the editor in Word and comes back with changes to tak
   await openExample(page);
 
   await page.getByRole("tab", { name: "Publicera" }).click();
-  await page.getByRole("button", { name: /^3\s*Exportera$/ }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Exportera/ })
+    .click();
   await page.getByText("Standardmanus", { exact: true }).click();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Exportera manus" }).click();

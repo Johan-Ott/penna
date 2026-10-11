@@ -918,7 +918,6 @@
   "Sätter stämningen när du skriver. Sparas i boken. Exporten styrs bara av Publicera.": "Sets the mood while you write. Kept in the book. The export follows Publicera only.",
   "Tema…": "Theme…",
   "Studio": "Studio",
-  "Bilder att dela och kapitel till nyhetsbrev": "Pictures to share and chapters for newsletters",
   "bäst: {day}, {count}": "best: {day}, {count}",
   "Veckan i siffror · v. {week}": "The week in numbers · w. {week}",
   "ord på {book}": "words on {book}",
@@ -1276,5 +1275,8 @@
   "Öppna och importera": "Open and import",
   "Dela och samarbeta": "Share and collaborate",
   "Kopior och export": "Copies and export",
-  "Om dig": "About you"
+  "Om dig": "About you",
+  "Tema, sidor och typsnitt": "Theme, pages and type",
+  "Titel, författare och omslag": "Title, author and cover",
+  "Bilder och nyhetsbrev": "Pictures and newsletters"
 }

@@ -1,5 +1,5 @@
 import { CoverFields } from "./CoverFields.js";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
 import { DesignControls } from "../bookdesign/DesignControls.js";
@@ -15,6 +15,7 @@ import {
 } from "../exporting/useExport.js";
 import { Choice } from "../controls.js";
 import { SubmitLink } from "./SubmitDialog.js";
+import { PublishTiles, StepHead, type Step } from "./PublishTiles.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -26,8 +27,6 @@ interface PublishProps {
   onBack: () => void;
   onStudio: () => void;
 }
-
-type Step = "design" | "details" | "export";
 
 const FORMATS: [ExportFormat, string, string, string][] = [
   [
@@ -92,59 +91,53 @@ function ExportStep(
   );
 }
 
-function StepBox(props: {
-  number: number;
-  label: string;
-  isOpen: boolean;
-  onOpen: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <section className={props.isOpen ? "publish-step open" : "publish-step"}>
-      <button className="publish-step-head" aria-expanded={props.isOpen} onClick={props.onOpen}>
-        <span className="publish-step-number">{props.number}</span>
-        <span>{props.label}</span>
-      </button>
-      {props.isOpen && <div className="publish-step-body">{props.children}</div>}
-    </section>
-  );
-}
-
 type Publishing = ReturnType<typeof usePublishing>;
 
 function usePublishing(props: PublishProps) {
   const { project } = props;
-  const [step, setStep] = useState<Step>("design");
+  const [step, setStep] = useState<Step | null>(null);
   const [choices, setChoices] = useState(() => startChoices(project));
   const exporter = useExport(project, props.generalAuthor, props.onSaveFields);
   const cover = useCover(project);
-  const stepProps = (id: Step) => ({ isOpen: step === id, onOpen: () => setStep(id) });
-  return { step, choices, setChoices, exporter, cover, stepProps };
+  return { step, setStep, choices, setChoices, exporter, cover };
 }
 
-function Steps({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
-  const { choices, setChoices, stepProps } = publishing;
+function OpenStep({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
+  const { step, choices, setChoices } = publishing;
   const design = designOf(props.project.fields);
   const saveDesign = (change: Partial<BookDesign>) =>
     props.onSaveFields({ design: { ...design, ...change } });
+  if (step === "design")
+    return <DesignControls design={design} save={saveDesign} dir={props.project.dir} />;
+  if (step === "details")
+    return (
+      <BookFields {...props} cover={publishing.cover} choices={choices} setChoices={setChoices} />
+    );
+  return <ExportStep {...props} choices={choices} setChoices={setChoices} />;
+}
+
+// The tiles, or the part one of them opened.
+function StepsOrTiles({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
+  const { step, setStep, choices } = publishing;
+  const formatName = FORMATS.find(([id]) => id === choices.format)?.[1] ?? "";
+  if (step === null)
+    return (
+      <>
+        <PublishTiles formatName={formatName} onStep={setStep} onStudio={props.onStudio} />
+        <SubmitLink {...props} />
+      </>
+    );
   return (
     <>
-      <StepBox number={1} label={t("Design")} {...stepProps("design")}>
-        <DesignControls design={design} save={saveDesign} dir={props.project.dir} />
-      </StepBox>
-      <StepBox number={2} label={t("Bokuppgifter")} {...stepProps("details")}>
-        <BookFields {...props} cover={publishing.cover} choices={choices} setChoices={setChoices} />
-      </StepBox>
-      <StepBox number={3} label={t("Exportera")} {...stepProps("export")}>
-        <ExportStep {...props} choices={choices} setChoices={setChoices} />
-      </StepBox>
+      <StepHead step={step} onBack={() => setStep(null)} />
+      <OpenStep props={props} publishing={publishing} />
     </>
   );
 }
 
 function PublishPreview({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
   const { choices } = publishing;
-  if (publishing.step === "design") {
+  if (publishing.step === null || publishing.step === "design") {
     return <PrintPreview project={props.project} generalAuthor={props.generalAuthor} />;
   }
   return (
@@ -157,29 +150,17 @@ function PublishPreview({ props, publishing }: { props: PublishProps; publishing
   );
 }
 
-// Beside the steps: Studio for sharing, and what goes to publishers apart from the manuscript.
-const PublishLinks = (props: PublishProps) => (
-  <>
-    <button className="studio-link" onClick={props.onStudio}>
-      <span className="studio-item-name">{t("Studio")}</span>
-      <span className="insight-muted">{t("Bilder att dela och kapitel till nyhetsbrev")}</span>
-    </button>
-    <SubmitLink {...props} />
-  </>
-);
-
 export function PublishView(props: PublishProps) {
   const publishing = usePublishing(props);
   const { choices, exporter } = publishing;
   const exportLabel = FORMATS.find(([id]) => id === choices.format)?.[2] ?? t("Exportera");
   return (
-    <div className="publish">
+    <div className={publishing.step ? `publish step-${publishing.step}` : "publish"}>
       <aside className="publish-steps" aria-label={t("Publicera")}>
         <button className="link-button quiet publish-back" onClick={props.onBack}>
           {t("← Tillbaka till texten")}
         </button>
-        <PublishLinks {...props} />
-        <Steps props={props} publishing={publishing} />
+        <StepsOrTiles props={props} publishing={publishing} />
         <button
           className="button primary publish-button"
           disabled={exporter.state.kind === "running"}

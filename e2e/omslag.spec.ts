@@ -6,7 +6,10 @@ test("the print cover counts the book's pages for its spine, and keeps the back 
 }) => {
   await openExample(page);
   await runCommand(page, "Gå till Publicera");
-  await page.getByRole("button", { name: "3 Exportera" }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Exportera/ })
+    .click();
 
   await page.getByRole("radio", { name: "Tryckomslag" }).click();
   await expect(page.getByText(/Ryggen blir [\d,]+ mm vid \d+ sidor/)).toBeVisible({

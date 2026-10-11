@@ -192,7 +192,10 @@ test("the text's own header opens its versions, beside Läs kapitlet", async ({ 
 test("the standard manuscript is exported as a Word file", async ({ page }) => {
   await editor(page).click();
   await runCommand(page, "Gå till Publicera");
-  await page.getByRole("button", { name: /^3\s*Exportera$/ }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Exportera/ })
+    .click();
 
   await page.getByText("Standardmanus", { exact: true }).click();
 

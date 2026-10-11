@@ -22,6 +22,10 @@ test("a book is designed, given its details, and exported for print and as an e-
   await page.setViewportSize({ width: 1400, height: 900 });
   await openExample(page);
   await page.getByRole("tab", { name: "Publicera" }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Design/ })
+    .click();
 
   await page.getByRole("radio", { name: /Modern/ }).click();
   await page.getByRole("button", { name: "+ Ny mall" }).click();
@@ -29,11 +33,19 @@ test("a book is designed, given its details, and exported for print and as an e-
   await page.getByRole("button", { name: "Klar", exact: true }).click();
   await expect(page.locator(".publish")).toContainText("Ornament");
 
-  await page.getByRole("button", { name: /^2\s*Bokuppgifter/ }).click();
+  await page.getByRole("button", { name: "← Publicera" }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Bokuppgifter/ })
+    .click();
   await page.getByLabel("Författarnamn").fill("Elin Berg");
   await page.getByLabel("Författarnamn").press("Tab");
 
-  await page.getByRole("button", { name: /^3\s*Exportera$/ }).click();
+  await page.getByRole("button", { name: "← Publicera" }).click();
+  await page
+    .locator(".publish-tile")
+    .filter({ hasText: /^Exportera/ })
+    .click();
   const folder = testInfo.outputDir;
   expect(await exported(page, "Tryck-PDF", "Exportera tryck-PDF", folder)).toBeGreaterThan(10_000);
   expect(await exported(page, "E-bok", "Exportera e-bok", folder)).toBeGreaterThan(5_000);

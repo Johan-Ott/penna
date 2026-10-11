@@ -496,6 +496,12 @@
   display: none;
 }
 
+/* The preview only with Design, so the tiles and the other parts need no scrolling. */
+.phone-view .publish:not(.step-design) .publish-preview,
+.phone-view .publish-step-head .link-button {
+  display: none;
+}
+
 .phone-view .publish-preview {
   flex-shrink: 0;
   min-height: 480px;
@@ -959,8 +965,7 @@
   body .sidebar-heading,
   body .design-section,
   body .contents-part-title,
-  body .badge-when,
-  body .publish-step-number {
+  body .badge-when {
     font-size: 12px;
   }
 
