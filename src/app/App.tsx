@@ -1,3 +1,4 @@
+import { useRemote } from "./remote.js";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
@@ -195,6 +196,7 @@ export type AppState = ReturnType<typeof useAppState>;
 // Outside both screens, so the update question is asked once per start.
 export function App() {
   const app = useAppState();
+  useRemote(app);
   const Screen = usePhone() ? PhoneProject : ProjectScreen;
   const { project } = app;
   // Starting, or reading a book from the shelf: the start picture shows meanwhile.

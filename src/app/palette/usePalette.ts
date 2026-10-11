@@ -8,13 +8,14 @@ export function usePalette(context: PaletteContext | null) {
   // A phone has no folders to pick, so that entry is left out there.
   const isPhone = usePhone();
   useShortcut("k", () => setOpen((current) => !current));
+  const entriesNow = () =>
+    context ? paletteEntries(isPhone ? { ...context, chooseFolder: null } : context) : [];
   return {
     isOpen: isOpen && context !== null,
     // Made only while open: a long book has hundreds of entries, and the app draws on every key.
-    entries:
-      isOpen && context
-        ? paletteEntries(isPhone ? { ...context, chooseFolder: null } : context)
-        : [],
+    entries: isOpen ? entriesNow() : [],
+    /** The entries as they are now, for window.penna; made only when asked for. */
+    entriesNow,
     open: () => setOpen(true),
     close: () => setOpen(false),
   };

@@ -499,6 +499,7 @@ select:focus-visible {
 
 .focus-header-end {
   display: flex;
+  align-self: stretch;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;

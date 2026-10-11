@@ -195,6 +195,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   own, under `%APPDATA%\se.penna.test`. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
   answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
+- `node scripts/penna.mjs <call> [args]` makes one call to `window.penna` (`app/remote.ts`) in
+  Penna Test: `state`, `tree`, `commands`, `run <command>`, `open <id>`, `text`, `type <text>`.
+  It goes through the app's own palette commands and editor, so it writes as a hand would.
 - The phone the same way: start the emulator (Medium_Phone_API_36.1), `npm run build:android --
 --emulator` puts a debug build in it, and `node scripts/drive-app.mjs --android steps.mjs`
   drives it through adb. It is the normal app, since the emulator holds no real books.

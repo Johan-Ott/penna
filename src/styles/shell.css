@@ -118,6 +118,7 @@
 }
 
 .topbar-end {
+  align-self: stretch;
   justify-content: flex-end;
 }
 
@@ -132,6 +133,7 @@
   display: grid;
   place-items: center;
   width: 46px;
+  height: 100%;
   border: 0;
   background: transparent;
   color: var(--text-label);
