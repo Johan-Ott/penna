@@ -255,3 +255,13 @@ test("Förslagsläge keeps the text as it was, and what was typed comes back to 
   await review.getByRole("button", { name: "Godta" }).click();
   await expect(editor(page)).toContainText("vantarna. Hon log.");
 });
+
+test("the folded sidebar floats out while the pointer rests on its button", async ({ page }) => {
+  await page.getByRole("button", { name: "Visa eller dölj sidomenyn" }).click();
+  await page.mouse.move(700, 400);
+  await expect(page.locator(".sidebar")).toBeHidden();
+
+  await page.getByRole("button", { name: "Visa eller dölj sidomenyn" }).hover();
+
+  await expect(page.locator(".sidebar")).toBeVisible();
+});

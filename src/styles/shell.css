@@ -35,8 +35,30 @@
   margin-left: 8px;
 }
 
+/* Folded away, the sidebar floats out while the pointer rests on its button or on it, and
+   lingers a moment so the pointer can cross the gap between them. */
 .app.sidebar-closed > .sidebar {
-  display: none;
+  position: fixed;
+  top: 44px;
+  bottom: 8px;
+  left: 8px;
+  z-index: 30;
+  width: var(--sidebar-width);
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  box-shadow: var(--shadow-dialog);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.12s 0.2s,
+    visibility 0s 0.32s;
+}
+
+.app.sidebar-closed:has(.sidebar-toggle:hover) > .sidebar,
+.app.sidebar-closed > .sidebar:hover {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
 }
 
 .main-card {
@@ -1406,10 +1428,6 @@
 }
 
 @media (max-width: 959px) {
-  .app:not(.sidebar-open) > .sidebar {
-    display: none;
-  }
-
   .app > .main-card,
   .app.sidebar-open > .main-card {
     grid-column: 1 / -1;

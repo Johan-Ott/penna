@@ -33,13 +33,14 @@ export interface TopbarProps {
 
 function IconButton(props: {
   label: string;
+  className?: string;
   onClick: (event: MouseEvent<HTMLElement>) => void;
   isDisabled?: boolean;
   children: ReactNode;
 }) {
   return (
     <button
-      className="topbar-button"
+      className={props.className ? `topbar-button ${props.className}` : "topbar-button"}
       aria-label={props.label}
       title={props.label}
       disabled={props.isDisabled}
@@ -119,7 +120,11 @@ function TopbarStart(props: TopbarProps) {
       <IconButton label={t("Meny")} onClick={props.onMenu}>
         <MenuIcon />
       </IconButton>
-      <IconButton label={t("Visa eller dölj sidomenyn")} onClick={props.onToggleSidebar}>
+      <IconButton
+        label={t("Visa eller dölj sidomenyn")}
+        className="sidebar-toggle"
+        onClick={props.onToggleSidebar}
+      >
         <SidebarIcon />
       </IconButton>
       <span className="topbar-history">
