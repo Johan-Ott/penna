@@ -1,3 +1,4 @@
+import { ClickCorrections } from "./spelling/ClickCorrections.js";
 import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
@@ -136,6 +137,7 @@ const selectionBarOf = (app: AppState, project: Project) => (
       onReadAloud={speechContext(app, project).readAloud ?? undefined}
     />
     <FootnotePopover editor={app.editor} />
+    <ClickCorrections editor={app.editor} />
   </>
 );
 

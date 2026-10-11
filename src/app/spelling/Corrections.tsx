@@ -8,9 +8,12 @@ type Editor = ReturnType<typeof useEditorView>;
 function misspelledAtCaret(editor: Editor) {
   const state = editor.editorState;
   const spelling = editor.modes.current.spelling;
-  if (!state || !spelling || !state.selection.empty) return null;
-  const place = wordAt(state.doc, state.selection.from);
-  return place && isMisspelled(spelling, place.word) ? place : null;
+  if (!state || !spelling) return null;
+  const { from, to, empty } = state.selection;
+  const place = wordAt(state.doc, from);
+  // The cursor in the word, or the word selected as a double click does.
+  const isOnWord = place && (empty || (place.from === from && place.to === to));
+  return isOnWord && isMisspelled(spelling, place.word) ? place : null;
 }
 
 /** The misspelled word the cursor stands in, with its corrections once they are found. */

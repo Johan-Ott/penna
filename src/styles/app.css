@@ -3376,3 +3376,20 @@ button.book-cover:hover {
     display: none;
   }
 }
+
+/* A misspelled word clicked on the computer: its corrections in a small bar just under it. */
+.click-corrections {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  padding: 4px;
+  border: 1px solid var(--border-control);
+  border-radius: 12px;
+  background: var(--bg);
+  box-shadow: var(--shadow-low);
+}
+
+.click-corrections .phone-correction {
+  height: 30px;
+  font-size: 14px;
+}
