@@ -1,18 +1,19 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, type CSSProperties, type ReactNode } from "react";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { refreshPageMarks } from "../editor/pageMarks.js";
 import { refreshRepetitions } from "../editor/repetitionMarks.js";
 import { SearchPanel } from "../editor/SearchPanel.js";
 import type { useEditorView } from "../editor/useEditorView.js";
-import { changeSize, DEFAULT_SETTINGS, type WritingSettings } from "../editor/writingSettings.js";
+import type { WritingSettings } from "../editor/writingSettings.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
 import { FocusHeader } from "./FocusHeader.js";
+import { usePanels } from "./settingsPanel.js";
 import type { Today } from "./useWritingStats.js";
 import { ReadOnlyNotice, SaveToast, TreeFailureToast, SavedNowToast } from "./SaveToast.js";
 import { useEscape, useShortcut } from "./useShortcut.js";
-import type { SettingsChange } from "./useWritingSettings.js";
+import { useTextSizeKeys, type SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { SheetEdges, type SheetProps } from "./SheetEdges.js";
 import { pageClass, pageStyle, type BookLook } from "./bookLook.js";
@@ -65,16 +66,6 @@ function manuscriptClass(settings: WritingSettings, isFocusMode: boolean) {
   return `manuscript focus-${settings.focus}${settings.typewriter ? " typewriter" : ""}`;
 }
 
-// "=" is where plus sits on a US keyboard.
-function useTextSizeKeys(change: (change: SettingsChange) => void) {
-  const larger = () => change((current) => changeSize(current, 1));
-  useShortcut("+", larger);
-  useShortcut("+", larger, { shift: true });
-  useShortcut("=", larger);
-  useShortcut("-", () => change((current) => changeSize(current, -1)));
-  useShortcut("0", () => change((current) => ({ ...current, size: DEFAULT_SETTINGS.size })));
-}
-
 function useWritingKeys(props: WritingAreaProps, panels: ReturnType<typeof usePanels>) {
   useTextSizeKeys(props.onChangeSettings);
   useShortcut("f", () => props.setSearchOpen(true));
@@ -84,11 +75,6 @@ function useWritingKeys(props: WritingAreaProps, panels: ReturnType<typeof usePa
     if (panels.isSettingsOpen) panels.setSettingsOpen(false);
     else if (props.isFocusMode) props.onToggleFocus();
   });
-}
-
-function usePanels() {
-  const [isSettingsOpen, setSettingsOpen] = useState(false);
-  return { isSettingsOpen, setSettingsOpen };
 }
 
 function EmptyScene({ onNewScene }: { onNewScene: () => void }) {
@@ -185,6 +171,27 @@ function useEditorModes(props: WritingAreaProps) {
   );
 }
 
+// Focus mode has its own header, with Aa; otherwise Aa is in the top bar.
+function WritingHead(props: WritingAreaProps & { panels: ReturnType<typeof usePanels> }) {
+  const { panels } = props;
+  const doc = props.editor.editorState?.doc;
+  const toggleSettings = () => panels.setSettingsOpen(!panels.isSettingsOpen);
+  return (
+    <>
+      {props.isFocusMode && (
+        <FocusHeader
+          {...props}
+          location={props.focusLocation}
+          wordCount={doc ? countDocumentWords(doc) : 0}
+          isSettingsOpen={panels.isSettingsOpen}
+          onToggleSettings={toggleSettings}
+          onLeave={props.onToggleFocus}
+        />
+      )}
+    </>
+  );
+}
+
 export function WritingArea(props: WritingAreaProps) {
   const { editor } = props;
   const panels = usePanels();
@@ -192,19 +199,9 @@ export function WritingArea(props: WritingAreaProps) {
   useEditorModes(props);
   const { focusIfRequested } = editor;
   useEffect(() => focusIfRequested(), [props.hasScene, focusIfRequested]);
-  const doc = editor.editorState?.doc;
   return (
     <main className={props.isHidden ? "writing hidden" : "writing"}>
-      {props.isFocusMode && (
-        <FocusHeader
-          {...props}
-          location={props.focusLocation}
-          wordCount={doc ? countDocumentWords(doc) : 0}
-          isSettingsOpen={panels.isSettingsOpen}
-          onToggleSettings={() => panels.setSettingsOpen(!panels.isSettingsOpen)}
-          onLeave={props.onToggleFocus}
-        />
-      )}
+      <WritingHead {...props} panels={panels} />
       <div className="writing-body">
         <Page {...props} />
         {props.beside}

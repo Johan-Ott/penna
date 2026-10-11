@@ -1,4 +1,5 @@
 import { SprintButton } from "../sprint/SprintBar.js";
+import { LookButton } from "../settingsPanel.js";
 import type { MouseEvent, ReactNode } from "react";
 import type { Today } from "../useWritingStats.js";
 import type { View } from "../useWritingMode.js";
@@ -175,6 +176,7 @@ export function Topbar(props: TopbarProps) {
         <span className="topbar-title">{props.title}</span>
       )}
       <div className="topbar-end">
+        {props.view === "skriv" && <LookButton />}
         <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
           <ReadIcon />
         </IconButton>

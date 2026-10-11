@@ -515,6 +515,11 @@ select:focus-visible {
 }
 
 /* Writing settings popover */
+/* The selection's bar steps aside while the text's look is being changed. */
+body:has(.settings-panel) .selection-bar {
+  display: none;
+}
+
 .settings-panel {
   position: absolute;
   top: 56px;
