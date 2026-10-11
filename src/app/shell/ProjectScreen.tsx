@@ -1,3 +1,4 @@
+import { ProfileButton } from "../profile/ProfileLayer.js";
 import type { MouseEvent } from "react";
 import type { AppState } from "../App.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
@@ -54,6 +55,7 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       // The button took the cursor from the text; it goes back there, where the writer was.
       onFocus={() => (writingMode.onToggleFocus(), app.editor.requestFocus())}
       onRead={() => writingMode.read(null)}
+      profile={<ProfileButton app={app} />}
     />
   );
 }

@@ -17,7 +17,6 @@ import { SeriesNotes } from "./tree/TreeView.js";
 import type { OpenScene } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
-import { ProfileRow } from "./profile/ProfileLayer.js";
 import { speechContext } from "./ReadAloud.js";
 
 const openText = (app: AppState) => (id: string) => {
@@ -95,7 +94,7 @@ export function sidebarProps(app: AppState, project: Project) {
       app.writingMode.setBeside({ kind: "text", dir: project.dir, sceneId: id }),
     onChangeTree: (tree: TreeNode[]) => void app.updateTree(tree),
     onUpdateProject: (change: ProjectChange) => void app.updateProject(change),
-    ...{ onShowShelf: () => void app.showShelf(), profile: <ProfileRow app={app} /> },
+    onShowShelf: () => void app.showShelf(),
     onNewNote: (sortId: string | null) => app.setNewNoteSort(sortId),
     ...app.treeHandlers,
     onSetNoteLink: (id: string, isLinked: boolean) => void app.actions.notes.setLink(id, isLinked),

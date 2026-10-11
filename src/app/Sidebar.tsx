@@ -13,7 +13,6 @@ import { t } from "../i18n/i18n.js";
 type BookDialogProps = Pick<SidebarProps, "project" | "libraryDir" | "onUpdateProject">;
 
 interface SidebarProps extends TreeViewProps {
-  profile: ReactNode;
   /** The Penna folder, where the writer's own templates are kept. */
   libraryDir: string | null;
   seriesNotes: ReactNode;
@@ -114,7 +113,6 @@ function BookTitle(props: SidebarProps) {
 export function Sidebar(props: SidebarProps) {
   return (
     <nav className="sidebar" aria-label={t("Boken")}>
-      {props.profile}
       <BookTitle {...props} />
       <TreeView {...props} />
       <SyncNotices

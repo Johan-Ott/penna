@@ -260,6 +260,26 @@
   background: transparent;
 }
 
+/* The book's title and the tree's tools stay put; the book scrolls under them. */
+.app > .sidebar .book-title-row,
+.app > .sidebar .tree-tools {
+  position: sticky;
+  z-index: 3;
+  background: var(--bg-subtle);
+}
+
+.app > .sidebar .book-title-row {
+  top: -6px;
+}
+
+.app > .sidebar .tree-tools {
+  top: 38px;
+}
+
+.profile-button {
+  margin-left: 6px;
+}
+
 .book-title-row {
   display: flex;
   flex-shrink: 0;
@@ -2252,25 +2272,6 @@
   object-fit: cover;
 }
 
-.profile-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  margin: 0 0 6px;
-  padding: 0 8px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text);
-  font: 500 14px var(--font-ui);
-  text-align: left;
-}
-
-.profile-row:hover {
-  background: var(--surface-hover);
-}
-
 .profile-dialog {
   width: min(560px, calc(100vw - 48px));
   max-height: calc(100vh - 48px);
@@ -3014,23 +3015,6 @@
 }
 
 /* The three newest badges, small beside the writer's name and under the journey. */
-.profile-row-medals {
-  display: flex;
-  gap: 3px;
-  margin-left: auto;
-}
-
-.profile-row-medal {
-  display: grid;
-  place-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent, #3f6b4e);
-  color: #ffffff;
-  font: 600 9px var(--font-prose);
-}
-
 .journey-badges {
   display: flex;
   flex-direction: column;

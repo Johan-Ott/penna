@@ -32,6 +32,8 @@ export interface TopbarProps {
   onSearch: () => void;
   onFocus: () => void;
   onRead: () => void;
+  /** The writer's picture, after Skriv and Publicera. */
+  profile: ReactNode;
 }
 
 function IconButton(props: {
@@ -94,6 +96,21 @@ export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
   );
 }
 
+const History = ({ navigation }: Pick<TopbarProps, "navigation">) => (
+  <span className="topbar-history">
+    <IconButton label={t("Bakåt")} onClick={navigation.back} isDisabled={!navigation.canGoBack}>
+      <BackIcon />
+    </IconButton>
+    <IconButton
+      label={t("Framåt")}
+      onClick={navigation.forward}
+      isDisabled={!navigation.canGoForward}
+    >
+      <ForwardIcon />
+    </IconButton>
+  </span>
+);
+
 function TopbarStart(props: TopbarProps) {
   const { navigation } = props;
   return (
@@ -108,19 +125,9 @@ function TopbarStart(props: TopbarProps) {
       >
         <SidebarIcon />
       </IconButton>
-      <span className="topbar-history">
-        <IconButton label={t("Bakåt")} onClick={navigation.back} isDisabled={!navigation.canGoBack}>
-          <BackIcon />
-        </IconButton>
-        <IconButton
-          label={t("Framåt")}
-          onClick={navigation.forward}
-          isDisabled={!navigation.canGoForward}
-        >
-          <ForwardIcon />
-        </IconButton>
-      </span>
+      <History navigation={navigation} />
       <ModeSwitch view={props.view} onView={props.onView} />
+      {props.profile}
     </div>
   );
 }

@@ -37,12 +37,17 @@ export function ProfileLayer({ app, project }: { app: AppState; project: Project
 }
 
 /** At the top of the sidebar: who writes, and the way into the profile. */
-export function ProfileRow({ app }: { app: AppState }) {
+/** The writer's picture in the top bar; it opens the profile. */
+export function ProfileButton({ app }: { app: AppState }) {
   const name = app.startup.preferences.authorName;
   return (
-    <button className="profile-row" onClick={app.profile.open}>
+    <button
+      className="topbar-button profile-button"
+      aria-label={t("Din profil")}
+      title={name || t("Din profil")}
+      onClick={app.profile.open}
+    >
       <Avatar name={name} picture={app.profile.profile.picture} size={22} />
-      <span className="profile-row-name">{name || t("Din profil")}</span>
     </button>
   );
 }
