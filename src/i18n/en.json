@@ -1279,5 +1279,11 @@
   "Minimera": "Minimise",
   "Maximera": "Maximise",
   "Stäng fönstret": "Close the window",
-  "”{word}” står flera gånger nära varandra": "“{word}” comes several times close together"
+  "”{word}” står flera gånger nära varandra": "“{word}” comes several times close together",
+  "Hämta från Google Drive…": "Get from Google Drive…",
+  "Hämta från Google Drive": "Get from Google Drive",
+  "Letar i din Drive…": "Looking in your Drive…",
+  "Alla böcker i Penna-mappen i din Drive finns redan här.": "Every book in the Penna folder in your Drive is already here.",
+  "Hämtar…": "Getting…",
+  "Hämta och öppna": "Get and open"
 }

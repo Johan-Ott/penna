@@ -6,6 +6,8 @@ export interface AppMenuActions {
   showShelf: () => void;
   newProject: () => void;
   openFolder: () => void;
+  /** A book from Penna/ in Google Drive; left out where there is no Drive or no library. */
+  fetchFromDrive?: (() => void) | null;
   /** Null when no text is open, or on the bookshelf. */
   showVersions: (() => void) | null;
   /** Null on the bookshelf, where there is no book to pack. */
@@ -75,6 +77,9 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
     ...group(t("Öppna och importera"), [
       { label: t("Öppna mapp…"), onSelect: actions.openFolder },
       { label: t("Importera manus…"), onSelect: actions.newProject },
+      ...(actions.fetchFromDrive
+        ? [{ label: t("Hämta från Google Drive…"), onSelect: actions.fetchFromDrive }]
+        : []),
     ]),
     ...bookGroups(actions),
     {

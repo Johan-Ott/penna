@@ -1,3 +1,4 @@
+import { useDriveBooksDialog } from "./shelf/DriveBooks.js";
 import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type MouseEvent, type ReactNode } from "react";
@@ -74,6 +75,9 @@ function shelfHandlers(app: StartScreenProps["app"], isPhone: boolean) {
 // A phone has no folders to pick and no shortcuts, so its menu is short.
 const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
   { label: t("Nytt projekt"), onSelect: actions.newProject },
+  ...(actions.fetchFromDrive
+    ? [{ label: t("Hämta från Google Drive…"), onSelect: actions.fetchFromDrive }]
+    : []),
   ...(actions.showBackups ? [{ label: t("Säkerhetskopior…"), onSelect: actions.showBackups }] : []),
   { label: t("Inställningar"), separatorBefore: true, onSelect: actions.openSettings },
   { label: t("Hjälp"), onSelect: actions.openShortcuts },
@@ -81,21 +85,27 @@ const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
   { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
 ];
 
+// A book fetched from Drive keeps syncing, so signing in for it turns the sync on.
+const useShelfDrive = (app: StartScreenProps["app"]) =>
+  useDriveBooksDialog({
+    libraryDir: app.startup.preferences.libraryDir,
+    onOpen: (dir) => void app.open(dir),
+    onSignedIn: () => app.startup.updatePreferences((now) => ({ ...now, isDriveSyncOn: true })),
+  });
+
 // The shelf's menu, with the dialogs it opens.
 function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, isPhone: boolean) {
   const settings = app.writingMode.settingsDialog;
   const backups = useBackupsDialog(app, []);
   const feedback = useFeedbackDialog();
+  const drive = useShelfDrive(app);
   const actions = {
     showShelf: () => undefined,
     newProject: onNewProject,
     openFolder: () => void app.choose(),
-    showVersions: null,
-    exportZip: null,
-    importRevision: null,
-    sharing: [],
+    fetchFromDrive: drive.open,
+    ...{ showVersions: null, exportZip: null, importRevision: null, openTheme: null, sharing: [] },
     showBackups: backups.open,
-    openTheme: null,
     sendFeedback: feedback.open,
     openSettings: () => settings.open(),
     openShortcuts: () => settings.open(HELP_TAB),
@@ -104,6 +114,7 @@ function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, is
   const layers = (
     <>
       {menu.menu}
+      {drive.layer}
       {backups.layer}
       {feedback.layer}
       <SettingsLayer {...app.startup} {...app.writingMode} dialog={settings} book={null} />
