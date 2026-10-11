@@ -514,6 +514,7 @@
   overflow: visible;
 }
 
+/* Back, or Publicera in the tabs, is the way out of Studio. */
 .phone-view .publish-back {
   display: none;
 }
@@ -824,12 +825,6 @@
 .phone-app .insights-panel,
 .phone-app .resume-screen {
   padding-top: max(16px, var(--safe-top));
-}
-
-.phone-app .studio-nav .publish-back {
-  display: block;
-  flex-basis: 100%;
-  text-align: left;
 }
 
 .phone-app .studio-group .sidebar-heading {

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../../project/tree.js";
-import { chapterOf } from "../../project/treeLabels.js";
 import type { AppState } from "../App.js";
 import { NewNoteDialog } from "../notes/NewNoteDialog.js";
 import { openInHome } from "../notes/noteHomes.js";
@@ -11,49 +10,21 @@ import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { TextBands } from "../TextBands.js";
 import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { useBookTheme } from "../themes/themeStyle.js";
-import { SearchIcon } from "../shell/icons.js";
-import { ReviewButton } from "../shell/Topbar.js";
 import type { Project } from "../useProject.js";
-import { SprintButton } from "../sprint/SprintBar.js";
+import { TextBar } from "./TextBar.js";
 import { WritingArea } from "../WritingArea.js";
 import { PhoneBook } from "./PhoneBook.js";
 import { PhoneSort } from "./PhoneSort.js";
 import { PhoneToolbar } from "./PhoneToolbar.js";
 import type { View } from "../useWritingMode.js";
 import { TabBar, tabOf, ViewScreen, type Tab } from "./PhoneTabs.js";
-import { usePhoneNavigation, type PhoneScreen } from "./usePhoneNavigation.js";
+import { usePhoneNavigation, useViewsInHistory, type PhoneScreen } from "./usePhoneNavigation.js";
 import { useKeyboardUp } from "./usePhone.js";
 import { scenePagesOf, usePageMap } from "../usePageMap.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
 
 type Props = { app: AppState; project: Project };
 
 // Android's back button puts the keyboard away, so the bar has no Klar.
-// The tabs below lead away, so the bar has no way back.
-function TextBar({ app, project }: Props) {
-  const scene = app.scene;
-  const chapter = scene ? chapterOf(project.tree, scene.id) : null;
-  const words = app.today.words.toLocaleString(numberLocale());
-  return (
-    <header className="phone-bar">
-      <SprintButton />
-      <span className="phone-bar-title">
-        <span>{chapter?.title ?? scene?.title ?? ""}</span>
-        <span className="phone-bar-sub">{t("{count} ord idag", { count: words })}</span>
-      </span>
-      <span className="phone-bar-end">
-        <ReviewButton
-          review={app.writingMode.review}
-          onReview={() => app.writingMode.setReviewOpen(!app.writingMode.isReviewOpen)}
-        />
-        <button className="topbar-button" aria-label={t("Sök")} onClick={app.palette.open}>
-          <SearchIcon />
-        </button>
-      </span>
-    </header>
-  );
-}
-
 function Floating({ app, project }: Props) {
   const notes = (isInSeries: boolean) => (isInSeries ? app.actions.series : app.actions).notes;
   return (
@@ -136,7 +107,8 @@ function usePhoneScreens({ app, project }: Props) {
   const continueId = useLastManuscriptScene(app, project);
   const continueWriting = () => continueId && openText(continueId);
   const { setView } = app.writingMode;
-  const showView = (view: View) => (setView(view), show({ kind: "view" }));
+  useViewsInHistory(app.writingMode.view, setView, screen, show);
+  const showView = (view: View) => (setView(view), show({ kind: "view", view }));
   // Opening a text leaves Innehåll or Läs for Skriv.
   const writeIn = (id: string) => (setView("skriv"), openText(id));
   const onTab = (tab: Tab) => {
@@ -179,9 +151,9 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
   const { screen } = screens;
   if (screen.kind === "text" || screen.kind === "view") {
     if (app.writingMode.view === "skriv") return null;
-    return (
-      <ViewScreen app={app} project={project} onBack={screens.back} onOpenText={screens.openText} />
-    );
+    const { depth, back, openText } = screens;
+    const props = { app, project, onBack: back, onOpenText: openText };
+    return <ViewScreen key={depth} {...props} />;
   }
   if (screen.kind === "sort")
     return (

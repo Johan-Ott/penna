@@ -72,6 +72,20 @@ test("the tabs go to Innehåll and Publicera, and back to Boken", async ({ page 
   await expect(page.getByRole("button", { name: /Fortsätt skriva/ })).toBeVisible();
 });
 
+test("Android's back leaves Studio, then goes from Publicera to Innehåll", async ({ page }) => {
+  const back = () => page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
+  await page.getByRole("button", { name: "Innehåll" }).click();
+  await page.getByRole("button", { name: "Publicera" }).click();
+  await page.getByRole("button", { name: /Studio/ }).click();
+  await expect(page.locator(".studio")).toBeVisible();
+
+  await back();
+  await expect(page.locator(".studio")).toHaveCount(0);
+  await back();
+
+  await expect(page.locator(".contents-view")).toBeVisible();
+});
+
 test("the palette on the phone has no folder to pick", async ({ page }) => {
   await page.getByRole("button", { name: "Sök" }).first().click();
   await page.keyboard.type("mapp");

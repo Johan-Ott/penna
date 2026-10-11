@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { View } from "../useWritingMode.js";
 
 export type PhoneScreen =
   | { kind: "book" }
   | { kind: "text"; sceneId: string }
   | { kind: "sort"; sortId: string }
   /** Innehåll, Läs, Publicera or Från synken, as the writing mode's view says. */
-  | { kind: "view" };
+  | { kind: "view"; view: View };
 
 // A screen opened anew starts at its top; going back keeps the place it was left at.
 function toTop() {
@@ -19,9 +20,17 @@ function toTop() {
 const LAYERS = "[role=menu], [role=dialog], .insights-panel, .review-panel.open";
 const openLayers = () => document.querySelectorAll(LAYERS).length;
 
+// A screen within a screen, such as Studio in Publicera, marks its way out for back to take.
+const innerBack = () => document.querySelector<HTMLElement>("[data-phone-back]");
+
 /** Android's back: closes what lies on top, else the screen before; false when there is none. */
 function pennaBack(depth: number) {
   const layers = openLayers();
+  const inner = innerBack();
+  if (layers === 0 && inner) {
+    inner.click();
+    return true;
+  }
   if (layers === 0) {
     if (depth <= 1) return false;
     window.history.back();
@@ -55,5 +64,27 @@ export function usePhoneNavigation() {
     page.pennaBack = () => pennaBack(depth);
     return () => void delete page.pennaBack;
   }, [stack.length]);
-  return { screen: stack[stack.length - 1] ?? { kind: "book" }, show, back };
+  const screen = stack[stack.length - 1] ?? { kind: "book" };
+  return { screen, depth: stack.length, show, back };
+}
+
+/** Every change of view on a screen is a step back can take, and back brings that view again. */
+export function useViewsInHistory(
+  view: View,
+  setView: (view: View) => void,
+  screen: PhoneScreen,
+  show: (screen: PhoneScreen) => void,
+) {
+  useEffect(() => {
+    if (screen.kind === "view") setView(screen.view);
+    if (screen.kind === "text") setView("skriv");
+  }, [screen, setView]);
+  // Only a view that changed is a step; a screen that changed has set its own view.
+  const shown = useRef(view);
+  useEffect(() => {
+    if (shown.current === view) return;
+    shown.current = view;
+    const isNew = screen.kind === "text" || (screen.kind === "view" && screen.view !== view);
+    if (view !== "skriv" && isNew) show({ kind: "view", view });
+  }, [view, screen, show]);
 }

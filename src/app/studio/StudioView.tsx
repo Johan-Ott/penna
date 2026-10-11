@@ -51,7 +51,7 @@ function groups(): [string, [CardId, string, string][]][] {
 function StudioNav(props: { card: CardId; onCard: (card: CardId) => void; onBack: () => void }) {
   return (
     <aside className="studio-nav" aria-label={t("Studio")}>
-      <button className="link-button quiet publish-back" onClick={props.onBack}>
+      <button className="link-button quiet publish-back" data-phone-back onClick={props.onBack}>
         {t("← Publicera")}
       </button>
       {groups().map(([label, items]) => (
