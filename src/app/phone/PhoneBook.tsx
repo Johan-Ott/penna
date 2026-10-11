@@ -12,7 +12,7 @@ import type { AppState } from "../App.js";
 import { useMenuButton } from "../Menu.js";
 import { phoneMenu } from "./phoneMenu.js";
 import { sidebarProps } from "../paneProps.js";
-import { MenuIcon, SearchIcon } from "../shell/icons.js";
+import { ContentsIcon, MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
 import { SyncNotices } from "../SyncLayer.js";
 import { TreeView } from "../tree/TreeView.js";
@@ -28,6 +28,8 @@ interface PhoneBookProps {
   /** The scene Fortsätt skriva opens. */
   continueId: string | null;
   onSync: () => void;
+  /** Innehåll: the whole book with what happens, when and how far it has come. */
+  onContents: () => void;
 }
 
 const format = (words: number) => words.toLocaleString(numberLocale());
@@ -93,7 +95,7 @@ function ContinueButton({ project, continueId, onContinue }: PhoneBookProps) {
   );
 }
 
-function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
+function PhoneBookHeader({ app, project, onContents }: HeaderProps) {
   const dialogs = useMenuDialogs({ app, project });
   const bookProps = sidebarProps(app, project);
   const theme = useThemeDialog(bookProps);
@@ -105,9 +107,14 @@ function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project
         <MenuIcon />
       </button>
       <span className="phone-bar-title prose">{project.name}</span>
-      <button className="topbar-button" aria-label={t("Sök")} onClick={app.palette.open}>
-        <SearchIcon />
-      </button>
+      <span className="phone-bar-end">
+        <button className="topbar-button" aria-label={t("Innehåll")} onClick={onContents}>
+          <ContentsIcon />
+        </button>
+        <button className="topbar-button" aria-label={t("Sök")} onClick={app.palette.open}>
+          <SearchIcon />
+        </button>
+      </span>
       {menu.menu}
       {dialogs.layers}
       {theme.dialog}
@@ -116,11 +123,13 @@ function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project
   );
 }
 
+type HeaderProps = Pick<PhoneBookProps, "app" | "project" | "onContents">;
+
 export function PhoneBook(props: PhoneBookProps) {
   const { app, project } = props;
   return (
     <div className="phone-screen">
-      <PhoneBookHeader app={app} project={project} />
+      <PhoneBookHeader app={app} project={project} onContents={props.onContents} />
       <main className="phone-card">
         <SyncNotices
           project={project}

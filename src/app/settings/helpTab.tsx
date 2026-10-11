@@ -12,7 +12,7 @@ const SECTIONS: [string, string[]][] = [
         "Delar, kapitel och scener ordnar du i sidomenyn, på telefonen under Boken. ⋯ på en rad, eller högerklick, ger radens meny. I Innehåll ser du hela boken med vad som händer, när och hur långt du har kommit.",
       ),
       t(
-        "Bilder: Infoga bild… i paletten, eller ▣ över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
+        "Bilder: Infoga bild… i paletten, eller Bild över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
       ),
       t(
         "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen tar den hela skärmen.",

@@ -1,32 +1,28 @@
 import type { ReactNode } from "react";
 import type { AppState } from "../App.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "../shell/bookViews.js";
-import { BookIcon, ContentsIcon, PenIcon, TreeIcon } from "../shell/icons.js";
+import { BookIcon, PenIcon, TreeIcon } from "../shell/icons.js";
 import type { Project } from "../useProject.js";
 import { usePageMap } from "../usePageMap.js";
 import type { View } from "../useWritingMode.js";
 import type { PhoneScreen } from "./usePhoneNavigation.js";
 import { t } from "../../i18n/i18n.js";
 
-// The phone's four places, as tabs along the bottom. While the keyboard is up in Skriv they
-// step aside, so the text has the room.
+// The phone's three places, as tabs along the bottom; Innehåll and Läs open from Boken. While
+// the keyboard is up in Skriv the tabs step aside, so the text has the room.
 
-export type Tab = "boken" | "skriv" | "innehall" | "publicera";
+export type Tab = "boken" | "skriv" | "publicera";
 
 const TABS: [Tab, string, ReactNode][] = [
   ["boken", t("Boken"), <TreeIcon key="boken" />],
   ["skriv", t("Skriv"), <PenIcon key="skriv" />],
-  ["innehall", t("Innehåll"), <ContentsIcon key="innehall" />],
   ["publicera", t("Publicera"), <BookIcon key="publicera" />],
 ];
 
-/** Which tab the screen belongs to; Läs is part of Innehåll, Från synken of Boken. */
+/** Which tab the screen belongs to; Innehåll, Läs and Från synken are part of Boken. */
 export function tabOf(screen: PhoneScreen, view: View): Tab {
   if (screen.kind === "text" && view === "skriv") return "skriv";
-  if (screen.kind !== "view") return "boken";
-  if (view === "las") return "innehall";
-  if (view === "synk" || view === "skriv") return "boken";
-  return view;
+  return screen.kind === "view" && view === "publicera" ? "publicera" : "boken";
 }
 
 export function TabBar(props: { tab: Tab; onTab: (tab: Tab) => void }) {

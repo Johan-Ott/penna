@@ -21,8 +21,8 @@ function tools(app: AppState, project: Project, toggleSettings: () => void): Too
     [t("Ångra"), "↶", () => run(undo)],
     [t("Gör om"), "↷", () => run(redo)],
     [t("Scenbrytning"), "⁂", () => run(insertSceneBreak)],
-    [t("Infoga fotnot"), "¹", () => run(insertFootnote)],
-    [t("Infoga bild…"), "▣", () => void insertChosenPicture(project.dir, run)],
+    [t("Infoga fotnot"), t("Fotnot"), () => run(insertFootnote)],
+    [t("Infoga bild…"), t("Bild"), () => void insertChosenPicture(project.dir, run)],
     [t("Skrivinställningar"), "Aa", toggleSettings],
   ];
 }

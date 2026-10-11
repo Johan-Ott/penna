@@ -163,6 +163,7 @@ function OtherScreen(props: Props & { screens: ReturnType<typeof usePhoneScreens
       onContinue={screens.continueWriting}
       continueId={screens.continueId}
       onSync={() => screens.showView("synk")}
+      onContents={() => screens.showView("innehall")}
     />
   );
 }
