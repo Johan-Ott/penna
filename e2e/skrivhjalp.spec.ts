@@ -48,3 +48,12 @@ test("a name from the notes is offered while typing, and Tab fills it in", async
   await expect(editor(page)).toContainText("vantarna. Arvid");
   await expect(editor(page).locator(".completion")).toHaveCount(0);
 });
+
+test("a click on a repeated word says so and leads to Granska", async ({ page }) => {
+  await page.locator(".ProseMirror .repeat").first().click();
+
+  const help = page.locator(".click-corrections");
+  await expect(help).toContainText("står flera gånger nära varandra");
+  await help.getByRole("button", { name: "Granska" }).click();
+  await expect(page.locator(".review-panel.open")).toBeVisible();
+});

@@ -137,7 +137,7 @@ const selectionBarOf = (app: AppState, project: Project) => (
       onReadAloud={speechContext(app, project).readAloud ?? undefined}
     />
     <FootnotePopover editor={app.editor} />
-    <ClickCorrections editor={app.editor} />
+    <ClickCorrections editor={app.editor} onReview={() => app.writingMode.setReviewOpen(true)} />
   </>
 );
 

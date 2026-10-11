@@ -3393,3 +3393,10 @@ button.book-cover:hover {
   height: 30px;
   font-size: 14px;
 }
+
+.click-note {
+  align-self: center;
+  padding: 0 8px;
+  color: var(--text-label);
+  font-size: 13px;
+}
