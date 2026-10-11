@@ -930,3 +930,106 @@
 .phone-app.with-tabs .phone-text:not(:focus-within) .phone-toolbar {
   display: none;
 }
+
+/* Sizes for a thumb and an arm's length, as phones' own apps use: text from 13 to 15 px and
+   anything tapped at least 40 to 48 px. `body` lets this win over every screen's own size. */
+@media (max-width: 600px) {
+  body .setting-hint,
+  body .choice-hint,
+  body .progress-label,
+  body .chapter-name,
+  body .contents-words,
+  body .contents-heading,
+  body .phone-today-facts,
+  body .phone-continue-where,
+  body .text-place,
+  body .read-link,
+  body .badge-name,
+  body .theme-card {
+    font-size: 14px;
+  }
+
+  body .field-label,
+  body .insight-title,
+  body .insight-muted,
+  body .progress-title,
+  body .studio-item-name {
+    font-size: 15px;
+  }
+
+  body .tree-meta,
+  body .phone-bar-sub,
+  body .contents-pov,
+  body .contents-when {
+    font-size: 13px;
+  }
+
+  body .sidebar-heading,
+  body .design-section,
+  body .contents-part-title,
+  body .badge-when,
+  body .publish-step-number {
+    font-size: 12px;
+  }
+
+  body .button,
+  body .chip,
+  body .dropdown,
+  body .settings-text,
+  body .settings-number {
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  body .button.small,
+  body .segmented button,
+  body .setting-value,
+  body .studio-item {
+    min-height: 40px;
+    font-size: 15px;
+  }
+
+  body .chip {
+    padding: 0 14px;
+  }
+
+  body .tree-add,
+  body .icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  body .toggle {
+    width: 48px;
+    height: 28px;
+    border-radius: 14px;
+  }
+
+  body .toggle span {
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+  }
+
+  /* Menus rise from the foot as a sheet, the screen dimmed behind it, as in phones' own apps. */
+  body .menu {
+    top: auto !important;
+    right: 8px !important;
+    bottom: calc(8px + var(--safe-bottom)) !important;
+    left: 8px !important;
+    min-width: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 6px;
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.28);
+    animation: rise var(--calm) var(--ease-out);
+  }
+
+  body .menu button {
+    height: 48px;
+    padding: 0 14px;
+    font-size: 16px;
+  }
+}

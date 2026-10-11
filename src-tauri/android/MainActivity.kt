@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.webkit.WebView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +26,7 @@ class MainActivity : TauriActivity() {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     followInsets()
+    followBack()
   }
 
   override fun onWebViewCreate(webView: WebView) {
@@ -60,11 +62,18 @@ class MainActivity : TauriActivity() {
     super.setContentView(SelectionMenuFrame(this).apply { addView(view) })
   }
 
-  // Tauri cannot recreate a destroyed activity in the same process (it hangs on the splash), so
-  // back on the shelf moves the app to the background instead of finishing it.
-  @Deprecated("Tauri's back handling calls this when the page has nowhere to go back to.")
-  override fun onBackPressed() {
-    moveTaskToBack(true)
+  // Back asks the page first: it closes a menu or dialog, or goes to the screen before. With
+  // nothing left, the app goes to the background; Tauri cannot recreate a destroyed activity in
+  // the same process (it hangs on the splash), so it is never finished.
+  private fun followBack() {
+    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+      override fun handleOnBackPressed() {
+        val view = webView ?: return run { moveTaskToBack(true) }
+        view.evaluateJavascript("window.pennaBack ? window.pennaBack() : false") { handled ->
+          if (handled != "true") moveTaskToBack(true)
+        }
+      }
+    })
   }
 }
 
