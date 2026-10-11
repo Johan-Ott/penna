@@ -363,7 +363,7 @@
 
 .text-eyebrow {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   color: var(--text-label);
@@ -383,7 +383,7 @@
 }
 
 .text-when input {
-  width: 9em;
+  width: 6.5em;
   padding: 0;
   border: 0;
   background: transparent;
@@ -1862,7 +1862,7 @@
 .text-place {
   display: flex;
   gap: 12px;
-  align-items: baseline;
+  align-items: center;
 }
 
 .read-link,
@@ -1880,6 +1880,24 @@
 .contents-read {
   display: block;
   margin-top: 8px;
+}
+
+/* Läs kapitlet, Versioner and När over the text: small buttons that look like buttons. */
+.text-eyebrow .read-link,
+.text-when {
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.text-eyebrow .read-link:hover,
+.text-when:hover,
+.text-when:focus-within {
+  border-color: var(--text-label);
+  color: var(--text);
 }
 
 .topbar-history {
