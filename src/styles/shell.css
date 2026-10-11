@@ -260,20 +260,28 @@
   background: transparent;
 }
 
-/* The book's title and the tree's tools stay put; the book scrolls under them. */
-.app > .sidebar .book-title-row,
-.app > .sidebar .tree-tools {
-  position: sticky;
-  z-index: 3;
-  background: var(--bg-subtle);
+/* The book's title and the tree's tools stay put; only the book under them scrolls. */
+.app > .sidebar {
+  overflow: hidden;
 }
 
-.app > .sidebar .book-title-row {
-  top: -6px;
+.app > .sidebar .tree {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.app > .sidebar .tree-tools {
-  top: 38px;
+.app > .sidebar .tree-scroll {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.app > .sidebar .tree-scroll > * {
+  flex-shrink: 0;
 }
 
 .profile-button {

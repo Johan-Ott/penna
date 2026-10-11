@@ -81,7 +81,7 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
 export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
   return (
     <header className="topbar" data-tauri-drag-region>
-      <div className="topbar-start">
+      <div className="topbar-start" data-tauri-drag-region>
         <IconButton label={t("Meny")} onClick={props.onMenu}>
           <MenuIcon />
         </IconButton>
@@ -114,7 +114,7 @@ const History = ({ navigation }: Pick<TopbarProps, "navigation">) => (
 function TopbarStart(props: TopbarProps) {
   const { navigation } = props;
   return (
-    <div className="topbar-start">
+    <div className="topbar-start" data-tauri-drag-region>
       <IconButton label={t("Meny")} onClick={props.onMenu}>
         <MenuIcon />
       </IconButton>
@@ -155,7 +155,7 @@ export function Topbar(props: TopbarProps) {
     <header className="topbar" data-tauri-drag-region>
       <TopbarStart {...props} />
       {props.title === null ? (
-        <span className="topbar-day">
+        <span className="topbar-day" data-tauri-drag-region>
           <DayProgress today={props.today} onProgress={props.onProgress} />
           <SprintButton />
         </span>

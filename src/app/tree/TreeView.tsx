@@ -148,9 +148,11 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       onContextMenu={(event) => tree.openMenu(event, [...addMenu(menuFor), ...foldMenu(view)])}
     >
       <BookHeading props={props} tree={tree} />
-      <Rows rows={sections.book} props={props} tree={tree} />
-      {props.hasAddButton && <AddButton props={props} tree={tree} />}
-      <NotesAndTrash props={props} tree={tree} />
+      <div className="tree-scroll">
+        <Rows rows={sections.book} props={props} tree={tree} />
+        {props.hasAddButton && <AddButton props={props} tree={tree} />}
+        <NotesAndTrash props={props} tree={tree} />
+      </div>
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
       <LabelsLayer props={props} view={view} />
     </div>
