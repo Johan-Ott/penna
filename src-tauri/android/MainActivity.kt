@@ -22,6 +22,10 @@ class MainActivity : TauriActivity() {
   private var webView: WebView? = null
   private var safeAreaScript: ScriptHandler? = null
 
+  // Tauri's own back only steps the WebView's history, past Studio and open panels; Penna's
+  // page decides instead.
+  override val handleBackNavigation = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
@@ -31,6 +35,7 @@ class MainActivity : TauriActivity() {
 
   override fun onWebViewCreate(webView: WebView) {
     this.webView = webView
+    followBack()
     ViewCompat.requestApplyInsets(findViewById(android.R.id.content))
   }
 
@@ -65,15 +70,25 @@ class MainActivity : TauriActivity() {
   // Back asks the page first: it closes a menu or dialog, or goes to the screen before. With
   // nothing left, the app goes to the background; Tauri cannot recreate a destroyed activity in
   // the same process (it hangs on the splash), so it is never finished.
-  private fun followBack() {
-    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-      override fun handleOnBackPressed() {
-        val view = webView ?: return run { moveTaskToBack(true) }
-        view.evaluateJavascript("window.pennaBack ? window.pennaBack() : false") { handled ->
-          if (handled != "true") moveTaskToBack(true)
-        }
+  private val back = object : OnBackPressedCallback(true) {
+    override fun handleOnBackPressed() {
+      val view = webView ?: return run { moveTaskToBack(true) }
+      view.evaluateJavascript("window.pennaBack ? window.pennaBack() : false") { handled ->
+        if (handled != "true") moveTaskToBack(true)
       }
-    })
+    }
+  }
+
+  // The newest callback answers first, and Tauri's app plugin adds one that only steps the
+  // history once the page has loaded; Penna's is put back on top after it.
+  private fun followBack() {
+    back.remove()
+    onBackPressedDispatcher.addCallback(this, back)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    followBack()
   }
 }
 
