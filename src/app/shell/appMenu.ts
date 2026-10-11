@@ -30,27 +30,57 @@ const BOOK_ITEMS: [BookAction, string][] = [
   ["showBackups", t("Säkerhetskopior…")],
 ];
 
+/** A row that opens its items beside it; none when it has nothing to hold. */
+export const group = (label: string, items: MenuItem[], separatorBefore = false): MenuItem[] =>
+  items.length > 0 ? [{ label, submenu: items, separatorBefore }] : [];
+
+/** Hjälp, feedback and updates: the same under Hjälp on the computer and the phone. */
+export const helpItems = (help: MenuItem, sendFeedback: () => void): MenuItem[] => [
+  help,
+  { label: t("Skicka feedback…"), onSelect: sendFeedback },
+  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
+];
+
+const bookItem = (actions: AppMenuActions, key: BookAction): MenuItem[] => {
+  const onSelect = actions[key];
+  const label = BOOK_ITEMS.find(([item]) => item === key)?.[1] ?? "";
+  return onSelect ? [{ label, onSelect }] : [];
+};
+
+// Sharing and copies, which only a book has.
+const bookGroups = (actions: AppMenuActions): MenuItem[] => [
+  ...group(
+    t("Dela och samarbeta"),
+    [...actions.sharing, ...bookItem(actions, "importRevision")],
+    true,
+  ),
+  ...group(t("Kopior och export"), [
+    ...bookItem(actions, "showVersions"),
+    ...bookItem(actions, "exportZip"),
+    ...bookItem(actions, "showBackups"),
+  ]),
+];
+
 export function appMenu(actions: AppMenuActions): MenuItem[] {
-  const bookItems: MenuItem[] = BOOK_ITEMS.flatMap(([key, label]) => {
-    const onSelect = actions[key];
-    return onSelect ? [{ label, onSelect }] : [];
-  });
-  const [firstBookItem, ...restBookItems] = bookItems;
+  const help = {
+    label: t("Hjälp och kortkommandon"),
+    shortcut: "?",
+    onSelect: actions.openShortcuts,
+  };
   return [
     { label: t("Bokhylla"), shortcut: "Ctrl+Shift+O", onSelect: actions.showShelf },
     { label: t("Nytt projekt"), shortcut: "Ctrl+N", onSelect: actions.newProject },
-    { label: t("Öppna mapp…"), onSelect: actions.openFolder },
-    { label: t("Importera manus…"), onSelect: actions.newProject },
-    ...(firstBookItem ? [{ ...firstBookItem, separatorBefore: true }, ...restBookItems] : []),
-    ...actions.sharing,
+    ...group(t("Öppna och importera"), [
+      { label: t("Öppna mapp…"), onSelect: actions.openFolder },
+      { label: t("Importera manus…"), onSelect: actions.newProject },
+    ]),
+    ...bookGroups(actions),
     {
       label: t("Inställningar"),
       shortcut: "Ctrl+,",
       separatorBefore: true,
       onSelect: actions.openSettings,
     },
-    { label: t("Hjälp och kortkommandon"), shortcut: "?", onSelect: actions.openShortcuts },
-    { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
-    { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
+    ...group(t("Hjälp"), helpItems(help, actions.sendFeedback)),
   ];
 }

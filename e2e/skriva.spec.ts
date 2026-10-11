@@ -206,6 +206,7 @@ test("Skicka till redaktör in the menu makes the Word manuscript at once", asyn
   await page.getByRole("button", { name: "Meny" }).first().click();
 
   const download = page.waitForEvent("download");
+  await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
   await page.getByRole("menuitem", { name: "Skicka till redaktör…" }).click();
 
   expect((await download).suggestedFilename()).toMatch(/\.docx$/);

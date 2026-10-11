@@ -8,6 +8,7 @@ async function openFeedback(page: Page, status: number) {
   );
   await openExample(page);
   await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Hjälp" }).click();
   await page.getByRole("menuitem", { name: "Skicka feedback…" }).click();
   return page.getByRole("dialog", { name: "Skicka feedback" });
 }

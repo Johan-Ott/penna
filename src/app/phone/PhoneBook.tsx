@@ -10,17 +10,15 @@ import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import { chapterOf, manuscriptWords, nodeLabel } from "../../project/treeLabels.js";
 import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
-import { useMenuButton, type MenuItem } from "../Menu.js";
+import { useMenuButton } from "../Menu.js";
+import { phoneMenu } from "./phoneMenu.js";
 import { sidebarProps } from "../paneProps.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
-import { HELP_TAB } from "../settings/SettingsDialog.js";
 import { SyncNotices } from "../SyncLayer.js";
-import { collaborationItems } from "../exporting/collaboration.js";
 import { TreeView } from "../tree/TreeView.js";
 import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import type { Project } from "../useProject.js";
-import { checkForUpdates } from "../updates.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 interface PhoneBookProps {
@@ -120,46 +118,6 @@ function NoteTiles({ app, onSort }: Pick<PhoneBookProps, "app" | "onSort">) {
       ))}
     </div>
   );
-}
-
-// A phone has no keyboard shortcuts or folders to pick, so the menu is short.
-const versionsItem = (app: AppState): MenuItem[] => {
-  const sceneId = app.scene?.id;
-  return sceneId
-    ? [{ label: t("Versioner av den här texten"), onSelect: () => app.snapshots.show(sceneId) }]
-    : [];
-};
-
-type BookDialogs = Record<"theme" | "templates", { open: () => void }>;
-
-function phoneMenu(
-  app: AppState,
-  dialogs: ReturnType<typeof useMenuDialogs>,
-  book: BookDialogs,
-): MenuItem[] {
-  return [
-    { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
-    { label: t("Profil"), onSelect: app.profile.open },
-    { label: t("Insikter"), onSelect: () => app.writingMode.setProgressOpen(true) },
-    { label: t("Tema…"), onSelect: book.theme.open },
-    { label: t("Mallar och bitar…"), onSelect: book.templates.open },
-    ...versionsItem(app),
-    ...(app.project ? collaborationItems(app.project, app.zip.run) : []),
-    { label: t("Läs in redaktörens Word-fil…"), onSelect: dialogs.revision.open },
-    { label: t("Serie…"), onSelect: dialogs.series.open },
-    { label: t("Exportera allt som zip"), separatorBefore: true, onSelect: app.zip.backup },
-    ...(dialogs.backups.open
-      ? [{ label: t("Säkerhetskopior…"), onSelect: dialogs.backups.open }]
-      : []),
-    {
-      label: t("Inställningar"),
-      separatorBefore: true,
-      onSelect: () => app.writingMode.settingsDialog.open(),
-    },
-    { label: t("Hjälp"), onSelect: () => app.writingMode.settingsDialog.open(HELP_TAB) },
-    { label: t("Skicka feedback…"), onSelect: dialogs.feedback.open },
-    { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
-  ];
 }
 
 function PhoneBookHeader({ app, project }: Pick<PhoneBookProps, "app" | "project">) {

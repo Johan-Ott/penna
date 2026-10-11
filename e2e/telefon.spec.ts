@@ -179,10 +179,14 @@ test("Boken adds with a button, moves a scene down, and keeps the trash in reach
   await expect(page.locator(".tree")).toContainText("Papperskorg");
 });
 
-test("the phone's menu has Serie… and the editor's Word file", async ({ page }) => {
-  await page.getByRole("button", { name: "Meny" }).first().click();
-
+test("the phone's menu has Serie… under Boken, and the editor's Word file", async ({ page }) => {
+  const menu = () => page.getByRole("button", { name: "Meny" }).first().click();
+  await menu();
+  await page.getByRole("menuitem", { name: "Boken" }).click();
   await expect(page.getByRole("menuitem", { name: "Serie…" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await menu();
+  await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
   await expect(page.getByRole("menuitem", { name: /redaktörens Word-fil/ })).toBeVisible();
 });
 

@@ -44,6 +44,7 @@ test("an editor's Word file is read back, and their changes are accepted or reje
 
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
   await page.getByRole("menuitem", { name: "Läs in redaktörens Word-fil…" }).click();
   await (await chooser).setFiles(file);
   await expect(page.getByText("Redaktören har ändrat i 1 scener")).toBeVisible();
