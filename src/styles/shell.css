@@ -121,6 +121,37 @@
   justify-content: flex-end;
 }
 
+/* The window has no frame: its own buttons end the top bar, flush with the window's edge. */
+.window-controls {
+  display: flex;
+  align-self: stretch;
+  margin: 0 -12px 0 8px;
+}
+
+.window-control {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+}
+
+.window-control:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.window-control.close:hover {
+  background: #c42b1c;
+  color: #ffffff;
+}
+
+.focus-header .window-controls {
+  height: 48px;
+  margin-right: -24px;
+}
+
 .topbar-button {
   display: flex;
   align-items: center;

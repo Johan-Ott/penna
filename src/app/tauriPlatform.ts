@@ -160,6 +160,12 @@ const spelling: Spelling = {
   suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
 };
 
+const windowControls = {
+  minimize: () => void getCurrentWindow().minimize(),
+  toggleMaximize: () => void getCurrentWindow().toggleMaximize(),
+  close: () => void getCurrentWindow().close(),
+};
+
 export const tauriPlatform: Platform = {
   isPhone,
   webFetch: appFetch as typeof fetch,
@@ -170,7 +176,7 @@ export const tauriPlatform: Platform = {
   pickFile,
   fileSystem: tauriFileSystem,
   spelling,
-  ...(isPhone ? {} : { readClipboard: readText }),
+  ...(isPhone ? {} : { readClipboard: readText, windowControls }),
   checkForUpdate: updateCheck(),
   notify,
   ...(isPhone ? { scheduleReminder } : {}),

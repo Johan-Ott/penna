@@ -1,3 +1,4 @@
+import { WindowControls } from "./shell/WindowControls.js";
 import type { Today } from "./useWritingStats.js";
 import { t, numberLocale } from "../i18n/i18n.js";
 
@@ -31,7 +32,7 @@ function SettingsButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () =>
 
 export function FocusHeader(props: FocusHeaderProps) {
   return (
-    <header className="focus-header">
+    <header className="focus-header" data-tauri-drag-region>
       <button className="link-button quiet" onClick={props.onLeave}>
         {t("Esc · lämna fokus")}
       </button>
@@ -39,6 +40,7 @@ export function FocusHeader(props: FocusHeaderProps) {
       <span className="focus-header-end">
         <span>{focusCount(props)}</span>
         <SettingsButton isOpen={props.isSettingsOpen} onToggle={props.onToggleSettings} />
+        <WindowControls />
       </span>
     </header>
   );

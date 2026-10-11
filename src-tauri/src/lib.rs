@@ -11,12 +11,12 @@ use tauri::WebviewWindowBuilder;
 const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection";
 
 // The window is made here rather than from tauri.conf.json, so a computer's WebView2 starts
-// without Edge's own popups.
+// without Edge's own popups. It has no frame of its own: Penna's top bar is the title bar.
 fn open_window(app: &tauri::App) -> tauri::Result<()> {
     let config = app.config().app.windows[0].clone();
     let builder = WebviewWindowBuilder::from_config(app.handle(), &config)?;
     #[cfg(desktop)]
-    let builder = builder.additional_browser_args(BROWSER_ARGS);
+    let builder = builder.additional_browser_args(BROWSER_ARGS).decorations(false);
     builder.build()?;
     Ok(())
 }

@@ -1,9 +1,11 @@
 import { SprintButton } from "../sprint/SprintBar.js";
 import { LookButton } from "../settingsPanel.js";
+import { WindowControls } from "./WindowControls.js";
+import { DayProgress } from "./DayProgress.js";
 import type { MouseEvent, ReactNode } from "react";
 import type { Today } from "../useWritingStats.js";
 import type { View } from "../useWritingMode.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t } from "../../i18n/i18n.js";
 import {
   BackIcon,
   BookIcon,
@@ -74,42 +76,20 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   );
 }
 
-function dayText({ words, goal }: Today) {
-  const format = (count: number) => count.toLocaleString(numberLocale());
-  if (!goal) return t("{count} ord idag", { count: format(words) });
-  if (words >= goal) return t("Dagens mål nått · {count} ord", { count: format(words) });
-  return t("{words} / {goal} ord", { words: format(words), goal: format(goal) });
-}
-
-// The day's words; a click opens Insikter, with the goals, the week and the writing journey.
-function DayProgress({ today, onProgress }: { today: Today; onProgress: () => void }) {
-  const share = today.goal ? Math.min(100, (100 * today.words) / today.goal) : null;
-  return (
-    <button
-      className="day-progress"
-      aria-label={t("Insikter och mål")}
-      title={t("Insikter och mål")}
-      onClick={onProgress}
-    >
-      <span>{dayText(today)}</span>
-      {share !== null && (
-        <span className="day-progress-bar">
-          <span style={{ width: `${share}%` }} />
-        </span>
-      )}
-    </button>
-  );
-}
-
 export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
   return (
-    <header className="topbar">
+    <header className="topbar" data-tauri-drag-region>
       <div className="topbar-start">
         <IconButton label={t("Meny")} onClick={props.onMenu}>
           <MenuIcon />
         </IconButton>
       </div>
-      <span className="topbar-title">{props.title}</span>
+      <span className="topbar-title" data-tauri-drag-region>
+        {props.title}
+      </span>
+      <div className="topbar-end" data-tauri-drag-region>
+        <WindowControls />
+      </div>
     </header>
   );
 }
@@ -165,7 +145,7 @@ export function ReviewButton({ review, onReview }: ReviewProps) {
 
 export function Topbar(props: TopbarProps) {
   return (
-    <header className="topbar">
+    <header className="topbar" data-tauri-drag-region>
       <TopbarStart {...props} />
       {props.title === null ? (
         <span className="topbar-day">
@@ -173,9 +153,11 @@ export function Topbar(props: TopbarProps) {
           <SprintButton />
         </span>
       ) : (
-        <span className="topbar-title">{props.title}</span>
+        <span className="topbar-title" data-tauri-drag-region>
+          {props.title}
+        </span>
       )}
-      <div className="topbar-end">
+      <div className="topbar-end" data-tauri-drag-region>
         {props.view === "skriv" && <LookButton />}
         <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
           <ReadIcon />
@@ -186,6 +168,7 @@ export function Topbar(props: TopbarProps) {
         <IconButton label={t("Fokusläge · Ctrl+Shift+F")} onClick={props.onFocus}>
           <FocusIcon />
         </IconButton>
+        <WindowControls />
       </div>
     </header>
   );

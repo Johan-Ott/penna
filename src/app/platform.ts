@@ -3,9 +3,18 @@ import type { FileSystem } from "../storage/fileSystem.js";
 import { browserPlatform } from "./browserPlatform.js";
 import { tauriPlatform } from "./tauriPlatform.js";
 
+/** A frameless window's own buttons, in Penna's top bar. */
+export interface WindowControls {
+  minimize: () => void;
+  toggleMaximize: () => void;
+  close: () => void;
+}
+
 export interface Platform {
   /** A phone: books in the app's own folder, no keyboard shortcuts, no folder to pick. */
   isPhone: boolean;
+  /** On a computer, where Penna's window has no frame of its own. */
+  windowControls?: WindowControls;
   fileSystem: FileSystem;
   pickFolder(): Promise<string | null>;
   /** With forward slashes. */
