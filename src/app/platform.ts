@@ -13,6 +13,8 @@ export interface WindowControls {
 export interface Platform {
   /** A phone: books in the app's own folder, no keyboard shortcuts, no folder to pick. */
   isPhone: boolean;
+  /** Whether tools on this computer may drive Penna from the next start; on sets it. Computer only. */
+  remoteControl?: (turnOn?: boolean) => Promise<boolean>;
   /** On a computer, where Penna's window has no frame of its own. */
   windowControls?: WindowControls;
   fileSystem: FileSystem;

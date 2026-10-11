@@ -160,6 +160,8 @@ const spelling: Spelling = {
   suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
 };
 
+const remoteControl = (turnOn?: boolean) => invoke<boolean>("remote_control", { turnOn });
+
 const windowControls = {
   minimize: () => void getCurrentWindow().minimize(),
   toggleMaximize: () => void getCurrentWindow().toggleMaximize(),
@@ -176,7 +178,7 @@ export const tauriPlatform: Platform = {
   pickFile,
   fileSystem: tauriFileSystem,
   spelling,
-  ...(isPhone ? {} : { readClipboard: readText, windowControls }),
+  ...(isPhone ? {} : { readClipboard: readText, windowControls, remoteControl }),
   checkForUpdate: updateCheck(),
   notify,
   ...(isPhone ? { scheduleReminder } : {}),

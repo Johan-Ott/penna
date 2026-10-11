@@ -1285,5 +1285,7 @@
   "Letar i din Drive…": "Looking in your Drive…",
   "Alla böcker i Penna-mappen i din Drive finns redan här.": "Every book in the Penna folder in your Drive is already here.",
   "Hämtar…": "Getting…",
-  "Hämta och öppna": "Get and open"
+  "Hämta och öppna": "Get and open",
+  "Styr Penna från den här datorn": "Let tools on this computer drive Penna",
+  "Skript och verktyg som Claude Code på den här datorn kan läsa och ändra böckerna medan Penna är igång. Gäller från nästa start.": "Scripts and tools such as Claude Code on this computer can read and change the books while Penna runs. Takes effect at the next start."
 }

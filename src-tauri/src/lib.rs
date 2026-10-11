@@ -1,6 +1,8 @@
 mod backups;
 mod books;
 mod google;
+#[cfg(desktop)]
+mod remote;
 #[cfg(mobile)]
 mod share;
 mod spelling;
@@ -16,7 +18,14 @@ fn open_window(app: &tauri::App) -> tauri::Result<()> {
     let config = app.config().app.windows[0].clone();
     let builder = WebviewWindowBuilder::from_config(app.handle(), &config)?;
     #[cfg(desktop)]
-    let builder = builder.additional_browser_args(BROWSER_ARGS).decorations(false);
+    let builder = {
+        let args = if remote::is_on(app.handle()) {
+            format!("{BROWSER_ARGS} {}", remote::PORT_ARG)
+        } else {
+            BROWSER_ARGS.to_string()
+        };
+        builder.additional_browser_args(&args).decorations(false)
+    };
     builder.build()?;
     Ok(())
 }
@@ -44,7 +53,8 @@ pub fn run() {
             backups::remove_backup,
             google::sign_in_in_browser,
             google::saved_google_key,
-            google::save_google_key
+            google::save_google_key,
+            remote::remote_control
         ]);
     #[cfg(mobile)]
     let builder = builder

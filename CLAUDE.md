@@ -195,8 +195,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   own, under `%APPDATA%\se.penna.test`. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
   answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
-- `node scripts/penna.mjs <call> [args]` makes one call to `window.penna` (`app/remote.ts`) in
-  Penna Test: `state`, `tree`, `commands`, `run <command>`, `open <id>`, `text`, `type <text>`,
+- `node scripts/penna.mjs [--app] <call> [args]` makes one call to `window.penna` (`app/remote.ts`)
+  in Penna Test, or with `--app` in the real Penna once Inställningar, "Styr Penna från den här
+  datorn" is on (port 9334, `src-tauri/src/remote.rs`; see docs/styrning.md): `state`, `tree`, `commands`, `run <command>`, `open <id>`, `text`, `type <text>`,
   `add <kind> [title] [afterId]`, `note <sort> <name>`, `rename <id> <title>`,
   `set <id> vad|när|pov <text>`, `status <id> <status>`, `move <id> <afterId>`, `trash <id>`,
   `read <id>` (`app/remoteBook.ts`).
