@@ -1845,8 +1845,8 @@
   .settings-tabs {
     flex-direction: row;
     width: auto;
+    flex-wrap: wrap;
     padding: 4px 16px 10px;
-    overflow-x: auto;
     border-right: 0;
     border-bottom: 1px solid var(--border);
     background: var(--bg);
@@ -2224,7 +2224,7 @@
 
 .badge-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
   gap: 14px 10px;
   margin: 0;
   padding: 0;

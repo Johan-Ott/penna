@@ -422,7 +422,7 @@
   background: transparent;
   color: var(--text-label);
   font: inherit;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .phone-tab.chosen {
@@ -496,8 +496,10 @@
   display: none;
 }
 
-/* The preview only with Design, so the tiles and the other parts need no scrolling. */
+/* The preview only with Design, and Exportera's button only where exporting is chosen. */
 .phone-view .publish:not(.step-design) .publish-preview,
+.phone-view .publish.step-design .publish-button,
+.phone-view .publish.step-details .publish-button,
 .phone-view .publish-step-head .link-button {
   display: none;
 }

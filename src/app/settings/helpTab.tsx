@@ -24,10 +24,10 @@ const SECTIONS: [string, string[]][] = [
     [
       t("Allt sparas inom en sekund medan du skriver."),
       t(
-        "Versioner: varje text sparas som en ny version vid större ändringar. Meny, Versioner av den här texten.",
+        "Versioner: varje text sparas som en ny version vid större ändringar. Meny, Kopior och export, Versioner av den här texten.",
       ),
       t(
-        "Säkerhetskopior: hela boken kopieras när den öppnas och var halvtimme. Meny, Säkerhetskopior.",
+        "Säkerhetskopior: hela boken kopieras när den öppnas och var halvtimme. Meny, Kopior och export, Säkerhetskopior.",
       ),
       t("Synk: koppla din Google Drive under Synk så finns boken på alla dina enheter."),
     ],
@@ -42,7 +42,7 @@ const SECTIONS: [string, string[]][] = [
         "Exportera som PDF för tryck, som e-bok (EPUB), som manus i Word, eller tryckomslaget med rygg.",
       ),
       t(
-        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
+        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Dela och samarbeta, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
       ),
     ],
   ],
@@ -59,7 +59,7 @@ const SECTIONS: [string, string[]][] = [
   ],
   [
     t("Hittar du något fel?"),
-    [t("Meny, Skicka feedback. Allt läses, och små saker är lika välkomna som stora.")],
+    [t("Meny, Hjälp, Skicka feedback. Allt läses, och små saker är lika välkomna som stora.")],
   ],
 ];
 
