@@ -95,6 +95,7 @@ function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, is
     importRevision: null,
     sharing: [],
     showBackups: backups.open,
+    openTheme: null,
     sendFeedback: feedback.open,
     openSettings: () => settings.open(),
     openShortcuts: () => settings.open(HELP_TAB),

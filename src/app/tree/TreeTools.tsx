@@ -1,23 +1,16 @@
 import type { DragEvent, ReactNode } from "react";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { FilterButton } from "../labels/LabelsInTree.js";
-import { FoldIcon, FollowIcon, LocateIcon, UnfoldIcon } from "../shell/icons.js";
-import { showInTree } from "./treeEffects.js";
+import { FoldIcon, UnfoldIcon } from "../shell/icons.js";
 import type { Tree, TreeViewProps } from "./useTreeView.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
-function Tool(props: {
-  label: string;
-  isPressed?: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) {
+function Tool(props: { label: string; onClick: () => void; children: ReactNode }) {
   return (
     <button
       className="tree-tool"
       aria-label={props.label}
       title={props.label}
-      aria-pressed={props.isPressed}
       onClick={props.onClick}
     >
       {props.children}
@@ -42,10 +35,10 @@ const BookWords = ({ project }: Pick<TreeViewProps, "project">) => (
   </span>
 );
 
-/** Above the book: filter, find the open text, follow it, fold all, unfold all, and the words. */
+/** Above the book: filter, unfold all, fold all, and the book's words. */
 export function TreeTools({ props, tree }: { props: TreeViewProps; tree: Tree }) {
-  const { view, follow } = tree;
-  const { project, openSceneId } = props;
+  const { view } = tree;
+  const { project } = props;
   return (
     <div
       className="tree-tools"
@@ -53,21 +46,6 @@ export function TreeTools({ props, tree }: { props: TreeViewProps; tree: Tree })
       onDrop={(event: DragEvent) => (event.preventDefault(), tree.dropAtBookEnd())}
     >
       <FilterButton props={props} view={view} />
-      {openSceneId && (
-        <Tool
-          label={t("Visa den öppna texten")}
-          onClick={() => showInTree(project.tree, openSceneId, view.expand)}
-        >
-          <LocateIcon />
-        </Tool>
-      )}
-      <Tool
-        label={t("Följ den öppna texten")}
-        isPressed={follow.isFollowing}
-        onClick={follow.toggle}
-      >
-        <FollowIcon />
-      </Tool>
       <FoldTools view={view} />
       <BookWords project={project} />
     </div>

@@ -1,3 +1,4 @@
+import { useThemeDialog } from "../Sidebar.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { useState } from "react";
 import type { AppState } from "../App.js";
@@ -36,20 +37,27 @@ export function useMenuDialogs({ app, project }: { app: AppState; project: Proje
     openIfOnDisk(app.session, project, id),
   );
   const series = useSeriesChoice(app, project);
+  const { libraryDir } = app.startup.preferences;
+  const theme = useThemeDialog({
+    project,
+    libraryDir,
+    onUpdateProject: (change) => void app.updateProject(change),
+  });
   const layers = (
     <>
+      {theme.dialog}
       {backups.layer}
       {feedback.layer}
       {revision.layer}
       {series.layer}
     </>
   );
-  return { backups, feedback, revision, series, layers };
+  return { backups, feedback, revision, series, theme, layers };
 }
 
 /** The open book's menu, with the dialogs it opens. */
 export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
-  const { backups, feedback, revision, layers: dialogs } = useMenuDialogs({ app, project });
+  const { backups, feedback, revision, theme, layers: dialogs } = useMenuDialogs({ app, project });
   const showShelf = () => void app.showShelf();
   useShortcut("o", showShelf, { shift: true });
   const items = appMenu({
@@ -65,6 +73,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     sharing: collaborationItems(project, app.zip.run),
     showBackups: backups.open,
     sendFeedback: feedback.open,
+    openTheme: theme.open,
     openSettings: () => app.writingMode.settingsDialog.open(),
     openShortcuts: () => app.writingMode.settingsDialog.open(HELP_TAB),
   });

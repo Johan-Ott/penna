@@ -4,7 +4,6 @@ import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
-import { openExcerpt, useShownExcerpt } from "./share/shareExcerpt.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
 import { numberLocale, t } from "../i18n/i18n.js";
@@ -44,10 +43,8 @@ function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   );
 }
 
-// Focus moving in or out of the text makes no transaction, so it is followed here. The picture's
-// dialog leaves the text focused, so the bar steps aside for it.
+// Focus moving in or out of the text makes no transaction, so it is followed here.
 function useIsBarWanted(editor: Editor) {
-  const isSharing = useShownExcerpt() !== null;
   const [hasFocus, setFocus] = useState(false);
   const element = editor.viewRef.current?.dom;
   useEffect(() => {
@@ -63,7 +60,7 @@ function useIsBarWanted(editor: Editor) {
       element.removeEventListener("blur", onBlur);
     };
   }, [element]);
-  return hasFocus && !isSharing;
+  return hasFocus;
 }
 
 // On a phone the bar goes below the selection: Android's own menu takes the place above.
@@ -76,11 +73,6 @@ function barPosition(editor: Editor, isPhone: boolean) {
   if (start.top > BAR_HEIGHT * 2) return { left: start.left, top: start.top - BAR_HEIGHT - 6 };
   return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };
 }
-
-const selectedText = (editor: Editor) => {
-  const state = editor.editorState;
-  return state ? state.doc.textBetween(state.selection.from, state.selection.to, "\n") : "";
-};
 
 interface BarProps {
   editor: Editor;
@@ -119,11 +111,6 @@ function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { is
       {onReadAloud && (
         <button className="icon-button" onClick={onReadAloud}>
           {t("Läs upp")}
-        </button>
-      )}
-      {!isPhone && (
-        <button className="icon-button" onClick={() => openExcerpt(selectedText(editor))}>
-          {t("Dela som bild")}
         </button>
       )}
     </>

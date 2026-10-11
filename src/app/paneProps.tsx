@@ -84,7 +84,7 @@ export function sidebarProps(app: AppState, project: Project) {
   return {
     ...{ project, libraryDir: app.startup.preferences.libraryDir },
     openSceneId: writingMode.view === "skriv" ? (app.scene?.id ?? null) : null,
-    onOpenScene: openText(app),
+    ...{ isFollowingOpenScene: writingMode.settings.followOpenText, onOpenScene: openText(app) },
     isContentsShown: writingMode.view === "innehall",
     onShowContents: () => writingMode.setView("innehall"),
     syncReviewCount: app.syncReview.items.length,

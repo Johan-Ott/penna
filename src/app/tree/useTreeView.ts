@@ -7,13 +7,8 @@ import {
   type NodeKind,
   type TreeNode,
 } from "../../project/tree.js";
-import {
-  chapterIds,
-  foldableIds,
-  sidebarSections,
-  visibleRows,
-  type TreeRow as Row,
-} from "../../project/treeRows.js";
+import { chapterIds, foldableIds, sidebarSections, visibleRows } from "../../project/treeRows.js";
+import type { TreeRow as Row } from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta } from "../../project/treeLabels.js";
 import { isLinkedByDefault } from "../../project/cards.js";
@@ -32,6 +27,8 @@ import { t } from "../../i18n/i18n.js";
 export interface TreeViewProps {
   project: Project;
   openSceneId: string | null;
+  /** The tree unfolds to the open scene; true when left out. */
+  isFollowingOpenScene?: boolean;
   /** Set when the sidebar is a table of contents: where each node starts in the printed book. */
   pageOf?: ((id: string) => number | null) | undefined;
   /** A node just created; the tree shows it and starts renaming it. */
@@ -142,7 +139,7 @@ export function useTreeView(props: TreeViewProps) {
   const { project } = props;
   const view = useTreeViewState(project.tree);
   useRenameRequest(props, view);
-  const follow = useFollowOpenScene(props, view);
+  useFollowOpenScene(props, view);
   const actions = useTreeActions({
     ...props,
     tree: project.tree,
@@ -161,7 +158,7 @@ export function useTreeView(props: TreeViewProps) {
   };
   const isFiltered = view.filter.length > 0;
   const { sections, focused } = sectionsOf(project.tree, view);
-  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered, focused, follow };
+  return { view, actions, drag, sections, dropAtBookEnd, openMenu, isFiltered, focused };
 }
 
 export type Tree = ReturnType<typeof useTreeView>;

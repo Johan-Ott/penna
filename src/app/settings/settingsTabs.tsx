@@ -52,6 +52,7 @@ type EditorSwitch =
   | "paper"
   | "bookType"
   | "tableOfContents"
+  | "followOpenText"
   | "commentsInMargin"
   | "typewriter"
   | "spellcheck"
@@ -71,6 +72,7 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     t("Sidomenyn som innehållsförteckning"),
     t("Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok."),
   ],
+  ["followOpenText", t("Sidomenyn följer texten"), t("Den fälls ut till texten du öppnar.")],
   [
     "commentsInMargin",
     t("Kommentarer i marginalen"),

@@ -1,4 +1,18 @@
-import { wrapLines } from "../share/excerptImage.js";
+/** The text broken into lines that fit `width` in the canvas's current font. */
+function wrapLines(context: CanvasRenderingContext2D, text: string, width: number) {
+  return text.split("\n").flatMap((paragraph) => {
+    const lines: string[] = [];
+    let line = "";
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+      const next = line ? `${line} ${word}` : word;
+      if (context.measureText(next).width > width && line) {
+        lines.push(line);
+        line = word;
+      } else line = next;
+    }
+    return [...lines, line];
+  });
+}
 
 export type Look = "papper" | "ljus" | "mork";
 export type CardFormat = "kvadrat" | "story" | "liggande";

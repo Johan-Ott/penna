@@ -78,21 +78,18 @@ const ContentsButton = ({ onShow }: { onShow: () => void }) => (
   </button>
 );
 
-type Opens = Record<"series" | "theme" | "templates", { open: () => void }>;
+type Opens = Record<"series" | "templates", { open: () => void }>;
 
 const bookMenu = (props: SidebarProps, dialogs: Opens) => [
   ...addMenu({ add: props.onAdd }),
   { label: t("Serie…"), separatorBefore: true, onSelect: dialogs.series.open },
-  { label: t("Tema…"), onSelect: dialogs.theme.open },
   { label: t("Mallar och bitar…"), onSelect: dialogs.templates.open },
-  { label: t("Bokhylla"), onSelect: props.onShowShelf },
 ];
 
 function BookTitle(props: SidebarProps) {
   const series = useSeriesDialog(props);
-  const theme = useThemeDialog(props);
   const templates = useTemplatesDialog(props);
-  const menu = useMenuButton(t("Lägg till"), bookMenu(props, { series, theme, templates }));
+  const menu = useMenuButton(t("Lägg till"), bookMenu(props, { series, templates }));
   return (
     <div className={props.isContentsShown ? "book-title-row chosen" : "book-title-row"}>
       <button className="book-title-button" onClick={props.onShowContents}>
@@ -109,7 +106,6 @@ function BookTitle(props: SidebarProps) {
       </button>
       {menu.menu}
       {series.dialog}
-      {theme.dialog}
       {templates.dialog}
     </div>
   );

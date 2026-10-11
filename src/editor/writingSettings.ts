@@ -35,6 +35,8 @@ export interface WritingSettings {
   tableOfContents: boolean;
   /** Comments beside the text, as pencilled notes in the margin. */
   commentsInMargin: boolean;
+  /** The sidebar unfolds to the open text and shows it. */
+  followOpenText: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -57,6 +59,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   bookType: false,
   tableOfContents: false,
   commentsInMargin: false,
+  followOpenText: true,
 };
 
 const STORAGE_KEY = "penna.writing";
@@ -104,6 +107,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     bookType: pick("bookType", isBoolean),
     tableOfContents: pick("tableOfContents", isBoolean),
     commentsInMargin: pick("commentsInMargin", isBoolean),
+    followOpenText: pick("followOpenText", isBoolean),
   };
 }
 

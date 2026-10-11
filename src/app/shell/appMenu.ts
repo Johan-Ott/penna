@@ -16,6 +16,8 @@ export interface AppMenuActions {
   sharing: MenuItem[];
   /** Null where Penna keeps no copies, as in the browser. */
   showBackups: (() => void) | null;
+  /** The book's look while writing; null on the bookshelf. */
+  openTheme: (() => void) | null;
   openSettings: () => void;
   openShortcuts: () => void;
   sendFeedback: () => void;
@@ -81,6 +83,7 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
       separatorBefore: true,
       onSelect: actions.openSettings,
     },
+    ...(actions.openTheme ? [{ label: t("Tema…"), onSelect: actions.openTheme }] : []),
     ...group(t("Hjälp"), helpItems(help, actions.sendFeedback)),
   ];
 }

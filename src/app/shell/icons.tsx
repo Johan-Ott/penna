@@ -124,21 +124,6 @@ export const TimerIcon = () => (
   </Icon>
 );
 
-export const LocateIcon = () => (
-  <Icon size={15}>
-    <circle cx="12" cy="12" r="7" />
-    <circle cx="12" cy="12" r="2" />
-    <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-  </Icon>
-);
-
-export const FollowIcon = () => (
-  <Icon size={15}>
-    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
-    <circle cx="12" cy="12" r="3" />
-  </Icon>
-);
-
 export const UnfoldIcon = () => (
   <Icon size={15}>
     <path d="m7 9 5-5 5 5M7 15l5 5 5-5" />

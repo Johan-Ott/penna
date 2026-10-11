@@ -474,8 +474,6 @@
   "Hemlighet": "Secret",
   "Öppna uppgifter i boken": "Open tasks in the book",
   "Med anteckningar": "With notes",
-  "Dela som bild": "Share as picture",
-  "Stående": "Portrait",
   "Kvadrat": "Square",
   "Bilden": "The picture",
   "Spara bild": "Save picture",
@@ -987,9 +985,6 @@
   "Scener i {chapter}": "Scenes in {chapter}",
   "klart runt {day} i din takt": "done around {day} at your pace",
   "Bokens rytm: {chapters} kapitel, {count} ord kvar": "The book's rhythm: {chapters} chapters, {count} words left",
-  "Minimal": "Minimal",
-  "Högst {count} tecken. Resten av manuset stannar hos dig.": "At most {count} characters. The rest of the manuscript stays with you.",
-  "Dela utdrag": "Share excerpt",
   "Innehåll · G I": "Contents · G I",
   "Skriv på ett ark": "Write on a sheet",
   "Texten på ett pappersark, med bokens sidor nederst.": "The text on a sheet of paper, with the book's pages at the foot.",
@@ -1278,6 +1273,6 @@
   "Bilder och nyhetsbrev": "Pictures and newsletters",
   "Nytt": "New",
   "Visa som ark eller löptext": "Show as sheets or running text",
-  "Visa den öppna texten": "Show the open text",
-  "Följ den öppna texten": "Follow the open text"
+  "Sidomenyn följer texten": "The sidebar follows the text",
+  "Den fälls ut till texten du öppnar.": "It unfolds to the text you open."
 }

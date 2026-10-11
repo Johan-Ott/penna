@@ -70,16 +70,16 @@ function drawBlock(pen: Pen, block: PageBlock) {
   pen.y += LEADING + 6;
 }
 
-// White paper, darker towards the fold.
+// White paper, a breath darker right at the fold.
 function paperWithFold(context: CanvasRenderingContext2D, isLeft: boolean) {
   const fold = isLeft ? PAGE.width : 0;
   const shade = context.createLinearGradient(
     fold,
     0,
-    isLeft ? PAGE.width * 0.86 : PAGE.width * 0.12,
+    isLeft ? PAGE.width * 0.95 : PAGE.width * 0.05,
     0,
   );
-  shade.addColorStop(0, "rgba(0,0,0,0.09)");
+  shade.addColorStop(0, "rgba(0,0,0,0.035)");
   shade.addColorStop(1, "rgba(0,0,0,0)");
   context.fillStyle = "#ffffff";
   context.fillRect(0, 0, PAGE.width, PAGE.height);
