@@ -12,8 +12,11 @@ export interface Drive {
   findFolder(name: string, parentId: string | null): Promise<string | null>;
   createFolder(name: string, parentId: string | null): Promise<string>;
   upload(name: string, parentId: string, bytes: Uint8Array): Promise<RemoteFile>;
-  update(fileId: string, bytes: Uint8Array): Promise<RemoteFile>;
+  /** Refuses with DriveChanged unless the file is still at `version`: another device wrote. */
+  update(fileId: string, bytes: Uint8Array, version: string): Promise<RemoteFile>;
   download(fileId: string): Promise<Uint8Array>;
   /** Moves a file to Drive's trash, where it can be restored for 30 days. */
   trash(fileId: string): Promise<void>;
 }
+
+export class DriveChanged extends Error {}

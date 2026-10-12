@@ -1,4 +1,4 @@
-import type { Drive, RemoteFile } from "../src/sync/drive";
+import { DriveChanged, type Drive, type RemoteFile } from "../src/sync/drive";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 export const BOOK = "/Penna/Isen.penna";
@@ -31,9 +31,10 @@ export function createFakeDrive() {
       )?.file.id ?? null,
     createFolder: async (name, parentId) => store(name, parentId, true, new Uint8Array()).id,
     upload: async (name, parentId, bytes) => store(name, parentId, false, bytes),
-    update: async (fileId, bytes) => {
+    update: async (fileId, bytes, version) => {
       const item = items.get(fileId);
       if (!item) throw new Error(`No file ${fileId}`);
+      if (item.file.version !== version) throw new DriveChanged("changed");
       item.bytes = bytes;
       item.file = { ...item.file, version: `v${++next}` };
       return item.file;
@@ -57,7 +58,7 @@ export function createFakeDrive() {
   };
   const writeAt = async (path: string, text: string) => {
     const item = find(path);
-    if (item) await drive.update(item.file.id, new TextEncoder().encode(text));
+    if (item) await drive.update(item.file.id, new TextEncoder().encode(text), item.file.version);
   };
   const isInTrash = (path: string) =>
     [...items.values()].some((item) => item.isTrashed && pathOf(item) === path);

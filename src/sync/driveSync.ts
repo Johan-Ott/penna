@@ -93,7 +93,7 @@ async function remember(run: Run, path: string, remote: RemoteFile, bytes: Uint8
 async function send(run: Run, path: string, bytes: Uint8Array, remote: RemoteFile | undefined) {
   const name = path.slice(path.lastIndexOf("/") + 1);
   const sent = remote
-    ? await run.drive.update(remote.id, bytes)
+    ? await run.drive.update(remote.id, bytes, remote.version)
     : await run.drive.upload(name, await folderFor(run, path), bytes);
   await remember(run, path, sent, bytes);
   run.result.uploaded.push(path);

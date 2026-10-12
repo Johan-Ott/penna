@@ -1,4 +1,5 @@
-import type { Drive, RemoteFile } from "./drive.js";
+import { DriveChanged, type Drive, type RemoteFile } from "./drive.js";
+import { t } from "../i18n/i18n.js";
 
 const API = "https://www.googleapis.com/drive/v3/files";
 const UPLOAD = "https://www.googleapis.com/upload/drive/v3/files";
@@ -82,6 +83,19 @@ function upload(call: Call, name: string, parentId: string, bytes: Uint8Array) {
   });
 }
 
+// Drive keeps no lock, so the version is read just before writing: the gap is a moment, not a sync.
+async function update(call: Call, fileId: string, bytes: Uint8Array, version: string) {
+  const now = toRemote(
+    (await (await call(`${API}/${fileId}?fields=${FIELDS}`)).json()) as DriveFile,
+  );
+  if (now.version !== version) {
+    throw new DriveChanged(t("En fil i Drive ändrades under synken. Synka igen."));
+  }
+  const url = `${UPLOAD}/${fileId}?uploadType=media&fields=${FIELDS}`;
+  const body = new Blob([bytes as BlobPart]);
+  return sendFile(call, url, { method: "PATCH", body, type: "application/octet-stream" });
+}
+
 async function findFolder(call: Call, name: string, parentId: string | null) {
   const parent = quoted(parentId ?? "root");
   const query = `name=${quoted(name)} and mimeType='${FOLDER}' and ${parent} in parents`;
@@ -108,11 +122,7 @@ export function googleDrive(token: () => Promise<string>, fetcher: typeof fetch 
     findFolder: (name, parentId) => findFolder(call, name, parentId),
     createFolder: (name, parentId) => createFolder(call, name, parentId),
     upload: (name, parentId, bytes) => upload(call, name, parentId, bytes),
-    update: (fileId, bytes) => {
-      const url = `${UPLOAD}/${fileId}?uploadType=media&fields=${FIELDS}`;
-      const body = new Blob([bytes as BlobPart]);
-      return sendFile(call, url, { method: "PATCH", body, type: "application/octet-stream" });
-    },
+    update: (fileId, bytes, version) => update(call, fileId, bytes, version),
     download: async (fileId) =>
       new Uint8Array(await (await call(`${API}/${fileId}?alt=media`)).arrayBuffer()),
     trash: async (fileId) => {

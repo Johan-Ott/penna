@@ -47,6 +47,22 @@ describe("googleDrive", () => {
     expect(new Headers(calls[0]?.init.headers).get("Authorization")).toBe("Bearer TOKEN");
   });
 
+  it("writes over a file only while it is still the version this sync saw", async () => {
+    const file = { id: "f", name: "S1.md", mimeType: "text/markdown" };
+    const changed = fakeFetch([{ body: { ...file, md5Checksum: "other" } }]);
+    const same = fakeFetch([
+      { body: { ...file, md5Checksum: "m1" } },
+      { body: { ...file, md5Checksum: "m2" } },
+    ]);
+    const bytes = new TextEncoder().encode("Ny text.");
+
+    await expect(googleDrive(token, changed.fetcher).update("f", bytes, "m1")).rejects.toThrow();
+    const sent = await googleDrive(token, same.fetcher).update("f", bytes, "m1");
+
+    expect(changed.calls).toHaveLength(1);
+    expect(sent.version).toBe("m2");
+  });
+
   it("looks for a folder by name with quotes made safe", async () => {
     const { calls, fetcher } = fakeFetch([{ body: { files: [] } }]);
 
