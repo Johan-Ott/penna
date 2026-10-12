@@ -50,7 +50,7 @@ export function romanNumeral(value: number): string {
 export function nodeLabel(node: TreeNode, tree: TreeNode[], summaries: Summaries): string {
   if (node.kind === "scene") return summaries[node.id]?.title ?? t("Hittas inte");
   if (node.kind === "folder" || node.kind === "sort")
-    return isSpecialFolder(node.id) ? specialFolderLabel(node.id) : (node.title ?? "");
+    return node.title ?? (isSpecialFolder(node.id) ? specialFolderLabel(node.id) : "");
   return numberedLabel(node, tree);
 }
 

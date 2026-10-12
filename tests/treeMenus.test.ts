@@ -25,6 +25,8 @@ const actions: TreeMenuActions = {
   editLabels: null,
   showDrafts: null,
   focus: noop,
+  otherSorts: () => [],
+  moveInto: noop,
 };
 const labels = (items: ReturnType<typeof rowMenu>) =>
   items.map((item) => (item.separatorBefore ? `| ${item.label}` : item.label));
@@ -76,8 +78,12 @@ describe("tree menus", () => {
     ]);
   });
 
-  it("lets a fixed sort hold new notes but never be renamed or trashed", () => {
-    expect(labels(rowMenu(node("sort", CHARACTERS_ID), false, actions))).toEqual(["Ny anteckning"]);
+  it("lets a fixed sort be renamed and trashed, as the writer's own sorts are", () => {
+    expect(labels(rowMenu(node("sort", CHARACTERS_ID), false, actions))).toEqual([
+      "Ny anteckning",
+      "| Byt namn",
+      "Flytta till papperskorg",
+    ]);
   });
 
   it("lets the writer's own sort be renamed and trashed", () => {
@@ -86,6 +92,22 @@ describe("tree menus", () => {
       "| Byt namn",
       "Flytta till papperskorg",
     ]);
+  });
+
+  it("moves a note to another sort from Flytta till", () => {
+    const moved: string[] = [];
+    const withSorts: TreeMenuActions = {
+      ...actions,
+      linkOf: () => true,
+      otherSorts: () => [{ id: "platser", name: "Platser" }],
+      moveInto: (_node, parentId) => moved.push(parentId),
+    };
+    const move = rowMenu(node("scene", "arvid"), false, withSorts).find(
+      (item) => item.label === "Flytta till",
+    );
+    move?.submenu?.[0]?.onSelect?.();
+
+    expect(moved).toEqual(["platser"]);
   });
 
   it("opens Ny anteckning for the sort when a note is added to it", () => {

@@ -1,3 +1,5 @@
+import { isNoteSide, isSpecial, TRASH_ID, withSpecialFolders } from "./sorts.js";
+
 /** A sort holds notes of one kind, such as Personer; the writer can add sorts of their own. */
 export type NodeKind = "part" | "chapter" | "scene" | "folder" | "sort";
 
@@ -32,31 +34,15 @@ export interface TreeNode {
 export type ChapterHeading = Pick<TreeNode, "subtitle" | "epigraph" | "epigraphBy">;
 export const HEADING_FIELDS = ["subtitle", "epigraph", "epigraphBy"] as const;
 
-export const CHARACTERS_ID = "karaktarer";
-export const PLACES_ID = "platser";
-export const THINGS_ID = "saker";
-/** Övrigt: notes whose names are not linked in the text unless the writer asks. */
-export const NOTES_ID = "anteckningar";
-/** Hemligheter: what the reader and the people learn, and when. */
-export const SECRETS_ID = "hemligheter";
-export const TRASH_ID = "trash";
-
-// Notes are scene files kept in sorts, so they are written, moved and trashed like any scene.
-const FIXED_SORTS: { id: string; kind: "sort"; title: string }[] = [
-  { id: CHARACTERS_ID, kind: "sort", title: "Personer" },
-  { id: PLACES_ID, kind: "sort", title: "Platser" },
-  { id: THINGS_ID, kind: "sort", title: "Saker" },
-  { id: NOTES_ID, kind: "sort", title: "Övrigt" },
-  { id: SECRETS_ID, kind: "sort", title: "Hemligheter" },
-];
-const TRASH: TreeNode = { id: TRASH_ID, kind: "folder", title: "Papperskorg" };
-
-// Older projects had these as fixed folders; with texts in them they become sorts.
-const RETIRED_FOLDERS = ["tidslinje", "research"];
-
-const isSpecial = (id: string) => id === TRASH_ID || FIXED_SORTS.some((sort) => sort.id === id);
-const isNoteSide = (node: TreeNode) =>
-  node.kind === "sort" || node.id === TRASH_ID || RETIRED_FOLDERS.includes(node.id);
+export {
+  CHARACTERS_ID,
+  NOTES_ID,
+  PLACES_ID,
+  SECRETS_ID,
+  THINGS_ID,
+  TRASH_ID,
+  withSpecialFolders,
+} from "./sorts.js";
 
 const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
   root: ["part", "chapter", "scene", "folder", "sort"],
@@ -66,22 +52,6 @@ const ALLOWED_CHILDREN: Record<NodeKind | "root", NodeKind[]> = {
   sort: ["scene"],
   scene: [],
 };
-
-export function withSpecialFolders(tree: TreeNode[]): TreeNode[] {
-  const ordinary = tree.filter((node) => !isNoteSide(node) && !isSpecial(node.id));
-  const fixed = FIXED_SORTS.map((sort) => {
-    const found = tree.find((node) => node.id === sort.id);
-    return found
-      ? { ...found, kind: "sort" as const, title: sort.title }
-      : { ...sort, children: [] };
-  });
-  const own = tree
-    .filter((node) => isNoteSide(node) && !isSpecial(node.id))
-    .filter((node) => node.kind === "sort" || (node.children ?? []).length > 0)
-    .map((node) => ({ ...node, kind: "sort" as const }));
-  const trash = tree.find((node) => node.id === TRASH_ID) ?? { ...TRASH, children: [] };
-  return [...ordinary, ...fixed, ...own, trash];
-}
 
 export const sortsOf = (tree: TreeNode[]) => tree.filter((node) => node.kind === "sort");
 
@@ -152,7 +122,7 @@ export function moveNode(tree: TreeNode[], id: string, parentId: string | null, 
 }
 
 function canMoveInto(tree: TreeNode[], node: TreeNode, parentId: string | null): boolean {
-  if (isSpecial(node.id)) return false;
+  if (node.id === TRASH_ID) return false;
   const targetKind = parentId === null ? "root" : findNode(tree, parentId)?.node.kind;
   if (!targetKind || !ALLOWED_CHILDREN[targetKind].includes(node.kind)) return false;
   const isOwnDescendant = parentId !== null && findNode([node], parentId) !== null;

@@ -2,7 +2,7 @@ import type { KeyboardEvent } from "react";
 import {
   findNode,
   isInTrash,
-  isSpecialFolder,
+  TRASH_ID,
   moveNode,
   moveToTrash,
   renameNode,
@@ -24,7 +24,7 @@ export interface TreeActionHandlers {
 /** Everything here changes project.json only, except a scene's title. */
 export function useTreeActions(handlers: TreeActionHandlers) {
   const { tree, onChangeTree } = handlers;
-  const canEdit = (node: TreeNode) => !isSpecialFolder(node.id);
+  const canEdit = (node: TreeNode) => node.id !== TRASH_ID;
   const actions = {
     canEdit,
     isInTrash: (id: string) => isInTrash(tree, id),

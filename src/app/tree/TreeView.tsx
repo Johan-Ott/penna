@@ -5,7 +5,6 @@ import { addMenu, foldMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
 import {
   isEmptySort,
-  menuActions,
   rowHandlers,
   rowView,
   useTreeView,
@@ -15,6 +14,7 @@ import {
 import { nodeLabel } from "../../project/treeLabels.js";
 import { LabelsLayer } from "../labels/LabelsInTree.js";
 import { TreeTools } from "./TreeTools.js";
+import { menuActions } from "./treeMenuActions.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";

@@ -11,15 +11,14 @@ import { chapterIds, foldableIds, sidebarSections, visibleRows } from "../../pro
 import type { TreeRow as Row } from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta } from "../../project/treeLabels.js";
-import { isLinkedByDefault } from "../../project/cards.js";
 import type { MenuItem } from "../Menu.js";
 import type { Project } from "../useProject.js";
-import type { Placement, TreeMenuActions } from "./treeMenus.js";
+import type { Placement } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";
 import { useTreeDrag } from "./useTreeDrag.js";
+import { noteLinkOf } from "./treeMenuActions.js";
 import { useFollowOpenScene, useRenameRequest } from "./treeEffects.js";
 import type { ProjectChange } from "../labels/LabelsDialog.js";
-import { labelMenu } from "../labels/LabelsInTree.js";
 import { filteredTree, labelsOn } from "../../project/labels.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { t } from "../../i18n/i18n.js";
@@ -83,42 +82,6 @@ function useTreeViewState(tree: TreeNode[]) {
   const [focusId, setFocusId] = useState<string | null>(null);
   const editing = { renamingId, setRenamingId, menu, setMenu, labelsFor, setLabelsFor };
   return { ...useCollapsed(tree), ...editing, filter, setFilter, focusId, setFocusId };
-}
-
-export function menuActions(actions: Actions, props: TreeViewProps, view: View): TreeMenuActions {
-  const { summaries } = props.project;
-  return {
-    open: (node) => actions.activate(node),
-    add: props.onAdd,
-    rename: (node) => actions.startRename(node),
-    trash: (node) => actions.trash(node),
-    restore: (node) => actions.restore(node),
-    setStatus: (node, status) => props.onSetSceneStatus(node.id, status),
-    statusOf: (node) => summaries[node.id]?.status ?? null,
-    statusName: (status) => statusSteps(props.project.fields)[status].name,
-    showSnapshots: (node) => props.onShowSnapshots(node.id),
-    openBeside: (node) => props.onOpenBeside(node.id),
-    linkOf: (node) => noteLinkOf(props.project, node.id),
-    setLink: (node, isLinked) => props.onSetNoteLink(node.id, isLinked),
-    newNote: props.onNewNote,
-    moveToSeries: props.onMoveToSeries ? (node) => props.onMoveToSeries?.(node.id) : null,
-    canMerge: (node) =>
-      props.canMergeOpenScene === true &&
-      node.id === props.openSceneId &&
-      noteLinkOf(props.project, node.id) === null,
-    mergeWithNext: () => props.onMergeWithNext?.(),
-    labelItems: labelMenu(props, view),
-    showDrafts: props.onShowDrafts ? (node) => props.onShowDrafts?.(node.id) : null,
-    editLabels: props.onUpdateProject ? (node) => view.setLabelsFor(node.id) : null,
-    focus: (node) => view.setFocusId(node.id),
-  };
-}
-
-// Null for anything that is not a note.
-function noteLinkOf(project: Project, id: string) {
-  const parent = findNode(project.tree, id)?.parent;
-  if (parent?.kind !== "sort") return null;
-  return project.summaries[id]?.link ?? isLinkedByDefault(parent.id);
 }
 
 // A filter shows every match unfolded; chapter focus shows only the chapter's scenes under Boken.

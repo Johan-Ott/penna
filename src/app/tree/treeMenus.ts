@@ -1,4 +1,4 @@
-import { isSpecialFolder, TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
+import { TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
 import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
 import type { MenuItem } from "../Menu.js";
 import { t } from "../../i18n/i18n.js";
@@ -35,6 +35,9 @@ export interface TreeMenuActions {
   labelItems: ((node: TreeNode) => MenuItem[]) | null;
   /** Shows only this chapter's scenes in the sidebar. */
   focus: (node: TreeNode) => void;
+  /** The sorts a note can be moved to, with their names, and the move. */
+  otherSorts: (node: TreeNode) => { id: string; name: string }[];
+  moveInto: (node: TreeNode, parentId: string) => void;
 }
 
 export function foldMenu(view: { foldAll: () => void; unfoldAll: () => void }): MenuItem[] {
@@ -84,6 +87,17 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   return byKind[node.kind];
 }
 
+// A note moves to another sort, such as from Övrigt to Personer.
+function sortMoves(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
+  const sorts = actions.otherSorts(node);
+  if (sorts.length === 0) return [];
+  const submenu = sorts.map(({ id, name }) => ({
+    label: name,
+    onSelect: () => actions.moveInto(node, id),
+  }));
+  return [{ label: t("Flytta till"), submenu }];
+}
+
 // A note has no status; its menu chooses whether its name is linked instead.
 function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null {
   const isLinked = actions.linkOf(node);
@@ -96,6 +110,7 @@ function noteItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] | null 
       separatorBefore: true,
       onSelect: () => actions.setLink(node, !isLinked),
     },
+    ...sortMoves(node, actions),
     ...(moveToSeries
       ? [{ label: t("Flytta till serien"), onSelect: () => moveToSeries(node) }]
       : []),
@@ -171,7 +186,6 @@ export function rowMenu(
   if (isInTrash)
     return [{ label: t("Lägg tillbaka i manuset"), onSelect: () => actions.restore(node) }];
   const added = newItemsFor(node, actions);
-  if (isSpecialFolder(node.id)) return added;
   const open =
     node.kind === "scene"
       ? [

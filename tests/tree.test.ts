@@ -81,6 +81,19 @@ describe("special folders", () => {
     expect(findNode(tree, "tidslinje")?.node).toMatchObject({ kind: "sort", title: "Tidslinje" });
   });
 
+  it("keeps the sorts in the writer's order, a renamed fixed sort's name, and one in Papperskorg", () => {
+    const tree = withSpecialFolders([
+      { id: PLACES_ID, kind: "sort", title: "Världen", children: [] },
+      { id: CHARACTERS_ID, kind: "sort", title: "Personer", children: [] },
+      { id: TRASH_ID, kind: "folder", children: [{ id: SECRETS_ID, kind: "sort", children: [] }] },
+    ]);
+
+    expect(tree.map((node) => node.id).slice(0, 2)).toEqual([PLACES_ID, CHARACTERS_ID]);
+    expect(findNode(tree, PLACES_ID)?.node.title).toBe("Världen");
+    expect(findNode(tree, CHARACTERS_ID)?.node.title).toBeUndefined();
+    expect(tree.filter((node) => node.id === SECRETS_ID)).toEqual([]);
+  });
+
   it("puts a new own sort after the others, before Papperskorg", () => {
     const own: TreeNode = { id: "egen", kind: "sort", title: "Fordon" };
 

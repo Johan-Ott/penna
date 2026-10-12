@@ -164,3 +164,25 @@ test("replace all changes every match in the scene and Ångra takes it back", as
 
   await expect(editor(page)).toContainText("hade isen lagt sig");
 });
+
+test("a fixed sort is renamed and thrown away, and a note moves to another sort", async ({
+  page,
+}) => {
+  await treeRow(page, "Personer").click();
+  await treeRow(page, "Arvid").click({ button: "right" });
+  await page.getByRole("menuitem", { name: /^Flytta till\W*$/ }).click();
+  await page.getByRole("menuitem", { name: "Platser", exact: true }).click();
+  await treeRow(page, "Platser").click();
+  await expect(sidebar(page).getByRole("group").filter({ hasText: "Arvid" })).toHaveCount(0);
+
+  await treeRow(page, "Hemligheter").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Byt namn" }).click();
+  await page.keyboard.press("Control+a");
+  await page.keyboard.type("Gåtor");
+  await page.keyboard.press("Enter");
+  await expect(treeRow(page, "Gåtor")).toBeVisible();
+
+  await treeRow(page, "Gåtor").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Flytta till papperskorg" }).click();
+  await expect(treeRow(page, "Gåtor")).toBeHidden();
+});
