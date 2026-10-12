@@ -1,7 +1,7 @@
 import { joinSceneFile, splitSceneFile } from "../manuscript/sceneFile.js";
 import { takeSnapshot, type SceneRef, type Snapshot } from "../project/snapshots.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/fileSystem.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
 import { t } from "../i18n/i18n.js";
 
@@ -13,7 +13,7 @@ export async function restoreSnapshot(
   time: number,
 ) {
   if (!(await session.autosave.flush())) return false;
-  const path = joinPath(scene.dir, `scenes/${scene.id}.md`);
+  const path = scenePath(scene.dir, scene.id);
   const current = await session.fileSystem.readText(path);
   await takeSnapshot(session.fileSystem, scene, current, { time, label: t("Före återställning") });
   const { frontMatter } = splitSceneFile(current);
@@ -27,6 +27,6 @@ export async function restoreSnapshot(
 /** Taken after the open scene's text is on disk. */
 export async function takeManualSnapshot(session: SceneSession, scene: SceneRef, label: string) {
   if (!(await session.autosave.flush())) return;
-  const text = await session.fileSystem.readText(joinPath(scene.dir, `scenes/${scene.id}.md`));
+  const text = await session.fileSystem.readText(scenePath(scene.dir, scene.id));
   await takeSnapshot(session.fileSystem, scene, text, { time: Date.now(), label: label.trim() });
 }

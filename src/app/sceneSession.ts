@@ -13,7 +13,7 @@ import {
 import { serializeMarkdown } from "../manuscript/serializeMarkdown.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { createAutosave, type SaveStatus } from "../storage/autosave.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { takeSnapshot } from "../project/snapshots.js";
 import { writeSuggestion } from "../project/revisions.js";
@@ -51,8 +51,6 @@ export interface SceneSession {
   /** Förslagsläge: what is typed is saved beside the scene as changes to accept, not in it. */
   isSuggesting: boolean;
 }
-
-const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);
 
 const textOf = (session: SceneSession, doc: Node) =>
   joinSceneFile({ frontMatter: session.scene?.frontMatter ?? "", body: serializeMarkdown(doc) });

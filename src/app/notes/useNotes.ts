@@ -1,10 +1,9 @@
+import { readSceneBodies } from "../../project/sceneSummaries.js";
 import { useEffect, useMemo, useState } from "react";
 import { plainText } from "../../manuscript/compare.js";
-import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { cardsOf, countMentions, type Card } from "../../project/cards.js";
 import { findNode, manuscriptSceneIds } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
-import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
@@ -19,14 +18,10 @@ interface TextRef {
 }
 
 async function readTexts(refs: TextRef[]) {
-  const texts: Record<string, string> = {};
-  for (const { dir, id } of refs) {
-    const file = await platform.fileSystem
-      .readText(joinPath(dir, `scenes/${id}.md`))
-      .catch(() => null);
-    if (file !== null) texts[id] = plainText(splitSceneFile(file).body, "\n");
-  }
-  return texts;
+  const bodies = await readSceneBodies(platform.fileSystem, refs);
+  return Object.fromEntries(
+    Object.entries(bodies).map(([id, body]) => [id, plainText(body, "\n")]),
+  );
 }
 
 // Read only while a note or name card shows, so an ordinary save does not read the whole book.

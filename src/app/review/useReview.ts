@@ -1,3 +1,4 @@
+import { readSceneBodies } from "../../project/sceneSummaries.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useMemo, useState } from "react";
 import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
@@ -7,11 +8,9 @@ import { narrationNotes, narrationOf } from "../../manuscript/narration.js";
 import { proseNotes, type ProseNote } from "../../manuscript/prose.js";
 import { splitCompounds } from "../../manuscript/compounds.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
-import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { mentionPattern, type Card } from "../../project/cards.js";
 import { CHARACTERS_ID, findNode } from "../../project/tree.js";
 import { chapterOf } from "../../project/treeLabels.js";
-import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
@@ -39,10 +38,10 @@ function useChapterTexts(project: Project, sceneId: string) {
   const [texts, setTexts] = useState<string[]>([]);
   useEffect(() => {
     let isCurrent = true;
-    const read = (id: string) =>
-      platform.fileSystem.readText(joinPath(project.dir, `scenes/${id}.md`)).catch(() => "");
-    void Promise.all((key ? key.split(",") : []).map(read)).then(
-      (files) => isCurrent && setTexts(files.map((file) => plainText(splitSceneFile(file).body))),
+    const wanted = key ? key.split(",") : [];
+    const refs = wanted.map((id) => ({ dir: project.dir, id }));
+    void readSceneBodies(platform.fileSystem, refs).then(
+      (bodies) => isCurrent && setTexts(wanted.map((id) => plainText(bodies[id] ?? ""))),
     );
     return () => void (isCurrent = false);
   }, [project.dir, key]);

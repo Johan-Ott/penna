@@ -1,10 +1,9 @@
+import { readSceneBodies } from "../../project/sceneSummaries.js";
 import type { Node } from "prosemirror-model";
 import { DOMSerializer } from "prosemirror-model";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { parseMarkdown } from "../../manuscript/parseMarkdown.js";
 import { manuscriptSchema } from "../../manuscript/schema.js";
-import { splitSceneFile } from "../../manuscript/sceneFile.js";
-import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
@@ -16,15 +15,12 @@ export function useSceneDocs(project: Project, ids: string[], beforeRead: () => 
   const key = ids.join(",");
   useEffect(() => {
     let isCurrent = true;
-    const read = async (id: string) => {
-      const text = await platform.fileSystem.readText(joinPath(project.dir, `scenes/${id}.md`));
-      return [id, parseMarkdown(splitSceneFile(text).body)] as const;
-    };
-    const wanted = key ? key.split(",") : [];
+    const refs = (key ? key.split(",") : []).map((id) => ({ dir: project.dir, id }));
     void beforeRead()
-      .then(() => Promise.all(wanted.map((id) => read(id).catch(() => null))))
-      .then((entries) => {
-        if (isCurrent) setDocs(Object.fromEntries(entries.filter((entry) => entry !== null)));
+      .then(() => readSceneBodies(platform.fileSystem, refs))
+      .then((bodies) => {
+        const docs = Object.entries(bodies).map(([id, body]) => [id, parseMarkdown(body)]);
+        if (isCurrent) setDocs(Object.fromEntries(docs));
       });
     return () => void (isCurrent = false);
   }, [project, key, beforeRead]);

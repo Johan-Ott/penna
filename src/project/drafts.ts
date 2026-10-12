@@ -2,7 +2,7 @@ import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, readIfThere, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { takeSnapshot } from "./snapshots.js";
 import { t } from "../i18n/i18n.js";
@@ -36,7 +36,7 @@ export async function saveDraft(
   await fileSystem.makeDir(folder);
   let words = 0;
   for (const sceneId of what.sceneIds) {
-    const text = await readIfThere(fileSystem, joinPath(bookDir, `scenes/${sceneId}.md`));
+    const text = await readIfThere(fileSystem, scenePath(bookDir, sceneId));
     if (text === null) continue;
     words += wordsIn(text);
     await writeAtomic(fileSystem, joinPath(folder, `${sceneId}.md`), text);
@@ -80,12 +80,9 @@ export async function restoreDraft(
 ) {
   const label = t("Före utkastet {name}", { name: draft.name });
   for (const sceneId of draft.sceneIds) {
-    const saved = await readIfThere(
-      fileSystem,
-      joinPath(draftDir(bookDir, draft.id), `scenes/${sceneId}.md`),
-    );
+    const saved = await readIfThere(fileSystem, scenePath(draftDir(bookDir, draft.id), sceneId));
     if (saved === null) continue;
-    const path = joinPath(bookDir, `scenes/${sceneId}.md`);
+    const path = scenePath(bookDir, sceneId);
     const current = await readIfThere(fileSystem, path);
     if (current !== null && current !== saved) {
       await takeSnapshot(fileSystem, { dir: bookDir, id: sceneId }, current, { time: now, label });

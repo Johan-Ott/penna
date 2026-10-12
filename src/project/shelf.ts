@@ -1,6 +1,6 @@
 import { ownStepName } from "./statusSteps.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
 import { readSceneSummaries, type SceneSummary } from "./sceneSummaries.js";
 import { seriesTitle } from "./series.js";
@@ -97,10 +97,7 @@ async function bookSceneIds(fileSystem: FileSystem, dir: string, tree: TreeNode[
 }
 
 async function lastChange(fileSystem: FileSystem, dir: string, sceneIds: string[]) {
-  const paths = [
-    ...sceneIds.map((id) => joinPath(dir, `scenes/${id}.md`)),
-    joinPath(dir, "project.json"),
-  ];
+  const paths = [...sceneIds.map((id) => scenePath(dir, id)), joinPath(dir, "project.json")];
   const times = await Promise.all(paths.map((path) => fileSystem.modifiedAt(path)));
   const known = times.filter((time): time is number => time !== null);
   return known.length > 0 ? Math.max(...known) : null;

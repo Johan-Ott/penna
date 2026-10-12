@@ -1,4 +1,4 @@
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { parentOf } from "./libraryFolders.js";
 import { projectFolderName } from "./newProject.js";
 import { writeProjectFile } from "./projectFile.js";
@@ -58,10 +58,7 @@ export async function moveNotesToSeries(
   for (const id of ids) {
     const sort = findNode(bookTree, id)?.parent;
     if (sort?.kind !== "sort") continue;
-    await fileSystem.rename(
-      joinPath(book.dir, `scenes/${id}.md`),
-      joinPath(series.dir, `scenes/${id}.md`),
-    );
+    await fileSystem.rename(scenePath(book.dir, id), scenePath(series.dir, id));
     seriesTree = withSortFor(seriesTree, sort);
     seriesTree = insertNode(seriesTree, { id, kind: "scene" }, sort.id, Number.MAX_SAFE_INTEGER);
     bookTree = removeNode(bookTree, id);

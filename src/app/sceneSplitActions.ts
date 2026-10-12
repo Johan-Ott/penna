@@ -3,7 +3,7 @@ import type { useEditorView } from "../editor/useEditorView.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { sceneStatus, splitSceneFile } from "../manuscript/sceneFile.js";
 import { insertAfter, moveToTrash, nextSceneSibling, type TreeNode } from "../project/tree.js";
-import { joinPath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/fileSystem.js";
 import { platform } from "./platform.js";
 import { createScene, setSceneStatus, type SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
@@ -44,7 +44,7 @@ async function merge(input: SplitInput) {
   const open = openBookScene(input);
   const nextId = open ? nextSceneSibling(open.project.tree, open.scene.id) : null;
   if (!open || !nextId) return;
-  const path = joinPath(open.project.dir, `scenes/${nextId}.md`);
+  const path = scenePath(open.project.dir, nextId);
   const text = await platform.fileSystem.readText(path).catch(() => null);
   if (text === null) return;
   input.editor.run(appendDoc(parseMarkdown(splitSceneFile(text).body)));

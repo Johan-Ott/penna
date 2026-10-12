@@ -12,7 +12,7 @@ import {
 } from "../project/tree.js";
 import { nodeLabel } from "../project/treeLabels.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
-import { joinPath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/fileSystem.js";
 import { platform } from "./platform.js";
 import type { AppState } from "./App.js";
 
@@ -106,8 +106,7 @@ function changeCalls(current: () => AppState) {
     },
     trash: (id: string) => change(moveToTrash(tree(), id)),
     /** A scene's or note's file as it lies on disk. */
-    read: (id: string) =>
-      platform.fileSystem.readText(joinPath(bookOf(current()).dir, `scenes/${id}.md`)),
+    read: (id: string) => platform.fileSystem.readText(scenePath(bookOf(current()).dir, id)),
   };
 }
 

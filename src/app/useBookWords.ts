@@ -1,10 +1,9 @@
+import { readSceneBodies } from "../project/sceneSummaries.js";
 import { useEffect, useRef } from "react";
 import { learnWords } from "../editor/vocabulary.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { plainText } from "../manuscript/compare.js";
-import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { manuscriptSceneIds } from "../project/tree.js";
-import { joinPath } from "../storage/fileSystem.js";
 import { platform } from "./platform.js";
 import type { Project } from "./useProject.js";
 
@@ -12,14 +11,9 @@ import type { Project } from "./useProject.js";
 const AFTER_OPENING_MS = 3000;
 
 async function bookTexts(book: Project) {
-  const texts: string[] = [];
-  for (const id of manuscriptSceneIds(book.tree)) {
-    const file = await platform.fileSystem
-      .readText(joinPath(book.dir, `scenes/${id}.md`))
-      .catch(() => null);
-    if (file !== null) texts.push(plainText(splitSceneFile(file).body, "\n"));
-  }
-  return texts;
+  const refs = manuscriptSceneIds(book.tree).map((id) => ({ dir: book.dir, id }));
+  const bodies = await readSceneBodies(platform.fileSystem, refs);
+  return Object.values(bodies).map((body) => plainText(body, "\n"));
 }
 
 /** The book's own words for the completion, learned once each time a book opens. */

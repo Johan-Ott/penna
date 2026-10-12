@@ -1,15 +1,13 @@
 import type { SearchQuery } from "prosemirror-search";
 import { replaceAllInText } from "../editor/manuscriptSearch.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { type FileSystem, scenePath } from "../storage/fileSystem.js";
 
 export interface SceneChange {
   id: string;
   before: string;
   after: string;
 }
-
-const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);
 
 export async function replaceInScenes(
   fileSystem: FileSystem,

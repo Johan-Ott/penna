@@ -2,7 +2,7 @@ import { useEffect, useState, type KeyboardEvent, type RefObject } from "react";
 import { fixedSceneText } from "../../editor/textFix.js";
 import { newComment, readComments, writeComments, type Anchor } from "../../project/comments.js";
 import { writeAtomic } from "../../storage/atomicWrite.js";
-import { joinPath } from "../../storage/fileSystem.js";
+import { scenePath } from "../../storage/fileSystem.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 import { pickedIn, type Picked } from "./pickedText.js";
@@ -21,7 +21,7 @@ type Mode = "fix" | "comment";
 
 // False when the words were changed somewhere else since the page was set.
 async function saveFix(saving: ReadSaving, sceneId: string, anchor: Anchor, text: string) {
-  const path = joinPath(saving.dir, `scenes/${sceneId}.md`);
+  const path = scenePath(saving.dir, sceneId);
   const fixed = fixedSceneText(await platform.fileSystem.readText(path), anchor, text);
   if (fixed === null) return false;
   await saving.writeOver(path, () => writeAtomic(platform.fileSystem, path, fixed));

@@ -2,7 +2,7 @@ import { DEMO_PROJECT_DIR, DEMO_PROJECT_FILES } from "../demo/demoProject.js";
 import type { ImportedNode } from "../import/markdownImport.js";
 import { newSceneText, withSceneStatus } from "../manuscript/sceneFile.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
@@ -59,7 +59,7 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
     }
     const text = newSceneText(id, node.title);
     const file = node.body ? withSceneStatus(text, "utkast") + node.body : text;
-    await writeAtomic(fileSystem, joinPath(dir, `scenes/${id}.md`), file);
+    await writeAtomic(fileSystem, scenePath(dir, id), file);
     tree.push({ id, kind: "scene" });
   }
   return tree;

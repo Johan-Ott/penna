@@ -4,7 +4,7 @@ import { plainText } from "../../manuscript/compare.js";
 import { parseMarkdown } from "../../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
-import { joinPath } from "../../storage/fileSystem.js";
+import { scenePath } from "../../storage/fileSystem.js";
 import type { AppState } from "../App.js";
 import { SceneText } from "../contents/sceneDocs.js";
 import { platform } from "../platform.js";
@@ -25,7 +25,7 @@ export function useBeside() {
 // Read again when the project is, so a text saved elsewhere shows as it is now.
 function useBesideDoc(beside: Beside | null, project: Project) {
   const [doc, setDoc] = useState<Node | null>(null);
-  const path = beside ? joinPath(beside.dir, `scenes/${beside.sceneId}.md`) : null;
+  const path = beside ? scenePath(beside.dir, beside.sceneId) : null;
   useEffect(() => {
     setDoc(null);
     if (!path) return;

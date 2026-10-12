@@ -7,7 +7,7 @@ import {
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 export interface SceneSummary {
@@ -56,10 +56,22 @@ export async function readSceneSummaries(
 ) {
   const entries = await Promise.all(
     sceneIds.map(async (id) => {
-      const path = joinPath(dir, `scenes/${id}.md`);
+      const path = scenePath(dir, id);
       const kept = known && !known.changed.has(path) ? known.summaries[id] : undefined;
       return [id, kept ?? cachedSummary(path, await fileSystem.readText(path))] as const;
     }),
   );
   return Object.fromEntries(entries);
+}
+
+/** Each scene's or note's text after its front matter, by id; a file that is gone is left out. */
+export async function readSceneBodies(fileSystem: FileSystem, refs: { dir: string; id: string }[]) {
+  const bodies: Record<string, string> = {};
+  await Promise.all(
+    refs.map(async ({ dir, id }) => {
+      const file = await fileSystem.readText(scenePath(dir, id)).catch(() => null);
+      if (file !== null) bodies[id] = splitSceneFile(file).body;
+    }),
+  );
+  return bodies;
 }

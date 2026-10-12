@@ -12,7 +12,7 @@ import {
   type ManuscriptScope,
 } from "../editor/manuscriptSearch.js";
 import { manuscriptSceneIds, sceneIdsIn, sortsOf } from "../project/tree.js";
-import { joinPath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/fileSystem.js";
 import { replaceInScenes, undoReplace, type SceneChange } from "./manuscriptReplace.js";
 import { platform } from "./platform.js";
 import { sceneHits } from "./searchHits.js";
@@ -51,7 +51,7 @@ function manuscriptIds(project: Project, only: string[] = []) {
 async function loadScenes(project: Project) {
   const scenes = new Map<string, EditorState>();
   for (const id of manuscriptIds(project, [WITH_NOTES])) {
-    const path = joinPath(project.dir, `scenes/${id}.md`);
+    const path = scenePath(project.dir, id);
     const text = await platform.fileSystem.readText(path).catch(() => null);
     if (text !== null) scenes.set(id, searchableScene(text));
   }

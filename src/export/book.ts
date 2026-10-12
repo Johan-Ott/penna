@@ -9,7 +9,7 @@ import {
   type ChapterHeading,
   type TreeNode,
 } from "../project/tree.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { type FileSystem, scenePath } from "../storage/fileSystem.js";
 import type { ChapterOpening } from "./openings.js";
 import { t } from "../i18n/i18n.js";
 
@@ -85,7 +85,7 @@ export async function readBookScenes(
 ) {
   const scenes = new Map<string, Node>();
   for (const id of sceneIds) {
-    const text = await fileSystem.readText(joinPath(dir, `scenes/${id}.md`)).catch(() => null);
+    const text = await fileSystem.readText(scenePath(dir, id)).catch(() => null);
     if (text === null) {
       throw new ExportError(titles[id] ?? id, t("Scenen finns inte på den här enheten än."));
     }
