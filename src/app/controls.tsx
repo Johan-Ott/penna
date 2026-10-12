@@ -112,6 +112,20 @@ export function Dialog(props: {
   );
 }
 
+/** The same row in a form: the action submits it, and waits until the form is ready. */
+export function DialogActions(props: { isReady: boolean; label?: string; onClose: () => void }) {
+  return (
+    <div className="dialog-actions">
+      <button type="button" className="button ghost" onClick={props.onClose}>
+        {t("Avbryt")}
+      </button>
+      <button type="submit" className="button primary" disabled={!props.isReady}>
+        {props.label ?? t("Skapa")}
+      </button>
+    </div>
+  );
+}
+
 /** The row at the bottom of a dialog: Avbryt, and the action that saves. */
 export function DialogButtons(props: {
   label?: string;

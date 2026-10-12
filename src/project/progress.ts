@@ -113,3 +113,9 @@ export function finishDay(words: number, goal: number | null, perDay: number, to
   if (!goal || perDay <= 0) return null;
   return dayAfter(today, Math.ceil(Math.max(0, goal - words) / perDay));
 }
+
+/** The book's pages once it reaches its goal, at the words per page it has now; at most 480. */
+export function pagesAtGoal(words: number, goal: number | null, written: number) {
+  if (!goal || words === 0) return written;
+  return Math.min(480, Math.max(written, Math.round((written * goal) / words)));
+}

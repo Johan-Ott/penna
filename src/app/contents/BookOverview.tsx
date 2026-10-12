@@ -14,6 +14,7 @@ import { KIND_LABELS } from "../../project/shelf.js";
 import { dayKey, type Stats } from "../../project/stats.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
+import { pagesAtGoal } from "../../project/progress.js";
 import type { Project } from "../useProject.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
@@ -36,10 +37,9 @@ function forecast(finish: string, deadline: string | null) {
 
 function lengthText(project: Project, pageMap: PageMap | null, words: number, goal: number | null) {
   if (pageMap && goal && words > 0) {
-    const pagesAtGoal = Math.round((goal * pageMap.pages) / words);
     return t("{pages} av cirka {total} sidor.", {
       pages: formatNumber(pageMap.pages),
-      total: formatNumber(pagesAtGoal),
+      total: formatNumber(pagesAtGoal(words, goal, pageMap.pages)),
     });
   }
   if (goal)

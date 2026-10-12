@@ -1,3 +1,5 @@
+import { pagesAtGoal, projectGoals } from "../../project/progress.js";
+import { manuscriptWords } from "../../project/treeLabels.js";
 import { useState } from "react";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { contentsRows } from "../../project/contents.js";
@@ -11,7 +13,6 @@ import { BookMeta, PageGrid, TasksLink } from "./BookOverview.js";
 import { ContentsBar, type ContentsShown } from "./ContentsBar.js";
 import { TempoView } from "./TempoView.js";
 import { ContentsList } from "./ContentsList.js";
-import { pagesAtGoal } from "./ShareSpreadButton.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface ContentsProps {
@@ -41,7 +42,11 @@ function ShareBook({ project, pageMap }: { project: Project; pageMap: PageMap })
     pages: [],
     firstNumber: 1,
     written: pageMap.pages,
-    total: pagesAtGoal(project, pageMap.pages),
+    total: pagesAtGoal(
+      manuscriptWords(project.tree, project.summaries),
+      projectGoals(project.fields).totalGoal,
+      pageMap.pages,
+    ),
   };
   return (
     <>

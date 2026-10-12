@@ -4,7 +4,7 @@ import { CHARACTERS_ID, findNode, sortsOf } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
 import { NameSuggestions } from "./NameSuggestions.js";
-import { Choice, Switch } from "../controls.js";
+import { Choice, DialogActions, Switch } from "../controls.js";
 import { useEscape } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
 import type { NewNote } from "./useNoteActions.js";
@@ -156,19 +156,6 @@ function useHome(props: NewNoteDialogProps, form: Form) {
   const home = isInSeries && props.series ? props.series : props.project;
   const changeHome = (next: boolean) => (setInSeries(next), form.pick(CHARACTERS_ID));
   return { isInSeries, home, changeHome };
-}
-
-export function DialogActions(props: { isReady: boolean; label?: string; onClose: () => void }) {
-  return (
-    <div className="dialog-actions">
-      <button type="button" className="button ghost" onClick={props.onClose}>
-        {t("Avbryt")}
-      </button>
-      <button type="submit" className="button primary" disabled={!props.isReady}>
-        {props.label ?? t("Skapa")}
-      </button>
-    </div>
-  );
 }
 
 export function NewNoteDialog(props: NewNoteDialogProps) {

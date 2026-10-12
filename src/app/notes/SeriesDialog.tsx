@@ -6,7 +6,7 @@ import { platform } from "../platform.js";
 import { Switch } from "../controls.js";
 import type { Project } from "../useProject.js";
 import { useEscape } from "../useShortcut.js";
-import { DialogActions } from "./NewNoteDialog.js";
+import { DialogActions } from "../controls.js";
 import { t } from "../../i18n/i18n.js";
 
 interface SeriesDialogProps {
