@@ -63,3 +63,47 @@ describe("readScrivener", () => {
     ]);
   });
 });
+
+const WITH_NOTES = `<ScrivenerProject><Binder>
+  <BinderItem UUID="D" Type="DraftFolder"><Title>Draft</Title><Children>
+    <BinderItem UUID="C1" Type="Folder"><Title>Brevet</Title><Children>
+      <BinderItem UUID="S1" Type="Text"><Title>Köket</Title></BinderItem>
+    </Children></BinderItem>
+  </Children></BinderItem>
+  <BinderItem UUID="CH" Type="Folder"><Title>Characters</Title><Children>
+    <BinderItem UUID="N1" Type="Text"><Title>Elin</Title></BinderItem>
+  </Children></BinderItem>
+  <BinderItem UUID="R" Type="ResearchFolder"><Title>Research</Title><Children>
+    <BinderItem UUID="N2" Type="Text"><Title>Fyrar</Title></BinderItem>
+    <BinderItem UUID="IMG" Type="Image"><Title>Karta</Title></BinderItem>
+  </Children></BinderItem>
+  <BinderItem UUID="T" Type="TrashFolder"><Title>Trash</Title><Children>
+    <BinderItem UUID="X" Type="Text"><Title>Gammalt</Title></BinderItem>
+  </Children></BinderItem>
+</Binder></ScrivenerProject>`;
+
+describe("readScrivener's notes", () => {
+  it("brings Characters and Research as sorts, synopses as Vad händer?, and leaves the trash", async () => {
+    const files = createMemoryFileSystem({
+      "/Vinter.scriv/Vinter.scrivx": WITH_NOTES,
+      "/Vinter.scriv/Files/Data/S1/content.rtf": "{\\rtf1 Brevet.\\par}",
+      "/Vinter.scriv/Files/Data/S1/synopsis.txt": "Elin hittar brevet.",
+      "/Vinter.scriv/Files/Data/N1/content.rtf": "{\\rtf1 Fyrvaktarens dotter.\\par}",
+      "/Vinter.scriv/Files/Data/N2/content.rtf": "{\\rtf1 Fyren t\\'e4ndes 1890.\\par}",
+      "/Vinter.scriv/Files/Data/X/content.rtf": "{\\rtf1 Bort.\\par}",
+    });
+
+    const book = await readScrivener(files, "/Vinter.scriv");
+
+    const chapter = book[0];
+    expect(chapter?.kind === "chapter" && chapter.children[0]).toMatchObject({
+      kind: "scene",
+      summary: "Elin hittar brevet.",
+    });
+    expect(book.slice(1)).toMatchObject([
+      { kind: "sort", title: "Characters", id: "karaktarer", children: [{ title: "Elin" }] },
+      { kind: "sort", title: "Research", children: [{ title: "Fyrar" }] },
+    ]);
+    expect(JSON.stringify(book)).not.toContain("Gammalt");
+  });
+});

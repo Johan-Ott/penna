@@ -47,6 +47,40 @@ describe("createProject", () => {
     expect((await openProjectFolder(files, created.dir)).scenes).toEqual([created.sceneId]);
   });
 
+  it("writes imported notes into their sorts, and a synopsis as the scene's Vad händer?", async () => {
+    const files = createMemoryFileSystem({});
+    const imported = [
+      {
+        kind: "chapter" as const,
+        title: "Brevet",
+        children: [
+          {
+            kind: "scene" as const,
+            title: "Köket",
+            body: "Brevet.\n",
+            summary: "Elin hittar brevet.",
+          },
+        ],
+      },
+      {
+        kind: "sort" as const,
+        title: "Characters",
+        id: "karaktarer",
+        children: [{ kind: "scene" as const, title: "Elin", body: "Dottern.\n" }],
+      },
+    ];
+
+    const created = await createProject(files, "/Penna", details, imported);
+
+    const { tree } = await readProjectFile(files, created.dir, []);
+    const people = tree.find((node) => node.id === "karaktarer");
+    expect(people?.children).toHaveLength(1);
+    expect(tree.find((node) => node.kind === "chapter")?.children?.[0]?.summary).toBe(
+      "Elin hittar brevet.",
+    );
+    expect(tree.filter((node) => node.id === "karaktarer")).toHaveLength(1);
+  });
+
   it("starts from a template: its parts and steps, notes, labels and goal", async () => {
     const files = createMemoryFileSystem({});
 

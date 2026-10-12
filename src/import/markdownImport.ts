@@ -1,7 +1,9 @@
 import { t } from "../i18n/i18n.js";
 export type ImportedNode =
   | { kind: "part" | "chapter"; title: string; summary?: string; children: ImportedNode[] }
-  | { kind: "scene"; title: string; body: string };
+  | { kind: "scene"; title: string; body: string; summary?: string }
+  /** Notes, such as Scrivener's Characters folder; `id` names one of Penna's own sorts. */
+  | { kind: "sort"; title: string; id?: string; children: ImportedNode[] };
 
 export class ImportError extends Error {}
 

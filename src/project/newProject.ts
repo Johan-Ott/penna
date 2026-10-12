@@ -46,21 +46,17 @@ export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string,
 async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
   const tree: TreeNode[] = [];
   for (const node of book) {
-    const id = newSceneId();
+    const id = (node.kind === "sort" ? node.id : undefined) ?? newSceneId();
+    const summary = node.kind !== "sort" && node.summary ? { summary: node.summary } : {};
     if (node.kind !== "scene") {
-      tree.push({
-        id,
-        kind: node.kind,
-        title: node.title,
-        ...(node.summary ? { summary: node.summary } : {}),
-        children: await writeBook(fileSystem, dir, node.children),
-      });
+      const children = await writeBook(fileSystem, dir, node.children);
+      tree.push({ id, kind: node.kind, title: node.title, ...summary, children });
       continue;
     }
     const text = newSceneText(id, node.title);
     const file = node.body ? withSceneStatus(text, "utkast") + node.body : text;
     await writeAtomic(fileSystem, scenePath(dir, id), file);
-    tree.push({ id, kind: "scene" });
+    tree.push({ id, kind: "scene", ...summary });
   }
   return tree;
 }
