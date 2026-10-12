@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { syncProject } from "../src/sync/driveSync";
+import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 import { BOOK, twoDevices } from "./fakeDrive";
 
 const NOW = Date.parse("2026-10-04T12:00:00Z");
@@ -65,5 +66,37 @@ describe("syncProject keeps the text here", () => {
 
     const copies = (await computer.list(`${BOOK}/scenes`)).filter((name) => name.includes("Drive"));
     expect(copies.sort()).toEqual(["S1 (Drive 2026-10-04) 2.md", "S1 (Drive 2026-10-04).md"]);
+  });
+});
+
+describe("syncProject keeps two books apart", () => {
+  it("gives a different book with the same name a Drive folder of its own", async () => {
+    const { cloud, computer } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
+    const other = createMemoryFileSystem({
+      [`${BOOK}/project.json`]: '{"title":"Isen, en annan"}',
+      [`${BOOK}/scenes/T1.md`]: "En helt annan bok.",
+    });
+
+    await syncProject(other, cloud.drive, BOOK, { now: NOW });
+
+    expect(cloud.textAt("Penna/Isen.penna (2)/scenes/T1.md")).toBe("En helt annan bok.");
+    expect(cloud.textAt("Penna/Isen.penna/scenes/T1.md")).toBeNull();
+    expect(await other.list(`${BOOK}/scenes`)).toEqual(["T1.md"]);
+  });
+
+  it("lets a copied book folder start afresh instead of changing the original's Drive folder", async () => {
+    const { cloud, computer } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
+    const copy = `${BOOK.replace(".penna", "")} kopia.penna`;
+    for (const name of ["project.json", "scenes/S1.md", ".penna-sync.json"]) {
+      await computer.writeText(`${copy}/${name}`, await computer.readText(`${BOOK}/${name}`));
+    }
+    await computer.writeText(`${copy}/scenes/S1.md`, "Ett försök i kopian.");
+
+    await syncProject(computer, cloud.drive, copy, { now: NOW });
+
+    expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
+    expect(cloud.textAt("Penna/Isen kopia.penna/scenes/S1.md")).toBe("Ett försök i kopian.");
   });
 });

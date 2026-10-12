@@ -1,4 +1,4 @@
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "../storage/fileSystem.js";
 import type { Drive, RemoteFile } from "./drive.js";
 import { filesIn } from "../storage/folderFiles.js";
 import {
@@ -14,6 +14,14 @@ import {
   type WriteGuard,
 } from "./localSide.js";
 import { mergeProjectText } from "./mergeProject.js";
+import {
+  bookFolder,
+  readState,
+  STATE_FILE,
+  writeState,
+  type Synced,
+  type SyncState,
+} from "./syncState.js";
 import { addToSyncLog, SYNC_LOG, syncLogger, type SyncLogger } from "./syncLog.js";
 import { t } from "../i18n/i18n.js";
 
@@ -26,19 +34,6 @@ interface SyncResult {
   trashed: string[];
 }
 
-// Each file as it was at the last sync; project.json keeps its whole text for the merge.
-interface Synced {
-  id: string;
-  version: string;
-  hash: string;
-  text?: string;
-}
-interface SyncState {
-  folderId: string | null;
-  files: Record<string, Synced>;
-}
-
-const STATE_FILE = ".penna-sync.json";
 const MERGED = "project.json";
 // A conflict copy stays on the device where it was made, so resolving it is not undone by a sync.
 const CONFLICT_COPY = / \(Drive \d{4}-\d\d-\d\d\)/;
@@ -48,14 +43,6 @@ const isLeftOut = (path: string) =>
   path.endsWith(".penna-tmp") ||
   path.endsWith(DOWNLOAD_SUFFIX) ||
   CONFLICT_COPY.test(path);
-
-async function readState(fileSystem: FileSystem, dir: string): Promise<SyncState> {
-  try {
-    return JSON.parse(await fileSystem.readText(joinPath(dir, STATE_FILE))) as SyncState;
-  } catch {
-    return { folderId: null, files: {} };
-  }
-}
 
 async function remoteFiles(drive: Drive, folderId: string, prefix: string, tree: RemoteTree) {
   for (const file of await drive.list(folderId)) {
@@ -72,15 +59,6 @@ async function remoteFiles(drive: Drive, folderId: string, prefix: string, tree:
 interface RemoteTree {
   files: Map<string, RemoteFile>;
   folders: Map<string, string>;
-}
-
-// Penna/<book folder> in My Drive, made the first time.
-async function bookFolder(drive: Drive, dir: string, state: SyncState) {
-  if (state.folderId) return state.folderId;
-  const penna =
-    (await drive.findFolder("Penna", null)) ?? (await drive.createFolder("Penna", null));
-  const name = dir.slice(dir.lastIndexOf("/") + 1);
-  return (await drive.findFolder(name, penna)) ?? (await drive.createFolder(name, penna));
 }
 
 interface Run {
@@ -205,7 +183,9 @@ export async function syncProject(
 ) {
   const { now, guard = (_path, write) => write() } = options;
   const state = await readState(fileSystem, dir);
-  const rootId = await bookFolder(drive, dir, state);
+  const local = await filesIn(fileSystem, dir);
+  const localScenes = [...local.keys()].filter((path) => path.startsWith("scenes/"));
+  const rootId = await bookFolder(drive, dir, state, localScenes);
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
   // An empty folder after files were synced means it was removed or moved in Drive, not that
@@ -214,7 +194,6 @@ export async function syncProject(
     throw new Error(t("Bokens mapp i Drive är tom eller borta. Inget har ändrats här."));
   }
   const book = { fileSystem, dir, guard };
-  const local = await filesIn(fileSystem, dir);
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const logger = syncLogger();
   const run: Run = { book, drive, now, rootId, remote, state, result, logger };
@@ -223,8 +202,8 @@ export async function syncProject(
     if (!isLeftOut(path)) await syncFile(run, path, await readLocal(book, path));
   }
   await fileSystem.makeDir(dir);
-  const saved: SyncState = { folderId: rootId, files: state.files };
-  await fileSystem.writeText(joinPath(dir, STATE_FILE), `${JSON.stringify(saved, null, 2)}\n`);
+  const saved: SyncState = { dir, folderId: rootId, files: state.files };
+  await writeState(fileSystem, dir, saved);
   await addToSyncLog(fileSystem, dir, logger.log);
   return result;
 }
