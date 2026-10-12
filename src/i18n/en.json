@@ -1298,5 +1298,12 @@
   "Integritetspolicy": "Privacy policy",
   "Hjälp och support": "Help and support",
   "Frågor, fel och önskemål.": "Questions, bugs and wishes.",
-  "Skriv till oss": "Write to us"
+  "Skriv till oss": "Write to us",
+  "Webbsida": "Web page",
+  "Exportera Markdown": "Export Markdown",
+  "Hela boken i en textfil med rubriker, för bloggar, webbföljetonger och andra program.": "The whole book in one text file with headings, for blogs, web serials and other programs.",
+  "Exportera text": "Export text",
+  "Bara texten, utan formatering.": "Just the text, without formatting.",
+  "Exportera webbsida": "Export web page",
+  "Hela boken som en webbsida att läsa i webbläsaren eller lägga upp.": "The whole book as a web page to read in a browser or put online."
 }

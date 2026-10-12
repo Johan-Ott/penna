@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 import { ExportError, type Typography } from "../../export/book.js";
-import { designOf } from "../../export/bookDesign.js";
 import { TypstError } from "../../export/typstError.js";
 import { typstFiles, typstSource } from "../../export/typstBook.js";
 import { seriesDirOf } from "../../project/series.js";
 import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
-import { findCover } from "../../project/cover.js";
 import { recordFailure } from "../errorLog.js";
+import { ebookFile, isPlain, plainFile } from "./exportFiles.js";
+import type { PlainFormat } from "../../export/plainFormats.js";
 import { platform, type FileKind } from "../platform.js";
 import { appTypst } from "../typstAssets.js";
 import type { Project } from "../useProject.js";
@@ -26,7 +26,7 @@ export type ExportState =
   | { kind: "saved"; fileName: string; path: string }
   | { kind: "failed"; sceneTitle: string; reason: string };
 
-export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag";
+export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag" | PlainFormat;
 
 export interface ExportChoices {
   format: ExportFormat;
@@ -66,19 +66,12 @@ const FILE_KINDS: Record<ExportFormat, FileKind> = {
   ebok: { name: t("E-bok"), extension: "epub" },
   tryck: { name: t("PDF för tryck"), extension: "pdf" },
   omslag: { name: t("PDF för tryck"), extension: "pdf" },
+  markdown: { name: "Markdown", extension: "md" },
+  text: { name: t("Text"), extension: "txt" },
+  html: { name: t("Webbsida"), extension: "html" },
 };
 
 const fileNameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1);
-
-// The same id on every export, so e-readers see one book: the ISBN or an id kept in project.json.
-function bookIdentifier(project: Project, saveFields: SaveFields) {
-  const isbn = String(project.fields["isbn"] ?? "").replace(/[^\dX]/gi, "");
-  if (isbn) return `urn:isbn:${isbn}`;
-  if (typeof project.fields["bookId"] === "string") return project.fields["bookId"];
-  const bookId = `urn:uuid:${crypto.randomUUID()}`;
-  saveFields({ bookId });
-  return bookId;
-}
 
 interface ExportJob {
   onProgress: ExportProgress;
@@ -91,6 +84,7 @@ interface ExportJob {
 async function buildFile({ project, generalAuthor, choices, saveFields, onProgress }: ExportJob) {
   const material = await bookMaterial(project, generalAuthor, onProgress);
   const language = bookLanguage(project.fields);
+  if (isPlain(choices.format)) return plainFile(material, choices, language);
   if (choices.format === "manus") {
     const { standardManuscript } = await import("../../export/standardManuscript.js");
     return standardManuscript({ ...material, ...choices, language });
@@ -104,19 +98,7 @@ async function buildFile({ project, generalAuthor, choices, saveFields, onProgre
     const input = printInput({ project, material, choices, extras });
     return appTypst.pdf(typstSource(input), typstFiles(input));
   }
-  const picture = await findCover(platform.fileSystem, project.dir);
-  const { buildEpub } = await import("../../export/epub.js");
-  return buildEpub({
-    ...material,
-    ...(picture ? { cover: { type: picture.size.type, bytes: picture.bytes } } : {}),
-    typography: choices.typography,
-    language,
-    design: designOf(project.fields),
-    extras,
-    identifier: bookIdentifier(project, saveFields),
-    modified: new Date(),
-    parts: choices,
-  });
+  return ebookFile({ project, material, choices, extras, language, saveFields });
 }
 
 // The cover is a PDF of its own beside the book's, so it gets a name of its own.

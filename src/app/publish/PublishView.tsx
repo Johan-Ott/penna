@@ -53,6 +53,19 @@ const FORMATS: [ExportFormat, string, string, string][] = [
     t("Exportera omslag"),
     t("Baksida, rygg och framsida i en PDF med 3 mm utfall. Ryggen räknas fram ur sidantalet."),
   ],
+  [
+    "markdown",
+    "Markdown",
+    t("Exportera Markdown"),
+    t("Hela boken i en textfil med rubriker, för bloggar, webbföljetonger och andra program."),
+  ],
+  ["text", t("Text"), t("Exportera text"), t("Bara texten, utan formatering.")],
+  [
+    "html",
+    t("Webbsida"),
+    t("Exportera webbsida"),
+    t("Hela boken som en webbsida att läsa i webbläsaren eller lägga upp."),
+  ],
 ];
 
 const TYPOGRAPHY: [Typography, string][] = [
