@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { createStore } from "./store.js";
 import { platform, type AppUpdate } from "./platform.js";
 
 // The update Penna has found, shared by the notice and the menus' Sök efter uppdateringar.
@@ -9,25 +9,14 @@ interface Updates {
   isLatest: boolean;
 }
 
-let current: Updates = { update: null, isLatest: false };
-const listeners = new Set<() => void>();
-
-function show(next: Updates) {
-  current = next;
-  listeners.forEach((listener) => listener());
-}
+const updates = createStore<Updates>({ update: null, isLatest: false });
 
 /** Quiet offline or failing; asked by hand, "nothing newer" is said too. */
 export async function checkForUpdates(isAsked = false) {
   const update = await platform.checkForUpdate().catch(() => null);
-  show({ update, isLatest: isAsked && !update });
+  updates.set({ update, isLatest: isAsked && !update });
 }
 
-export const dismissUpdates = () => show({ update: null, isLatest: false });
+export const dismissUpdates = () => updates.set({ update: null, isLatest: false });
 
-const subscribe = (listener: () => void) => {
-  listeners.add(listener);
-  return () => void listeners.delete(listener);
-};
-
-export const useUpdates = () => useSyncExternalStore(subscribe, () => current);
+export const useUpdates = updates.use;

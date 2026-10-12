@@ -1,15 +1,11 @@
 import type { EditorState } from "prosemirror-state";
-import { useSyncExternalStore } from "react";
+import { createStore } from "./store.js";
 
 // Uppläsning: the computer's own voice reads the text back, a paragraph at a time, to proofread by
 // ear. The phone's WebView has no voice, so there it is not offered.
 
-let isSpeaking = false;
-const listeners = new Set<() => void>();
-const tell = (now: boolean) => {
-  isSpeaking = now;
-  listeners.forEach((listener) => listener());
-};
+const speaking = createStore(false);
+const tell = speaking.set;
 
 export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -57,11 +53,4 @@ export function stopSpeaking() {
   tell(false);
 }
 
-export const useSpeaking = () =>
-  useSyncExternalStore(
-    (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    () => isSpeaking,
-  );
+export const useSpeaking = speaking.use;

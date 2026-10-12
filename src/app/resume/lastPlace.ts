@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { createStore } from "../store.js";
 import { welcomeBack } from "../../project/inkwell.js";
 import { dayKey } from "../../project/stats.js";
 import { chapterOf } from "../../project/treeLabels.js";
@@ -43,18 +43,10 @@ export function placeIn(dir: string): Place | null {
 }
 
 // The opening picture waits here until the writer starts writing.
-let shown: Place | null = null;
-const listeners = new Set<() => void>();
-const tell = () => listeners.forEach((listener) => listener());
+const shown = createStore<Place | null>(null);
 
-export const showResume = (place: Place | null) => ((shown = place), tell());
-
-export function useResume() {
-  return useSyncExternalStore(
-    (listener) => (listeners.add(listener), () => listeners.delete(listener)),
-    () => shown,
-  );
-}
+export const showResume = shown.set;
+export const useResume = shown.use;
 
 /** Back after three days or more: the book opens with a welcome that says where they stopped. */
 export function greetBack(project: Project, place: Place) {
