@@ -600,7 +600,6 @@
   "Ta bort boken…": "Delete book…",
   "Ta bort boken": "Delete book",
   "Bokens meny": "Book menu",
-  "”{title}” raderas från telefonen. En kopia i Google Drive finns kvar.": "“{title}” is deleted from this phone. A copy stays in Google Drive.",
   "”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.": "“{title}” is moved to the Recycle Bin, where you can restore it.",
   "Första orden i kapitäler": "First words in small caps",
   "Ornament": "Ornament",
@@ -1309,5 +1308,7 @@
   "{path} gick inte att läsa, så inget mer synkades. Försök igen strax.": "{path} could not be read, so nothing more was synced. Try again in a moment.",
   "Många av bokens filer är borta på ena sidan på en gång, så inget synkades. Titta i bokmappen och i Drive.": "Many of the book's files are gone on one side at once, so nothing was synced. Look in the book folder and in Drive.",
   "Före Ersätt alla": "Before Replace all",
-  "Före första synken": "Before the first sync"
+  "Före första synken": "Before the first sync",
+  "”{title}” raderas från telefonen. Det som hunnit synkas finns kvar i Google Drive.": "“{title}” is deleted from this phone. What was synced stays in Google Drive.",
+  "”{title}” raderas från telefonen för gott. Den finns inte i Google Drive.": "“{title}” is deleted from this phone for good. It is not in Google Drive."
 }

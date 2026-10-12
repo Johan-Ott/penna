@@ -16,6 +16,7 @@ import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
 import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
+import { STATE_FILE } from "../sync/syncState.js";
 import type { FileKind, PickKind, Platform, RemoteState, Spelling } from "./platform.js";
 import { checkForAndroidUpdate, shareAsSave, shareFile } from "./androidPlatform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
@@ -43,10 +44,20 @@ function changedPaths(event: WatchEvent | WatchEvent[]) {
 
 const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
 
-// A computer puts the book in its trash; a phone has none, so the question says so.
+// A computer puts the book in its trash; a phone has none, so the question says so, and says
+// whether Drive has the book at all.
+async function phoneMessage(dir: string, title: string) {
+  const isSynced = (await tauriFileSystem.modifiedAt(`${dir}/${STATE_FILE}`)) !== null;
+  return isSynced
+    ? t("”{title}” raderas från telefonen. Det som hunnit synkas finns kvar i Google Drive.", {
+        title,
+      })
+    : t("”{title}” raderas från telefonen för gott. Den finns inte i Google Drive.", { title });
+}
+
 async function removeBook(dir: string, title: string) {
   const message = isPhone
-    ? t("”{title}” raderas från telefonen. En kopia i Google Drive finns kvar.", { title })
+    ? await phoneMessage(dir, title)
     : t("”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.", { title });
   const isSure = await confirm(message, {
     title: t("Ta bort boken"),
