@@ -1305,5 +1305,6 @@
   "Exportera text": "Export text",
   "Bara texten, utan formatering.": "Just the text, without formatting.",
   "Exportera webbsida": "Export web page",
-  "Hela boken som en webbsida att läsa i webbläsaren eller lägga upp.": "The whole book as a web page to read in a browser or put online."
+  "Hela boken som en webbsida att läsa i webbläsaren eller lägga upp.": "The whole book as a web page to read in a browser or put online.",
+  "{path} gick inte att läsa, så inget mer synkades. Försök igen strax.": "{path} could not be read, so nothing more was synced. Try again in a moment."
 }

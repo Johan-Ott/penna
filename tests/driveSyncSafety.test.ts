@@ -100,3 +100,17 @@ describe("syncProject keeps two books apart", () => {
     expect(cloud.textAt("Penna/Isen kopia.penna/scenes/S1.md")).toBe("Ett försök i kopian.");
   });
 });
+
+describe("syncProject and a file it cannot read", () => {
+  it("stops instead of counting a locked file as removed and removing it from Drive", async () => {
+    const { cloud, computer } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
+    const readBytes = computer.readBytes;
+    computer.readBytes = (path) =>
+      path.endsWith("S1.md") ? Promise.reject(new Error("os error 32")) : readBytes(path);
+
+    await expect(syncProject(computer, cloud.drive, BOOK, { now: NOW })).rejects.toThrow();
+
+    expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
+  });
+});

@@ -1,5 +1,6 @@
 import { takeSnapshot } from "../project/snapshots.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { t } from "../i18n/i18n.js";
 
 /** Wraps each write over a file here; the app saves the open scene first and reads it after. */
 export type WriteGuard = (path: string, write: () => Promise<void>) => Promise<void>;
@@ -29,8 +30,19 @@ export async function writeLocal(book: LocalBook, path: string, bytes: Uint8Arra
   await book.fileSystem.rename(`${target}${DOWNLOAD_SUFFIX}`, target);
 }
 
-export const readLocal = (book: LocalBook, path: string) =>
-  book.fileSystem.readBytes(joinPath(book.dir, path)).catch(() => undefined);
+/** Undefined only when the file is missing: one that is there but locked stops the sync, as it
+ * would otherwise count as removed here and be removed from Drive too. */
+export async function readLocal(book: LocalBook, path: string) {
+  const full = joinPath(book.dir, path);
+  try {
+    return await book.fileSystem.readBytes(full);
+  } catch {
+    if ((await book.fileSystem.modifiedAt(full).catch(() => null)) === null) return undefined;
+    throw new Error(
+      t("{path} gick inte att läsa, så inget mer synkades. Försök igen strax.", { path }),
+    );
+  }
+}
 
 // A file changed here while the sync worked waits for the next sync instead of being replaced.
 export async function replaceLocal(
