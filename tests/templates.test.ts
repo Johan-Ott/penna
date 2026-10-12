@@ -42,7 +42,10 @@ describe("structures and pieces", () => {
     expect(suggestedStructure("roman", ["romans", "magi"])).toBe("romantasy");
     expect(suggestedStructure("roman", [])).toBe("tre-akter");
     expect(suggestedStructure("noveller", ["deckare"])).toBe("novell");
-    expect(suggestedStructure("fackbok", [])).toBe("tom");
+    expect(suggestedStructure("fackbok", [])).toBe("fackbok");
+    expect(suggestedStructure("fackbok", ["memoar"])).toBe("memoar");
+    expect(suggestedStructure("roman", ["skrack", "romans"])).toBe("skrack");
+    expect(suggestedStructure("annat", [])).toBe("tom");
   });
 
   it("keep Penna's standard labels to themselves when no piece adds any", () => {

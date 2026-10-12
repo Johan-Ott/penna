@@ -38,13 +38,24 @@ export const structures = (): BookTemplate[] => texts().structures;
 export const templatePieces = (): TemplatePiece[] => texts().pieces;
 
 /** The structure Penna suggests for a kind of book and the pieces the writer picked. */
+// The first piece in this order that the writer picked decides the novel's structure.
+const NOVEL_STRUCTURES: [piece: string, structure: string][] = [
+  ["deckare", "deckare"],
+  ["thriller", "thriller"],
+  ["skrack", "skrack"],
+  ["romans", "romantasy"],
+  ["feelgood", "feelgood"],
+  ["ungdom", "ungdom"],
+  ["barnbok", "barnbok"],
+  ["memoar", "memoar"],
+  ["magi", "hjaltens-resa"],
+];
+
 export function suggestedStructure(type: string, pieces: string[]): string {
   if (type === "noveller") return "novell";
+  if (type === "fackbok") return pieces.includes("memoar") ? "memoar" : "fackbok";
   if (type !== "roman") return "tom";
-  if (pieces.includes("deckare")) return "deckare";
-  if (pieces.includes("romans")) return "romantasy";
-  if (pieces.includes("magi")) return "hjaltens-resa";
-  return "tre-akter";
+  return NOVEL_STRUCTURES.find(([piece]) => pieces.includes(piece))?.[1] ?? "tre-akter";
 }
 
 const unique = (values: string[]) => [...new Set(values)];

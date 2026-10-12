@@ -178,9 +178,9 @@
         {
           "title": "Två världar",
           "chapters": [
-            ["Hennes värld", "Huvudpersonen, hennes börda och vad hon är beredd att göra."],
+            ["Den första världen", "Huvudpersonen, bördan och vad hen är beredd att göra."],
             ["Mötet", "De två möts, och det gnistrar av motstånd."],
-            ["Hans värld", "Den andra rösten: hans hemlighet och hans hov."],
+            ["Den andra världen", "Den andra rösten: en hemlighet och en egen värld."],
             ["Fiender eller allierade", "Ett tvång eller en pakt binder dem samman."]
           ]
         },
@@ -198,7 +198,7 @@
           "chapters": [
             ["Sveket", "En hemlighet kommer fram och allt rasar."],
             ["Isär", "De går skilda vägar, och kriget närmar sig."],
-            ["Valet", "Hon måste välja mellan kärleken och plikten."]
+            ["Valet", "Huvudpersonen måste välja mellan kärleken och plikten."]
           ]
         },
         {
@@ -248,6 +248,229 @@
           "chapters": [
             ["Avslöjandet", "Hur det gick till, och varför."],
             ["Efteråt", "Vad fallet kostade, och vad som väntar."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thriller",
+      "name": "Thrillerns fyra delar",
+      "hint": "Ett hot, en jakt, en vändning och en uppgörelse mot klockan.",
+      "totalGoal": 90000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Hotet",
+          "chapters": [
+            ["Det vanliga livet", "Huvudpersonen och det hen har att förlora."],
+            ["Det första tecknet", "Något är fel, och ingen annan ser det."],
+            ["Indragen", "Det går inte längre att vända om."]
+          ]
+        },
+        {
+          "title": "Jakten",
+          "chapters": [
+            ["Spåret", "Den första ledtråden leder vidare."],
+            ["Motståndaren", "Hotet får ett ansikte, eller en plan."],
+            ["Klockan tickar", "En tidsgräns gör allt brådskande."]
+          ]
+        },
+        {
+          "title": "Vändningen",
+          "chapters": [
+            ["Allt var fel", "En sanning vänder upp och ned på allt."],
+            ["Ensam", "Hjälpen sviker; huvudpersonen står själv."],
+            ["Planen", "En sista chans tar form."]
+          ]
+        },
+        {
+          "title": "Uppgörelsen",
+          "chapters": [
+            ["Mot klockan", "Allt avgörs på kort tid."],
+            ["Efteråt", "Vad som är förändrat och vad det kostade."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skrack",
+      "name": "Skräckens trappa",
+      "hint": "Det vardagliga spricker, steg för steg, tills inget är tryggt.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Det vardagliga",
+          "chapters": [
+            ["Platsen", "Där allt ska hända, innan något har hänt."],
+            ["Det första konstiga", "En liten sak som inte stämmer."],
+            ["Förklaringar", "Alla förklarar bort det."]
+          ]
+        },
+        {
+          "title": "Det växer",
+          "chapters": [
+            ["Närmare", "Det som skrämmer kommer närmare."],
+            ["Ingen tror en", "Huvudpersonen är ensam med det."],
+            ["Sanningen", "Vad det är, och vad det vill."]
+          ]
+        },
+        {
+          "title": "Det värsta",
+          "chapters": [
+            ["Fast", "Det finns ingen väg ut."],
+            ["Konfrontationen", "Ansikte mot ansikte med rädslan."],
+            ["Efterklangen", "Det som stannar kvar, kanske för alltid."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feelgood",
+      "name": "Feelgood och romantisk komedi",
+      "hint": "En ny början, ett möte som skaver, värme, ett bakslag och ett varmt slut.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Den nya början",
+          "chapters": [
+            ["Ett liv i gungning", "Något tar slut och något nytt måste börja."],
+            ["Platsen", "En ort, en butik eller ett hus att landa i."],
+            ["Mötet", "Två som inte alls borde passa ihop."]
+          ]
+        },
+        {
+          "title": "Värmen",
+          "chapters": [
+            ["Gemenskapen", "Människorna runt omkring blir viktiga."],
+            ["Närmare", "Det skaver mindre och mindre."],
+            ["Det goda ögonblicket", "Allt känns möjligt."]
+          ]
+        },
+        {
+          "title": "Bakslaget",
+          "chapters": [
+            ["Missförståndet", "Ett gammalt sår eller en hemlighet ställer till det."],
+            ["Isär", "Det ser ut att vara över."]
+          ]
+        },
+        {
+          "title": "Hem",
+          "chapters": [
+            ["Modet", "Någon vågar säga det som behöver sägas."],
+            ["Det varma slutet", "Livet som det blev, bättre än planen."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ungdom",
+      "name": "Ungdomsroman",
+      "hint": "Att hitta sig själv: vänner, första gången och ett val som förändrar allt.",
+      "totalGoal": 60000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Före",
+          "chapters": [
+            ["Vem jag tror att jag är", "Huvudpersonen, familjen och vännerna."],
+            ["Det nya", "En ny skola, en ny vän eller en hemlighet."]
+          ]
+        },
+        {
+          "title": "Mitt i",
+          "chapters": [
+            ["Första gången", "Något händer för första gången."],
+            ["Gruppen", "Att höra till, eller inte."],
+            ["Lögnen", "Något huvudpersonen döljer växer."]
+          ]
+        },
+        {
+          "title": "Efter",
+          "chapters": [
+            ["Allt brister", "Lögnen kommer fram."],
+            ["Valet", "Att välja vem man vill vara."],
+            ["Någon ny", "Den huvudpersonen blev."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barnbok",
+      "name": "Kapitelbok för barn",
+      "hint": "Korta kapitel med en tydlig fråga, ett äventyr och ett tryggt slut.",
+      "totalGoal": 15000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "",
+          "chapters": [
+            ["Hemma", "Huvudpersonen och det hen önskar sig."],
+            ["Något händer", "En överraskning sätter igång allt."],
+            ["Äventyret", "Ut i det okända, med en vän."],
+            ["Det svåra", "Ett problem som verkar för stort."],
+            ["Modet", "Huvudpersonen löser det, på sitt eget sätt."],
+            ["Hem igen", "Tryggt, men inte riktigt som förut."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memoar",
+      "name": "Memoar",
+      "hint": "Ett liv berättat kring en fråga: vad hände, och vad betydde det.",
+      "totalGoal": 70000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Varifrån",
+          "chapters": [
+            ["Ögonblicket", "En scen som visar vad boken handlar om."],
+            ["Uppväxten", "Platsen, människorna och det som formade dig."]
+          ]
+        },
+        {
+          "title": "Det som hände",
+          "chapters": [
+            ["Vändpunkten", "Det som förändrade allt."],
+            ["Kampen", "Det svåra, och hur du tog dig igenom det."],
+            ["Människorna", "De som betydde mest, på gott och ont."]
+          ]
+        },
+        {
+          "title": "Vad det betydde",
+          "chapters": [
+            ["Förståelsen", "Det du ser nu som du inte såg då."],
+            ["Nu", "Var du står i dag."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fackbok",
+      "name": "Fackbok",
+      "hint": "En fråga, kunskapen som svarar på den och vad läsaren kan göra med den.",
+      "totalGoal": 60000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "",
+          "chapters": [
+            ["Inledning", "Frågan boken svarar på, och varför den spelar roll."],
+            ["Bakgrund", "Det läsaren behöver veta först."],
+            ["Första delen", "Den första stora idén, med exempel."],
+            ["Andra delen", "Nästa idé, som bygger på den första."],
+            ["Tredje delen", "Det svåraste, eller det mest överraskande."],
+            ["Så gör du", "Hur läsaren använder det i sitt eget liv."],
+            ["Avslutning", "Det viktigaste i korthet."]
           ]
         }
       ]
@@ -323,6 +546,98 @@
         ["Första rösten", "#2f86c9"],
         ["Andra rösten", "#c9508f"]
       ],
+      "chapters": []
+    },
+    {
+      "id": "thriller",
+      "name": "Thriller",
+      "hint": "Hotet, tidslinjen och vändningarna att hålla reda på.",
+      "sorts": ["Hotet", "Tidslinje"],
+      "labels": [
+        ["Vändning", "#d4483b"],
+        ["Tidspress", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "skrack",
+      "name": "Skräck",
+      "hint": "Det som skrämmer, platsen och reglerna för det övernaturliga.",
+      "sorts": ["Det som skrämmer", "Platsen"],
+      "labels": [
+        ["Rädsla", "#6b2c8f"],
+        ["Varsel", "#7d7d7d"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "scifi",
+      "name": "Science fiction",
+      "hint": "Tekniken, världarna och samhället i framtiden.",
+      "sorts": ["Teknik", "Världar", "Samhället"],
+      "labels": [["Teknik", "#2f86c9"]],
+      "chapters": []
+    },
+    {
+      "id": "historisk",
+      "name": "Historisk roman",
+      "hint": "Epoken, källorna och vad som verkligen hände.",
+      "sorts": ["Epoken", "Källor"],
+      "labels": [
+        ["Historiskt faktum", "#8a6d3b"],
+        ["Kolla fakta", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "feelgood",
+      "name": "Feelgood",
+      "hint": "Orten, gemenskapen och det som värmer.",
+      "sorts": ["Orten", "Gemenskapen"],
+      "labels": [["Värme", "#e0a21e"]],
+      "chapters": []
+    },
+    {
+      "id": "ungdom",
+      "name": "Ungdom",
+      "hint": "Vänner, skolan och första gången.",
+      "sorts": ["Vänner", "Skolan"],
+      "labels": [["Första gången", "#c9508f"]],
+      "chapters": []
+    },
+    {
+      "id": "litterar",
+      "name": "Litterär roman",
+      "hint": "Teman och motiv som går igen genom boken.",
+      "sorts": ["Teman", "Motiv"],
+      "labels": [["Motiv", "#5c8a5c"]],
+      "chapters": []
+    },
+    {
+      "id": "barnbok",
+      "name": "Barnbok",
+      "hint": "Bilderna och orden för läsaren.",
+      "sorts": ["Bilder"],
+      "labels": [["Bild här", "#2f86c9"]],
+      "chapters": []
+    },
+    {
+      "id": "memoar",
+      "name": "Memoar",
+      "hint": "Minnen, brev och dokument från livet.",
+      "sorts": ["Minnen", "Brev och dokument"],
+      "labels": [
+        ["Minne", "#8a6d3b"],
+        ["Kolla fakta", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "fakta",
+      "name": "Fakta och källor",
+      "hint": "Källorna, citaten och det som behöver beläggas.",
+      "sorts": ["Källor", "Citat"],
+      "labels": [["Källa behövs", "#d4483b"]],
       "chapters": []
     },
     {

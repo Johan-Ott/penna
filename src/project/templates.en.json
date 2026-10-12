@@ -190,9 +190,9 @@
         {
           "title": "Two worlds",
           "chapters": [
-            ["Her world", "The main character, her burden and what she is willing to do."],
+            ["The first world", "The main character, the burden and what they are willing to do."],
             ["The meeting", "The two meet, and the friction sparks."],
-            ["His world", "The second voice: his secret and his court."],
+            ["The second world", "The second voice: a secret and a world of their own."],
             ["Enemies or allies", "A bargain or a bond ties them together."]
           ]
         },
@@ -210,7 +210,7 @@
           "chapters": [
             ["The betrayal", "A secret comes out and everything falls apart."],
             ["Apart", "They go separate ways, and war draws near."],
-            ["The choice", "She has to choose between love and duty."]
+            ["The choice", "The main character has to choose between love and duty."]
           ]
         },
         {
@@ -260,6 +260,229 @@
           "chapters": [
             ["The reveal", "How it was done, and why."],
             ["Afterwards", "What the case cost, and what lies ahead."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "thriller",
+      "name": "The thriller in four parts",
+      "hint": "A threat, a chase, a twist and a reckoning against the clock.",
+      "totalGoal": 90000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "The threat",
+          "chapters": [
+            ["Ordinary life", "The main character and what they stand to lose."],
+            ["The first sign", "Something is wrong, and no one else sees it."],
+            ["Drawn in", "There is no turning back."]
+          ]
+        },
+        {
+          "title": "The chase",
+          "chapters": [
+            ["The trail", "The first clue leads on."],
+            ["The opponent", "The threat gets a face, or a plan."],
+            ["The clock ticks", "A deadline makes everything urgent."]
+          ]
+        },
+        {
+          "title": "The twist",
+          "chapters": [
+            ["Everything was wrong", "A truth turns everything upside down."],
+            ["Alone", "Help fails; the main character stands alone."],
+            ["The plan", "A last chance takes shape."]
+          ]
+        },
+        {
+          "title": "The reckoning",
+          "chapters": [
+            ["Against the clock", "Everything is decided in little time."],
+            ["After", "What has changed, and what it cost."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "skrack",
+      "name": "The staircase of horror",
+      "hint": "The everyday cracks, step by step, until nothing is safe.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "The everyday",
+          "chapters": [
+            ["The place", "Where it will all happen, before anything has."],
+            ["The first strange thing", "A small thing that does not add up."],
+            ["Explanations", "Everyone explains it away."]
+          ]
+        },
+        {
+          "title": "It grows",
+          "chapters": [
+            ["Closer", "What frightens comes closer."],
+            ["No one believes", "The main character is alone with it."],
+            ["The truth", "What it is, and what it wants."]
+          ]
+        },
+        {
+          "title": "The worst",
+          "chapters": [
+            ["Trapped", "There is no way out."],
+            ["The confrontation", "Face to face with the fear."],
+            ["The echo", "What stays, perhaps for good."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "feelgood",
+      "name": "Feel-good and romantic comedy",
+      "hint": "A new start, a meeting that grates, warmth, a setback and a warm ending.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "The new start",
+          "chapters": [
+            ["A life in flux", "Something ends and something new must begin."],
+            ["The place", "A town, a shop or a house to land in."],
+            ["The meeting", "Two who should not fit together at all."]
+          ]
+        },
+        {
+          "title": "The warmth",
+          "chapters": [
+            ["The community", "The people around them begin to matter."],
+            ["Closer", "It grates less and less."],
+            ["The good moment", "Everything seems possible."]
+          ]
+        },
+        {
+          "title": "The setback",
+          "chapters": [
+            ["The misunderstanding", "An old wound or a secret gets in the way."],
+            ["Apart", "It looks like it is over."]
+          ]
+        },
+        {
+          "title": "Home",
+          "chapters": [
+            ["The courage", "Someone dares to say what needs saying."],
+            ["The warm ending", "Life as it turned out, better than the plan."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ungdom",
+      "name": "Young adult",
+      "hint": "Finding yourself: friends, first times and a choice that changes everything.",
+      "totalGoal": 60000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Before",
+          "chapters": [
+            ["Who I think I am", "The main character, the family and the friends."],
+            ["The new", "A new school, a new friend or a secret."]
+          ]
+        },
+        {
+          "title": "In the middle",
+          "chapters": [
+            ["The first time", "Something happens for the first time."],
+            ["The group", "Belonging, or not."],
+            ["The lie", "Something the main character hides grows."]
+          ]
+        },
+        {
+          "title": "After",
+          "chapters": [
+            ["Everything breaks", "The lie comes out."],
+            ["The choice", "Choosing who to be."],
+            ["Someone new", "Who the main character became."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barnbok",
+      "name": "Chapter book for children",
+      "hint": "Short chapters with a clear question, an adventure and a safe ending.",
+      "totalGoal": 15000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "",
+          "chapters": [
+            ["At home", "The main character and what they wish for."],
+            ["Something happens", "A surprise sets everything going."],
+            ["The adventure", "Out into the unknown, with a friend."],
+            ["The hard part", "A problem that seems too big."],
+            ["The courage", "The main character solves it, in their own way."],
+            ["Home again", "Safe, but not quite as before."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memoar",
+      "name": "Memoir",
+      "hint": "A life told around one question: what happened, and what did it mean.",
+      "totalGoal": 70000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Where from",
+          "chapters": [
+            ["The moment", "A scene that shows what the book is about."],
+            ["Growing up", "The place, the people and what shaped you."]
+          ]
+        },
+        {
+          "title": "What happened",
+          "chapters": [
+            ["The turning point", "What changed everything."],
+            ["The struggle", "The hard part, and how you got through it."],
+            ["The people", "Those who mattered most, for better or worse."]
+          ]
+        },
+        {
+          "title": "What it meant",
+          "chapters": [
+            ["The understanding", "What you see now that you did not see then."],
+            ["Now", "Where you stand today."]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fackbok",
+      "name": "Non-fiction",
+      "hint": "A question, the knowledge that answers it and what the reader can do with it.",
+      "totalGoal": 60000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "",
+          "chapters": [
+            ["Introduction", "The question the book answers, and why it matters."],
+            ["Background", "What the reader needs to know first."],
+            ["First part", "The first big idea, with examples."],
+            ["Second part", "The next idea, built on the first."],
+            ["Third part", "The hardest, or the most surprising."],
+            ["How to", "How the reader uses it in their own life."],
+            ["Conclusion", "The essentials in brief."]
           ]
         }
       ]
@@ -335,6 +558,98 @@
         ["First voice", "#2f86c9"],
         ["Second voice", "#c9508f"]
       ],
+      "chapters": []
+    },
+    {
+      "id": "thriller",
+      "name": "Thriller",
+      "hint": "The threat, the timeline and the twists to keep track of.",
+      "sorts": ["The threat", "Timeline"],
+      "labels": [
+        ["Twist", "#d4483b"],
+        ["Time pressure", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "skrack",
+      "name": "Horror",
+      "hint": "What frightens, the place and the rules of the supernatural.",
+      "sorts": ["What frightens", "The place"],
+      "labels": [
+        ["Fear", "#6b2c8f"],
+        ["Omen", "#7d7d7d"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "scifi",
+      "name": "Science fiction",
+      "hint": "The technology, the worlds and the society of the future.",
+      "sorts": ["Technology", "Worlds", "Society"],
+      "labels": [["Technology", "#2f86c9"]],
+      "chapters": []
+    },
+    {
+      "id": "historisk",
+      "name": "Historical novel",
+      "hint": "The era, the sources and what really happened.",
+      "sorts": ["The era", "Sources"],
+      "labels": [
+        ["Historical fact", "#8a6d3b"],
+        ["Check facts", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "feelgood",
+      "name": "Feel-good",
+      "hint": "The town, the community and what warms.",
+      "sorts": ["The town", "The community"],
+      "labels": [["Warmth", "#e0a21e"]],
+      "chapters": []
+    },
+    {
+      "id": "ungdom",
+      "name": "Young adult",
+      "hint": "Friends, school and first times.",
+      "sorts": ["Friends", "School"],
+      "labels": [["First time", "#c9508f"]],
+      "chapters": []
+    },
+    {
+      "id": "litterar",
+      "name": "Literary novel",
+      "hint": "Themes and motifs that recur through the book.",
+      "sorts": ["Themes", "Motifs"],
+      "labels": [["Motif", "#5c8a5c"]],
+      "chapters": []
+    },
+    {
+      "id": "barnbok",
+      "name": "Children's book",
+      "hint": "The pictures and the words for the reader.",
+      "sorts": ["Pictures"],
+      "labels": [["Picture here", "#2f86c9"]],
+      "chapters": []
+    },
+    {
+      "id": "memoar",
+      "name": "Memoir",
+      "hint": "Memories, letters and documents from a life.",
+      "sorts": ["Memories", "Letters and documents"],
+      "labels": [
+        ["Memory", "#8a6d3b"],
+        ["Check facts", "#e08a1e"]
+      ],
+      "chapters": []
+    },
+    {
+      "id": "fakta",
+      "name": "Facts and sources",
+      "hint": "The sources, the quotations and what needs evidence.",
+      "sorts": ["Sources", "Quotations"],
+      "labels": [["Source needed", "#d4483b"]],
       "chapters": []
     },
     {
