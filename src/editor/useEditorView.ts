@@ -15,9 +15,10 @@ function createView(
   element: HTMLElement,
   switches: ViewSwitches,
   onState: (state: EditorState, docChanged: boolean) => void,
+  state: EditorState,
 ) {
   const view: EditorView = new EditorView(element, {
-    state: createEditorState(schema.node("doc"), switches),
+    state,
     editable: switches.isEditable,
     // Penna's own check, where there is one, instead of the browser's.
     attributes: () => ({
@@ -119,6 +120,34 @@ function useFocusRequest(viewRef: React.RefObject<EditorView | null>) {
   return { requestFocus, focusIfRequested };
 }
 
+function useMount(
+  viewRef: React.RefObject<EditorView | null>,
+  switches: ViewSwitches,
+  setEditorState: (state: EditorState | null) => void,
+  onDocChangeRef: React.RefObject<(doc: Node) => void>,
+) {
+  // A new mount (the phone turned, the screen changed) carries on with the open text; an empty
+  // page there would be saved over the scene at the first key.
+  const lastState = useRef<EditorState | null>(null);
+  return useCallback((element: HTMLDivElement | null) => {
+    lastState.current = viewRef.current?.state ?? lastState.current;
+    viewRef.current?.destroy();
+    const state = lastState.current ?? createEditorState(schema.node("doc"), switches);
+    viewRef.current = element
+      ? createView(
+          element,
+          switches,
+          (next, docChanged) => {
+            setEditorState(next);
+            if (docChanged) onDocChangeRef.current(next.doc);
+          },
+          state,
+        )
+      : null;
+    setEditorState(viewRef.current?.state ?? null);
+  }, []);
+}
+
 /** React re-renders on every transaction through `editorState`. */
 export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
@@ -127,17 +156,7 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   const { switches, modes } = useModeSwitches();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
 
-  // The switches read refs and never change, so mount and load need no dependencies.
-  const mount = useCallback((element: HTMLDivElement | null) => {
-    viewRef.current?.destroy();
-    viewRef.current = element
-      ? createView(element, switches, (state, docChanged) => {
-          setEditorState(state);
-          if (docChanged) onDocChangeRef.current(state.doc);
-        })
-      : null;
-    setEditorState(viewRef.current?.state ?? null);
-  }, []);
+  const mount = useMount(viewRef, switches, setEditorState, onDocChangeRef);
   const load = useCallback((doc: Node) => {
     viewRef.current?.updateState(createEditorState(doc, switches));
     setEditorState(viewRef.current?.state ?? null);

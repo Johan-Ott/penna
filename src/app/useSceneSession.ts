@@ -30,6 +30,17 @@ function openedModes(modes: ReturnType<typeof useEditorView>["modes"], opened: O
   modes.current.pictureUrl = opened ? (name) => pictureUrlIn(opened.dir, name) : async () => null;
 }
 
+// Closing asks to save first; a phone may close an app in the background without asking, so the
+// text is saved as soon as it leaves the screen.
+function useSavedOnLeaving(session: SceneSession) {
+  useEffect(() => platform.guardClose(() => session.autosave.flush()), [session]);
+  useEffect(() => {
+    const onHide = () => document.hidden && void session.autosave.flush();
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, [session]);
+}
+
 export function useSceneSession() {
   const [scene, setScene] = useState<OpenScene | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus | null>(null);
@@ -57,7 +68,7 @@ export function useSceneSession() {
     [load, viewRef, modes],
   );
   sessionRef.current = session;
-  useEffect(() => platform.guardClose(() => session.autosave.flush()), [session]);
+  useSavedOnLeaving(session);
 
   return { session, scene, saveStatus, conflict, editor, savedRef };
 }

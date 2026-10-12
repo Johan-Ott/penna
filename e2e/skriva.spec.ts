@@ -253,3 +253,16 @@ test("the folded sidebar floats out while the pointer rests on its button", asyn
 
   await expect(page.locator(".sidebar")).toBeVisible();
 });
+
+test("the text stays when the window turns narrow and the phone's screen takes over", async ({
+  page,
+}) => {
+  await expect(editor(page)).toContainText("Brevet låg på köksbordet");
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+
+  await expect(editor(page)).toContainText("Brevet låg på köksbordet");
+  await page.setViewportSize({ width: 1280, height: 820 });
+  await expect(editor(page)).toContainText("Brevet låg på köksbordet");
+});
