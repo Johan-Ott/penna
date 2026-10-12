@@ -7,7 +7,7 @@ const titleOf = (project: Project, id: string) => project.summaries[id]?.title ?
 
 async function settleCrashText(project: Project, restore: boolean) {
   for (const temp of project.recoverable) {
-    if (restore) await restoreCrashText(platform.fileSystem, temp);
+    if (restore) await restoreCrashText(platform.fileSystem, project.dir, temp);
     else await setAsideCrashText(platform.fileSystem, project.dir, temp);
   }
 }

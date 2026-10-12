@@ -115,12 +115,13 @@ describe("crash text", () => {
   const TEMP = { tempPath: `${SCENE_PATH}.penna-tmp`, targetPath: SCENE_PATH };
   const CRASH = `---\nid: ${SCENE_ID}\ntitle: Köket\n---\nIsen var grå. Skrivet före kraschen.\n`;
 
-  it("restoring puts the newer text in the scene", async () => {
+  it("restoring puts the newer text in the scene, and the saved one in trash/", async () => {
     const { files } = setup({ [TEMP.tempPath]: CRASH });
 
-    await restoreCrashText(files, TEMP);
+    await restoreCrashText(files, "/bok", TEMP);
 
     expect(await files.readText(SCENE_PATH)).toBe(CRASH);
+    expect(await files.readText(`/bok/trash/${SCENE_ID} (före återställning).md`)).toBe(MINE);
     expect(await files.list("/bok/scenes")).not.toContain(`${SCENE_ID}.md.penna-tmp`);
   });
 

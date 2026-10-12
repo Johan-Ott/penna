@@ -23,14 +23,16 @@ export async function writeAtomic(
   await fileSystem.rename(tempPath, path);
 }
 
-/** Temp files left by a crash that hold newer text than their target. */
+/** Temp files left by a crash that hold newer text than their target. An empty one is a write
+ * that never began, and is left out. */
 export async function findRecoverableTemps(fileSystem: FileSystem, dir: string) {
   const tempNames = (await fileSystem.list(dir)).filter((name) => name.endsWith(TEMP_SUFFIX));
   const found: RecoverableTemp[] = [];
   for (const name of tempNames) {
     const tempPath = joinPath(dir, name);
     const targetPath = tempPath.slice(0, -TEMP_SUFFIX.length);
-    if (await isNewerThanTarget(fileSystem, tempPath, targetPath)) {
+    const isEmpty = (await fileSystem.readBytes(tempPath).catch(() => null))?.length === 0;
+    if (!isEmpty && (await isNewerThanTarget(fileSystem, tempPath, targetPath))) {
       found.push({ tempPath, targetPath });
     }
   }

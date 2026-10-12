@@ -78,9 +78,19 @@ export async function keepVersion(
 export const crashSceneId = (temp: RecoverableTemp) =>
   temp.targetPath.slice(temp.targetPath.lastIndexOf("/") + 1, -".md".length);
 
-// Settled before any scene opens: the next save would overwrite the temp file.
-export const restoreCrashText = (fileSystem: FileSystem, temp: RecoverableTemp) =>
-  fileSystem.rename(temp.tempPath, temp.targetPath);
+// Settled before any scene opens: the next save would overwrite the temp file. The saved text
+// goes to trash/, so restoring can be undone.
+export async function restoreCrashText(fileSystem: FileSystem, dir: string, temp: RecoverableTemp) {
+  if ((await fileSystem.modifiedAt(temp.targetPath)) !== null) {
+    await setAside(
+      fileSystem,
+      dir,
+      temp.targetPath,
+      `${crashSceneId(temp)} (före återställning).md`,
+    );
+  }
+  await fileSystem.rename(temp.tempPath, temp.targetPath);
+}
 
 export const setAsideCrashText = (fileSystem: FileSystem, dir: string, temp: RecoverableTemp) =>
   setAside(fileSystem, dir, temp.tempPath, `${crashSceneId(temp)} (osparad vid krasch).md`);

@@ -73,6 +73,16 @@ describe("findRecoverableTemps", () => {
     expect(found).toEqual([]);
   });
 
+  it("skips an empty temp file, a write that never began", async () => {
+    await writeFile(scenePath(), "sparad");
+    await writeFile(tempPathFor(scenePath()), "");
+    await utimes(scenePath(), 1000, 1000);
+
+    const found = await findRecoverableTemps(nodeFileSystem, dir);
+
+    expect(found).toEqual([]);
+  });
+
   it("returns nothing for a folder that does not exist", async () => {
     const found = await findRecoverableTemps(nodeFileSystem, joinPath(dir, "saknas"));
 
