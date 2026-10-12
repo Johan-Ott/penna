@@ -1,7 +1,7 @@
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
-import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
   cancel,
   isPermissionGranted,
@@ -16,7 +16,7 @@ import { ask, open, save } from "@tauri-apps/plugin-dialog";
 import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
 import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
 import { tauriFileSystem } from "../storage/tauriFileSystem.js";
-import type { FileKind, PickKind, Platform, Spelling } from "./platform.js";
+import type { FileKind, PickKind, Platform, RemoteState, Spelling } from "./platform.js";
 import { checkForAndroidUpdate, shareAsSave, shareFile } from "./androidPlatform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { isTestBuild, testAsk, testPath } from "./testMode.js";
@@ -160,7 +160,7 @@ const spelling: Spelling = {
   suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
 };
 
-const remoteControl = (turnOn?: boolean) => invoke<boolean>("remote_control", { turnOn });
+const remoteControl = (turnOn?: boolean) => invoke<RemoteState>("remote_control", { turnOn });
 
 const windowControls = {
   minimize: () => void getCurrentWindow().minimize(),
@@ -186,6 +186,7 @@ export const tauriPlatform: Platform = {
   knownFolders: isPhone ? phoneFolders : computerFolders,
   ...googleSignInHere(),
   folderExists: (path) => exists(path),
+  openLink: (url) => openUrl(url),
 
   async pickFolder() {
     if (isPhone) return null;

@@ -16,6 +16,7 @@ export const browserPlatform: Platform = {
   webFetch: (input, init) => fetch(input, init),
   fileSystem,
   pickFolder: async () => `${HOME}/Dokument`,
+  openLink: async (url) => void window.open(url, "_blank", "noreferrer"),
   knownFolders: async () => ({ home: HOME, documents: `${HOME}/Dokument` }),
   folderExists: async (path) =>
     (await fileSystem.list(parentOf(path))).includes(path.slice(path.lastIndexOf("/") + 1)),

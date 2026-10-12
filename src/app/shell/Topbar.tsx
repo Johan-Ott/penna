@@ -1,5 +1,6 @@
 import { SprintButton } from "../sprint/SprintBar.js";
 import { LookButton } from "../settingsPanel.js";
+import { RemoteBadge } from "../settings/RemoteControlRow.js";
 import { WindowControls } from "./WindowControls.js";
 import { DayProgress } from "./DayProgress.js";
 import type { MouseEvent, ReactNode } from "react";
@@ -150,6 +151,25 @@ export function ReviewButton({ review, onReview }: ReviewProps) {
   );
 }
 
+function TopbarEnd(props: TopbarProps) {
+  return (
+    <div className="topbar-end" data-tauri-drag-region>
+      <RemoteBadge />
+      {props.view === "skriv" && <LookButton />}
+      <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
+        <ReadIcon />
+      </IconButton>
+      <IconButton label={t("Sök · Ctrl+K")} onClick={props.onSearch}>
+        <SearchIcon />
+      </IconButton>
+      <IconButton label={t("Fokusläge · Ctrl+Shift+F")} onClick={props.onFocus}>
+        <FocusIcon />
+      </IconButton>
+      <WindowControls />
+    </div>
+  );
+}
+
 export function Topbar(props: TopbarProps) {
   return (
     <header className="topbar" data-tauri-drag-region>
@@ -164,19 +184,7 @@ export function Topbar(props: TopbarProps) {
           {props.title}
         </span>
       )}
-      <div className="topbar-end" data-tauri-drag-region>
-        {props.view === "skriv" && <LookButton />}
-        <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
-          <ReadIcon />
-        </IconButton>
-        <IconButton label={t("Sök · Ctrl+K")} onClick={props.onSearch}>
-          <SearchIcon />
-        </IconButton>
-        <IconButton label={t("Fokusläge · Ctrl+Shift+F")} onClick={props.onFocus}>
-          <FocusIcon />
-        </IconButton>
-        <WindowControls />
-      </div>
+      <TopbarEnd {...props} />
     </header>
   );
 }

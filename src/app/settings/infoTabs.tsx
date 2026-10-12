@@ -1,3 +1,4 @@
+import { platform } from "../platform.js";
 import { useState } from "react";
 import { errorLog } from "../errorLog.js";
 import { Row } from "../controls.js";
@@ -84,13 +85,16 @@ function Credits() {
   );
 }
 
+const PRIVACY_URL = "https://johan-ott.github.io/penna/integritet.html";
+const SUPPORT_URL = "https://github.com/Johan-Ott/penna/issues";
+
 export function AboutTab() {
   return (
     <>
       <Row label={t("Version")}>{__APP_VERSION__}</Row>
       <Row
         label={t("Felrapport")}
-        hint={t("Version, enhet och de senaste felen, att klistra in i ett mejl till oss.")}
+        hint={t("Version, enhet och de senaste felen, att klistra in när du ber om hjälp.")}
       >
         <ErrorReportButton />
       </Row>
@@ -98,9 +102,18 @@ export function AboutTab() {
       <Row
         label={t("Integritet")}
         hint={t(
-          "Penna samlar inte in någon data. Text lämnar enheten bara om du kopplar din egen Google Drive.",
+          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr; feedback går via Formspree. De ser att en enhet frågar, aldrig vad du skriver.",
         )}
-      />
+      >
+        <button className="link-button" onClick={() => void platform.openLink(PRIVACY_URL)}>
+          {t("Integritetspolicy")}
+        </button>
+      </Row>
+      <Row label={t("Hjälp och support")} hint={t("Frågor, fel och önskemål.")}>
+        <button className="link-button" onClick={() => void platform.openLink(SUPPORT_URL)}>
+          {t("Skriv till oss")}
+        </button>
+      </Row>
       <Credits />
     </>
   );

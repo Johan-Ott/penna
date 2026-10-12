@@ -19,7 +19,7 @@ fn open_window(app: &tauri::App) -> tauri::Result<()> {
     let builder = WebviewWindowBuilder::from_config(app.handle(), &config)?;
     #[cfg(desktop)]
     let builder = {
-        let args = if remote::is_on(app.handle()) {
+        let args = if remote::take(app.handle()) {
             format!("{BROWSER_ARGS} {}", remote::PORT_ARG)
         } else {
             BROWSER_ARGS.to_string()

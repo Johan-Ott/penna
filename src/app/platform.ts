@@ -3,6 +3,11 @@ import type { FileSystem } from "../storage/fileSystem.js";
 import { browserPlatform } from "./browserPlatform.js";
 import { tauriPlatform } from "./tauriPlatform.js";
 
+export interface RemoteState {
+  isOpen: boolean;
+  isNext: boolean;
+}
+
 /** A frameless window's own buttons, in Penna's top bar. */
 export interface WindowControls {
   minimize: () => void;
@@ -13,8 +18,10 @@ export interface WindowControls {
 export interface Platform {
   /** A phone: books in the app's own folder, no keyboard shortcuts, no folder to pick. */
   isPhone: boolean;
-  /** Whether tools on this computer may drive Penna from the next start; on sets it. Computer only. */
-  remoteControl?: (turnOn?: boolean) => Promise<boolean>;
+  /** Tools on this computer may drive Penna for the next start only; open is this start. */
+  remoteControl?: (turnOn?: boolean) => Promise<RemoteState>;
+  /** A web page in the system's browser, outside Penna. */
+  openLink(url: string): Promise<void>;
   /** On a computer, where Penna's window has no frame of its own. */
   windowControls?: WindowControls;
   fileSystem: FileSystem;

@@ -7,7 +7,9 @@ autosparet, versionerna och trädet fungerar som vanligt.
 ## Kom igång
 
 **Med den vanliga Penna:** slå på Inställningar, Allmänt, "Styr Penna från den här datorn" och
-starta om Penna. Anropen går sedan mot dina riktiga böcker med `--app`:
+starta om Penna. Det gäller den starten och bara den: topplisten visar "Styrs utifrån" så länge
+det är på, och nästa gång Penna startar är det av igen. Anropen går mot dina riktiga böcker med
+`--app`:
 
 ```bash
 node scripts/penna.mjs --app tree
@@ -48,8 +50,9 @@ Svaret kommer som JSON.
 
 ## Bra att veta
 
-- Den vanliga Penna går bara att styra när du har slagit på det, och bara från den här datorn.
-  Stäng av det i Inställningar när du inte behöver det.
+- Den vanliga Penna går bara att styra när du har slagit på det, en start i taget, och bara från
+  den här datorn. Porten har inget lösenord, så vilket program på datorn som helst kan använda
+  den under den starten.
 - Varje ändring väntar tills appen tagit emot den, så flera anrop i rad bygger på varandra.
 - Koden: `src/app/remote.ts` (läsa, kommandon, texten) och `src/app/remoteBook.ts` (ändra
   boken). Testerna: `e2e/styrning.spec.ts`.
