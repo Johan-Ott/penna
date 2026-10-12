@@ -11,7 +11,10 @@ pub const PORT_ARG: &str = "--remote-debugging-port=9334";
 static IS_OPEN: AtomicBool = AtomicBool::new(false);
 
 fn flag(app: &tauri::AppHandle) -> Option<PathBuf> {
-    app.path().app_data_dir().ok().map(|dir| dir.join("remote-control"))
+    app.path()
+        .app_data_dir()
+        .ok()
+        .map(|dir| dir.join("remote-control"))
 }
 
 /// True once, at the start after it was turned on; the file is gone afterwards.
@@ -42,5 +45,8 @@ pub fn remote_control(app: tauri::AppHandle, turn_on: Option<bool>) -> Result<Re
         Some(false) if path.exists() => std::fs::remove_file(&path).map_err(|e| e.to_string())?,
         _ => {}
     }
-    Ok(RemoteState { is_open: IS_OPEN.load(Ordering::Relaxed), is_next: path.exists() })
+    Ok(RemoteState {
+        is_open: IS_OPEN.load(Ordering::Relaxed),
+        is_next: path.exists(),
+    })
 }

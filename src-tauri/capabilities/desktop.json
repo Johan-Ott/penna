@@ -51,6 +51,12 @@
         },
         {
           "path": "$APPDATA/backups/**"
+        },
+        {
+          "path": "$APPDATA/Dokument"
+        },
+        {
+          "path": "$APPDATA/Dokument/**"
         }
       ]
     }
