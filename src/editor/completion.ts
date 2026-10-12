@@ -1,12 +1,14 @@
 import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey, type EditorState } from "prosemirror-state";
 import { Decoration, DecorationSet, type EditorView } from "prosemirror-view";
+import type { CompletionWords } from "./vocabulary.js";
 
-// Word completion on the computer: the rest of a name or a long word from the scene, shown in
-// grey after the cursor; Tab takes it, typing on or Esc leaves it.
+// Word completion on the computer: the rest of a name, of one of the book's words, or the word
+// the book usually puts next, shown in grey after the cursor; Tab takes it, typing on leaves it.
 
 const LONG_WORD = 7;
 const PREFIX = 3;
+const NAME_PREFIX = 2;
 
 interface Completion {
   place: number;
@@ -28,8 +30,8 @@ function longWordsIn(doc: Node) {
 }
 
 /** The rest of the first name or word that begins as the word being typed, or null. */
-export function completionFor(prefix: string, words: string[]) {
-  if (prefix.length < PREFIX) return null;
+export function completionFor(prefix: string, words: string[], shortest = PREFIX) {
+  if (prefix.length < shortest) return null;
   const lower = prefix.toLocaleLowerCase();
   const match = words.find(
     (word) => word.length > prefix.length && word.toLocaleLowerCase().startsWith(lower),
@@ -37,14 +39,28 @@ export function completionFor(prefix: string, words: string[]) {
   return match ? match.slice(prefix.length) : null;
 }
 
-function completionAt(state: EditorState, names: string[]): Completion | null {
+// After a word and a space: the word the book usually puts next, when it mostly does.
+function nextWord(before: string, words: CompletionWords) {
+  const previous = before.match(/(\p{L}+) $/u)?.[1];
+  return previous ? (words.nextOf[previous.toLowerCase()] ?? null) : null;
+}
+
+function restOf(before: string, words: CompletionWords, doc: Node) {
+  const prefix = before.match(/\p{L}+$/u)?.[0] ?? "";
+  if (!prefix) return nextWord(before, words);
+  return (
+    completionFor(prefix, words.names, NAME_PREFIX) ??
+    completionFor(prefix, [...words.words, ...longWordsIn(doc)])
+  );
+}
+
+function completionAt(state: EditorState, words: CompletionWords): Completion | null {
   const { $from, empty } = state.selection;
   if (!empty || !$from.parent.isTextblock) return null;
   const before = $from.parent.textBetween(0, $from.parentOffset, undefined, "￼");
   const after = $from.parent.textBetween($from.parentOffset, $from.parent.content.size);
-  const prefix = before.match(/\p{L}+$/u)?.[0] ?? "";
   if (/^\p{L}/u.test(after)) return null;
-  const rest = completionFor(prefix, [...names, ...longWordsIn(state.doc)]);
+  const rest = restOf(before, words, state.doc);
   return rest ? { place: $from.pos, rest } : null;
 }
 
@@ -69,15 +85,15 @@ function takeOrLeave(view: EditorView, event: KeyboardEvent) {
   return true;
 }
 
-/** Names are asked each time, so a note made a moment ago is offered at once. */
-export function completionPlugin(isOn: () => boolean, names: () => string[]) {
+/** The words are asked each time, so a note made a moment ago is offered at once. */
+export function completionPlugin(isOn: () => boolean, words: () => CompletionWords) {
   return new Plugin<Completion | null>({
     key: completionKey,
     state: {
       init: () => null,
       apply: (transaction, _value, _old, state) => {
         if (transaction.getMeta(completionKey) === "hide" || !isOn()) return null;
-        return transaction.docChanged ? completionAt(state, names()) : null;
+        return transaction.docChanged ? completionAt(state, words()) : null;
       },
     },
     props: { decorations: shownCompletion, handleKeyDown: takeOrLeave },

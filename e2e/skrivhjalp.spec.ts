@@ -49,6 +49,18 @@ test("a name from the notes is offered while typing, and Tab fills it in", async
   await expect(editor(page).locator(".completion")).toHaveCount(0);
 });
 
+test("a name comes after two letters, and the book's own words after three", async ({ page }) => {
+  await cursorAfterFirstParagraph(page);
+
+  await page.keyboard.type(" Ar");
+  await expect(editor(page).locator(".completion")).toHaveText("vid");
+  await page.keyboard.press("Escape");
+  // The book's words are learned a moment after it opens.
+  await page.waitForTimeout(3500);
+  await page.keyboard.type(" fyr");
+  await expect(editor(page).locator(".completion")).toHaveText("en");
+});
+
 test("a click on a repeated word says so and leads to Granska", async ({ page }) => {
   await page.locator(".ProseMirror .repeat").first().click();
 

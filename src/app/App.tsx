@@ -105,7 +105,7 @@ function useNotesParts(core: ReturnType<typeof useCoreState>) {
   const isNoteOpen = homes.some((home) => noteSortOf(home, sceneState.scene?.id ?? "") !== null);
   const { view, isReviewOpen } = writingMode;
   const notes = useNotes(homes, project, isNoteOpen || view === "innehall" || isReviewOpen);
-  useMentionLinks(sceneState.editor, notes);
+  useMentionLinks(sceneState.editor, notes, project);
   useSpelling(sceneState.editor, project, notes, {
     isOn: writingMode.settings.spellcheck,
     updateFields: (fields) => void projectState.updateFields(fields),

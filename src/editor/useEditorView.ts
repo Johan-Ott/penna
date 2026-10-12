@@ -1,3 +1,4 @@
+import { NO_WORDS, type CompletionWords } from "./vocabulary.js";
 import type { Node } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
@@ -43,7 +44,8 @@ interface EditorModes {
   isTypographyOn: boolean;
   isAutocorrectOn: boolean;
   isCompletionOn: boolean;
-  completionNames: string[];
+  /** Names and the book's own words, each set by what knows them. */
+  completion: CompletionWords;
   isSpellcheckOn: boolean;
   isEditable: boolean;
   mentionMatchers: MentionMatcher[];
@@ -63,7 +65,7 @@ const START_MODES: EditorModes = {
   isTypographyOn: true,
   isAutocorrectOn: false,
   isCompletionOn: false,
-  completionNames: [],
+  completion: NO_WORDS,
   isSpellcheckOn: true,
   isEditable: false,
   mentionMatchers: [],
@@ -85,7 +87,7 @@ function useModeSwitches() {
     isTypographyOn: () => modes.current.isTypographyOn,
     isAutocorrectOn: () => modes.current.isAutocorrectOn,
     isCompletionOn: () => modes.current.isCompletionOn,
-    completionNames: () => modes.current.completionNames,
+    completion: () => modes.current.completion,
     isSpellcheckOn: () => modes.current.isSpellcheckOn,
     isEditable: () => modes.current.isEditable,
     mentionMatchers: () => modes.current.mentionMatchers,

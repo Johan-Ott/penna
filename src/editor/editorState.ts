@@ -9,6 +9,7 @@ import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
 import { autocorrectPlugin, autocorrectRules } from "./autocorrect.js";
 import { completionPlugin } from "./completion.js";
+import { NO_WORDS, type CompletionWords } from "./vocabulary.js";
 import { focusPlugin, typewriterPlugin } from "./focus.js";
 import { mentionsPlugin, type MentionMatcher } from "./mentions.js";
 import { placeholder } from "./placeholder.js";
@@ -46,7 +47,7 @@ export interface EditorSwitches {
   isTypographyOn: () => boolean;
   isAutocorrectOn: () => boolean;
   isCompletionOn: () => boolean;
-  completionNames: () => string[];
+  completion: () => CompletionWords;
   mentionMatchers: () => MentionMatcher[];
   onMention: (id: string, box: DOMRect) => void;
   /** Null when the review is off. */
@@ -66,7 +67,7 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   isTypographyOn: () => true,
   isAutocorrectOn: () => false,
   isCompletionOn: () => false,
-  completionNames: () => [],
+  completion: () => NO_WORDS,
   mentionMatchers: () => [],
   onMention: () => undefined,
   repeatWindow: () => null,
@@ -116,7 +117,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
     plugins: [
       history(),
       search(),
-      completionPlugin(switches.isCompletionOn, switches.completionNames),
+      completionPlugin(switches.isCompletionOn, switches.completion),
       autocorrectPlugin(switches.isAutocorrectOn, switches.spelling),
       writingRules(switches),
       writingKeys,

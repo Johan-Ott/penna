@@ -103,7 +103,7 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   [
     "completion",
     t("Ordförslag"),
-    t("Resten av ett namn eller ett långt ord ur scenen visas i grått. Tab fyller i."),
+    t("Namn, bokens ord och ordet du brukar skriva härnäst visas i grått. Tab fyller i."),
   ],
   ["review", t("Granskning"), t("Namnstavning och upprepningar, i texten och i en panel bredvid.")],
 ];
