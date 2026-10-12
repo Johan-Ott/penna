@@ -1,5 +1,6 @@
 // `npm run build:android`: a signed app file in out/Penna.apk, to send to a phone and open there.
-// It is signed with Android's own test key, enough to install it; a store needs a real key.
+// It is signed with Penna's own key in ~/.penna (never in git); without it, with Android's test
+// key, which installs but must never reach a release: phones cannot update across keys.
 import { execFileSync } from "node:child_process";
 import {
   copyFileSync,
@@ -21,6 +22,8 @@ const ndk = process.env.NDK_HOME ?? join(sdk, "ndk", newest(join(sdk, "ndk")));
 const buildTools = join(sdk, "build-tools", newest(join(sdk, "build-tools")));
 const environment = { ...process.env, ANDROID_HOME: sdk, NDK_HOME: ndk };
 const testKey = join(homedir(), ".android", "debug.keystore");
+const releaseKey = join(homedir(), ".penna", "penna-release.jks");
+const releasePass = join(homedir(), ".penna", "penna-release.pass");
 // src-tauri/gen is not in git, so our Kotlin files, icons and the sign-in library are added on
 // every build.
 const android = "src-tauri/gen/android/app";
@@ -93,8 +96,11 @@ mkdirSync("out", { recursive: true });
 step("Filen packas för Android", join(buildTools, "zipalign"), [
   `-f -p 4 ${join(built, "app-universal-release-unsigned.apk")} ${aligned}`,
 ]);
-// Android's test key is the same on every computer, with the password "android".
+const hasReleaseKey = existsSync(releaseKey) && existsSync(releasePass);
+const key = hasReleaseKey
+  ? `--ks ${releaseKey} --ks-pass file:${releasePass}`
+  : `--ks ${testKey} --ks-pass pass:android`;
 step("Filen signeras", join(buildTools, "apksigner.bat"), [
-  `sign --ks ${testKey} --ks-pass pass:android --out ${join("out", "Penna.apk")} ${aligned}`,
+  `sign ${key} --out ${join("out", "Penna.apk")} ${aligned}`,
 ]);
-say("Klart: out/Penna.apk");
+say(hasReleaseKey ? "Klart: out/Penna.apk" : "Klart, men med testnyckeln: inte för release.");
