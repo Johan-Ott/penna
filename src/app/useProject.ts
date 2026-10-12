@@ -69,20 +69,26 @@ function useProjectWriter(projectRef: React.RefObject<Project | null>) {
     },
     [projectRef],
   );
-  return { write, treeFailure };
+  const settled = useCallback(() => queue.current, []);
+  return { write, treeFailure, settled };
 }
 
 export function useProjectUpdates(
   projectRef: React.RefObject<Project | null>,
   setProject: React.Dispatch<React.SetStateAction<Project | null>>,
 ) {
-  const { write, treeFailure } = useProjectWriter(projectRef);
+  const { write, treeFailure, settled } = useProjectWriter(projectRef);
+  // Counted, so a read that began before a change knows it is out of date.
+  const edits = useRef(0);
   const update = useCallback(
     (change: { tree?: TreeNode[]; fields?: Record<string, unknown> }) => {
       const project = projectRef.current;
       if (!project || project.isReadOnly) return Promise.resolve();
       const tree = change.tree ?? project.tree;
       const fields = { ...project.fields, ...change.fields };
+      // At once, so a second change before the next render builds on this one.
+      projectRef.current = { ...project, tree, fields };
+      edits.current++;
       setProject((current) => current && { ...current, tree, fields });
       return write(fields, tree);
     },
@@ -93,7 +99,7 @@ export function useProjectUpdates(
     (fields: Record<string, unknown>) => update({ fields }),
     [update],
   );
-  return { updateTree, updateFields, updateProject: update, treeFailure };
+  return { updateTree, updateFields, updateProject: update, treeFailure, edits, settled };
 }
 
 // The folder being read, so the start picture shows instead of a screen that seems stuck.
@@ -111,6 +117,38 @@ function useOpen(setProject: (project: Project) => void) {
   return { opening, open };
 }
 
+type Updates = ReturnType<typeof useProjectUpdates>;
+
+// A read that began before a change here would put back the tree from before, so it reads again
+// once the change is saved. A failed read keeps what is shown.
+function useRefresh(
+  dir: string | null,
+  projectRef: React.RefObject<Project | null>,
+  setProject: React.Dispatch<React.SetStateAction<Project | null>>,
+  updates: Pick<Updates, "edits" | "settled">,
+) {
+  const { edits, settled } = updates;
+  const refresh = useCallback(
+    async (changed?: string[]): Promise<void> => {
+      if (!dir) return;
+      const current = projectRef.current;
+      const editsBefore = edits.current;
+      const known =
+        changed && current?.dir === dir
+          ? { summaries: current.summaries, changed: new Set(changed) }
+          : undefined;
+      const fresh = await readProject(dir, known, false).catch(
+        recordFailure("Boken kunde inte läsas om"),
+      );
+      if (!fresh) return;
+      if (edits.current !== editsBefore) return settled().then(() => refresh());
+      setProject((latest) => (latest?.dir === dir ? fresh : latest));
+    },
+    [dir, projectRef, setProject, edits, settled],
+  );
+  return refresh;
+}
+
 export function useProject(onFolderChange: () => void) {
   const [project, setProject] = useState<Project | null>(null);
   const projectRef = useRef<Project | null>(null);
@@ -119,23 +157,7 @@ export function useProject(onFolderChange: () => void) {
   const dir = project?.dir ?? null;
 
   const { opening, open } = useOpen(setProject);
-  // A read after the project closed is dropped; one that fails keeps what is shown. Given the
-  // paths the folder watch saw, only those scenes are read again.
-  const refresh = useCallback(
-    async (changed?: string[]) => {
-      if (!dir) return;
-      const current = projectRef.current;
-      const known =
-        changed && current?.dir === dir
-          ? { summaries: current.summaries, changed: new Set(changed) }
-          : undefined;
-      const fresh = await readProject(dir, known, false).catch(
-        recordFailure("Boken kunde inte läsas om"),
-      );
-      if (fresh) setProject((latest) => (latest?.dir === dir ? fresh : latest));
-    },
-    [dir],
-  );
+  const refresh = useRefresh(dir, projectRef, setProject, updates);
   const choose = useCallback(async () => {
     const folder = await platform.pickFolder();
     if (folder) await open(folder);

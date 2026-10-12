@@ -19,10 +19,14 @@ export function useSeries(book: Project | null, onFolderChange: () => void) {
   // Only the read for the book still open may land.
   const dirRef = useRef(dir);
   dirRef.current = dir;
-  const refresh = useCallback(async () => {
+  const { edits, settled } = updates;
+  // Read again once a change made meanwhile is saved, as this read has the tree from before.
+  const refresh = useCallback(async (): Promise<void> => {
+    const editsBefore = edits.current;
     const fresh = await readSeries(dir);
+    if (edits.current !== editsBefore) return settled().then(() => refresh());
     if (dirRef.current === dir) setSeries(fresh);
-  }, [dir]);
+  }, [dir, edits, settled]);
   useEffect(() => void refresh(), [refresh]);
   useFolderWatch(dir, refresh, onFolderChange);
   return {
