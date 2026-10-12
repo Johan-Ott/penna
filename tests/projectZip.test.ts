@@ -27,6 +27,22 @@ describe("projectZip", () => {
     expect(await zip.file("Isen.penna/scenes/s1.md")?.async("string")).toBe("Brevet låg där.");
   });
 
+  it("leaves out a file it cannot read instead of failing the whole copy", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/Isen.penna/project.json": "{}",
+      "/Penna/Isen.penna/scenes/s1.md": "Låst.",
+    });
+    const { readBytes, list } = files;
+    files.readBytes = (path) =>
+      path.endsWith("s1.md") ? Promise.reject(new Error("os error 32")) : readBytes(path);
+    files.list = (dir) =>
+      dir.endsWith("s1.md") ? Promise.reject(new Error("not a folder")) : list(dir);
+
+    const zip = await JSZip.loadAsync(await projectZip(files, ["/Penna/Isen.penna"]));
+
+    expect(zip.file("Isen.penna/project.json")).not.toBeNull();
+  });
+
   it("packs the book's series beside the book, so both unpack into the library together", async () => {
     const files = createMemoryFileSystem({
       "/Penna/Isen.penna/project.json": '{"series":"Vintern.serie"}',

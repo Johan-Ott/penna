@@ -6,12 +6,16 @@ export async function filesIn(fileSystem: FileSystem, dir: string, prefix = "") 
   const folder = prefix ? joinPath(dir, prefix) : dir;
   for (const name of await fileSystem.list(folder)) {
     const path = prefix ? `${prefix}/${name}` : name;
-    // A folder cannot be read as a file, so whatever fails to read is walked into.
+    // A folder cannot be read as a file, so whatever fails to read is walked into. A locked
+    // file is no folder either, and is left out rather than stopping a whole backup.
     const bytes = await fileSystem.readBytes(joinPath(folder, name)).catch(() => null);
     if (bytes) found.set(path, bytes);
-    else
-      for (const [inner, content] of await filesIn(fileSystem, dir, path))
-        found.set(inner, content);
+    else {
+      const inside = await filesIn(fileSystem, dir, path).catch(
+        () => new Map<string, Uint8Array>(),
+      );
+      for (const [inner, content] of inside) found.set(inner, content);
+    }
   }
   return found;
 }
