@@ -25,10 +25,15 @@ export interface Project extends OpenedProject {
 const folderName = (dir: string) =>
   (dir.split("/").pop() ?? dir).replace(/\.penna$/, "").replace(/\.serie$/, "");
 
-export async function readProject(dir: string, known?: KnownSummaries): Promise<Project> {
+/** `isOpening`: only opening a book may repair its project.json; reading it again only retries. */
+export async function readProject(
+  dir: string,
+  known?: KnownSummaries,
+  isOpening = true,
+): Promise<Project> {
   const fileSystem = platform.fileSystem;
   const listing = await openProjectFolder(fileSystem, dir);
-  const file = await readProjectFile(fileSystem, dir, listing.scenes);
+  const file = await readProjectFile(fileSystem, dir, listing.scenes, isOpening);
   const { tree } = reconcileScenes(file.tree, listing.scenes);
   const summaries = await readSceneSummaries(fileSystem, dir, listing.scenes, known);
   const title = file.fields["title"];
@@ -124,7 +129,9 @@ export function useProject(onFolderChange: () => void) {
         changed && current?.dir === dir
           ? { summaries: current.summaries, changed: new Set(changed) }
           : undefined;
-      const fresh = await readProject(dir, known).catch(recordFailure("Boken kunde inte läsas om"));
+      const fresh = await readProject(dir, known, false).catch(
+        recordFailure("Boken kunde inte läsas om"),
+      );
       if (fresh) setProject((latest) => (latest?.dir === dir ? fresh : latest));
     },
     [dir],

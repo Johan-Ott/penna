@@ -28,23 +28,42 @@ const isTextRecord = (value: unknown) =>
 // Pictures by area, and label ids as a list.
 const isOptionalTextRecord = (value: unknown) => value === undefined || isTextRecord(value);
 
-function isTreeNode(value: unknown): value is TreeNode {
-  if (typeof value !== "object" || value === null) return false;
-  const node = value as Record<string, unknown>;
+// The node's own values, not its children's.
+function isNodeItself(node: Record<string, unknown>) {
   const hasIdAndKind = typeof node["id"] === "string" && KINDS.includes(node["kind"] as NodeKind);
   const texts = ["title", "summary", "when", "pov", "opening", "reveal", ...HEADING_FIELDS].every(
     (key) => isOptionalString(node[key]),
   );
   const records = ["pictures", "labels", "knownBy"].every((key) => isOptionalTextRecord(node[key]));
-  return hasIdAndKind && texts && records && isOptionalNodeList(node["children"]);
+  return hasIdAndKind && texts && records;
 }
 
-function parseProject(text: string): { fields: Record<string, unknown>; tree: TreeNode[] } | null {
+function isTreeNode(value: unknown): value is TreeNode {
+  if (typeof value !== "object" || value === null) return false;
+  const node = value as Record<string, unknown>;
+  return isNodeItself(node) && isOptionalNodeList(node["children"]);
+}
+
+const asRecord = (value: unknown) =>
+  typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
+
+/** Every node that can be read is kept; a broken one gives way to its children. */
+export function salvageTree(nodes: unknown[]): TreeNode[] {
+  return nodes.flatMap((value): TreeNode[] => {
+    const node = asRecord(value);
+    if (!node) return [];
+    const children = Array.isArray(node["children"]) ? salvageTree(node["children"]) : undefined;
+    if (!isNodeItself(node)) return children ?? [];
+    return [{ ...(node as unknown as TreeNode), ...(children ? { children } : {}) }];
+  });
+}
+
+function parseProject(text: string): { fields: Record<string, unknown>; tree: unknown[] } | null {
   try {
-    const parsed: unknown = JSON.parse(text);
-    if (typeof parsed !== "object" || parsed === null) return null;
-    const { tree, ...fields } = parsed as Record<string, unknown>;
-    return Array.isArray(tree) && tree.every(isTreeNode) ? { fields, tree } : null;
+    const parsed = asRecord(JSON.parse(text));
+    if (!parsed) return null;
+    const { tree, ...fields } = parsed;
+    return Array.isArray(tree) ? { fields, tree } : null;
   } catch {
     return null;
   }
@@ -65,33 +84,58 @@ export async function writeProjectFile(
   );
 }
 
-async function repair(
-  fileSystem: FileSystem,
-  dir: string,
-  brokenText: string,
-  sceneIds: string[],
-): Promise<ProjectFile> {
-  const stamp = new Date().toISOString().slice(0, 16).replace(":", "-");
-  const repairCopy = `project.json.trasig-${stamp}`;
+/** project.json could not be read and was left as it is, as a half-written file may be. */
+export class UnreadableProject extends Error {}
+
+// To the second, so two repairs never share a copy.
+const repairName = () =>
+  `project.json.trasig-${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}`;
+
+// The broken file is kept as a copy; what could be read of it is written back, the fields kept.
+async function repair(fileSystem: FileSystem, dir: string, brokenText: string, read: Read) {
+  const repairCopy = repairName();
   await writeAtomic(fileSystem, joinPath(dir, repairCopy), brokenText);
-  const tree = rebuildTree(sceneIds);
-  await writeProjectFile(fileSystem, dir, {}, tree);
-  return { fields: {}, tree, repairCopy, isNewerFormat: false };
+  await writeProjectFile(fileSystem, dir, read.fields, read.tree);
+  return { fields: read.fields, tree: read.tree, repairCopy, isNewerFormat: false };
 }
 
-/** A broken file is kept as a copy and the tree is rebuilt from the scenes. */
+type Read = {
+  fields: Record<string, unknown>;
+  tree: TreeNode[];
+  isNewer: boolean;
+  isWhole: boolean;
+};
+
+// What can be read of the text: the valid nodes, or a tree from the scene files.
+function readText(text: string, sceneIds: string[]): Read {
+  const parsed = parseProject(text);
+  const { formatVersion, ...fields } = parsed?.fields ?? {};
+  return {
+    fields,
+    tree: parsed ? salvageTree(parsed.tree) : rebuildTree(sceneIds),
+    isNewer: typeof formatVersion === "number" && formatVersion > FORMAT_VERSION,
+    isWhole: parsed !== null && parsed.tree.every(isTreeNode),
+  };
+}
+
+/**
+ * A newer format opens read-only, as it is. A broken file is repaired only when `mayRepair`:
+ * the folder watch may see a file another program is still writing, and only retries.
+ */
 export async function readProjectFile(
   fileSystem: FileSystem,
   dir: string,
   sceneIds: string[],
+  mayRepair = true,
 ): Promise<ProjectFile> {
   const text = await readIfThere(fileSystem, projectPath(dir));
   if (text === null) {
     return { fields: {}, tree: rebuildTree(sceneIds), repairCopy: null, isNewerFormat: false };
   }
-  const parsed = parseProject(text);
-  if (!parsed) return repair(fileSystem, dir, text, sceneIds);
-  const { formatVersion, ...fields } = parsed.fields;
-  const isNewerFormat = typeof formatVersion === "number" && formatVersion > FORMAT_VERSION;
-  return { fields, tree: parsed.tree, repairCopy: null, isNewerFormat };
+  const read = readText(text, sceneIds);
+  if (read.isNewer || read.isWhole) {
+    return { fields: read.fields, tree: read.tree, repairCopy: null, isNewerFormat: read.isNewer };
+  }
+  if (!mayRepair) throw new UnreadableProject(projectPath(dir));
+  return repair(fileSystem, dir, text, read);
 }

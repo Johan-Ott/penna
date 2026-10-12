@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readProjectFile, writeProjectFile } from "../src/project/projectFile";
+import { readProjectFile, UnreadableProject, writeProjectFile } from "../src/project/projectFile";
 import {
   CHARACTERS_ID,
   NOTES_ID,
@@ -77,12 +77,42 @@ describe("readProjectFile", () => {
     expect(JSON.parse(await files.readText(PROJECT_PATH)).tree).toHaveLength(7);
   });
 
-  it("treats a tree with invalid nodes as broken", async () => {
-    const files = createMemoryFileSystem({ [PROJECT_PATH]: '{ "tree": [{ "id": 5 }] }' });
+  it("repairs an invalid node by keeping every valid node and every field", async () => {
+    const stored = {
+      title: "Vintervägen",
+      tree: [
+        { id: "k1", kind: "chapter", title: "Brevet", children: [{ id: "s1", kind: "scene" }] },
+        { id: 5, kind: "part", children: [{ id: "s2", kind: "scene" }] },
+      ],
+    };
+    const files = createMemoryFileSystem({ [PROJECT_PATH]: JSON.stringify(stored) });
+
+    const project = await readProjectFile(files, "/bok", ["s1", "s2"]);
+
+    expect(project.repairCopy).not.toBeNull();
+    expect(project.fields).toEqual({ title: "Vintervägen" });
+    expect(project.tree).toEqual([
+      { id: "k1", kind: "chapter", title: "Brevet", children: [{ id: "s1", kind: "scene" }] },
+      { id: "s2", kind: "scene" },
+    ]);
+    expect(JSON.parse(await files.readText(PROJECT_PATH)).title).toBe("Vintervägen");
+  });
+
+  it("never rewrites a newer Penna's project.json, even with nodes it does not know", async () => {
+    const text = JSON.stringify({ formatVersion: 2, tree: [{ id: "x", kind: "tidslinje" }] });
+    const files = createMemoryFileSystem({ [PROJECT_PATH]: text });
 
     const project = await readProjectFile(files, "/bok", []);
 
-    expect(project.repairCopy).not.toBeNull();
+    expect(project.isNewerFormat).toBe(true);
+    expect(await files.readText(PROJECT_PATH)).toBe(text);
+  });
+
+  it("leaves a half-written file alone when it may not repair", async () => {
+    const files = createMemoryFileSystem({ [PROJECT_PATH]: '{ "tree": [ halv' });
+
+    await expect(readProjectFile(files, "/bok", ["s1"], false)).rejects.toThrow(UnreadableProject);
+    expect(await files.readText(PROJECT_PATH)).toBe('{ "tree": [ halv');
   });
 });
 
