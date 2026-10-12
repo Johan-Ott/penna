@@ -3,9 +3,7 @@ import { wordsByLabel, wordsByStatus } from "../../project/bookNumbers.js";
 import { labelsOf } from "../../project/labels.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (words: number) => words.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 /** How far the book has come, as one bar in the steps' colours. */
 export function WordsByStatus({ project }: { project: Project }) {
@@ -30,7 +28,7 @@ export function WordsByStatus({ project }: { project: Project }) {
       <div className="status-legend">
         {SCENE_STATUSES.filter((status) => words[status] > 0).map((status) => (
           <span key={status}>
-            {steps[status].name} {format(words[status])}
+            {steps[status].name} {formatNumber(words[status])}
           </span>
         ))}
       </div>
@@ -53,7 +51,7 @@ export function WordsByLabel({ project }: { project: Project }) {
           <span className="chapter-name">
             <span className="tree-dot" style={{ background: label.color }} /> {label.name}
           </span>
-          <span className="progress-label">{format(words)}</span>
+          <span className="progress-label">{formatNumber(words)}</span>
         </div>
       ))}
     </section>

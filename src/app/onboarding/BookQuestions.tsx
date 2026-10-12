@@ -2,7 +2,7 @@ import type { ProjectDetails } from "../../project/newProject.js";
 import { NarrationPicker } from "../review/NarrationPicker.js";
 import { PieceToggles, TemplateSuggestion } from "../templates/TemplateChoices.js";
 import { BOOK_STEPS, continueFrom, type OnboardingState } from "./useOnboarding.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 type FieldProps = { details: ProjectDetails; onChange: (details: ProjectDetails) => void };
 
@@ -20,7 +20,7 @@ function GoalFields({ details, onChange }: FieldProps) {
         <span className="field-label">{t("Dagligt ordmål")}</span>
         <input
           inputMode="numeric"
-          value={details.dailyGoal.toLocaleString(numberLocale())}
+          value={formatNumber(details.dailyGoal)}
           onChange={(event) =>
             onChange({ ...details, dailyGoal: Number(event.target.value.replace(/\D/g, "")) })
           }

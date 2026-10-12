@@ -14,7 +14,7 @@ import {
   TRASH_ID,
   type TreeNode,
 } from "./tree.js";
-import { t, numberLocale } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 type Summaries = Record<string, SceneSummary>;
 
@@ -76,7 +76,7 @@ export function shortWordCount(words: number): string {
 
 /** Words, or how many notes a sort holds. */
 export function nodeMeta(node: TreeNode, summaries: Summaries): string {
-  if (node.kind === "scene") return (summaries[node.id]?.words ?? 0).toLocaleString(numberLocale());
+  if (node.kind === "scene") return formatNumber(summaries[node.id]?.words ?? 0);
   if (node.kind === "sort") return String(sceneIdsIn([node], node.id).length);
   if (node.kind === "part") return "";
   const words = nodeWords(node, summaries);

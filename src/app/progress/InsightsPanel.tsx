@@ -16,9 +16,7 @@ import type { Journey } from "../../project/journey.js";
 import { JourneyCard } from "../journey/JourneyCard.js";
 import { JourneyDialog } from "../journey/JourneyDialog.js";
 import { DayDialog } from "../journey/DayDialog.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
-
-const format = (words: number) => words.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function Chapters({ project }: { project: Project }) {
   const chapters = chapterWords(project.tree, project.summaries);
@@ -33,7 +31,7 @@ function Chapters({ project }: { project: Project }) {
           <div className="progress-bar thin">
             <div style={{ width: `${(100 * chapter.words) / most}%` }} />
           </div>
-          <span className="progress-label">{format(chapter.words)}</span>
+          <span className="progress-label">{formatNumber(chapter.words)}</span>
         </div>
       ))}
     </section>

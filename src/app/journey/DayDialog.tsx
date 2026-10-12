@@ -3,9 +3,8 @@ import { INK, type Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
 import { Dialog } from "../controls.js";
 import { textsToday } from "./todayTexts.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 
-const format = (count: number) => count.toLocaleString(numberLocale());
 const DROP =
   "M148 35 C170 60 178 78 178 92 C178 109 165 120 148 120 C131 120 118 109 118 92 C118 78 126 60 148 35 Z";
 
@@ -41,7 +40,7 @@ function TodayTexts() {
   return texts.map((text) => (
     <div key={text.title} className="day-dialog-text">
       <span>{text.title || t("Namnlös scen")}</span>
-      <span className="day-dialog-quiet">{format(text.words)}</span>
+      <span className="day-dialog-quiet">{formatNumber(text.words)}</span>
     </div>
   ));
 }
@@ -56,8 +55,8 @@ function InkLine({ journey }: { journey: Journey }) {
       <span className="day-dialog-quiet">{paceText(summary.days)}</span>
       <TodayTexts />
       <div className="day-dialog-ink">
-        <span>{t("+ {count} bläck idag", { count: format(inkToday) })}</span>
-        <span className="day-dialog-quiet">{`${summary.rank.name} · ${format(summary.ink)}`}</span>
+        <span>{t("+ {count} bläck idag", { count: formatNumber(inkToday) })}</span>
+        <span className="day-dialog-quiet">{`${summary.rank.name} · ${formatNumber(summary.ink)}`}</span>
       </div>
     </>
   );
@@ -79,7 +78,7 @@ export function DayDialog(props: {
       </span>
       <Drop isDone={props.goal !== null && props.words >= props.goal} />
       <span className="day-dialog-words">
-        {t("{count} ord skrivna", { count: format(props.words) })}
+        {t("{count} ord skrivna", { count: formatNumber(props.words) })}
       </span>
       <InkLine journey={props.journey} />
       <div className="dialog-actions">

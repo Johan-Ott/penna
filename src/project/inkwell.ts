@@ -9,7 +9,7 @@ import {
   totalWords,
   type Journey,
 } from "./journey.js";
-import { numberLocale, t } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 const wordsOn = (journey: Journey, day: string) => journey.words[day] ?? 0;
 
@@ -68,7 +68,6 @@ export interface Celebration {
 
 const STREAKS = [7, 14, 30, 50, 100, 200, 365];
 const BEST_DAY_FROM = 500;
-const format = (words: number) => words.toLocaleString(numberLocale());
 
 function streakText(days: number): Celebration {
   const title = days === 7 ? t("En vecka i sträck.") : t("{count} dagar i rad.", { count: days });
@@ -82,13 +81,13 @@ export function celebrationsBetween(before: Summary, after: Summary): Celebratio
     found.push({
       kind: "level",
       title: t("Ny nivå: {level}.", { level: after.level.name }),
-      text: t("{count} ord sedan du började.", { count: format(after.words) }),
+      text: t("{count} ord sedan du började.", { count: formatNumber(after.words) }),
     });
   if (after.rank.index > before.rank.index)
     found.push({
       kind: "rank",
       title: t("Ny bläcknivå: {rank}.", { rank: after.rank.name }),
-      text: t("{count} bläck.", { count: format(after.ink) }),
+      text: t("{count} bläck.", { count: formatNumber(after.ink) }),
     });
   if (after.days > before.days && STREAKS.includes(after.days)) found.push(streakText(after.days));
   const wasBest = before.todayWords > before.bestDay;
@@ -96,7 +95,7 @@ export function celebrationsBetween(before: Summary, after: Summary): Celebratio
     found.push({
       kind: "best",
       title: t("Din bästa dag hittills."),
-      text: t("{count} ord idag.", { count: format(after.todayWords) }),
+      text: t("{count} ord idag.", { count: formatNumber(after.todayWords) }),
     });
   return found;
 }
@@ -104,7 +103,7 @@ export function celebrationsBetween(before: Summary, after: Summary): Celebratio
 export const goalReached = (words: number): Celebration => ({
   kind: "goal",
   title: t("Dagens sida är skriven."),
-  text: t("{count} ord. Resten av dagen är din.", { count: format(words) }),
+  text: t("{count} ord. Resten av dagen är din.", { count: formatNumber(words) }),
 });
 
 /** Three days or more since the writer was last here: welcomed back, told where they stopped. */

@@ -1,9 +1,7 @@
 import { contentsRows } from "../../project/contents.js";
 import { chapterTempo, type ChapterTempo } from "../../project/tempo.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (count: number) => Math.round(count).toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function Bar({ share, label }: { share: number; label: string }) {
   return (
@@ -17,7 +15,7 @@ type Most = { words: number; sentence: number };
 
 function TempoRow({ chapter, most }: { chapter: ChapterTempo; most: Most }) {
   const dialogue = t("{share} % dialog", { share: Math.round(chapter.dialogue * 100) });
-  const sentence = t("{count} ord per mening", { count: format(chapter.sentence) });
+  const sentence = t("{count} ord per mening", { count: formatNumber(chapter.sentence) });
   return (
     <div className={chapter.isSlow ? "tempo-row slow" : "tempo-row"}>
       <span className="tempo-title">
@@ -26,13 +24,13 @@ function TempoRow({ chapter, most }: { chapter: ChapterTempo; most: Most }) {
       </span>
       <Bar
         share={chapter.words / (most.words || 1)}
-        label={t("{count} ord", { count: format(chapter.words) })}
+        label={t("{count} ord", { count: formatNumber(chapter.words) })}
       />
-      <span className="tempo-value">{format(chapter.words)}</span>
+      <span className="tempo-value">{formatNumber(chapter.words)}</span>
       <Bar share={chapter.dialogue} label={dialogue} />
       <span className="tempo-value">{Math.round(chapter.dialogue * 100)} %</span>
       <Bar share={chapter.sentence / (most.sentence || 1)} label={sentence} />
-      <span className="tempo-value">{format(chapter.sentence)}</span>
+      <span className="tempo-value">{formatNumber(chapter.sentence)}</span>
     </div>
   );
 }

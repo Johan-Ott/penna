@@ -1,11 +1,10 @@
 import type { Today } from "../useWritingStats.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function dayText({ words, goal }: Today) {
-  const format = (count: number) => count.toLocaleString(numberLocale());
-  if (!goal) return t("{count} ord idag", { count: format(words) });
-  if (words >= goal) return t("Dagens mål nått · {count} ord", { count: format(words) });
-  return t("{words} / {goal} ord", { words: format(words), goal: format(goal) });
+  if (!goal) return t("{count} ord idag", { count: formatNumber(words) });
+  if (words >= goal) return t("Dagens mål nått · {count} ord", { count: formatNumber(words) });
+  return t("{words} / {goal} ord", { words: formatNumber(words), goal: formatNumber(goal) });
 }
 
 // The day's words; a click opens Insikter, with the goals, the week and the writing journey.

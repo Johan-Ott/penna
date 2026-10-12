@@ -1,7 +1,5 @@
 import type { Summary } from "../../project/inkwell.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (count: number) => count.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function factsOf(summary: Summary) {
   const next = summary.level.next;
@@ -9,8 +7,11 @@ function factsOf(summary: Summary) {
     summary.days === 1 ? t("1 dag i rad") : t("{count} dagar i rad", { count: summary.days });
   return [
     next &&
-      t("{count} ord till {level}", { count: format(next[1] - summary.words), level: next[0] }),
-    t("{count} bläck", { count: format(summary.ink) }),
+      t("{count} ord till {level}", {
+        count: formatNumber(next[1] - summary.words),
+        level: next[0],
+      }),
+    t("{count} bläck", { count: formatNumber(summary.ink) }),
     days,
   ];
 }

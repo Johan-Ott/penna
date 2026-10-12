@@ -3,7 +3,7 @@ import { projectGoals } from "../../project/progress.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 /** The book's rhythm: each chapter as long as its words, in its step's colour, and what is left. */
 export function BookRhythm({ project }: { project: Project }) {
@@ -15,7 +15,7 @@ export function BookRhythm({ project }: { project: Project }) {
   const steps = statusSteps(project.fields);
   const label = t("Bokens rytm: {chapters} kapitel, {count} ord kvar", {
     chapters: rows.length,
-    count: left.toLocaleString(numberLocale()),
+    count: formatNumber(left),
   });
   return (
     <span className="book-rhythm" role="img" aria-label={label}>

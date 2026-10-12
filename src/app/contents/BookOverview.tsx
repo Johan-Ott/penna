@@ -15,9 +15,7 @@ import { dayKey, type Stats } from "../../project/stats.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (count: number) => count.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 // Weeks or months read more easily than many days.
 function spanText(days: number) {
@@ -40,16 +38,17 @@ function lengthText(project: Project, pageMap: PageMap | null, words: number, go
   if (pageMap && goal && words > 0) {
     const pagesAtGoal = Math.round((goal * pageMap.pages) / words);
     return t("{pages} av cirka {total} sidor.", {
-      pages: format(pageMap.pages),
-      total: format(pagesAtGoal),
+      pages: formatNumber(pageMap.pages),
+      total: formatNumber(pagesAtGoal),
     });
   }
-  if (goal) return t("{words} av {goal} ord.", { words: format(words), goal: format(goal) });
+  if (goal)
+    return t("{words} av {goal} ord.", { words: formatNumber(words), goal: formatNumber(goal) });
   const { width, height } = trimSize(designOf(project.fields).trim);
   const pages = pageMap
-    ? ` · ${t("{pages} sidor i {width} × {height} mm", { pages: format(pageMap.pages), width, height })}`
+    ? ` · ${t("{pages} sidor i {width} × {height} mm", { pages: formatNumber(pageMap.pages), width, height })}`
     : "";
-  return `${t("{count} ord", { count: format(words) })}${pages}.`;
+  return `${t("{count} ord", { count: formatNumber(words) })}${pages}.`;
 }
 
 /** Under the book's title: how long it is, and when the first draft is done at this pace. */

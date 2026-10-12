@@ -18,7 +18,7 @@ import { SyncNotices } from "../SyncLayer.js";
 import { TreeView } from "../tree/TreeView.js";
 import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 interface PhoneBookProps {
   app: AppState;
@@ -31,8 +31,6 @@ interface PhoneBookProps {
   /** Innehåll: the whole book with what happens, when and how far it has come. */
   onContents: () => void;
 }
-
-const format = (words: number) => words.toLocaleString(numberLocale());
 
 function todayFacts(app: AppState, project: Project) {
   const today = dayKey(Date.now());
@@ -51,8 +49,11 @@ function todayFacts(app: AppState, project: Project) {
 
 const dayWords = (today: AppState["today"]) =>
   today.goal
-    ? t("{words} / {goal} ord idag", { words: format(today.words), goal: format(today.goal) })
-    : t("{count} ord idag", { count: format(today.words) });
+    ? t("{words} / {goal} ord idag", {
+        words: formatNumber(today.words),
+        goal: formatNumber(today.goal),
+      })
+    : t("{count} ord idag", { count: formatNumber(today.words) });
 
 // The day's words open Insikter.
 function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {

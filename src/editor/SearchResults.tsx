@@ -1,7 +1,7 @@
 import type { SearchQuery } from "prosemirror-search";
 import type { EditorState } from "prosemirror-state";
 import type { ManuscriptScope } from "./manuscriptSearch.js";
-import { numberLocale, t } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 /** How many matches, and which one is shown. */
 export function countText({ total, current }: { total: number; current: number }) {
@@ -33,7 +33,7 @@ export function SearchResults(props: {
         >
           <span className="search-hit-place">
             {hit.place}
-            <span className="search-hit-count">{hit.count.toLocaleString(numberLocale())}</span>
+            <span className="search-hit-count">{formatNumber(hit.count)}</span>
           </span>
           <span className="search-hit-text">{hit.snippet}</span>
         </button>

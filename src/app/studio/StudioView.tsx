@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { findCover } from "../../project/cover.js";
 import type { Signature } from "./newsletter.js";
-import { takeStudioRequest } from "./studioRequest.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
@@ -180,7 +179,7 @@ function Newsletter({ project, signature }: { project: Project; signature: Signa
 
 /** Studio: pictures to share about the writing and the book, and chapters for readers. */
 export function StudioView(props: StudioProps) {
-  const [card, setCard] = useState<CardId>(() => takeStudioRequest() ?? "vecka");
+  const [card, setCard] = useState<CardId>("vecka");
   return (
     <div className="studio">
       <StudioNav card={card} onCard={setCard} onBack={props.onBack} />

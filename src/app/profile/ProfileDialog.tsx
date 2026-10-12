@@ -8,7 +8,7 @@ import { platform } from "../platform.js";
 import { Avatar } from "./Avatar.js";
 import { Badges } from "./Badges.js";
 import type { Profile } from "./useProfile.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 const PICTURE = { name: t("Bild"), extensions: ["jpg", "jpeg", "png"] };
 const SIDE = 192;
@@ -36,7 +36,7 @@ function factsOf(journey: Journey) {
   return [
     summary.level.name,
     summary.rank.name,
-    t("{count} ord", { count: summary.words.toLocaleString(numberLocale()) }),
+    t("{count} ord", { count: formatNumber(summary.words) }),
     days === 1 ? t("1 skrivdag") : t("{count} skrivdagar", { count: days }),
   ].join(" · ");
 }

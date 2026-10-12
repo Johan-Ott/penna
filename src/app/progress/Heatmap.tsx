@@ -1,8 +1,6 @@
 import { heatmap, shortDay } from "../../project/progress.js";
 import type { Stats } from "../../project/stats.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
-
-const format = (words: number) => words.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 export function Heatmap(props: { stats: Stats; today: string; dailyGoal: number | null }) {
   return (
@@ -14,7 +12,9 @@ export function Heatmap(props: { stats: Stats; today: string; dailyGoal: number 
             key={cell.day}
             className={cell.level === null ? "heat future" : `heat level-${cell.level}`}
             title={
-              cell.level === null ? undefined : `${shortDay(cell.day)}: ${format(cell.words)} ord`
+              cell.level === null
+                ? undefined
+                : `${shortDay(cell.day)}: ${formatNumber(cell.words)} ord`
             }
           />
         ))}

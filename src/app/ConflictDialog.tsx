@@ -2,7 +2,7 @@ import { countWords } from "../countWords.js";
 import { differingExcerpts, plainText } from "../manuscript/compare.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import type { ConflictChoice, DiskConflict } from "./sceneSession.js";
-import { t, numberLocale } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 interface ConflictDialogProps {
   sceneTitle: string;
@@ -24,7 +24,7 @@ function VersionCard(props: { label: string; body: string; excerpt: string; isCh
     <div className={props.isChosen ? "version-card chosen" : "version-card"}>
       <span className="version-label">{props.label}</span>
       <span className="version-meta">
-        {t("{count} ord", { count: countWords(props.body).toLocaleString(numberLocale()) })}
+        {t("{count} ord", { count: formatNumber(countWords(props.body)) })}
       </span>
       <span className="version-excerpt">{props.excerpt}</span>
     </div>

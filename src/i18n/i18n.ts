@@ -26,3 +26,6 @@ export function t(swedish: string, values: Record<string, string | number> = {})
 export const uiLanguage = () => current;
 
 export const numberLocale = () => (current === "en" ? "en-GB" : "sv-SE");
+
+/** A count as the interface's language writes it: 1 234 in Swedish, 1,234 in English. */
+export const formatNumber = (count: number) => Math.round(count).toLocaleString(numberLocale());

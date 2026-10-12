@@ -3191,12 +3191,6 @@
   font-weight: 600;
 }
 
-.sprint-choices {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 /* Innehåll's Tempo: a row per chapter with its length, talk and sentence length as bars. */
 .tempo {
   display: flex;

@@ -1,7 +1,7 @@
 import { shelfGroups, type ShelfBook } from "../../project/shelf.js";
 import { Book } from "./Book.js";
 import { useShelf } from "./useShelf.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 interface BookshelfProps {
   libraryDir: string | null;
@@ -50,7 +50,7 @@ function summary(books: ShelfBook[]) {
   const words = present.reduce((sum, book) => sum + book.words, 0);
   return t("{count} projekt · {words} ord totalt", {
     count: present.length,
-    words: words.toLocaleString(numberLocale()),
+    words: formatNumber(words),
   });
 }
 

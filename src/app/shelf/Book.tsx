@@ -1,7 +1,7 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
 import { useMenuButton } from "../Menu.js";
 import { platform } from "../platform.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 const COVERS = ["cover-black", "cover-light", "cover-dark", "cover-white"];
 
@@ -22,9 +22,7 @@ function Cover({ book, index, onOpen }: Pick<BookProps, "book" | "index" | "onOp
     >
       <span className="book-kind">{book.kind}</span>
       <span className="book-title">{book.title}</span>
-      <span className="book-words">
-        {t("{count} ord", { count: book.words.toLocaleString(numberLocale()) })}
-      </span>
+      <span className="book-words">{t("{count} ord", { count: formatNumber(book.words) })}</span>
     </button>
   );
 }
@@ -75,7 +73,7 @@ function BookMeta({ book, onRemove }: Pick<BookProps, "book" | "onRemove">) {
         <span>{book.status}</span>
         <span className="book-percent">{book.progress}%</span>
         <span className="book-meta-words">
-          {t("{count} ord", { count: book.words.toLocaleString(numberLocale()) })}
+          {t("{count} ord", { count: formatNumber(book.words) })}
         </span>
       </div>
       <ProgressBar book={book} />

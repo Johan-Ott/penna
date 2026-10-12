@@ -1,9 +1,8 @@
 import { finishDay, shortDay, weekOf } from "../../project/progress.js";
 import { streak, type Stats } from "../../project/stats.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 import type { Numbers } from "./insightNumbers.js";
 
-const format = (words: number) => words.toLocaleString(numberLocale());
 const RING = 2 * Math.PI * 30;
 
 function dayTitle(words: number, goal: number) {
@@ -14,9 +13,12 @@ function dayTitle(words: number, goal: number) {
 
 function dayText(words: number, goal: number | null) {
   if (!goal) return t("Sätt ett dagsmål, så räknar Penna mot det.");
-  const done = t("{words} av {goal} ord.", { words: format(words), goal: format(goal) });
+  const done = t("{words} av {goal} ord.", {
+    words: formatNumber(words),
+    goal: formatNumber(goal),
+  });
   if (words >= goal) return done;
-  return `${done} ${t("{count} ord kvar.", { count: format(goal - words) })}`;
+  return `${done} ${t("{count} ord kvar.", { count: formatNumber(goal - words) })}`;
 }
 
 /** Today's words as a ring around the ink drop, and what is left of the day's goal. */
@@ -41,7 +43,7 @@ export function DayCard(props: { words: number; goal: number | null; onGoals: ()
         />
       </svg>
       <span className="insight-heading">
-        {goal ? dayTitle(words, goal) : t("{count} ord idag", { count: format(words) })}
+        {goal ? dayTitle(words, goal) : t("{count} ord idag", { count: formatNumber(words) })}
       </span>
       <span className="insight-muted">{dayText(words, goal)}</span>
     </button>
@@ -59,9 +61,9 @@ function deadlineLine({ plan, goals, average }: Numbers) {
   if (!plan || !goals.deadline) return null;
   if (plan.wordsPerDay === 0) return t("Slutmålet är nått.");
   return t("{needed} ord per dag räcker till {day}. Du skriver i snitt {average}.", {
-    needed: format(plan.wordsPerDay),
+    needed: formatNumber(plan.wordsPerDay),
     day: shortDay(goals.deadline),
-    average: format(average),
+    average: formatNumber(average),
   });
 }
 
@@ -83,7 +85,10 @@ export function TowardsGoal({ numbers }: { numbers: Numbers }) {
       <div className="insight-row">
         <span className="insight-title">{t("Mot slutmanus")}</span>
         <span className="insight-muted">
-          {t("{words} av {goal} ord", { words: format(numbers.words), goal: format(goal) })}
+          {t("{words} av {goal} ord", {
+            words: formatNumber(numbers.words),
+            goal: formatNumber(goal),
+          })}
         </span>
       </div>
       <span className="insight-text">{goalLine(numbers, share)}</span>
@@ -110,7 +115,7 @@ const weekday = (day: string) =>
 // "·" for a day without words, "1,3k" from a thousand.
 function shortWords(words: number) {
   if (words <= 0) return "·";
-  if (words < 1000) return format(words);
+  if (words < 1000) return formatNumber(words);
   return `${(words / 1000).toLocaleString(numberLocale(), { maximumFractionDigits: 1 })}k`;
 }
 
@@ -121,7 +126,7 @@ function barClass(words: number, best: number) {
 
 function DayBar({ day, words, best }: { day: string; words: number; best: number }) {
   return (
-    <div className="insight-day-bar" title={`${shortDay(day)}: ${format(words)}`}>
+    <div className="insight-day-bar" title={`${shortDay(day)}: ${formatNumber(words)}`}>
       <span>{shortWords(words)}</span>
       <span className="bar-room">
         <span
@@ -138,7 +143,7 @@ function paceLine(stats: Stats, numbers: Numbers) {
   const days = streak(stats, numbers.today);
   return t("{streak} i rad · i snitt {average} ord per dag", {
     streak: days === 1 ? t("1 dag") : t("{count} dagar", { count: days }),
-    average: format(numbers.average),
+    average: formatNumber(numbers.average),
   });
 }
 
@@ -151,7 +156,7 @@ export function WeekCard({ stats, numbers }: { stats: Stats; numbers: Numbers })
     <section className="insight-card">
       <div className="insight-row">
         <span className="insight-title">{t("Den här veckan")}</span>
-        <span className="insight-muted">{t("{count} ord", { count: format(total) })}</span>
+        <span className="insight-muted">{t("{count} ord", { count: formatNumber(total) })}</span>
       </div>
       <div className="insight-week">
         {week.map((day) => (

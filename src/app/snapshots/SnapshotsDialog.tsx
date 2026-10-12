@@ -6,7 +6,7 @@ import { diffWords } from "../../manuscript/wordDiff.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
 import { useEscape } from "../useShortcut.js";
 import type { useSnapshots } from "./useSnapshots.js";
-import { t, numberLocale } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 type SnapshotState = ReturnType<typeof useSnapshots>;
 
@@ -20,8 +20,7 @@ interface SnapshotsDialogProps {
   onBeside?: (snapshot: Snapshot) => void;
 }
 
-const formatWords = (words: number) =>
-  t("{count} ord", { count: words.toLocaleString(numberLocale()) });
+const formatWords = (words: number) => t("{count} ord", { count: formatNumber(words) });
 
 function itemLabels(snapshot: Snapshot, now: number) {
   const when = snapshotWhen(snapshot.time, now);

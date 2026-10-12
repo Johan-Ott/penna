@@ -6,7 +6,7 @@ import type { useEditorView } from "../editor/useEditorView.js";
 import { StylePicker } from "./StylePicker.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
-import { numberLocale, t } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
@@ -38,7 +38,7 @@ function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   const words = countWordsBetween(editorState.doc, from, to);
   return (
     <span className="selection-words">
-      {words === 1 ? t("1 ord") : t("{count} ord", { count: words.toLocaleString(numberLocale()) })}
+      {words === 1 ? t("1 ord") : t("{count} ord", { count: formatNumber(words) })}
     </span>
   );
 }

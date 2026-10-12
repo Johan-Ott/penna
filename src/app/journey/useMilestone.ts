@@ -5,7 +5,7 @@ import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import { celebrate, earnBadge } from "./journeyEvents.js";
 import { bookBadgesHeld, reachedBookBadges, type BookBadge } from "../../project/bookBadges.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 /** True when a change took the book from under its goal to it or past it. */
 export const crossesGoal = (before: number, after: number, goal: number | null) =>
@@ -28,7 +28,7 @@ export function useMilestone(
       kind: "milestone",
       title: t("Första utkastet är klart."),
       text: t("{count} ord i {book}.", {
-        count: words.toLocaleString(numberLocale()),
+        count: formatNumber(words),
         book: project.name,
       }),
     });

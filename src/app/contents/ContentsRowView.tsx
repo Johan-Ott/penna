@@ -7,7 +7,7 @@ import { useMenuButton, type MenuItem } from "../Menu.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { labelsWithin } from "../../project/labels.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 export interface RowProps {
   project: Project;
@@ -25,8 +25,6 @@ export interface RowProps {
   onChangeTree: (tree: TreeNode[]) => void;
   onSetStatus: (sceneIds: string[], status: SceneStatus) => void;
 }
-
-const format = (count: number) => count.toLocaleString(numberLocale());
 
 // Saves when the field is left, not on every key.
 function InlineText(props: {
@@ -161,7 +159,7 @@ function pageText(pages: RowProps["pages"]) {
 /** One chapter in Innehåll: its title, what happens, when, its length and its status. */
 const WordsCell = ({ row, pages }: RowProps) => (
   <span className="contents-words">
-    {row.words > 0 ? format(row.words) : ""}
+    {row.words > 0 ? formatNumber(row.words) : ""}
     {pages && <span className="contents-pages">{pageText(pages)}</span>}
   </span>
 );

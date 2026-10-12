@@ -4,7 +4,7 @@ import { SearchIcon } from "../shell/icons.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import { SprintButton } from "../sprint/SprintBar.js";
 import type { Project } from "../useProject.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 type Props = { app: AppState; project: Project };
 
@@ -12,7 +12,7 @@ type Props = { app: AppState; project: Project };
 export function TextBar({ app, project }: Props) {
   const scene = app.scene;
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
-  const words = app.today.words.toLocaleString(numberLocale());
+  const words = formatNumber(app.today.words);
   return (
     <header className="phone-bar">
       <SprintButton />

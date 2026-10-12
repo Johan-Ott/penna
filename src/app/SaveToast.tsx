@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { SaveStatus } from "../storage/autosave.js";
 import type { SaveFailure } from "../storage/saveError.js";
-import { t, numberLocale } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 import { useShortcut } from "./useShortcut.js";
 
 const FAILURE_MESSAGES: Record<SaveFailure, string> = {
@@ -70,7 +70,7 @@ export function ReplaceToast(props: {
     <div className="toast inverted" role="status">
       <span>
         {t("Ändrade {count} {noun} av ”{search}”", {
-          count: done.count.toLocaleString(numberLocale()),
+          count: formatNumber(done.count),
           noun,
           search: done.search,
         })}

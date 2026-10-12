@@ -45,17 +45,6 @@
   font-weight: 400;
 }
 
-.phone-back {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  justify-self: start;
-  padding: 0 10px;
-  color: var(--text);
-  font-size: 15px;
-  text-decoration: none;
-}
-
 .phone-card {
   display: flex;
   flex-grow: 1;

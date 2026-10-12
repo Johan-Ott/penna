@@ -1,8 +1,6 @@
 import type { Summary } from "../../project/inkwell.js";
 import { INK, inkRanks } from "../../project/journey.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (count: number) => count.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function RuleList() {
   const rules: [string, string][] = [
@@ -27,7 +25,7 @@ function RankList({ summary }: { summary: Summary }) {
       <span className={index === summary.rank.index ? "ink-rank-name now" : "ink-rank-name"}>
         {name}
       </span>
-      <span>{t("{count} bläck", { count: format(from) })}</span>
+      <span>{t("{count} bläck", { count: formatNumber(from) })}</span>
     </div>
   ));
 }

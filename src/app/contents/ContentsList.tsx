@@ -13,7 +13,7 @@ import { nodeLabel } from "../../project/treeLabels.js";
 import { Row } from "./ContentsRowView.js";
 import type { ContentsProps } from "./ContentsView.js";
 import { SceneRows, useSceneDrag, type SceneDrag } from "./SceneRows.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 const timeOrderOf = (fields: Record<string, unknown>) => {
   const stored = fields["timeOrder"];
@@ -79,7 +79,7 @@ function ChapterRows(props: ListParts & { row: ContentsRow; dragProps: object })
 // "Kapitel 1–4 · 25 502 ord", shown while the part is folded away.
 function partSummary(rows: ContentsRow[]) {
   const numbers = rows.flatMap((row) => (row.number === null ? [] : [row.number]));
-  const words = rows.reduce((sum, row) => sum + row.words, 0).toLocaleString(numberLocale());
+  const words = formatNumber(rows.reduce((sum, row) => sum + row.words, 0));
   if (numbers.length === 0) return t("{count} ord", { count: words });
   const span = `${Math.min(...numbers)}–${Math.max(...numbers)}`;
   return t("Kapitel {span} · {count} ord", { span, count: words });

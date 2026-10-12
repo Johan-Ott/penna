@@ -3,7 +3,7 @@ import { manuscriptWords } from "../../project/treeLabels.js";
 import { FilterButton } from "../labels/LabelsInTree.js";
 import { FoldIcon, UnfoldIcon } from "../shell/icons.js";
 import type { Tree, TreeViewProps } from "./useTreeView.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function Tool(props: { label: string; onClick: () => void; children: ReactNode }) {
   return (
@@ -31,7 +31,7 @@ const FoldTools = ({ view }: { view: Tree["view"] }) => (
 
 const BookWords = ({ project }: Pick<TreeViewProps, "project">) => (
   <span className="tree-tools-words" aria-label={t("Ord i boken")}>
-    {manuscriptWords(project.tree, project.summaries).toLocaleString(numberLocale())}
+    {formatNumber(manuscriptWords(project.tree, project.summaries))}
   </span>
 );
 

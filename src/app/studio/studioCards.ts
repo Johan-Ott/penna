@@ -1,9 +1,8 @@
 import type { weekFigures, yearFigures } from "../../project/studio.js";
 import { MONTHS } from "../../project/snapshots.js";
 import { GREEN, PROSE, bar, lines, text, type Card } from "./studioCanvas.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 
-const format = (count: number) => count.toLocaleString(numberLocale());
 const KICKER = { size: 11, spacing: 0.24, upper: true, alpha: 0.6 };
 const dayName = (day: string, weekday: "narrow" | "long") =>
   new Date(`${day}T00:00:00Z`).toLocaleDateString(numberLocale(), { weekday, timeZone: "UTC" });
@@ -40,7 +39,7 @@ function weekFooter(card: Card, figures: Week, streak: number) {
   text(card, inRow, { x: 250, y }, { size: 13, align: "center" });
   const best = t("bäst: {day}, {count}", {
     day: dayName(figures.best.day, "long"),
-    count: format(figures.best.words),
+    count: formatNumber(figures.best.words),
   });
   text(card, best, { x: 456, y }, { size: 13, colour: GREEN, align: "right" });
 }
@@ -50,7 +49,7 @@ export function drawWeek(card: Card, figures: Week, book: string, streak: number
   const middle = (card.height - 150) / 2;
   text(
     card,
-    format(figures.words),
+    formatNumber(figures.words),
     { x: 44, y: middle },
     { size: 72, weight: 500, spacing: -0.04 },
   );
@@ -63,7 +62,7 @@ export function drawWeek(card: Card, figures: Week, book: string, streak: number
 function yearFacts(figures: ReturnType<typeof yearFigures>): [string, string][] {
   const month = figures.bestMonth ? (MONTHS[figures.bestMonth - 1] ?? "") : "–";
   return [
-    [format(figures.words), t("ord")],
+    [formatNumber(figures.words), t("ord")],
     [String(figures.writingDays), t("skrivdagar")],
     [String(figures.record), t("dagar i rad, rekord")],
     [month, t("bästa månad")],

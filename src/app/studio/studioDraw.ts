@@ -17,7 +17,7 @@ import {
 import { bookOutline, estimatedPages } from "../../export/book.js";
 import { KIND_LABELS } from "../../project/shelf.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 import { earnBadge } from "../journey/journeyEvents.js";
 
 export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "omslag" | "nedrakning" | "handeln";
@@ -54,7 +54,7 @@ function milestone(card: Card, { project, stats }: StudioData, today: string) {
     kind: (typeof kind === "string" && KIND_LABELS[kind]) || "",
     date: new Date(`${today}T12:00:00`).toLocaleDateString(numberLocale(), { dateStyle: "long" }),
     facts: t("{words} ord · {pages} sidor · {days} skrivdagar", {
-      words: words.toLocaleString(numberLocale()),
+      words: formatNumber(words),
       pages,
       days,
     }),

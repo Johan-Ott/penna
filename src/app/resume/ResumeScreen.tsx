@@ -9,13 +9,11 @@ import type { useEditorView } from "../../editor/useEditorView.js";
 import { usePhone } from "../phone/usePhone.js";
 import type { Project } from "../useProject.js";
 import { showResume, useResume, type Place } from "./lastPlace.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
-
-const format = (count: number) => count.toLocaleString(numberLocale());
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 function whenText(writtenAt: number, words: number) {
   const days = daysBetween(dayKey(writtenAt), dayKey(Date.now()));
-  const count = format(words);
+  const count = formatNumber(words);
   if (days <= 0) return t("{count} ord idag", { count });
   const day = t("{count} ord den dagen", { count });
   if (days === 1)
@@ -35,7 +33,7 @@ function WeekLine({ stats }: { stats: Stats }) {
   const week = lastWeek(stats, dayKey(Date.now()));
   if (week.words === 0) return null;
   const text = t("Förra veckan: {words} ord på {days} dagar", {
-    words: format(week.words),
+    words: formatNumber(week.words),
     days: week.days,
   });
   return (

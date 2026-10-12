@@ -1,8 +1,6 @@
 import { dayAfter, daysBetween } from "./progress.js";
 import type { Stats } from "./stats.js";
-import { numberLocale, t } from "../i18n/i18n.js";
-
-const format = (words: number) => words.toLocaleString(numberLocale());
+import { numberLocale, t, formatNumber } from "../i18n/i18n.js";
 
 const dateOf = (day: string, options: Intl.DateTimeFormatOptions) =>
   new Date(`${day}T12:00:00Z`).toLocaleDateString(numberLocale(), { ...options, timeZone: "UTC" });
@@ -39,8 +37,8 @@ export function colophon(title: string, stats: Stats, words: number, today: stri
           span,
         }),
     t("Den har {words} ord. Den längsta dagen gav {best} av dem, en {weekday} i {month}.", {
-      words: format(words),
-      best: format(stats[best] ?? 0),
+      words: formatNumber(words),
+      best: formatNumber(stats[best] ?? 0),
       weekday: dateOf(best, { weekday: "long" }),
       month: dateOf(best, { month: "long" }),
     }),

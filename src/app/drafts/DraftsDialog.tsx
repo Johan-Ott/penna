@@ -6,7 +6,7 @@ import { nodeLabel } from "../../project/treeLabels.js";
 import { Choice, Dialog } from "../controls.js";
 import type { Project } from "../useProject.js";
 import type { Drafts } from "./useDrafts.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 const BOOK = "bok";
 
@@ -57,7 +57,7 @@ const metaOf = (project: Project, draft: Draft) =>
   [
     scopeLabel(project, draft.chapterId),
     snapshotWhen(draft.time, Date.now()),
-    t("{count} ord", { count: draft.words.toLocaleString(numberLocale()) }),
+    t("{count} ord", { count: formatNumber(draft.words) }),
   ].join(" · ");
 
 function DraftRow(props: RowProps) {

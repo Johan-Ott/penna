@@ -15,7 +15,7 @@ import { nodeLabel } from "../../project/treeLabels.js";
 import { LabelsLayer } from "../labels/LabelsInTree.js";
 import { TreeTools } from "./TreeTools.js";
 import { menuActions } from "./treeMenuActions.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 
 export type { TreeViewProps } from "./useTreeView.js";
 
@@ -61,7 +61,7 @@ function SectionHeading(props: {
       {props.filter}
       {props.words !== undefined && (
         <span className="sidebar-heading-words" aria-label={t("Ord i boken")}>
-          {props.words.toLocaleString(numberLocale())}
+          {formatNumber(props.words)}
         </span>
       )}
     </div>

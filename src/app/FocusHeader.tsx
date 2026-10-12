@@ -1,6 +1,6 @@
 import { WindowControls } from "./shell/WindowControls.js";
 import type { Today } from "./useWritingStats.js";
-import { t, numberLocale } from "../i18n/i18n.js";
+import { t, formatNumber } from "../i18n/i18n.js";
 
 interface FocusHeaderProps {
   location: string;
@@ -12,9 +12,8 @@ interface FocusHeaderProps {
 }
 
 function focusCount({ wordCount, today }: Pick<FocusHeaderProps, "wordCount" | "today">) {
-  const format = (words: number) => words.toLocaleString(numberLocale());
-  if (today.goal === null) return `${format(wordCount)} ord`;
-  return `${format(today.words)} / ${format(today.goal)} ord`;
+  if (today.goal === null) return `${formatNumber(wordCount)} ord`;
+  return `${formatNumber(today.words)} / ${formatNumber(today.goal)} ord`;
 }
 
 function SettingsButton({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {

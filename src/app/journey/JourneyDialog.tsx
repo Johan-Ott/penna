@@ -4,11 +4,9 @@ import { dayKey } from "../../project/stats.js";
 import { Dialog } from "../controls.js";
 import { InkRules } from "./InkRules.js";
 import { Inkwell } from "./Inkwell.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t, formatNumber } from "../../i18n/i18n.js";
 import { latestBadges } from "../../project/badges.js";
 import { Medal } from "../profile/Badges.js";
-
-const format = (count: number) => count.toLocaleString(numberLocale());
 
 // Each level a book spine, taller the further it is; reached ones dark, the current one green.
 const SPINES = [
@@ -44,9 +42,9 @@ function Spines({ current }: { current: number }) {
 }
 
 function wordsLine({ words, level }: Summary) {
-  const since = t("{count} ord sedan du började.", { count: format(words) });
+  const since = t("{count} ord sedan du började.", { count: formatNumber(words) });
   if (!level.next) return since;
-  const left = format(level.next[1] - words);
+  const left = formatNumber(level.next[1] - words);
   return `${since} ${t("{count} ord kvar till {level}.", { count: left, level: level.next[0] })}`;
 }
 
