@@ -1308,5 +1308,6 @@
   "Hela boken som en webbsida att läsa i webbläsaren eller lägga upp.": "The whole book as a web page to read in a browser or put online.",
   "{path} gick inte att läsa, så inget mer synkades. Försök igen strax.": "{path} could not be read, so nothing more was synced. Try again in a moment.",
   "Många av bokens filer är borta på ena sidan på en gång, så inget synkades. Titta i bokmappen och i Drive.": "Many of the book's files are gone on one side at once, so nothing was synced. Look in the book folder and in Drive.",
-  "Före Ersätt alla": "Before Replace all"
+  "Före Ersätt alla": "Before Replace all",
+  "Före första synken": "Before the first sync"
 }

@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { joinPath } from "../storage/fileSystem.js";
 import { syncProject } from "../sync/driveSync.js";
+import { STATE_FILE } from "../sync/syncState.js";
+import { backupNow } from "./useAutoBackup.js";
 import type { WriteGuard } from "../sync/localSide.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
@@ -26,12 +29,21 @@ const failure = (error: unknown): DriveStatus => ({
       : String(error instanceof Error ? error.message : error),
 });
 
+// The first sync of a book that is already here may merge it with Drive's, so it is copied first.
+async function backupBeforeFirstSync(dir: string) {
+  const fileSystem = platform.fileSystem;
+  if ((await fileSystem.modifiedAt(joinPath(dir, STATE_FILE))) !== null) return;
+  if ((await fileSystem.modifiedAt(joinPath(dir, "project.json"))) === null) return;
+  await backupNow([dir], t("Före första synken"));
+}
+
 async function syncFolders(dirs: string[], guard: WriteGuard) {
   const signIn = platform.googleSignIn;
   if (!signIn) return false;
   const drive = googleDrive(signIn.accessToken, signIn.fetch);
   let hasChanged = false;
   for (const dir of dirs) {
+    await backupBeforeFirstSync(dir);
     const result = await syncProject(platform.fileSystem, drive, dir, { now: Date.now(), guard });
     hasChanged ||= result.downloaded.length + result.trashed.length > 0;
   }
