@@ -1,3 +1,4 @@
+import { DAY } from "./stats.js";
 import { journeySummary } from "./inkwell.js";
 import type { Journey } from "./journey.js";
 import { daysBetween, weekOf } from "./progress.js";
@@ -9,7 +10,7 @@ export function weekNumber(day: string) {
   const thursday = new Date(date);
   thursday.setUTCDate(date.getUTCDate() + 3 - ((date.getUTCDay() + 6) % 7));
   const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
-  return Math.floor((thursday.getTime() - yearStart) / 86_400_000 / 7) + 1;
+  return Math.floor((thursday.getTime() - yearStart) / DAY / 7) + 1;
 }
 
 /** This week in the book: the words of each day, the writing days and the best day. */

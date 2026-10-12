@@ -110,7 +110,7 @@ export function sidebarProps(app: AppState, project: Project) {
   };
 }
 
-export function seriesTreeProps(app: AppState, series: Project) {
+function seriesTreeProps(app: AppState, series: Project) {
   const { actions, writingMode } = app;
   return {
     project: series,

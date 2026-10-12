@@ -1,3 +1,4 @@
+import { fold } from "../palette/paletteSearch.js";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
 import { AboutTab, ShortcutsTab } from "./infoTabs.js";
@@ -22,11 +23,6 @@ const isShown = (label: string) => !(platform.isPhone && label === t("Kortkomman
 
 // The tabs that hold settings, searched together; Hjälp and Om Penna are reading, not settings.
 const SEARCHED = TABS.slice(0, 4);
-const fold = (text: string) =>
-  text
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
 
 // Every settings tab is drawn, and the rows whose words do not hold the search are hidden.
 function Found(props: TabProps & { query: string }) {

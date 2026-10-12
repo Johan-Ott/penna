@@ -1,5 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
-import { openExample } from "./helpers";
+import { expect, test } from "@playwright/test";
+import { openExample, sidebar, treeRow } from "./helpers";
 
 // Labels and status steps: made, ticked, shown in the tree and Innehåll, and found in the palette.
 // A new book has the standard labels, so the tests make one of their own beside them.
@@ -8,9 +8,6 @@ test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 });
   await openExample(page);
 });
-
-const sidebar = (page: Page) => page.locator(".sidebar");
-const treeRow = (page: Page, name: string) => sidebar(page).getByText(name, { exact: true });
 
 test("a label is made on one scene and ticked only there, and can be removed", async ({ page }) => {
   await treeRow(page, "Köket").click({ button: "right" });

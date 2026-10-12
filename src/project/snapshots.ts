@@ -1,3 +1,4 @@
+import { DAY } from "./stats.js";
 import { plainText } from "../manuscript/compare.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import {
@@ -133,7 +134,6 @@ export const MONTHS = [
   t("nov"),
   t("dec"),
 ];
-const DAY = 24 * 60 * 60 * 1000;
 
 export function snapshotWhen(time: number, now: number): string {
   const date = new Date(time);

@@ -6,7 +6,7 @@ import { useEscape, useShortcut } from "./useShortcut.js";
 import { t } from "../i18n/i18n.js";
 
 /** Reads the selection, or from the cursor on, in the book's language. */
-export function readAloudFrom(app: Pick<AppState, "editor">, project: Pick<Project, "fields">) {
+function readAloudFrom(app: Pick<AppState, "editor">, project: Pick<Project, "fields">) {
   const state = app.editor.viewRef.current?.state;
   if (state && canSpeak()) speak(paragraphsToRead(state), bookLanguage(project.fields));
 }

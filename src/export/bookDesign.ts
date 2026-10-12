@@ -74,12 +74,12 @@ export const BODY_FONTS = [
 ];
 export const HEADING_FONTS = [...BODY_FONTS, "Geist"];
 export const BODY_SIZES = [10, 10.5, 11, 11.5, 12, 13, 14, 16];
-export const LEADINGS: Leading[] = ["tatt", "normalt", "luftigt"];
-export const FOLIO_PLACES: FolioPlace[] = ["mitten", "ytterhorn", "overst"];
-export const MARGIN_SIZES: MarginSize[] = ["smala", "normala", "breda"];
+const LEADINGS: Leading[] = ["tatt", "normalt", "luftigt"];
+const FOLIO_PLACES: FolioPlace[] = ["mitten", "ytterhorn", "overst"];
+const MARGIN_SIZES: MarginSize[] = ["smala", "normala", "breda"];
 /** Lines apart in em, and how much of the theme's margins are kept. */
 export const LEADING_EM: Record<Leading, number> = { tatt: 0.5, normalt: 0.62, luftigt: 0.78 };
-export const MARGIN_SCALE: Record<MarginSize, number> = { smala: 0.8, normala: 1, breda: 1.25 };
+const MARGIN_SCALE: Record<MarginSize, number> = { smala: 0.8, normala: 1, breda: 1.25 };
 // The marks the design offers between scenes: stars, an asterism and a long dash.
 const LONG_DASH = String.fromCharCode(0x2014);
 export const SCENE_BREAKS = ["* * *", "⁂", LONG_DASH];

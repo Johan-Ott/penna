@@ -1,3 +1,4 @@
+import { DAY } from "./stats.js";
 import { ownStepName } from "./statusSteps.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
@@ -34,7 +35,6 @@ export const KIND_LABELS: Record<string, string> = {
   fackbok: t("Fackbok"),
   annat: t("Annat"),
 };
-const DAY = 24 * 60 * 60 * 1000;
 
 /** On a tie the earlier stage. */
 export function bookStatus(

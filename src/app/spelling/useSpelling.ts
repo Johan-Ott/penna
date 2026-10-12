@@ -7,7 +7,7 @@ import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
 /** The words the writer added to the book's own list in project.json. */
-export function ownWords(fields: Record<string, unknown>): string[] {
+function ownWords(fields: Record<string, unknown>): string[] {
   const stored = fields["words"];
   return Array.isArray(stored)
     ? stored.filter((word): word is string => typeof word === "string")

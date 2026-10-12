@@ -26,7 +26,7 @@ const LOOKS: Record<Look, { paper: string; ink: string; grain: string }> = {
 };
 export const GREEN = "#3f6b4e";
 export const PROSE = '"Literata", Georgia, serif';
-export const SANS = '"Geist Sans", system-ui, sans-serif';
+const SANS = '"Geist Sans", system-ui, sans-serif';
 
 /** Drawn in the design's units, 500 wide, and scaled to 1080 pixels. */
 export interface Card {

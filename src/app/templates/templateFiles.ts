@@ -12,7 +12,7 @@ import { t } from "../../i18n/i18n.js";
 
 // The writer's own templates, as files in the Penna folder: read, imported and shared.
 
-export const TEMPLATE_FILE = { name: t("Penna-mall"), extensions: ["json"] };
+const TEMPLATE_FILE = { name: t("Penna-mall"), extensions: ["json"] };
 
 export function useOwnTemplates(libraryDir: string | null) {
   const [own, setOwn] = useState<BookTemplate[]>([]);

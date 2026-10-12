@@ -19,7 +19,7 @@ export function useRenameRequest(props: TreeViewProps, view: View) {
 }
 
 /** Unfolds the tree to the scene and scrolls its row into sight. */
-export function showInTree(tree: TreeNode[], sceneId: string, expand: View["expand"]) {
+function showInTree(tree: TreeNode[], sceneId: string, expand: View["expand"]) {
   expand(ancestorIds(tree, sceneId));
   requestAnimationFrame(() =>
     document

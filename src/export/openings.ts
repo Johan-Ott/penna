@@ -136,7 +136,7 @@ export const touchesEdge = (shown: PictureArea) =>
   shown.y + shown.height >= 1 - EDGE;
 
 /** A new id that no template or area in `taken` has. */
-export function freshId(prefix: string, taken: { id: string }[]) {
+function freshId(prefix: string, taken: { id: string }[]) {
   let number = taken.length + 1;
   while (taken.some((item) => item.id === `${prefix}${number}`)) number += 1;
   return `${prefix}${number}`;

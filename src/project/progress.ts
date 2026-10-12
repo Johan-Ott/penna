@@ -1,7 +1,6 @@
 import { MONTHS } from "./snapshots.js";
-import { dailyGoalOf, type Stats } from "./stats.js";
+import { dailyGoalOf, type Stats, DAY } from "./stats.js";
 
-const DAY = 24 * 60 * 60 * 1000;
 const AVERAGE_DAYS = 30;
 const HEATMAP_WEEKS = 12;
 

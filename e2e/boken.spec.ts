@@ -1,13 +1,17 @@
-import { expect, test, type Page } from "@playwright/test";
-import { cursorAfterFirstParagraph, editor, openExample, selectFirstWord } from "./helpers";
+import { expect, test } from "@playwright/test";
+import {
+  cursorAfterFirstParagraph,
+  editor,
+  openExample,
+  selectFirstWord,
+  sidebar,
+  treeRow,
+} from "./helpers";
 
 test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 820 });
   await openExample(page);
 });
-
-const sidebar = (page: Page) => page.locator(".sidebar");
-const treeRow = (page: Page, name: string) => sidebar(page).getByText(name, { exact: true });
 
 test("a comment is written on the selected words and shown in Granska", async ({ page }) => {
   await selectFirstWord(page);

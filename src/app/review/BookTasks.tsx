@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { readComments, type Comment } from "../../project/comments.js";
-import { chapterOf } from "../../project/treeLabels.js";
+import { placeOf } from "../../project/treeLabels.js";
 import { joinPath } from "../../storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
@@ -20,12 +20,6 @@ export async function openTasks(project: Project): Promise<Task[]> {
     ),
   );
   return lists.flat().sort((one, other) => one.comment.createdAt - other.comment.createdAt);
-}
-
-function placeOf(project: Project, sceneId: string) {
-  const chapter = chapterOf(project.tree, sceneId);
-  const title = project.summaries[sceneId]?.title ?? "";
-  return chapter ? `${chapter.number}. ${chapter.title} · ${title}` : title;
 }
 
 // Read again when the book or the open scene's comments change, not on every save as the project does.
@@ -63,7 +57,7 @@ export function BookTasks(props: {
           className="review-item book-task"
           onClick={() => props.onOpen(sceneId)}
         >
-          <span className="kpi-sub">{placeOf(project, sceneId)}</span>
+          <span className="kpi-sub">{placeOf(project.tree, project.summaries, sceneId)}</span>
           <span>{comment.body}</span>
         </button>
       ))}

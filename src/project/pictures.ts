@@ -8,7 +8,7 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 /** The book's pictures live in this folder, so they sync and are backed up with the text. */
-export const PICTURES_DIR = "bilder";
+const PICTURES_DIR = "bilder";
 
 const EXTENSIONS = { jpeg: "jpg", png: "png" } as const;
 

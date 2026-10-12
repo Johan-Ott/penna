@@ -1,16 +1,11 @@
+import { weekday } from "../progress/InsightCards.js";
 import { weekOf } from "../../project/progress.js";
 import { isHoliday, isOnHoliday, type Journey } from "../../project/journey.js";
 import type { Summary } from "../../project/inkwell.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { t } from "../../i18n/i18n.js";
 
 const OUTLINE =
   "M30 34 h50 v10 c10 6 18 18 18 34 v34 a8 8 0 0 1 -8 8 h-70 a8 8 0 0 1 -8 -8 v-34 c0 -16 8 -28 18 -34 z";
-
-const weekday = (day: string) =>
-  new Date(`${day}T00:00:00Z`).toLocaleDateString(numberLocale(), {
-    weekday: "narrow",
-    timeZone: "UTC",
-  });
 
 function ringOf(journey: Journey, day: string, today: string) {
   if ((journey.words[day] ?? 0) > 0) return "ring done";

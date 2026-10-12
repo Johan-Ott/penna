@@ -110,3 +110,10 @@ export const chapterWords = (tree: TreeNode[], summaries: Summaries) =>
 /** Notes and Papperskorg left out. */
 export const manuscriptWords = (tree: TreeNode[], summaries: Summaries) =>
   manuscriptSceneIds(tree).reduce((sum, id) => sum + (summaries[id]?.words ?? 0), 0);
+
+/** Where a scene is: "3. Fyren · Natten", or only its title outside a chapter. */
+export function placeOf(tree: TreeNode[], summaries: Summaries, sceneId: string) {
+  const chapter = chapterOf(tree, sceneId);
+  const title = summaries[sceneId]?.title ?? "";
+  return chapter ? `${chapter.number}. ${chapter.title} · ${title}` : title;
+}

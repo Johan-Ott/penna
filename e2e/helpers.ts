@@ -13,6 +13,8 @@ export async function openExample(page: Page) {
 }
 
 export const editor = (page: Page) => page.locator(".ProseMirror");
+export const sidebar = (page: Page) => page.locator(".sidebar");
+export const treeRow = (page: Page, name: string) => sidebar(page).getByText(name, { exact: true });
 
 /** Puts the cursor at the end of the scene's first paragraph. */
 export async function cursorAfterFirstParagraph(page: Page) {

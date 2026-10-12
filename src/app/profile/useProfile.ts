@@ -58,5 +58,3 @@ export function useProfile(libraryDir: string | null) {
   );
   return { profile, save, isOpen, open: () => setOpen(true), close: () => setOpen(false) };
 }
-
-export type ProfileState = ReturnType<typeof useProfile>;

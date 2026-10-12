@@ -23,7 +23,7 @@ export function secretsOf(tree: TreeNode[], summaries: Record<string, SceneSumma
 }
 
 /** Where a scene stands in the book's reading order; -1 for anything outside the manuscript. */
-export const readingPlace = (tree: TreeNode[]) => {
+const readingPlace = (tree: TreeNode[]) => {
   const order = manuscriptSceneIds(tree);
   return (sceneId: string) => order.indexOf(sceneId);
 };

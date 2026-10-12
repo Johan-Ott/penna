@@ -7,7 +7,8 @@ import { joinPath, type FileSystem } from "../storage/fileSystem.js";
 /** Words written per day, as { "2026-10-02": 812 }. */
 export type Stats = Record<string, number>;
 
-const DAY = 24 * 60 * 60 * 1000;
+/** A day in milliseconds. */
+export const DAY = 24 * 60 * 60 * 1000;
 
 export function dayKey(time: number): string {
   const date = new Date(time);

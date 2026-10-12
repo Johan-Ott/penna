@@ -1,3 +1,4 @@
+import { DAY } from "./stats.js";
 import JSZip from "jszip";
 import { projectZip } from "../export/projectZip.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
@@ -23,7 +24,6 @@ export interface BookBackups {
 
 const KEEP_NEWEST = 10;
 const KEEP_DAYS = 30;
-const DAY = 24 * 60 * 60 * 1000;
 // The sync's state: a restored copy starts unsynced, so it never writes over the original in Drive.
 const SYNC_STATE = ".penna-sync.json";
 

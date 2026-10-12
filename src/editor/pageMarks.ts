@@ -17,7 +17,7 @@ function pageMark(page: number, ending: number | undefined) {
 }
 
 /** A mark at each top-level block where a new printed page has begun since the block before. */
-export function pageDecorations(doc: Node, pages: (number | undefined)[]) {
+function pageDecorations(doc: Node, pages: (number | undefined)[]) {
   const decorations: Decoration[] = [];
   let previous: number | undefined;
   doc.forEach((_block, offset, index) => {

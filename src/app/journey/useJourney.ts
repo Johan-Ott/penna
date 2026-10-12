@@ -120,5 +120,3 @@ export function useJourney(libraryDir: string | null) {
     setHoliday: (isOn: boolean) => change((own, today) => withHoliday(own, isOn, today)),
   };
 }
-
-export type JourneyState = ReturnType<typeof useJourney>;

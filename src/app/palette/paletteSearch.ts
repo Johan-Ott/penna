@@ -11,7 +11,7 @@ export interface PaletteEntry {
 }
 
 // "ä" and "a" match each other when searching, so "fokuslage" finds "Fokusläge".
-const fold = (text: string) =>
+export const fold = (text: string) =>
   text
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")

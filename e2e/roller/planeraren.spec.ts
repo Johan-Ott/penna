@@ -1,10 +1,8 @@
+import { sidebar, editor } from "../helpers";
 import { expect, test, type Page } from "@playwright/test";
 
 // A planner on her computer: lays out parts and chapters first, keeps a cast of characters,
 // writes a little, and plans the book in Innehåll with what happens and when.
-
-const editor = (page: Page) => page.locator(".ProseMirror");
-const sidebar = (page: Page) => page.locator(".sidebar");
 
 async function add(page: Page, what: string) {
   await page.getByRole("button", { name: "Lägg till" }).click();

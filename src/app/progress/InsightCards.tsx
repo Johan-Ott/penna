@@ -106,7 +106,8 @@ export function TowardsGoal({ numbers }: { numbers: Numbers }) {
   );
 }
 
-const weekday = (day: string) =>
+/** The day's first letter, M for Monday. */
+export const weekday = (day: string) =>
   new Date(`${day}T00:00:00Z`).toLocaleDateString(numberLocale(), {
     weekday: "narrow",
     timeZone: "UTC",

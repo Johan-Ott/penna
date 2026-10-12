@@ -15,7 +15,7 @@ const addedText = (text: string) => {
 };
 
 /** What the editor struck through, and beside it in green what they wrote instead. */
-export function revisionDecorations(doc: Node, changes: RevisionChange[]): DecorationSet {
+function revisionDecorations(doc: Node, changes: RevisionChange[]): DecorationSet {
   const { toDoc } = documentText(doc);
   const decorations = changes.flatMap((change) => {
     const from = toDoc(change.from);

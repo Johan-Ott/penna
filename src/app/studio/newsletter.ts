@@ -6,7 +6,7 @@ import { findNode, manuscriptSceneIds } from "../../project/tree.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 
-export const EXCERPT_WORDS = 600;
+const EXCERPT_WORDS = 600;
 const serializer = DOMSerializer.fromSchema(manuscriptSchema);
 const wordsOf = (node: Node) => node.textContent.split(/\s+/).filter(Boolean).length;
 
