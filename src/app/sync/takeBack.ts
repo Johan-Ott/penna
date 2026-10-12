@@ -1,3 +1,4 @@
+import { takeSnapshot } from "../../project/snapshots.js";
 import { moveToTrash, type TreeNode } from "../../project/tree.js";
 import { writeAtomic } from "../../storage/atomicWrite.js";
 import { joinPath, readIfThere } from "../../storage/fileSystem.js";
@@ -34,6 +35,17 @@ export function canTakeBack(change: FileChange | NodeChange) {
   return change.kind === "changed" && change.field !== undefined;
 }
 
+// Text written here since the sync is kept as a version, so taking back never loses it.
+async function keepWrittenSince(parts: TakeBackParts, change: FileChange, sceneId: string | null) {
+  if (!(await parts.session.autosave.flush())) return false;
+  const now = await readIfThere(platform.fileSystem, joinPath(parts.project.dir, change.path));
+  if (sceneId && now !== null && now !== change.after) {
+    const scene = { dir: parts.project.dir, id: sceneId };
+    await takeSnapshot(platform.fileSystem, scene, now, { time: Date.now() });
+  }
+  return true;
+}
+
 // Back where it was, unless a file of that name has come since.
 async function putBack(dir: string, change: FileChange) {
   const to = joinPath(dir, change.path);
@@ -48,7 +60,7 @@ async function takeBackFile(parts: TakeBackParts, change: FileChange) {
   // A new scene goes to Penna's own trash, where it can still be found.
   if (change.kind === "added")
     return sceneId ? parts.updateTree(moveToTrash(project.tree, sceneId)) : undefined;
-  if (change.before === null) return;
+  if (change.before === null || !(await keepWrittenSince(parts, change, sceneId))) return;
   await writeAtomic(platform.fileSystem, joinPath(project.dir, change.path), change.before);
   await checkDisk(parts.session);
 }

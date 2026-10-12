@@ -59,6 +59,31 @@ test("what the sync brought is shown side by side, and a conflict is chosen", as
   await expect(page.locator(".ProseMirror")).toBeVisible();
 });
 
+test("taking back keeps what was written since the sync as a version", async ({ page }) => {
+  await openExample(page);
+  await leaveSyncLog(page);
+  await page.keyboard.press("Control+Shift+O");
+  await page.getByText("Vintervägen").first().click();
+  await page.locator(".ProseMirror").click();
+  await page.keyboard.press("Control+End");
+  await page.keyboard.type(" Skrivet efter synken.");
+
+  await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
+  const view = page.locator(".sync-view");
+  await view.getByRole("button", { name: /Köket/ }).click();
+  await view.getByRole("button", { name: "Ta tillbaka min" }).click();
+
+  await expect(page.locator(".ProseMirror")).not.toContainText("Skrivet efter synken.");
+  const versions = await page.evaluate(async (dir) => {
+    const url = "/src/app/platform.ts";
+    const { platform } = (await import(url)) as { platform: typeof appPlatform };
+    const folder = `${dir}/snapshots/01J9Z4K2QX0000000000000001`;
+    const names = await platform.fileSystem.list(folder);
+    return Promise.all(names.map((name) => platform.fileSystem.readText(`${folder}/${name}`)));
+  }, BOOK);
+  expect(versions.join("")).toContain("Skrivet efter synken.");
+});
+
 test("the phone shows what the sync brought too", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openExample(page);
