@@ -73,7 +73,13 @@ export function pageFinder(map: PageMap | null, tree: TreeNode[]) {
 }
 
 /** The book set as printed, in the background, while something on screen shows its pages. */
-export function usePageMap(project: Project, generalAuthor: string, isWanted: boolean) {
+/** `settleMs` is how long the book must stay unchanged before its pages are counted again. */
+export function usePageMap(
+  project: Project,
+  generalAuthor: string,
+  isWanted: boolean,
+  settleMs = SETTLE_MS,
+) {
   const [map, setMap] = useState<PageMap | null>(null);
   useEffect(() => {
     if (!isWanted) return;
@@ -82,11 +88,11 @@ export function usePageMap(project: Project, generalAuthor: string, isWanted: bo
       buildPageMap(project, generalAuthor)
         .then((built) => isCurrent && setMap(built))
         .catch(recordFailure("Sidantal"));
-    }, SETTLE_MS);
+    }, settleMs);
     return () => {
       isCurrent = false;
       clearTimeout(timer);
     };
-  }, [project, generalAuthor, isWanted]);
+  }, [project, generalAuthor, isWanted, settleMs]);
   return isWanted ? map : null;
 }

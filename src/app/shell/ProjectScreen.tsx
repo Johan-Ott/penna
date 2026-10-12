@@ -96,12 +96,15 @@ function pageParts(app: AppState, project: Project, pageMap: PageMap | null) {
   };
 }
 
-// The printed book's pages, counted while Innehåll, the sheet or the table of contents shows them.
+// Counting pages sets the whole book with Typst; for the sheet's page number alone it waits for a
+// quiet moment, so it never slows the opening or every pause in the writing.
+const SHEET_SETTLE_MS = 20_000;
+
 function useScreenPages({ app, project }: ScreenProps) {
   const { view, settings } = app.writingMode;
-  const isCounting =
-    view === "innehall" || settings.showPages || settings.paper || settings.tableOfContents;
-  return usePageMap(project, app.startup.preferences.authorName, isCounting);
+  const isShown = view === "innehall" || settings.showPages || settings.tableOfContents;
+  const settle = isShown ? undefined : SHEET_SETTLE_MS;
+  return usePageMap(project, app.startup.preferences.authorName, isShown || settings.paper, settle);
 }
 
 function MainCard({ app, project, pageMap }: ScreenProps & { pageMap: PageMap | null }) {

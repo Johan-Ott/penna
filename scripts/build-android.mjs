@@ -1,6 +1,5 @@
-// `npm run build:android`: a signed app file in out/Penna.apk, to send to a phone and open there.
-// It is signed with Penna's own key in ~/.penna (never in git); without it, with Android's test
-// key, which installs but must never reach a release: phones cannot update across keys.
+// `npm run build:android`: out/Penna.apk, signed with Penna's own key in ~/.penna (never in git),
+// or else with Android's test key, which must never reach a release: phones cannot change keys.
 import { execFileSync } from "node:child_process";
 import {
   copyFileSync,
