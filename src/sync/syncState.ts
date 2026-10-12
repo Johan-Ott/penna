@@ -1,5 +1,6 @@
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { t } from "../i18n/i18n.js";
 import type { Drive } from "./drive.js";
 
 // Which Drive folder a book syncs with, and each file as it was at the last sync;
@@ -56,5 +57,28 @@ export async function bookFolder(
     const found = await drive.findFolder(candidate, penna);
     if (!found) return drive.createFolder(candidate, penna);
     if (await isSameBook(drive, found, localScenes)) return found;
+  }
+}
+
+// Many files gone on one side at once is a folder emptied, moved or half-copied, not a writer
+// removing them; trashing them on the other side too would empty the book there as well.
+export function checkFewGone(
+  state: SyncState,
+  here: Map<string, unknown>,
+  drive: Map<string, unknown>,
+) {
+  const known = Object.keys(state.files);
+  const goneThere = known.filter((path) => !drive.has(path)).length;
+  if (known.length > 0 && goneThere === known.length) {
+    throw new Error(t("Bokens mapp i Drive är tom eller borta. Inget har ändrats här."));
+  }
+  const goneHere = known.filter((path) => !here.has(path)).length;
+  const limit = Math.max(10, known.length / 2);
+  if (goneHere > limit || goneThere > limit) {
+    throw new Error(
+      t(
+        "Många av bokens filer är borta på ena sidan på en gång, så inget synkades. Titta i bokmappen och i Drive.",
+      ),
+    );
   }
 }

@@ -114,3 +114,25 @@ describe("syncProject and a file it cannot read", () => {
     expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
   });
 });
+
+describe("syncProject and a book emptied on one side", () => {
+  it("stops instead of trashing most of the book in Drive when its folder here lost the files", async () => {
+    const cloud = twoDevices().cloud;
+    const scenes = Object.fromEntries(
+      Array.from({ length: 12 }, (_slot, index) => [
+        `${BOOK}/scenes/S${index}.md`,
+        `Scen ${index}.`,
+      ]),
+    );
+    const computer = createMemoryFileSystem({ [`${BOOK}/project.json`]: "{}", ...scenes });
+    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
+    const emptied = createMemoryFileSystem({
+      [`${BOOK}/project.json`]: "{}",
+      [`${BOOK}/.penna-sync.json`]: await computer.readText(`${BOOK}/.penna-sync.json`),
+    });
+
+    await expect(syncProject(emptied, cloud.drive, BOOK, { now: NOW })).rejects.toThrow();
+
+    expect(cloud.isInTrash("Penna/Isen.penna/scenes/S0.md")).toBe(false);
+  });
+});

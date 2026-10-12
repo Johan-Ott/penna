@@ -16,6 +16,7 @@ import {
 import { mergeProjectText } from "./mergeProject.js";
 import {
   bookFolder,
+  checkFewGone,
   readState,
   STATE_FILE,
   writeState,
@@ -23,7 +24,6 @@ import {
   type SyncState,
 } from "./syncState.js";
 import { addToSyncLog, SYNC_LOG, syncLogger, type SyncLogger } from "./syncLog.js";
-import { t } from "../i18n/i18n.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
 interface SyncResult {
@@ -188,11 +188,7 @@ export async function syncProject(
   const rootId = await bookFolder(drive, dir, state, localScenes);
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
-  // An empty folder after files were synced means it was removed or moved in Drive, not that
-  // every file was; trashing them all here would empty the book.
-  if (remote.files.size === 0 && Object.keys(state.files).length > 0) {
-    throw new Error(t("Bokens mapp i Drive är tom eller borta. Inget har ändrats här."));
-  }
+  checkFewGone(state, local, remote.files);
   const book = { fileSystem, dir, guard };
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const logger = syncLogger();
