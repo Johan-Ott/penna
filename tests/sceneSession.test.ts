@@ -18,8 +18,8 @@ import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 const SCENE_PATH = "/bok/scenes/01J9Z4K2QX.md";
 const SCENE = "---\nid: 01J9Z4K2QX\ntitle: Köket\n---\nBrevet låg där.\n";
 
-function setup() {
-  const files = createMemoryFileSystem({ [SCENE_PATH]: SCENE });
+function setup(more: Record<string, string> = {}) {
+  const files = createMemoryFileSystem({ [SCENE_PATH]: SCENE, ...more });
   let editorDoc: Node | null = null;
   const conflicts: (DiskConflict | null)[] = [];
   const session = createSceneSession(files, {
@@ -51,6 +51,17 @@ describe("scene session", () => {
 
     expect(editorText()).toBe("Brevet låg där.");
     expect(session.scene?.title).toBe("Köket");
+  });
+
+  it("saves what was typed while the next scene was being read", async () => {
+    const { files, session, type } = setup({ "/bok/scenes/01ISEN.md": "Isen." });
+    await openScene(session, "/bok", "01J9Z4K2QX");
+    const { readText } = files;
+    files.readText = (path) => Promise.resolve(type("Brevet låg kvar.")).then(() => readText(path));
+
+    await openScene(session, "/bok", "01ISEN");
+
+    expect(await readText(SCENE_PATH)).toContain("Brevet låg kvar.");
   });
 
   it("saves the front matter and the new text one second after typing stops", async () => {

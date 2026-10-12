@@ -100,10 +100,12 @@ function showScene(session: SceneSession, dir: string, id: string, text: string)
   session.hooks.editor.load(parseMarkdown(body));
 }
 
-// Leaving a scene whose text is not on disk would lose it, so the switch waits for the save.
+// Leaving a scene whose text is not on disk would lose it, so the switch waits for the save,
+// and saves again after the read for what was typed meanwhile.
 export async function openScene(session: SceneSession, dir: string, id: string) {
   if (!(await session.autosave.flush())) return false;
   const text = await session.fileSystem.readText(scenePath(dir, id));
+  if (!(await session.autosave.flush())) return false;
   session.autosave.release();
   showScene(session, dir, id, text);
   session.hooks.onConflict(null);
@@ -178,9 +180,8 @@ export async function resolveConflict(
     );
   }
   // The editor's text is kept among the scene's versions, so nothing is lost.
-  if (choice === "theirs") {
+  if (choice === "theirs")
     await takeSnapshot(session.fileSystem, scene, conflict.editorText, { time: Date.now() });
-  }
   session.autosave.release();
   session.hooks.onConflict(null);
   if (choice === "theirs") return showScene(session, scene.dir, scene.id, conflict.diskText);
