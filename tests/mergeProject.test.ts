@@ -60,6 +60,12 @@ describe("mergeProjectText", () => {
     expect(merged).toMatchObject({ title: "Isen", series: "Ö.serie" });
   });
 
+  it("keeps the scenes of both sides on a first sync", () => {
+    const merged = mergeProjectText(null, file({}, [scene("S1")]), file({}, [scene("S2")]));
+
+    expect(parsed(merged)["tree"]).toEqual([scene("S2"), scene("S1")]);
+  });
+
   it("keeps a setting this device removed", () => {
     const base = file({ series: "Ö.serie" }, []);
 

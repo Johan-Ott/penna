@@ -36,8 +36,9 @@ export function mergeProjectText(base: string | null, here: string, drive: strin
     const value = pick(baseJson, hereJson, driveJson, key);
     if (value !== undefined) merged[key] = value;
   }
+  // Before the first sync both trees count as changed, so neither side's scenes are dropped.
   const trees = [treeOf(baseJson), treeOf(hereJson), treeOf(driveJson)] as const;
-  if (baseJson && !same(trees[1], trees[0]) && !same(trees[2], trees[0])) {
+  if (!baseJson || (!same(trees[1], trees[0]) && !same(trees[2], trees[0]))) {
     const tree = mergeTrees(...trees);
     merged["tree"] = tree.tree;
     conflicts.push(...tree.conflicts);
