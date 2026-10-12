@@ -28,6 +28,18 @@ describe("replaceInScenes", () => {
     expect(await files.readText("/bok/scenes/01FYREN.md")).toContain("Sjöberg och Sjöberg.");
     expect(await files.readText("/bok/scenes/01ISEN.md")).toBe(ISEN);
   });
+
+  it("keeps each changed scene as a version first, for after Penna has closed", async () => {
+    const files = setup();
+
+    await replaceInScenes(files, "/bok", ["01KOKET", "01ISEN"], QUERY);
+
+    const [version] = await files.list("/bok/snapshots/01KOKET");
+    expect(await files.readText(`/bok/snapshots/01KOKET/${version ?? ""}`)).toContain(
+      "Sjöbergh kom.",
+    );
+    expect(await files.list("/bok/snapshots/01ISEN")).toEqual([]);
+  });
 });
 
 describe("undoReplace", () => {

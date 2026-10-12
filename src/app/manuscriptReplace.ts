@@ -1,6 +1,8 @@
 import type { SearchQuery } from "prosemirror-search";
 import { replaceAllInText } from "../editor/manuscriptSearch.js";
+import { takeSnapshot } from "../project/snapshots.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
+import { t } from "../i18n/i18n.js";
 import { type FileSystem, scenePath } from "../storage/fileSystem.js";
 
 export interface SceneChange {
@@ -22,6 +24,9 @@ export async function replaceInScenes(
     if (before === null) continue;
     const result = replaceAllInText(before, query);
     if (result.count === 0) continue;
+    // A version first, so the scene can be found as it was even after Penna has closed.
+    const label = t("Före Ersätt alla");
+    await takeSnapshot(fileSystem, { dir, id }, before, { time: Date.now(), label });
     await writeAtomic(fileSystem, scenePath(dir, id), result.text);
     changes.push({ id, before, after: result.text });
     count += result.count;
