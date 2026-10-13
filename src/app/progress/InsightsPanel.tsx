@@ -1,3 +1,4 @@
+import { CloseButton } from "../controls.js";
 import { useState } from "react";
 import { dailyGoalOf, dayKey, type Stats } from "../../project/stats.js";
 import { chapterWords } from "../../project/treeLabels.js";
@@ -77,14 +78,7 @@ function InsightsBody(props: BodyProps) {
 const InsightsHead = ({ onClose }: { onClose: () => void }) => (
   <div className="insights-head">
     <span className="insights-title">{t("Insikter")}</span>
-    <button
-      className="icon-button insights-close"
-      aria-label={t("Stäng insikter")}
-      data-phone-back
-      onClick={onClose}
-    >
-      ×
-    </button>
+    <CloseButton label={t("Stäng insikter")} isPhoneBack onClose={onClose} />
   </div>
 );
 

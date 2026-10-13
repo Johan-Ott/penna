@@ -368,7 +368,7 @@ body .selection-bar.phone .icon-button {
   justify-content: flex-end;
 }
 
-.phone-text .review-close {
+.phone-app .close-button {
   width: 44px;
   height: 44px;
 }
@@ -765,10 +765,10 @@ body .selection-bar.phone .icon-button {
   font-weight: 600;
 }
 
-.phone-app .insights-close {
+.phone-app .insights-head .close-button {
   position: absolute;
+  right: 6px;
   bottom: 4px;
-  left: 6px;
   width: 44px;
   height: 44px;
   font-size: 22px;
@@ -1082,10 +1082,8 @@ body .phone-app .text-when input {
   }
 }
 
-/* Android's back closes these, so the phone needs no Stäng or × of its own. */
-.android .review-close,
-.android .insights-close,
-.android .dialog-close {
+/* Android's back closes these, so the phone needs no × of its own. */
+.android .close-button {
   display: none;
 }
 

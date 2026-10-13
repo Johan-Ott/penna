@@ -1,3 +1,4 @@
+import { CloseButton } from "../controls.js";
 import { fold } from "../palette/paletteSearch.js";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useEscape, useShortcut } from "../useShortcut.js";
@@ -110,9 +111,7 @@ function SettingsDialog(props: TabProps & { startTab: number; onClose: () => voi
         <div className="settings-content">
           <div className="settings-heading">
             <h1>{query ? t("Sökresultat") : title}</h1>
-            <button className="link-button quiet dialog-close" onClick={props.onClose}>
-              {t("Stäng")}
-            </button>
+            <CloseButton onClose={props.onClose} />
           </div>
           {query ? <Found {...props} query={query} /> : <Content {...props} />}
         </div>

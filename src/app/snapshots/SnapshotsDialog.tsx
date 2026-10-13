@@ -1,3 +1,4 @@
+import { CloseButton } from "../controls.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useRef, useState } from "react";
 import { countDocumentWords } from "../../manuscript/wordCount.js";
@@ -140,9 +141,7 @@ function SnapshotsDialog(props: SnapshotsDialogProps) {
           <span id="snapshots-title" className="dialog-title">
             {t("Versioner av ”{title}”", { title: props.sceneTitle })}
           </span>
-          <button className="link-button quiet dialog-close" onClick={state.close}>
-            {t("Stäng")}
-          </button>
+          <CloseButton onClose={state.close} />
         </div>
         <div className="snapshots">
           <SnapshotList {...props} />

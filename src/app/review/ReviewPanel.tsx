@@ -1,3 +1,4 @@
+import { CloseButton } from "../controls.js";
 import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { ProseNote } from "../../manuscript/prose.js";
@@ -124,14 +125,11 @@ function ReviewHeader(props: { isShown: boolean; onClose: () => void }) {
   return (
     <div className="review-header">
       <span className="progress-title">{t("Granska")}</span>
-      <button
-        className="review-close"
-        aria-label={t("Stäng granskning")}
-        data-phone-back={props.isShown || undefined}
-        onClick={props.onClose}
-      >
-        ×
-      </button>
+      <CloseButton
+        label={t("Stäng granskning")}
+        isPhoneBack={props.isShown}
+        onClose={props.onClose}
+      />
     </div>
   );
 }

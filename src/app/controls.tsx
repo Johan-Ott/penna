@@ -86,6 +86,23 @@ export function Dropdown<T extends string>(props: {
   );
 }
 
+/** The × at the top right of a panel or a dialog: whatever lies over the text closes this way,
+ * while a view the writer went to has Tillbaka at its top left. */
+export function CloseButton(props: { label?: string; onClose: () => void; isPhoneBack?: boolean }) {
+  const label = props.label ?? t("Stäng");
+  return (
+    <button
+      className="close-button"
+      aria-label={label}
+      title={label}
+      data-phone-back={props.isPhoneBack || undefined}
+      onClick={props.onClose}
+    >
+      ×
+    </button>
+  );
+}
+
 /** A modal dialog with a title; Escape or a click outside closes it. */
 export function Dialog(props: {
   label: string;

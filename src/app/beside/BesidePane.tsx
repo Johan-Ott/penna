@@ -1,3 +1,4 @@
+import { CloseButton } from "../controls.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useState } from "react";
 import { plainText } from "../../manuscript/compare.js";
@@ -64,9 +65,7 @@ export function BesidePane({ app, project }: { app: AppState; project: Project }
     <aside className="beside-pane" aria-label={t("Bredvid")}>
       <div className="beside-header">
         <span className="beside-title">{titleOf(app, beside)}</span>
-        <button className="review-close" aria-label={t("Stäng")} onClick={() => setBeside(null)}>
-          ×
-        </button>
+        <CloseButton onClose={() => setBeside(null)} />
       </div>
       <div className="beside-body manuscript">{besideBody(app, beside, doc)}</div>
     </aside>
