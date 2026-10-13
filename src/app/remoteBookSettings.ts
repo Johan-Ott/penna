@@ -1,7 +1,9 @@
 import { withBookField } from "../project/bookFields.js";
 import { seriesFolder, shownSettings } from "../project/bookFileSettings.js";
 import { bookFileCalls } from "../project/bookFiles.js";
-import { withNamedLabel, withPieces, type BookParts } from "../project/bookSettings.js";
+import { withNamedLabel, type BookParts } from "../project/bookSettings.js";
+import { additionsOf, pieceIdsFrom } from "../project/pieceAdditions.js";
+import { addToBook } from "./templates/addPieces.js";
 import { closeScene } from "./sceneSession.js";
 import { platform } from "./platform.js";
 import { bookOf, until } from "./remoteBook.js";
@@ -29,7 +31,11 @@ const settingCalls = (current: () => AppState) => ({
   },
   label: (id: string, name: string, state?: string) =>
     changeBook(current, (parts) => withNamedLabel(parts, id, name, state !== "av")),
-  pieces: (...ids: string[]) => changeBook(current, (parts) => withPieces(parts, ids)),
+  pieces: async (...ids: string[]) => {
+    const book = bookOf(current());
+    await current().updateProject(await addToBook(book, additionsOf(pieceIdsFrom(ids), null)));
+    await until(() => current().project !== book);
+  },
 });
 
 const seriesCalls = (current: () => AppState) => ({

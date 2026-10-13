@@ -512,9 +512,10 @@
     {
       "id": "deckare",
       "name": "Mystery",
-      "hint": "Suspects, clues and a timeline to keep track of.",
-      "sorts": ["Suspects", "Clues", "Timeline"],
+      "hint": "Clues to keep track of, and suspects as a label on the people.",
+      "sorts": ["Clues"],
       "labels": [
+        ["Suspect", "#7a5cc9"],
         ["Clue", "#2f86c9"],
         ["Red herring", "#e08a1e"],
         ["Reveal", "#d4483b"],
@@ -545,7 +546,7 @@
       "id": "urban",
       "name": "Urban fantasy",
       "hint": "A city we know, with a hidden world beneath.",
-      "sorts": ["The city", "The hidden world"],
+      "sorts": ["The hidden world"],
       "labels": [],
       "chapters": []
     },
@@ -563,8 +564,8 @@
     {
       "id": "thriller",
       "name": "Thriller",
-      "hint": "The threat, the timeline and the twists to keep track of.",
-      "sorts": ["The threat", "Timeline"],
+      "hint": "The threat and the twists to keep track of.",
+      "sorts": ["The threat"],
       "labels": [
         ["Twist", "#d4483b"],
         ["Time pressure", "#e08a1e"]
@@ -574,8 +575,8 @@
     {
       "id": "skrack",
       "name": "Horror",
-      "hint": "What frightens, the place and the rules of the supernatural.",
-      "sorts": ["What frightens", "The place"],
+      "hint": "What frightens and the rules of the supernatural.",
+      "sorts": ["What frightens"],
       "labels": [
         ["Fear", "#6b2c8f"],
         ["Omen", "#7d7d7d"]
@@ -604,8 +605,8 @@
     {
       "id": "feelgood",
       "name": "Feel-good",
-      "hint": "The town, the community and what warms.",
-      "sorts": ["The town", "The community"],
+      "hint": "The community and what warms.",
+      "sorts": ["The community"],
       "labels": [["Warmth", "#e0a21e"]],
       "chapters": []
     },

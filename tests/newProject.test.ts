@@ -116,7 +116,7 @@ describe("createProject", () => {
     });
     expect(manuscriptSceneIds(project.tree)).toHaveLength(13);
     const sorts = project.tree.filter((node) => node.kind === "sort").map((node) => node.title);
-    expect(sorts.slice(-3)).toEqual(["Misstänkta", "Ledtrådar", "Tidslinje"]);
+    expect(sorts.at(-1)).toBe("Ledtrådar");
     expect(project.fields).toMatchObject({ totalGoal: 80_000 });
     expect((project.fields["labels"] as { name: string }[]).map((label) => label.name)).toContain(
       "Falskt spår",

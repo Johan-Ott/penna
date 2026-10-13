@@ -17,6 +17,6 @@ test("pieces are added to a book that exists: its notes, labels and closing chap
   await dialog.getByRole("button", { name: "Lägg till", exact: true }).click();
 
   const sidebar = page.locator(".sidebar");
-  await expect(sidebar.getByText("Misstänkta", { exact: true })).toBeVisible();
+  await expect(sidebar.getByText("Ledtrådar", { exact: true })).toBeVisible();
   await expect(sidebar.getByText("Kroken")).toBeVisible();
 });

@@ -1,7 +1,9 @@
+import { t } from "../i18n/i18n.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
 import { withBookField } from "./bookFields.js";
-import { changeProject, readBook, type BookFolder } from "./bookFolder.js";
-import { withNamedLabel, withPieces } from "./bookSettings.js";
+import { changeProject, newScene, readBook, type BookFolder } from "./bookFolder.js";
+import { withNamedLabel } from "./bookSettings.js";
+import { additionsOf, pieceIdsFrom, withAdditions } from "./pieceAdditions.js";
 import { parentOf } from "./libraryFolders.js";
 import { readProjectFile, writeProjectFile } from "./projectFile.js";
 import { createSeries, listSeries, moveNotesToSeries, seriesDirOf, seriesTitle } from "./series.js";
@@ -51,8 +53,12 @@ export const settingCalls = (book: BookFolder) => ({
   /** A label on a node by its name, a new label if none has it; "av" takes it off. */
   label: (id: string, name: string, state?: string) =>
     changeProject(book, (parts) => withNamedLabel(parts, id, name, state !== "av")),
-  /** Ny bok's pieces, such as deckare or romans, added to the book: their sorts and labels. */
-  pieces: (...ids: string[]) => changeProject(book, (parts) => withPieces(parts, ids)),
+  /** Pieces from Ny bok, such as deckare or romans, added as Mallar och bitar adds them. */
+  pieces: async (...ids: string[]) => {
+    const additions = additionsOf(pieceIdsFrom(ids), null);
+    const sceneIds = await Promise.all(additions.chapters.map(() => newScene(book, t("Scen 1"))));
+    return changeProject(book, (parts) => withAdditions(parts, additions, sceneIds));
+  },
 });
 
 /** The book's series, and its notes moved there to be shared. */

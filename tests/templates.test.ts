@@ -19,14 +19,11 @@ describe("structures and pieces", () => {
     const book = composeTemplate(structure, ["deckare", "romans", "magi", "urban", "serie"]);
 
     expect(book.sorts).toEqual([
-      "Misstänkta",
       "Ledtrådar",
-      "Tidslinje",
       "Relationen",
       "Magisystem",
       "Riken",
       "Varelser",
-      "Staden",
       "Den dolda världen",
     ]);
     expect(book.labels.map(([name]) => name)).toEqual(

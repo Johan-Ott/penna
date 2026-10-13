@@ -59,7 +59,7 @@ describe("createBookFromOutline", () => {
 
     const project = await readProjectFile(files, created.dir, []);
     expect(project.fields["totalGoal"]).toBe(110000);
-    expect(sortsOf(project.tree).map((sort) => sort.title)).toContain("Misstänkta");
+    expect(sortsOf(project.tree).map((sort) => sort.title)).toContain("Ledtrådar");
     expect(labelsOf(project.fields).map((label) => label.name)).toContain("Falskt spår");
   });
 

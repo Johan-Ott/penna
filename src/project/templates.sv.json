@@ -500,9 +500,10 @@
     {
       "id": "deckare",
       "name": "Deckare",
-      "hint": "Misstänkta, ledtrådar och en tidslinje att hålla reda på.",
-      "sorts": ["Misstänkta", "Ledtrådar", "Tidslinje"],
+      "hint": "Ledtrådar att hålla reda på, och misstänkta som etikett på personerna.",
+      "sorts": ["Ledtrådar"],
       "labels": [
+        ["Misstänkt", "#7a5cc9"],
         ["Ledtråd", "#2f86c9"],
         ["Falskt spår", "#e08a1e"],
         ["Avslöjande", "#d4483b"],
@@ -533,7 +534,7 @@
       "id": "urban",
       "name": "Urban fantasy",
       "hint": "En stad som vi känner, med en dold värld under.",
-      "sorts": ["Staden", "Den dolda världen"],
+      "sorts": ["Den dolda världen"],
       "labels": [],
       "chapters": []
     },
@@ -551,8 +552,8 @@
     {
       "id": "thriller",
       "name": "Thriller",
-      "hint": "Hotet, tidslinjen och vändningarna att hålla reda på.",
-      "sorts": ["Hotet", "Tidslinje"],
+      "hint": "Hotet och vändningarna att hålla reda på.",
+      "sorts": ["Hotet"],
       "labels": [
         ["Vändning", "#d4483b"],
         ["Tidspress", "#e08a1e"]
@@ -562,8 +563,8 @@
     {
       "id": "skrack",
       "name": "Skräck",
-      "hint": "Det som skrämmer, platsen och reglerna för det övernaturliga.",
-      "sorts": ["Det som skrämmer", "Platsen"],
+      "hint": "Det som skrämmer och reglerna för det övernaturliga.",
+      "sorts": ["Det som skrämmer"],
       "labels": [
         ["Rädsla", "#6b2c8f"],
         ["Varsel", "#7d7d7d"]
@@ -592,8 +593,8 @@
     {
       "id": "feelgood",
       "name": "Feelgood",
-      "hint": "Orten, gemenskapen och det som värmer.",
-      "sorts": ["Orten", "Gemenskapen"],
+      "hint": "Gemenskapen och det som värmer.",
+      "sorts": ["Gemenskapen"],
       "labels": [["Värme", "#e0a21e"]],
       "chapters": []
     },
