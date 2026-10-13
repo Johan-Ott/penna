@@ -41,20 +41,21 @@ export function ProfileLayer({ app, project }: { app: ProfileApp; project: Proje
   );
 }
 
-/** At the top of the sidebar: who writes, and the way into the profile. */
-/** The writer's picture in the top bar; it opens the profile. */
+/** The writer's picture in the top bar, with the title the writer wears; it opens the profile. */
 export function ProfileButton({ app }: { app: Pick<AppState, "profile" | "startup" | "journey"> }) {
   const name = app.startup.preferences.authorName;
   const earned = earnedOf(app.journey.journey, dayKey(Date.now()));
   const frame = wornFlair(app.profile.profile.frame, earned)?.id ?? "";
+  const title = wornFlair(app.profile.profile.title, earned)?.name;
   return (
     <button
-      className="topbar-button profile-button"
+      className={title ? "topbar-button profile-button with-title" : "topbar-button profile-button"}
       aria-label={t("Din profil")}
       title={name || t("Din profil")}
       onClick={app.profile.open}
     >
       <Avatar name={name} picture={app.profile.profile.picture} size={22} frame={frame} />
+      {title && <span className="profile-button-title">{title}</span>}
     </button>
   );
 }

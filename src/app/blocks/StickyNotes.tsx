@@ -1,56 +1,17 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { placeInRoom, withoutStrokesNear } from "../../project/stickyNoteGeometry.js";
 import { NOTE_COLORS, type StickyNote } from "../../project/stickyNotes.js";
 import { GripIcon, PenIcon } from "../shell/icons.js";
-import { NoteDrawing } from "./NoteDrawing.js";
+import { EraserIcon } from "./EraserIcon.js";
+import { NoteDrawing, type NoteTool } from "./NoteDrawing.js";
+import { useKeptSize, useNoteDrag, useRoomSize } from "./stickyNoteHooks.js";
 import type { StickyNotesState } from "./useStickyNotes.js";
 import { t } from "../../i18n/i18n.js";
 
-// Lappar over the text: each moved by its head, sized from its corner, in its own colour, with
-// text to write and the pen to draw. Removing one with something on it asks first.
+// Lappar over the text, each with text, pen and eraser, kept inside the window while keeping
+// its own place for when the window grows. Removing one with something on it asks first.
 
 type Props = { note: StickyNote; state: StickyNotesState };
-
-function useNoteDrag({ note, state }: Props) {
-  return (event: PointerEvent<HTMLElement>) => {
-    const card = event.currentTarget.parentElement;
-    if (!card || (event.target as HTMLElement).closest("button")) return;
-    event.preventDefault();
-    const room = card.offsetParent?.getBoundingClientRect();
-    const grab = { x: event.clientX - note.left, y: event.clientY - note.top };
-    const move = (moved: globalThis.PointerEvent) => {
-      const left = Math.max(
-        0,
-        Math.min(moved.clientX - grab.x, (room?.width ?? 2000) - card.offsetWidth),
-      );
-      const top = Math.max(
-        0,
-        Math.min(moved.clientY - grab.y, (room?.height ?? 2000) - card.offsetHeight),
-      );
-      state.change(note.id, { left, top });
-    };
-    const drop = () => {
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerup", drop);
-    };
-    window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", drop);
-  };
-}
-
-// The size the writer drags the corner to is kept with the note.
-function useKeptSize(card: React.RefObject<HTMLElement | null>, { note, state }: Props) {
-  useEffect(() => {
-    const element = card.current;
-    if (!element) return;
-    const observer = new ResizeObserver(() => {
-      const width = element.offsetWidth;
-      const height = element.offsetHeight;
-      if (width !== note.width || height !== note.height) state.change(note.id, { width, height });
-    });
-    observer.observe(element);
-    return () => observer.disconnect();
-  });
-}
 
 const COLOR_NAMES: Record<StickyNote["color"], string> = {
   gul: t("Gul"),
@@ -93,21 +54,38 @@ function RemoveButton({ note, state }: Props) {
   );
 }
 
-function NoteHead(props: Props & { isPen: boolean; onPen: () => void }) {
-  const { note, state } = props;
-  const addNext = () => state.add({ left: note.left + 24, top: note.top + 24 }, note.color);
+type Box = { left: number; top: number; width: number; height: number };
+
+function ToolButton(props: {
+  tool: NoteTool;
+  chosen: NoteTool | null;
+  onChoose: (tool: NoteTool | null) => void;
+}) {
+  const isChosen = props.chosen === props.tool;
   return (
-    <header className="note-head" onPointerDown={useNoteDrag(props)}>
+    <button
+      className={isChosen ? "note-tool chosen" : "note-tool"}
+      aria-label={props.tool === "pen" ? t("Rita") : t("Sudda")}
+      aria-pressed={isChosen}
+      onClick={() => props.onChoose(isChosen ? null : props.tool)}
+    >
+      {props.tool === "pen" ? <PenIcon /> : <EraserIcon />}
+    </button>
+  );
+}
+
+function NoteHead(
+  props: Props & { shown: Box; tool: NoteTool | null; onTool: (tool: NoteTool | null) => void },
+) {
+  const { note, state } = props;
+  const addNext = () =>
+    state.add({ left: props.shown.left + 24, top: props.shown.top + 24 }, note.color);
+  return (
+    <header className="note-head" onPointerDown={useNoteDrag(note, props.shown, state)}>
       <GripIcon />
       <ColorDots note={note} state={state} />
-      <button
-        className={props.isPen ? "note-tool chosen" : "note-tool"}
-        aria-label={t("Rita")}
-        aria-pressed={props.isPen}
-        onClick={props.onPen}
-      >
-        <PenIcon />
-      </button>
+      <ToolButton tool="pen" chosen={props.tool} onChoose={props.onTool} />
+      <ToolButton tool="eraser" chosen={props.tool} onChoose={props.onTool} />
       <button className="note-tool" aria-label={t("Ny lapp")} onClick={addNext}>
         +
       </button>
@@ -116,33 +94,43 @@ function NoteHead(props: Props & { isPen: boolean; onPen: () => void }) {
   );
 }
 
+function NoteBody(props: Props & { shown: Box; tool: NoteTool | null }) {
+  const { note, state } = props;
+  const erase = (point: [number, number]) =>
+    state.change(note.id, { strokes: withoutStrokesNear(note.strokes, point) });
+  return (
+    <div className="note-body">
+      <textarea
+        value={note.text}
+        aria-label={t("Lappens text")}
+        placeholder={t("Skriv eller rita…")}
+        onChange={(event) => state.change(note.id, { text: event.target.value })}
+      />
+      <NoteDrawing
+        strokes={note.strokes}
+        tool={props.tool}
+        size={`${props.shown.width}x${props.shown.height}`}
+        onStroke={(stroke) => state.change(note.id, { strokes: [...note.strokes, stroke] })}
+        onErase={erase}
+      />
+    </div>
+  );
+}
+
 export function StickyNoteCard({ note, state }: Props) {
   const card = useRef<HTMLElement>(null);
-  const [isPen, setPen] = useState(false);
-  useKeptSize(card, { note, state });
-  const style = { left: note.left, top: note.top, width: note.width, height: note.height };
+  const [tool, setTool] = useState<NoteTool | null>(null);
+  const shown = placeInRoom(note, useRoomSize(card));
+  useKeptSize(card, note, shown, state);
   return (
     <section
       ref={card}
       className={`sticky-note ${note.color}`}
-      style={style}
+      style={shown}
       aria-label={t("Lapp")}
     >
-      <NoteHead note={note} state={state} isPen={isPen} onPen={() => setPen(!isPen)} />
-      <div className="note-body">
-        <textarea
-          value={note.text}
-          aria-label={t("Lappens text")}
-          placeholder={t("Skriv eller rita…")}
-          onChange={(event) => state.change(note.id, { text: event.target.value })}
-        />
-        <NoteDrawing
-          strokes={note.strokes}
-          isPen={isPen}
-          size={`${note.width}x${note.height}`}
-          onStroke={(stroke) => state.change(note.id, { strokes: [...note.strokes, stroke] })}
-        />
-      </div>
+      <NoteHead note={note} state={state} shown={shown} tool={tool} onTool={setTool} />
+      <NoteBody note={note} state={state} shown={shown} tool={tool} />
     </section>
   );
 }

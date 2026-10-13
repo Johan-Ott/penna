@@ -1,7 +1,10 @@
 import { useEffect, useRef, type PointerEvent, type RefObject } from "react";
 import type { Stroke } from "../../project/stickyNotes.js";
 
-// What is drawn on a note: its lines, over its text, drawn with the pen while it is on.
+// What is drawn on a note: its lines, over its text, drawn with the pen and rubbed out with the
+// eraser while one of them is chosen.
+
+export type NoteTool = "pen" | "eraser";
 
 function draw(canvas: HTMLCanvasElement, strokes: Stroke[]) {
   const context = canvas.getContext("2d");
@@ -50,22 +53,43 @@ function usePen(
   };
 }
 
+// The eraser takes the lines it passes over, from press to release.
+function useEraser(onErase: (point: [number, number]) => void) {
+  const isErasing = useRef(false);
+  return {
+    onPointerDown: (event: PointerEvent<HTMLCanvasElement>) => {
+      event.currentTarget.setPointerCapture(event.pointerId);
+      isErasing.current = true;
+      onErase(pointOf(event));
+    },
+    onPointerMove: (event: PointerEvent<HTMLCanvasElement>) => {
+      if (isErasing.current) onErase(pointOf(event));
+    },
+    onPointerUp: () => {
+      isErasing.current = false;
+    },
+  };
+}
+
 export function NoteDrawing(props: {
   strokes: Stroke[];
-  isPen: boolean;
+  tool: NoteTool | null;
   size: string;
   onStroke: (stroke: Stroke) => void;
+  onErase: (point: [number, number]) => void;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const pen = usePen(canvas, props.strokes, props.onStroke);
+  const eraser = useEraser(props.onErase);
   useEffect(() => {
     if (canvas.current) draw(canvas.current, props.strokes);
   }, [props.strokes, props.size]);
+  const handlers = props.tool ? { pen, eraser }[props.tool] : {};
   return (
     <canvas
       ref={canvas}
-      className={props.isPen ? "note-drawing pen" : "note-drawing"}
-      {...(props.isPen ? pen : {})}
+      className={props.tool ? `note-drawing ${props.tool}` : "note-drawing"}
+      {...handlers}
     />
   );
 }

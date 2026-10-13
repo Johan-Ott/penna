@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-function Icon({ size = 16, children }: { size?: number; children: ReactNode }) {
+export function Icon({ size = 16, children }: { size?: number; children: ReactNode }) {
   return (
     <svg
       width={size}
