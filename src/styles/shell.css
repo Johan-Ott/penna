@@ -2250,10 +2250,15 @@
   bottom: auto;
 }
 
+/* The head stays at the top while the panel scrolls, so its × is always within reach. */
 .block-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: var(--bg-panel);
   cursor: grab;
   touch-action: none;
   user-select: none;
