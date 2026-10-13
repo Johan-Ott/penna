@@ -72,7 +72,7 @@ export function whenUpdated(time: number, now: number): string {
   });
 }
 
-const folderTitle = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
+export const folderTitle = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
 
 // A broken project.json is repaired when the project opens, not here.
 async function readProjectFields(fileSystem: FileSystem, dir: string) {

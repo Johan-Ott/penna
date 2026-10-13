@@ -31,7 +31,7 @@ export function useCover(project: Project) {
 }
 
 // An object URL lives until it is revoked.
-function usePictureUrl(picture: CoverPicture | null) {
+export function usePictureUrl(picture: CoverPicture | null) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!picture) return setUrl(null);

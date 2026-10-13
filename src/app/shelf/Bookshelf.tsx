@@ -72,7 +72,7 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
       {group.series && <h2 className="shelf-series">{group.series}</h2>}
       <div className="books">
         {group.books.map((book) => (
-          <Book key={book.dir} book={book} index={props.books.indexOf(book)} {...props} />
+          <Book key={book.dir} book={book} {...props} />
         ))}
         {groupIndex === groups.length - 1 && !props.isPhone && <NewBook {...props} />}
       </div>

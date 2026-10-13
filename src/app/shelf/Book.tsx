@@ -1,25 +1,33 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
+import { coverLookOf } from "../../project/shelfLook.js";
 import { useMenuButton } from "../Menu.js";
 import { platform } from "../platform.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
-
-const COVERS = ["cover-black", "cover-light", "cover-dark", "cover-white"];
+import { useShelfCover } from "./useShelfCover.js";
 
 interface BookProps {
   book: ShelfBook;
-  index: number;
   onOpen: (dir: string) => void;
   onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
 }
 
-function Cover({ book, index, onOpen }: Pick<BookProps, "book" | "index" | "onOpen">) {
+function Cover({ book, onOpen }: Pick<BookProps, "book" | "onOpen">) {
+  const pictureUrl = useShelfCover(book.dir);
+  if (pictureUrl) {
+    return (
+      <button
+        className="book-cover with-picture"
+        aria-label={book.title}
+        onClick={() => onOpen(book.dir)}
+      >
+        <img className="book-cover-picture" src={pictureUrl} alt="" />
+      </button>
+    );
+  }
   return (
-    <button
-      className={`book-cover ${COVERS[index % COVERS.length] ?? ""}`}
-      onClick={() => onOpen(book.dir)}
-    >
+    <button className={`book-cover ${coverLookOf(book.dir)}`} onClick={() => onOpen(book.dir)}>
       <span className="book-kind">{book.kind}</span>
       <span className="book-title">{book.title}</span>
       <span className="book-words">{t("{count} ord", { count: formatNumber(book.words) })}</span>

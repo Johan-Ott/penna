@@ -1120,6 +1120,17 @@ body:has(.settings-panel) .selection-bar {
   transition: transform 0.15s;
 }
 
+.book-cover.with-picture {
+  padding: 0;
+  overflow: hidden;
+}
+
+.book-cover-picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 button.book-cover:hover {
   transform: translateY(-4px);
 }
