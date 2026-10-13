@@ -3,7 +3,7 @@ import { MONTHS } from "../../project/snapshots.js";
 import { GREEN, PROSE, bar, lines, text, type Card } from "./studioCanvas.js";
 import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 
-const KICKER = { size: 11, spacing: 0.24, upper: true, alpha: 0.6 };
+export const KICKER = { size: 11, spacing: 0.24, upper: true, alpha: 0.6 };
 const dayName = (day: string, weekday: "narrow" | "long") =>
   new Date(`${day}T00:00:00Z`).toLocaleDateString(numberLocale(), { weekday, timeZone: "UTC" });
 

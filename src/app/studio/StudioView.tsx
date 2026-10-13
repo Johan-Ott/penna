@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { findCover } from "../../project/cover.js";
 import type { Signature } from "./newsletter.js";
 import { recordFailure } from "../errorLog.js";
-import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import {
   bookField,
@@ -14,63 +12,17 @@ import {
   type StudioData,
 } from "./studioDraw.js";
 import { BookField, ImagePanel, NewsletterPanel, useNewsletter } from "./StudioPanels.js";
+import { StudioNav, type CardId } from "./StudioNav.js";
+import { useAuthor, useCoverBitmap, type AuthorChoice } from "./studioPictures.js";
 import { t } from "../../i18n/i18n.js";
 
-type CardId = ImageCardId | "nyhetsbrev";
-
-interface StudioProps extends Omit<StudioData, "cover"> {
+interface StudioProps extends Omit<StudioData, "cover" | "author"> {
+  /** The writer's name, picture and the frame and title chosen under Stil. */
+  author: AuthorChoice;
   /** Om författaren, from the profile, signs the newsletter. */
   about: string;
   onSaveFields: (fields: Record<string, unknown>) => void;
   onBack: () => void;
-}
-
-function groups(): [string, [CardId, string, string][]][] {
-  return [
-    [
-      t("Skrivande"),
-      [
-        ["vecka", t("Veckan i siffror"), t("Ord, dagar och streak")],
-        ["skrivar", t("Ditt skrivår"), t("Hela året, i alla böcker")],
-        ["milstolpe", t("Milstolpe"), t("Första utkastet, eller det du vill fira")],
-      ],
-    ],
-    [
-      t("Lansering"),
-      [
-        ["omslag", t("Omslaget är här"), t("Visa omslaget")],
-        ["nedrakning", t("Nedräkning"), t("Dagar kvar till release")],
-        ["handeln", t("Nu i handeln"), t("Med ett citat ur boken")],
-      ],
-    ],
-    [t("Läsare"), [["nyhetsbrev", t("Kapitel till nyhetsbrev"), t("Substack, Patreon, e-post")]]],
-  ];
-}
-
-function StudioNav(props: { card: CardId; onCard: (card: CardId) => void; onBack: () => void }) {
-  return (
-    <aside className="studio-nav" aria-label={t("Studio")}>
-      <button className="link-button quiet publish-back" data-phone-back onClick={props.onBack}>
-        {t("← Publicera")}
-      </button>
-      {groups().map(([label, items]) => (
-        <div key={label} className="studio-group">
-          <span className="sidebar-heading">{label}</span>
-          {items.map(([id, name, hint]) => (
-            <button
-              key={id}
-              className="studio-item"
-              aria-pressed={props.card === id}
-              onClick={() => props.onCard(id)}
-            >
-              <span className="studio-item-name">{name}</span>
-              <span className="insight-muted">{hint}</span>
-            </button>
-          ))}
-        </div>
-      ))}
-    </aside>
-  );
 }
 
 function cardExtra(card: CardId, props: StudioProps) {
@@ -115,27 +67,16 @@ function useCardCanvas(card: ImageCardId, choices: ImageChoices, data: StudioDat
   return canvas;
 }
 
-// The cover is read once, as a picture the canvas can draw.
-function useCoverBitmap(project: Project) {
-  const [cover, setCover] = useState<ImageBitmap | null>(null);
-  const { dir } = project;
-  useEffect(() => {
-    void findCover(platform.fileSystem, dir)
-      .then((found) => (found ? createImageBitmap(new Blob([found.bytes.slice()])) : null))
-      .then(setCover)
-      .catch(() => setCover(null));
-  }, [dir]);
-  return cover;
-}
-
 function ImageCard(props: StudioProps & { card: ImageCardId }) {
   const [choices, setChoices] = useState<ImageChoices>({
     look: "papper",
     format: "kvadrat",
     isMarked: true,
+    isSigned: true,
   });
   const cover = useCoverBitmap(props.project);
-  const canvas = useCardCanvas(props.card, choices, { ...props, cover });
+  const author = useAuthor(props.author, props.journey);
+  const canvas = useCardCanvas(props.card, choices, { ...props, cover, author });
   const run = (action: (element: HTMLCanvasElement) => Promise<void>) =>
     canvas.current && void action(canvas.current).catch(recordFailure("Bilden kunde inte göras"));
   const name = `${props.project.name} – ${props.card}`;

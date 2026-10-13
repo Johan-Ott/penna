@@ -48,6 +48,15 @@ function LookChoices({
   );
 }
 
+function SwitchRow(props: { label: string; isOn: boolean; onFlip: () => void }) {
+  return (
+    <div className="design-row">
+      <span>{props.label}</span>
+      <Switch label={props.label} isOn={props.isOn} onFlip={props.onFlip} />
+    </div>
+  );
+}
+
 /** Background, format and the corner mark of an image card, the card's own words, and copy or save. */
 export function ImagePanel(props: {
   choices: ImageChoices;
@@ -59,14 +68,16 @@ export function ImagePanel(props: {
   return (
     <>
       <LookChoices choices={props.choices} onChange={props.onChange} />
-      <div className="design-row">
-        <span>{t("Skriven i Penna")}</span>
-        <Switch
-          label={t("Skriven i Penna")}
-          isOn={props.choices.isMarked}
-          onFlip={() => props.onChange({ ...props.choices, isMarked: !props.choices.isMarked })}
-        />
-      </div>
+      <SwitchRow
+        label={t("Skriven i Penna")}
+        isOn={props.choices.isMarked}
+        onFlip={() => props.onChange({ ...props.choices, isMarked: !props.choices.isMarked })}
+      />
+      <SwitchRow
+        label={t("Din signatur")}
+        isOn={props.choices.isSigned}
+        onFlip={() => props.onChange({ ...props.choices, isSigned: !props.choices.isSigned })}
+      />
       {props.extra}
       <ImageActions onCopy={props.onCopy} onSave={props.onSave} />
     </>

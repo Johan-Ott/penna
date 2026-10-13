@@ -91,6 +91,14 @@ export function ReadScreen({ app, project, onBack }: ViewProps) {
   );
 }
 
+// The writer for the Studio's cards: the name from the settings, the rest from the profile.
+const authorOf = (app: AppState) => ({
+  name: app.startup.preferences.authorName,
+  picture: app.profile.profile.picture,
+  frame: app.profile.profile.frame,
+  title: app.profile.profile.title,
+});
+
 export function PublishScreen({ app, project, onBack }: ViewProps) {
   const [isStudio, setStudio] = useState(false);
   const saveFields = (fields: Record<string, unknown>) => void app.updateFields(fields);
@@ -102,6 +110,7 @@ export function PublishScreen({ app, project, onBack }: ViewProps) {
         journey={app.journey.journey}
         link={app.profile.profile.link}
         about={app.profile.profile.about}
+        author={authorOf(app)}
         onSaveFields={saveFields}
         onBack={() => setStudio(false)}
       />

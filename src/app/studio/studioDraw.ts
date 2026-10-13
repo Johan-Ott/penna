@@ -6,6 +6,8 @@ import { daysToRelease, weekFigures, yearFigures } from "../../project/studio.js
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import { penMark, startCard, type Card, type CardFormat, type Look } from "./studioCanvas.js";
+import { drawSignature, type Author } from "./studioSignature.js";
+import { drawWriter, writerFacts } from "./studioWriter.js";
 import {
   drawCountdown,
   drawCover,
@@ -20,7 +22,8 @@ import { manuscriptWords } from "../../project/treeLabels.js";
 import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 import { earnBadge } from "../journey/journeyEvents.js";
 
-export type ImageCardId = "vecka" | "skrivar" | "milstolpe" | "omslag" | "nedrakning" | "handeln";
+export type ImageCardId =
+  "vecka" | "skrivar" | "milstolpe" | "forfattare" | "omslag" | "nedrakning" | "handeln";
 
 export interface StudioData {
   project: Project;
@@ -30,6 +33,7 @@ export interface StudioData {
   link: string;
   /** The book's cover picture, when it has one. */
   cover: ImageBitmap | null;
+  author: Author;
 }
 
 export const bookField = (project: Project, key: string) => {
@@ -71,6 +75,8 @@ const DRAWERS: Record<ImageCardId, (card: Card, data: StudioData, today: string)
     ),
   skrivar: (card, data, today) => drawYear(card, yearFigures(data.journey, today)),
   milstolpe: milestone,
+  forfattare: (card, data, today) =>
+    drawWriter(card, data.author, writerFacts(data.journey, today)),
   omslag: (card, data) => {
     const release = bookField(data.project, "releaseDate");
     const out = release ? t("Ute {day}.", { day: shortDay(release) }) : "";
@@ -85,6 +91,8 @@ export interface ImageChoices {
   look: Look;
   format: CardFormat;
   isMarked: boolean;
+  /** The writer's picture, name and title in the corner. */
+  isSigned: boolean;
 }
 
 export function drawCard(
@@ -97,6 +105,8 @@ export function drawCard(
   if (!card) return;
   DRAWERS[id](card, data, dayKey(Date.now()));
   if (choices.isMarked) penMark(card);
+  // Författarkort is the writer already; a signature there would say it twice.
+  if (choices.isSigned && id !== "forfattare") drawSignature(card, data.author);
 }
 
 const PNG = { name: t("Bild"), extension: "png" };
