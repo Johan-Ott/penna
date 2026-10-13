@@ -11,6 +11,7 @@ import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
 import { useMenuButton } from "../Menu.js";
 import { phoneMenu } from "./phoneMenu.js";
+import { ProfileButton } from "../profile/ProfileLayer.js";
 import { sidebarProps } from "../paneProps.js";
 import { ContentsIcon, MenuIcon, SearchIcon } from "../shell/icons.js";
 import { useMenuDialogs } from "../shell/useAppMenu.js";
@@ -104,9 +105,12 @@ function PhoneBookHeader({ app, project, onContents }: HeaderProps) {
   const menu = useMenuButton(t("Meny"), phoneMenu(app, dialogs, { theme, templates }));
   return (
     <header className="phone-bar">
-      <button className="topbar-button" aria-label={t("Meny")} onClick={menu.open}>
-        <MenuIcon />
-      </button>
+      <span className="phone-bar-start">
+        <button className="topbar-button" aria-label={t("Meny")} onClick={menu.open}>
+          <MenuIcon />
+        </button>
+        <ProfileButton app={app} />
+      </span>
       <span className="phone-bar-title prose">{project.name}</span>
       <span className="phone-bar-end">
         <button className="topbar-button" aria-label={t("Innehåll")} onClick={onContents}>

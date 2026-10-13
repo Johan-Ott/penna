@@ -15,7 +15,7 @@
 .phone-bar {
   display: grid;
   flex-shrink: 0;
-  grid-template-columns: 64px 1fr 64px;
+  grid-template-columns: 88px 1fr 88px;
   align-items: center;
   padding: max(28px, var(--safe-top)) 6px 4px;
 }
@@ -359,6 +359,12 @@ body .selection-bar.phone .icon-button {
 /* Over the text the right side holds both Granska and search */
 .phone-text .phone-bar {
   grid-template-columns: 100px 1fr 100px;
+}
+
+/* The menu and the profile, as the computer has them at the top left. */
+.phone-bar-start {
+  display: flex;
+  align-items: center;
 }
 
 .phone-bar-end {
