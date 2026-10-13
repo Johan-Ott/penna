@@ -8,9 +8,11 @@ Specen gäller för beteende, canvasen för utseende, copy och tillstånd.
 ## Principer
 
 1. Lokalt först: vanliga filer i en mapp användaren väljer, helt offline.
-2. Inga servrar, inga konton: synk via användarens molnmapp (iCloud, Dropbox, OneDrive).
+2. Inga egna servrar, inga Penna-konton: synk via användarens molnmapp (iCloud, Dropbox, OneDrive)
+   eller användarens egen Google Drive.
 3. Ingen prenumeration: engångsköp.
-4. Ingen AI: ingen text lämnar enheten.
+4. Ingen inbyggd AI: Penna skickar ingen text till någon AI-tjänst. Den som vill kan styra Penna
+   från ett eget verktyg på datorn (docs/styrning.md).
 5. Semantik före utseende: man märker upp vad texten är, bokdesign bestämmer hur den ser ut.
 
 ## Teknik
