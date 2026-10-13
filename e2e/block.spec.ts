@@ -44,7 +44,7 @@ test("a layout keeps which panels are open, and brings them back", async ({ page
   await expect(page.getByRole("region", { name: "Kladdlapp" })).toBeHidden();
 
   await page.getByRole("button", { name: "Layouter" }).click();
-  await page.getByRole("menuitem", { name: "Layout 1", exact: true }).click();
+  await page.getByRole("menuitemradio", { name: "Layout 1" }).click();
 
   await expect(page.getByRole("region", { name: "Kladdlapp" })).toBeVisible();
 });

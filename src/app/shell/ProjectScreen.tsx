@@ -71,12 +71,10 @@ function OverTheText({ app, project }: ScreenProps) {
         app={app}
         project={project}
         review={
-          !writingMode.isReviewOpen && (
-            <ReviewPill
-              review={writingMode.review}
-              onReview={() => writingMode.setReviewOpen(true)}
-            />
-          )
+          <ReviewPill
+            review={writingMode.review}
+            onReview={() => writingMode.setReviewOpen(!writingMode.isReviewOpen)}
+          />
         }
       />
       <DayGoalLayer app={app} project={project} />

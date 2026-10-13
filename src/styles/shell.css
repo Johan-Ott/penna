@@ -846,7 +846,7 @@
   top: 52px;
   right: 16px;
   z-index: 8;
-  max-height: calc(100vh - 68px);
+  max-height: calc(100vh - 116px);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2156,26 +2156,6 @@
   align-items: center;
 }
 
-/* Granska at the foot of the text; the open panel has its own way to close. */
-.review-pill {
-  position: absolute;
-  right: 16px;
-  bottom: 14px;
-  z-index: 5;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  border: 1px solid var(--border-control);
-  border-radius: 14px;
-  background: var(--bg);
-  color: var(--text-label);
-  font: inherit;
-  font-size: 13px;
-}
-
-/* The blocks' dock at the text's foot on the right: their icons, then Granska. */
 /* One connected bar: the blocks' icons and Granska share its frame. */
 .blocks-dock {
   position: absolute;
@@ -2192,11 +2172,28 @@
   background: var(--bg);
 }
 
-.blocks-dock .review-pill {
-  position: static;
-  height: 24px;
-  border: 0;
-  border-radius: 12px;
+/* Granska's count, small at the icon's top right. */
+.review-dock {
+  position: relative;
+}
+
+.dock-badge.quiet {
+  background: var(--border-control);
+  color: var(--text);
+}
+
+.dock-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 7px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 10px;
+  line-height: 14px;
 }
 
 .dock-button {
@@ -2271,24 +2268,6 @@
 
 .block-head:hover .block-title svg {
   opacity: 1;
-}
-
-.review-pill:hover {
-  background: var(--surface-hover);
-  color: var(--text);
-}
-
-.review-pill-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  background: var(--primary);
-  color: var(--on-primary);
-  font-size: 12px;
 }
 
 /* As the design: a row's words show where the writer is, or where the pointer rests. */

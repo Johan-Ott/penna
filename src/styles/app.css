@@ -3404,3 +3404,24 @@ button.book-cover:hover {
   color: var(--text-label);
   font-size: 13px;
 }
+
+/* Penna's tooltip, in its own colours, over everything and never in the way of the pointer. */
+.tooltip {
+  position: fixed;
+  z-index: 1000;
+  max-width: 280px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-low);
+  color: var(--text);
+  font: 12px/1.4 var(--font-ui);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.tooltip.shown {
+  opacity: 1;
+}

@@ -1000,8 +1000,6 @@
   "Samma siffror som korten, skrivna som bokens sista sida.": "The same numbers as the cards, written as the book's last page.",
   "Skriven i Penna.": "Written in Penna.",
   "Kopiera texten": "Copy the text",
-  "Visa som": "Show as",
-  "Kort": "Cards",
   "Kolofon": "Colophon",
   "{title} har skrivits sedan den {date}.": "{title} has been written since {date}.",
   "Titelsidan": "The title page",
@@ -1333,5 +1331,7 @@
   "Lösa tankar medan du skriver. De sparas i boken.": "Stray thoughts while you write. They are saved in the book.",
   "Layout {slot}": "Layout {slot}",
   "Layouter": "Layouts",
-  "Spara som layout {slot}": "Save as layout {slot}"
+  "Spara som layout {slot}": "Save as layout {slot}",
+  "Layouter · {name}": "Layouts · {name}",
+  "Kolofonen fylls i när du har skrivit några dagar.": "The colophon fills in once you have written for a few days."
 }

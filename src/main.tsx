@@ -17,9 +17,11 @@ import { createRoot } from "react-dom/client";
 import { App } from "./app/App.js";
 import { recordUncaughtErrors } from "./app/errorLog.js";
 import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
+import { styledTooltips } from "./app/tooltips.js";
 
 recordUncaughtErrors();
 keepWebMenuOut();
+styledTooltips();
 // Android has a back button, so the page can leave out its own ways to close.
 document.documentElement.classList.toggle("android", /Android/i.test(navigator.userAgent));
 const root = document.getElementById("root");

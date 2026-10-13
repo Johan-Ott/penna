@@ -26,6 +26,8 @@ export const places = createStore<Record<string, Place>>(read(PLACES_KEY, {}));
 /** The blocks of the dock that are open; Granska, Insikter and the sprint keep their own. */
 export const openBlocks = createStore<string[]>([]);
 export const layouts = createStore<Record<number, Layout>>(read(LAYOUTS_KEY, {}));
+/** The layout last chosen or saved, shown on the dock's icon. */
+export const activeLayout = createStore<number | null>(null);
 
 export function setPlace(id: string, place: Place) {
   places.set({ ...places.get(), [id]: place });
@@ -43,6 +45,7 @@ export function saveLayout(slot: number, open: string[]) {
   const next = { ...layouts.get(), [slot]: { open, places: places.get() } };
   layouts.set(next);
   write(LAYOUTS_KEY, next);
+  activeLayout.set(slot);
 }
 
 /** The layout's places are set; the caller opens and closes what it holds. */

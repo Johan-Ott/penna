@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { AppState } from "../App.js";
-import { ChartIcon, ImageIcon, NoteIcon, PeopleIcon } from "../shell/icons.js";
+import { BookIcon, ChartIcon, ImageIcon, NoteIcon, PeopleIcon } from "../shell/icons.js";
+import { Colophon } from "../progress/Colophon.js";
 import { SprintButton } from "../sprint/SprintBar.js";
 import type { Project } from "../useProject.js";
 import { BlockPanel } from "./BlockPanel.js";
@@ -14,7 +15,7 @@ import { t } from "../../i18n/i18n.js";
 // The blocks as icons at the text's foot on the right, before Granska; each opens as a panel
 // that can be moved, and closing it makes it an icon again.
 
-type BlockId = "kladdlapp" | "iscenen" | "referens";
+type BlockId = "kladdlapp" | "iscenen" | "referens" | "kolofon";
 type Props = { app: AppState; project: Project; review: ReactNode };
 type Block = { id: BlockId; title: string; icon: ReactNode; body: (props: Props) => ReactNode };
 
@@ -30,6 +31,19 @@ const BLOCKS: Block[] = [
     title: t("I scenen"),
     icon: <PeopleIcon />,
     body: (props) => <InSceneBlock app={props.app} />,
+  },
+  {
+    id: "kolofon",
+    title: t("Kolofon"),
+    icon: <BookIcon />,
+    body: (props) =>
+      Object.keys(props.app.stats).length > 0 ? (
+        <Colophon project={props.project} stats={props.app.stats} />
+      ) : (
+        <p className="setting-hint reference-empty">
+          {t("Kolofonen fylls i när du har skrivit några dagar.")}
+        </p>
+      ),
   },
   {
     id: "referens",

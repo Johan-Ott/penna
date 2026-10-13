@@ -192,18 +192,19 @@ export function Topbar(props: TopbarProps) {
   );
 }
 
-/** Granska floats at the foot of the text, with what it has found, as the design draws it. */
+/** Granska's icon in the blocks' dock, with how much it has found. */
 export function ReviewPill({ review, onReview }: ReviewProps) {
   if (review.count === null) return null;
   return (
     <button
-      className={review.isOpen ? "review-pill open" : "review-pill"}
+      className={review.isOpen ? "dock-button review-dock chosen" : "dock-button review-dock"}
       aria-label={t("Granska · {count}", { count: review.count })}
       aria-pressed={review.isOpen}
+      title={t("Granska")}
       onClick={onReview}
     >
-      {t("Granska")}
-      {review.count > 0 && <span className="review-pill-count">{review.count}</span>}
+      <ReviewIcon />
+      {review.count > 0 && <span className="dock-badge">{review.count}</span>}
     </button>
   );
 }
