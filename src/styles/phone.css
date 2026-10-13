@@ -328,6 +328,12 @@ body .selection-bar.phone .icon-button {
   color: var(--text-dim);
 }
 
+/* A phone's panels have their bar above what scrolls, on the screen's own colour. */
+.phone-app .block-head {
+  position: static;
+  background: transparent;
+}
+
 /* A phone's panels fill the screen, so there is nothing to resize. */
 .phone-app .review-panel,
 .phone-app .insights-panel {

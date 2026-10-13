@@ -1969,7 +1969,7 @@ button.book-cover:hover {
   gap: 20px;
   width: 320px;
   max-height: calc(100% - 76px);
-  padding: 12px 18px 18px;
+  padding: 0 18px 18px;
   overflow-y: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -3424,4 +3424,8 @@ button.book-cover:hover {
 
 .tooltip.shown {
   opacity: 1;
+}
+
+.review-panel > .review-header {
+  padding-top: 12px;
 }
