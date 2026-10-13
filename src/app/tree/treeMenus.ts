@@ -23,6 +23,7 @@ export interface TreeMenuActions {
   linkOf: (node: TreeNode) => boolean | null;
   setLink: (node: TreeNode, isLinked: boolean) => void;
   newNote: (sortId: string) => void;
+  addFile: (sortId: string) => void;
   /** Null when the book is in no series. */
   moveToSeries: ((node: TreeNode) => void) | null;
   canMerge: (node: TreeNode) => boolean;
@@ -82,10 +83,15 @@ function newItemsFor(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
       item(t("Ny scen i mappen"), "scene", inside),
       item(t("Ny mapp i mappen"), "folder", inside),
     ],
-    sort: [{ label: t("Ny anteckning"), onSelect: () => actions.newNote(node.id) }],
+    sort: sortItems(node, actions),
   };
   return byKind[node.kind];
 }
+
+const sortItems = (node: TreeNode, actions: TreeMenuActions): MenuItem[] => [
+  { label: t("Ny anteckning"), onSelect: () => actions.newNote(node.id) },
+  { label: t("Lägg till fil…"), onSelect: () => actions.addFile(node.id) },
+];
 
 // A note moves to another sort, such as from Övrigt to Personer.
 function sortMoves(node: TreeNode, actions: TreeMenuActions): MenuItem[] {

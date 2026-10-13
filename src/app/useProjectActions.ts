@@ -126,7 +126,9 @@ export function useProjectActions(input: ProjectActionsInput) {
 }
 
 export function useTreeHandlers(
-  actions: ReturnType<typeof useProjectActions>,
+  actions: ReturnType<typeof useProjectActions> & {
+    notes: { addFile: (sortId: string) => Promise<void> };
+  },
   onRenamed?: (id: string, title: string) => void,
 ) {
   const [renameRequestId, setRenameRequestId] = useState<string | null>(null);
@@ -137,6 +139,7 @@ export function useTreeHandlers(
       void actions.renameSceneTitle(id, title);
     },
     onSetSceneStatus: (id: string, status: SceneStatus) => void actions.setStatus(id, status),
+    onAddFile: (sortId: string) => void actions.notes.addFile(sortId),
     onAdd: (kind: NodeKind, placement: Placement) =>
       void actions.newItem(kind, placement).then((id) => {
         if (id && kind !== "scene") setRenameRequestId(id);

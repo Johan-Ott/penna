@@ -1,7 +1,7 @@
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
-import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
   cancel,
   isPermissionGranted,
@@ -136,10 +136,15 @@ async function checkForUpdate() {
   };
 }
 
+// A program is never started from a book: such a file is shown in its folder instead.
+const RUNS = /\.(exe|msi|bat|cmd|com|ps1|vbs|js|jse|wsf|scr|lnk|reg|hta|cpl|jar|app|sh)$/i;
+const openFile = (path: string) => (RUNS.test(path) ? revealItemInDir(path) : openPath(path));
+
 // The dialog grants Penna the picked file, wherever it lies.
 async function pickFile(kind: PickKind) {
   const answer = await testPath();
-  const picked = answer !== undefined ? answer : await open({ filters: [kind] });
+  const filters = kind.extensions.length > 0 ? [kind] : [];
+  const picked = answer !== undefined ? answer : await open({ filters });
   if (typeof picked !== "string") return null;
   return { path: withForwardSlashes(picked), bytes: await readFile(picked) };
 }
@@ -187,6 +192,7 @@ export const tauriPlatform: Platform = {
   saveFile: isAndroid ? shareAsSave : saveFile,
   ...(isAndroid ? { shareFile } : {}),
   pickFile,
+  ...(isPhone ? {} : { openFile }),
   fileSystem: tauriFileSystem,
   spelling,
   ...(isPhone ? {} : { readClipboard: readText, windowControls, remoteControl }),

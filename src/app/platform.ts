@@ -57,6 +57,8 @@ export interface Platform {
   readClipboard?: () => Promise<string>;
   /** Penna's own spelling check; missing in the browser, which checks the spelling itself. */
   spelling?: Spelling;
+  /** Opens a file in the program the computer uses for it; missing where there is none. */
+  openFile?: (path: string) => Promise<void>;
   /** Android's share sheet, for a picture or an export; missing elsewhere. */
   shareFile?: (name: string, bytes: Uint8Array, mime: string) => Promise<void>;
 }

@@ -24,6 +24,7 @@ export function menuActions(actions: Actions, props: TreeViewProps, view: View):
     linkOf: (node) => noteLinkOf(props.project, node.id),
     setLink: (node, isLinked) => props.onSetNoteLink(node.id, isLinked),
     newNote: props.onNewNote,
+    addFile: props.onAddFile,
     moveToSeries: props.onMoveToSeries ? (node) => props.onMoveToSeries?.(node.id) : null,
     canMerge: (node) =>
       props.canMergeOpenScene === true &&

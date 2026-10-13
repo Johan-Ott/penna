@@ -18,6 +18,7 @@ const actions: TreeMenuActions = {
   linkOf: () => null,
   setLink: noop,
   newNote: noop,
+  addFile: noop,
   moveToSeries: null,
   canMerge: () => false,
   mergeWithNext: noop,
@@ -81,6 +82,7 @@ describe("tree menus", () => {
   it("lets a fixed sort be renamed and trashed, as the writer's own sorts are", () => {
     expect(labels(rowMenu(node("sort", CHARACTERS_ID), false, actions))).toEqual([
       "Ny anteckning",
+      "Lägg till fil…",
       "| Byt namn",
       "Flytta till papperskorg",
     ]);
@@ -89,6 +91,7 @@ describe("tree menus", () => {
   it("lets the writer's own sort be renamed and trashed", () => {
     expect(labels(rowMenu(node("sort", "fordon"), false, actions))).toEqual([
       "Ny anteckning",
+      "Lägg till fil…",
       "| Byt namn",
       "Flytta till papperskorg",
     ]);

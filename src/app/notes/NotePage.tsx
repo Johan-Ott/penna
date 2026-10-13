@@ -12,6 +12,7 @@ import type { Project } from "../useProject.js";
 import { mentionedChapters } from "./cardFormat.js";
 import type { Notes } from "./useNotes.js";
 import { Connections } from "./Connections.js";
+import { ResearchFile } from "./ResearchFile.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface NotePageProps {
@@ -45,6 +46,7 @@ export function noteSortOf(project: Project, id: string) {
 export function NoteHeader(props: NotePageProps & { sortId: string }) {
   const { project, noteId } = props;
   const chapters = mentionedChapters(props.book, props.notes.mentions.get(noteId));
+  const file = project.summaries[noteId]?.file;
   return (
     <header className="note-header">
       <div className="text-eyebrow">
@@ -56,6 +58,7 @@ export function NoteHeader(props: NotePageProps & { sortId: string }) {
         )}
       </div>
       <h1>{project.summaries[noteId]?.title ?? ""}</h1>
+      {file && <ResearchFile dir={project.dir} name={file} />}
       <Connections {...props} />
     </header>
   );

@@ -46,6 +46,8 @@ export interface PaletteContext {
   describe: (id: string) => string;
   openCard: (id: string) => void;
   newNote: () => void;
+  /** A research file, into Övrigt. */
+  addFile: () => void;
   /** Null when there is nothing to split or merge. */
   splitScene: (() => void) | null;
   mergeScene: (() => void) | null;
@@ -106,6 +108,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Ny del"), () => context.add("part")),
     command(t("Ny mapp"), () => context.add("folder")),
     command(t("Ny anteckning"), context.newNote),
+    command(t("Lägg till fil bland anteckningarna…"), context.addFile),
     ...sceneEntries(context),
     command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
     command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),

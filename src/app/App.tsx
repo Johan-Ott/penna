@@ -153,10 +153,10 @@ function paletteContextOf(app: PaletteParts): PaletteContext | null {
     showShelf: () => void app.showShelf(),
     openSettings: () => writingMode.settingsDialog.open(),
     showView: writingMode.setView,
-    cards: app.notes.cards,
-    describe: app.notes.descriptionOf,
+    ...{ cards: app.notes.cards, describe: app.notes.descriptionOf },
     openCard: app.cards.open,
     newNote: () => app.setNewNoteSort(null),
+    addFile: () => void app.actions.notes.addFile(),
     ...sceneContext({ ...app, project }),
   };
 }

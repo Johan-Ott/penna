@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "desktop",
-  "description": "On a computer the Penna library lives in Documents or in OneDrive, Dropbox or iCloud Drive in the home folder, or in any folder picked in the dialog (kept by persisted-scope); the rest of the home folder is out of reach; its automatic copies in backups/ in Penna's own folder; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases. The text's own menu reads the clipboard for Klistra in. The window has no frame, so Penna's top bar moves, minimises, maximises and closes it.",
+  "description": "On a computer the Penna library lives in Documents or in OneDrive, Dropbox or iCloud Drive in the home folder, or in any folder picked in the dialog (kept by persisted-scope); the rest of the home folder is out of reach; its automatic copies in backups/ in Penna's own folder; persisted-scope keeps picked folders across restarts. Updates come from GitHub Releases. The text's own menu reads the clipboard for Klistra in. A research file in a book's filer/ folder opens in its own program. The window has no frame, so Penna's top bar moves, minimises, maximises and closes it.",
   "platforms": ["windows", "macOS", "linux"],
   "windows": ["main"],
   "permissions": [
@@ -13,6 +13,10 @@
     "core:window:allow-internal-toggle-maximize",
     "core:window:allow-start-dragging",
     "core:window:allow-close",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [{ "path": "**/*.penna/filer/*" }, { "path": "**/*.serie/filer/*" }]
+    },
     {
       "identifier": "fs:scope",
       "allow": [

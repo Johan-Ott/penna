@@ -2,6 +2,7 @@ import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import {
   sceneStatus,
   noteLink,
+  readField,
   sceneTitle,
   splitSceneFile,
   type SceneStatus,
@@ -16,17 +17,21 @@ export interface SceneSummary {
   status: SceneStatus;
   /** Without one the note follows its sort. */
   link?: boolean;
+  /** A research file's name in the book's filer/ folder. */
+  file?: string;
 }
 
 function summarize(text: string): SceneSummary {
   const { frontMatter, body } = splitSceneFile(text);
   const title = sceneTitle(frontMatter) ?? t("Namnlös scen");
   const link = noteLink(frontMatter);
+  const file = readField(frontMatter, "file");
   return {
     title,
     words: countDocumentWords(parseMarkdown(body)),
     status: sceneStatus(frontMatter),
     ...(link === null ? {} : { link }),
+    ...(file === null ? {} : { file }),
   };
 }
 

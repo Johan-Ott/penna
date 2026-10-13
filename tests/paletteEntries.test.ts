@@ -30,6 +30,7 @@ function context() {
     describe: () => "Elins farbror",
     openCard: () => undefined,
     newNote: () => undefined,
+    addFile: () => undefined,
     splitScene: null,
     mergeScene: null,
     insertPicture: null,

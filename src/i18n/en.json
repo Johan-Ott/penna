@@ -1311,5 +1311,8 @@
   "Före första synken": "Before the first sync",
   "”{title}” raderas från telefonen. Det som hunnit synkas finns kvar i Google Drive.": "“{title}” is deleted from this phone. What was synced stays in Google Drive.",
   "”{title}” raderas från telefonen för gott. Den finns inte i Google Drive.": "“{title}” is deleted from this phone for good. It is not in Google Drive.",
-  "En fil i Drive ändrades under synken. Synka igen.": "A file in Drive changed during the sync. Sync again."
+  "En fil i Drive ändrades under synken. Synka igen.": "A file in Drive changed during the sync. Sync again.",
+  "Alla filer": "All files",
+  "Lägg till fil…": "Add file…",
+  "Lägg till fil bland anteckningarna…": "Add a file to the notes…"
 }

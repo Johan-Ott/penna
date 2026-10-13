@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { isLinkedByDefault } from "../../project/cards.js";
-import { insertNode, type TreeNode } from "../../project/tree.js";
+import { insertNode, NOTES_ID, type TreeNode } from "../../project/tree.js";
+import { createFileNote, saveResearchFile } from "../../project/researchFiles.js";
 import { newSceneId } from "../../storage/sceneId.js";
+import { t } from "../../i18n/i18n.js";
 import { platform } from "../platform.js";
 import { createScene, openScene, setNoteLink, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
@@ -27,6 +29,25 @@ function withSort(tree: TreeNode[], note: NewNote) {
   return { tree: insertNode(tree, sort, null, 0), sortId: sort.id };
 }
 
+// A PDF, a photo or any other file the writer gathered, copied into the book as a note.
+function useAddFile({ project, session, updateTree, refresh }: NoteActionsInput) {
+  return useCallback(
+    async (sortId: string = NOTES_ID) => {
+      if (!project || project.isReadOnly) return;
+      const picked = await platform.pickFile({ name: t("Alla filer"), extensions: [] });
+      if (!picked) return;
+      const { fileSystem } = platform;
+      const name = await saveResearchFile(fileSystem, project.dir, picked.path, picked.bytes);
+      const id = await createFileNote(fileSystem, project.dir, name);
+      const note = { id, kind: "scene" as const };
+      await updateTree(insertNode(project.tree, note, sortId, Number.MAX_SAFE_INTEGER));
+      await refresh();
+      await openScene(session, project.dir, id);
+    },
+    [project, session, updateTree, refresh],
+  );
+}
+
 /** Only a link choice that differs from the sort's is written to the note. */
 export function useNoteActions({ project, session, updateTree, refresh }: NoteActionsInput) {
   const newNote = useCallback(
@@ -44,6 +65,7 @@ export function useNoteActions({ project, session, updateTree, refresh }: NoteAc
     },
     [project, session, updateTree, refresh],
   );
+  const addFile = useAddFile({ project, session, updateTree, refresh });
   const setLink = useCallback(
     async (id: string, isLinked: boolean) => {
       if (!project) return;
@@ -52,5 +74,5 @@ export function useNoteActions({ project, session, updateTree, refresh }: NoteAc
     },
     [project, session, refresh],
   );
-  return { newNote, setLink };
+  return { newNote, addFile, setLink };
 }

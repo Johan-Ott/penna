@@ -41,6 +41,7 @@ export interface TreeViewProps {
   onOpenBeside: (id: string) => void;
   onAdd: (kind: NodeKind, placement: Placement) => void;
   onNewNote: (sortId: string | null) => void;
+  onAddFile: (sortId: string) => void;
   onMoveToSeries?: (id: string) => void;
   canMergeOpenScene?: boolean;
   onMergeWithNext?: () => void;

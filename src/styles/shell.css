@@ -446,6 +446,37 @@
   font-style: var(--heading-style, normal);
 }
 
+/* A research note's file: the picture itself, or the file's name to open it by */
+.research-file {
+  margin-top: 16px;
+}
+
+.research-picture {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.research-file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.research-file-name {
+  flex: 1;
+  overflow: hidden;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .connections {
   display: flex;
   flex-wrap: wrap;
