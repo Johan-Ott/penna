@@ -2235,6 +2235,16 @@
   box-shadow: var(--shadow-dialog);
 }
 
+/* Every floating panel can be made larger or smaller from its lower right corner. */
+.block-panel,
+.review-panel,
+.insights-panel {
+  min-width: 200px;
+  min-height: 80px;
+  overflow: auto;
+  resize: both;
+}
+
 .block-panel[style] {
   right: auto;
   bottom: auto;

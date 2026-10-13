@@ -328,6 +328,12 @@ body .selection-bar.phone .icon-button {
   color: var(--text-dim);
 }
 
+/* A phone's panels fill the screen, so there is nothing to resize. */
+.phone-app .review-panel,
+.phone-app .insights-panel {
+  resize: none;
+}
+
 /* Granska covers the whole text on a phone, under the bar, instead of a narrow strip beside it */
 .phone-text .review-panel {
   position: fixed;
