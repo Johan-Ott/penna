@@ -1,3 +1,4 @@
+import { WindowBar } from "../shell/WindowControls.js";
 import { useEffect } from "react";
 import { cursorAt } from "../../editor/commands.js";
 import { positionAfter } from "../../editor/documentText.js";
@@ -62,13 +63,24 @@ function ResumeText(props: { project: Project; stats: Stats; place: Place; sente
   );
 }
 
-/** Du slutade här: the sentence the writer stopped in; a key or a click goes on from there. */
+// Any key goes on, as a click does.
+function useAnyKey(isOn: boolean, onKey: () => void) {
+  useEffect(() => {
+    if (!isOn) return;
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+}
+
+/** Du slutade här: the sentence the writer stopped in; a key or a click goes on from there. It
+ * covers the top bar, so the window's buttons come along; a phone's screens have their own. */
 export function ResumeScreen(props: {
   project: Project;
   stats: Stats;
   editor: ReturnType<typeof useEditorView>;
 }) {
   const place = useResume();
+  const isPhone = usePhone();
   const { editor } = props;
   const doc = editor.editorState?.doc;
   const position = place && doc ? positionAfter(doc, place.before ?? "", place.position) : 0;
@@ -78,15 +90,14 @@ export function ResumeScreen(props: {
     editor.run(cursorAt(position));
     editor.requestFocus();
   };
-  useEffect(() => {
-    if (!place) return;
-    window.addEventListener("keydown", goOn);
-    return () => window.removeEventListener("keydown", goOn);
-  });
+  useAnyKey(place !== null, goOn);
   if (!place || !doc) return null;
   return (
-    <button className="resume-screen" aria-label={t("Fortsätt skriva")} onClick={goOn}>
-      <ResumeText {...props} place={place} sentence={sentenceBefore(doc, position)} />
-    </button>
+    <>
+      <button className="resume-screen" aria-label={t("Fortsätt skriva")} onClick={goOn}>
+        <ResumeText {...props} place={place} sentence={sentenceBefore(doc, position)} />
+      </button>
+      {!isPhone && <WindowBar />}
+    </>
   );
 }
