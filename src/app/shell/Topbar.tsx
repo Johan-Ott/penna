@@ -1,4 +1,3 @@
-import { SprintButton } from "../sprint/SprintBar.js";
 import { LookButton } from "../settingsPanel.js";
 import { RemoteBadge } from "../settings/RemoteControlRow.js";
 import { WindowControls } from "./WindowControls.js";
@@ -182,7 +181,6 @@ export function Topbar(props: TopbarProps) {
       {props.title === null ? (
         <span className="topbar-day" data-tauri-drag-region>
           <DayProgress today={props.today} onProgress={props.onProgress} />
-          <SprintButton />
         </span>
       ) : (
         <span className="topbar-title" data-tauri-drag-region>

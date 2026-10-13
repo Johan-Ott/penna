@@ -141,3 +141,23 @@ export const FilterIcon = () => (
     <path d="M3 5h18l-7 8v6l-4-2v-4z" />
   </Icon>
 );
+
+export const SoundIcon = () => (
+  <Icon>
+    <path d="M9 18V5l12-2v13" />
+    <circle cx="6" cy="18" r="3" />
+    <circle cx="18" cy="16" r="3" />
+  </Icon>
+);
+
+// Six dots: what can be dragged by.
+export const GripIcon = () => (
+  <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" aria-hidden="true">
+    <circle cx="2" cy="2" r="1.2" />
+    <circle cx="6" cy="2" r="1.2" />
+    <circle cx="2" cy="6" r="1.2" />
+    <circle cx="6" cy="6" r="1.2" />
+    <circle cx="2" cy="10" r="1.2" />
+    <circle cx="6" cy="10" r="1.2" />
+  </svg>
+);

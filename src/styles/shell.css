@@ -2177,6 +2177,147 @@
   font-size: 13px;
 }
 
+/* The blocks' dock at the text's foot on the right: their icons, then Granska. */
+/* One connected bar: the blocks' icons and Granska share its frame. */
+.blocks-dock {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  z-index: 5;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  height: 30px;
+  padding: 0 2px;
+  border: 1px solid var(--border-control);
+  border-radius: 15px;
+  background: var(--bg);
+}
+
+.blocks-dock .review-pill {
+  position: static;
+  height: 24px;
+  border: 0;
+  border-radius: 12px;
+}
+
+.dock-button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-label);
+}
+
+.dock-button:hover,
+.dock-button[aria-pressed="true"],
+.dock-button.chosen,
+.dock-button.playing {
+  color: var(--text);
+}
+
+.dock-button:hover {
+  background: var(--surface-hover);
+}
+
+/* A block opened from the dock, over the text until it is closed or moved. */
+.block-panel {
+  position: absolute;
+  right: 16px;
+  bottom: 52px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 10px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-dialog);
+}
+
+.block-panel[style] {
+  right: auto;
+  bottom: auto;
+}
+
+.block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.block-head:active {
+  cursor: grabbing;
+}
+
+.block-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--text-label);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.block-title svg {
+  opacity: 0.6;
+}
+
+.block-head:hover .block-title svg {
+  opacity: 1;
+}
+
+.sounds {
+  display: flex;
+  gap: 4px;
+}
+
+.sound-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  width: 58px;
+  color: var(--text-label);
+  font-size: 11px;
+}
+
+.sound-tile.on {
+  color: var(--text);
+}
+
+.sound-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-control);
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 15px;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.sound-tile.on .sound-mark {
+  border-color: var(--text-label);
+  filter: none;
+  opacity: 1;
+}
+
+.sound-tile input {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
 .review-pill:hover {
   background: var(--surface-hover);
   color: var(--text);
@@ -3245,6 +3386,88 @@
 }
 
 /* A writing sprint: the time left and the words so far, over the text. */
+/* The sprint's block: four numbers to step, as a pomodoro timer has them, and Starta. */
+.sprint-settings {
+  display: grid;
+  grid-template-columns: repeat(4, 52px);
+  gap: 4px;
+}
+
+.sprint-setting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  border-radius: var(--radius-button);
+  background: var(--bg);
+}
+
+.sprint-setting button {
+  width: 100%;
+  padding: 1px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+  font-size: 8px;
+}
+
+.sprint-setting button:hover {
+  color: var(--text);
+}
+
+.sprint-setting-label {
+  color: var(--text-label);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.sprint-setting-value {
+  font: 600 17px/1.1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.sprint-setting-unit {
+  color: var(--text-label);
+  font-size: 9px;
+}
+
+.sprint-start {
+  margin-top: 6px;
+}
+
+.sprint-running {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  min-width: 200px;
+}
+
+.sprint-phase,
+.sprint-words {
+  color: var(--text-label);
+  font-size: 12px;
+}
+
+.sprint-big-clock {
+  font: 600 26px/1.2 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.sprint-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.sprint-bar .sprint-clock {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
 .sprint-bar {
   position: absolute;
   bottom: 14px;

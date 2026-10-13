@@ -35,7 +35,21 @@ test("a writing sprint counts the words written and can be ended", async ({ page
   await expect(sprint).toContainText("4 ord", { timeout: 5000 });
 
   await sprint.getByRole("button", { name: "Avsluta" }).click();
-  await expect(page.getByText("Sprinten är klar: 4 ord på 25 minuter.")).toBeVisible();
+  await expect(page.getByText("Sprinten är klar: 4 ord på 1 pass.")).toBeVisible();
+});
+
+test("the sprint's block sets its passes and breaks, and shows the pass running", async ({
+  page,
+}) => {
+  await page.getByRole("button", { name: "Skrivsprint" }).first().click();
+  const block = page.getByRole("region", { name: "Skrivsprint" });
+  await block.getByRole("button", { name: "Mer Varv" }).click();
+  await expect(block.locator(".sprint-setting").nth(3)).toContainText("03");
+
+  await block.getByRole("button", { name: "▶ Starta" }).click();
+
+  await expect(block).toContainText("Pass · 1 av 3");
+  await expect(page.getByRole("timer")).toBeVisible();
 });
 
 test("a name from the notes is offered while typing, and Tab fills it in", async ({ page }) => {

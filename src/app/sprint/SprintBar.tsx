@@ -1,49 +1,57 @@
-import { useEffect, useState, type MouseEvent } from "react";
-import { Menu } from "../Menu.js";
+import { useEffect } from "react";
 import { TimerIcon } from "../shell/icons.js";
 import type { AppState } from "../App.js";
 import { platform } from "../platform.js";
 import {
   closeSprintResult,
   endSprint,
+  minutesOf,
+  nextPhase,
+  phasesOf,
+  setPanelOpen,
   setStartWords,
-  SPRINT_LENGTHS,
-  startSprint,
   useSprint,
+  type Phase,
   type Sprint,
 } from "./sprint.js";
+import { clock, sprintWords, useTick } from "./sprintClock.js";
+import { SprintPanel } from "./SprintPanel.js";
 import { t } from "../../i18n/i18n.js";
 
-const clock = (milliseconds: number) => {
-  const seconds = Math.max(0, Math.ceil(milliseconds / 1000));
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-};
-
-function useTick() {
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  return now;
+// `wordsAtEnd` once the sprint is over; else the phase that begins is said.
+function phaseMessage(sprint: Sprint, next: Phase | undefined, wordsAtEnd: number | null) {
+  if (wordsAtEnd !== null) return t("Sprinten är klar: {words} ord.", { words: wordsAtEnd });
+  if (next === "pass") return t("Dags att skriva igen.");
+  return t("Paus i {minutes} minuter.", { minutes: minutesOf(sprint.plan, next ?? "kort") });
 }
 
-// The words since the sprint began, counted from the day's words as they are saved.
+// Each phase's end moves the sprint on, with a word to the writer: a break, back to writing, or
+// the sprint's end.
+function usePhaseEnds(sprint: Sprint, words: number, now: number) {
+  useEffect(() => {
+    if (now < sprint.endsAt) return;
+    const next = phasesOf(sprint.plan)[sprint.phase + 1];
+    const isGoingOn = nextPhase(words);
+    void platform
+      .notify(t("Skrivsprint"), phaseMessage(sprint, next, isGoingOn ? null : words))
+      .catch(() => undefined);
+  }, [now, sprint, words]);
+}
+
+// Over the text while a sprint runs; a click opens its block.
 function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number }) {
   const now = useTick();
-  const words = Math.max(0, todayWords - (sprint.startWords ?? todayWords));
+  const words = sprintWords(sprint, todayWords);
   useEffect(() => {
     if (sprint.startWords === null) setStartWords(todayWords);
   }, [sprint.startWords, todayWords]);
-  useEffect(() => {
-    if (now < sprint.endsAt) return;
-    endSprint(words);
-    const text = t("{words} ord på {minutes} minuter.", { words, minutes: sprint.minutes });
-    void platform.notify(t("Sprinten är klar"), text).catch(() => undefined);
-  }, [now, sprint, words]);
+  usePhaseEnds(sprint, words, now);
+  const isBreak = phasesOf(sprint.plan)[sprint.phase] !== "pass";
   return (
     <div className="sprint-bar" role="timer">
-      <span className="sprint-clock">{clock(sprint.endsAt - now)}</span>
+      <button className="sprint-clock" onClick={() => setPanelOpen(true)}>
+        {isBreak ? `${t("Paus")} ${clock(sprint.endsAt - now)}` : clock(sprint.endsAt - now)}
+      </button>
       <span>{t("{words} ord", { words })}</span>
       <button className="link-button" onClick={() => endSprint(words)}>
         {t("Avsluta")}
@@ -52,17 +60,13 @@ function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number })
   );
 }
 
-/** Over the text while a sprint runs, and its result once it is over. */
-export function SprintBar({ app }: { app: Pick<AppState, "today"> }) {
-  const { sprint, done } = useSprint();
-  if (sprint) return <Running sprint={sprint} todayWords={app.today.words} />;
-  if (!done) return null;
+function Result({ done }: { done: { passes: number; words: number } }) {
   return (
     <div className="sprint-bar" role="status">
       <span>
-        {t("Sprinten är klar: {words} ord på {minutes} minuter.", {
+        {t("Sprinten är klar: {words} ord på {passes} pass.", {
           words: done.words,
-          minutes: done.minutes,
+          passes: done.passes,
         })}
       </span>
       <button className="link-button" onClick={closeSprintResult}>
@@ -72,30 +76,31 @@ export function SprintBar({ app }: { app: Pick<AppState, "today"> }) {
   );
 }
 
-/** In Skriv's bar: a sprint of fifteen, twenty-five or forty-five minutes. */
-export function SprintButton() {
-  const [place, setPlace] = useState<{ x: number; y: number } | null>(null);
-  const items = SPRINT_LENGTHS.map((minutes) => ({
-    label: t("{minutes} min", { minutes }),
-    onSelect: () => startSprint(minutes),
-  }));
-  const open = (event: MouseEvent<HTMLButtonElement>) => {
-    const box = event.currentTarget.getBoundingClientRect();
-    setPlace({ x: box.left, y: box.bottom + 4 });
-  };
+/** Over the text: the sprint's block when open, its bar while it runs, and its result. */
+export function SprintBar({ app }: { app: Pick<AppState, "today"> }) {
+  const { sprint, done } = useSprint();
   return (
     <>
-      <button
-        className="topbar-button"
-        aria-label={t("Skrivsprint")}
-        title={t("Skrivsprint")}
-        onClick={open}
-      >
-        <TimerIcon />
-      </button>
-      {place && (
-        <Menu {...place} items={items} label={t("Skrivsprint")} onClose={() => setPlace(null)} />
-      )}
+      <SprintPanel todayWords={app.today.words} />
+      {sprint && <Running sprint={sprint} todayWords={app.today.words} />}
+      {!sprint && done && <Result done={done} />}
     </>
+  );
+}
+
+/** In the blocks' dock, or a phone's bar: opens the sprint's block, to set it up or see it run. */
+export function SprintButton({ look = "topbar-button" }: { look?: string }) {
+  const { sprint, isPanelOpen } = useSprint();
+  const state = [isPanelOpen && "chosen", sprint && "playing"].filter(Boolean).join(" ");
+  return (
+    <button
+      className={state ? `${look} ${state}` : look}
+      aria-label={t("Skrivsprint")}
+      aria-pressed={isPanelOpen}
+      title={t("Skrivsprint")}
+      onClick={() => setPanelOpen(!isPanelOpen)}
+    >
+      <TimerIcon />
+    </button>
   );
 }

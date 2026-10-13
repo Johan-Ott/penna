@@ -115,7 +115,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
     command(t("Visa som ark eller löptext"), () =>
       context.changeSettings((now) => ({ ...now, paper: !now.paper })),
     ),
-    command(t("Skrivsprint, 25 minuter"), () => startSprint(25)),
+    command(t("Starta skrivsprint"), startSprint),
     ...(context.showSnapshots
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
       : []),

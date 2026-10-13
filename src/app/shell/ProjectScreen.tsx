@@ -15,6 +15,7 @@ import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";
 import { ReviewPill, Topbar } from "./Topbar.js";
+import { BlocksDock } from "../blocks/BlocksDock.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
 import { lastPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
@@ -65,9 +66,16 @@ function OverTheText({ app, project }: ScreenProps) {
   const { writingMode } = app;
   return (
     <>
-      {!writingMode.isReviewOpen && (
-        <ReviewPill review={writingMode.review} onReview={() => writingMode.setReviewOpen(true)} />
-      )}
+      <BlocksDock
+        review={
+          !writingMode.isReviewOpen && (
+            <ReviewPill
+              review={writingMode.review}
+              onReview={() => writingMode.setReviewOpen(true)}
+            />
+          )
+        }
+      />
       <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
       <TextBands app={app} project={project} />
     </>
