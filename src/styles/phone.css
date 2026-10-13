@@ -45,16 +45,13 @@
   font-weight: 400;
 }
 
+/* On the page itself, as the computer's sidebar is: no frame around it */
 .phone-card {
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  gap: 16px;
-  margin: 0 8px 8px;
-  padding: 18px 16px;
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
-  background: var(--bg);
+  gap: 18px;
+  padding: 8px 20px 20px;
 }
 
 /* Boken: the day, Fortsätt skriva, the book and the notes as tiles */
@@ -86,7 +83,7 @@
 .book-rhythm {
   display: flex;
   gap: 2px;
-  height: 16px;
+  height: 6px;
 }
 
 .book-rhythm > span {
@@ -96,8 +93,7 @@
 }
 
 .book-rhythm > .left {
-  border: 1px dashed var(--border-control);
-  background: transparent;
+  background: var(--border-soft);
 }
 
 .phone-today-facts {
@@ -141,14 +137,8 @@
 }
 
 .phone-card .tree .tree-row {
-  min-height: 44px;
-  border-bottom: 1px solid var(--border-soft);
-  border-radius: 0;
+  min-height: 42px;
   font-size: 15px;
-}
-
-.phone-card .tree .tree-row.active {
-  background: transparent;
 }
 
 .phone-card .sidebar-heading {
@@ -621,13 +611,19 @@ body .selection-bar.phone .icon-button {
   }
 }
 
-/* Room for a thumb: rows, their ⋯ and menu items at least 44 px. */
+/* Room for a thumb: rows, their ⋯ and menu items at least 44 px. The ⋯ stays quiet but for
+   the open row's, so the list reads as the book and not as buttons. */
 .phone-app .tree-more {
   align-items: center;
   justify-content: center;
   min-width: 44px;
   min-height: 44px;
   margin-right: -10px;
+  opacity: 0.35;
+}
+
+.phone-app .tree-row.active .tree-more {
+  opacity: 1;
 }
 
 @media (max-width: 600px) {
