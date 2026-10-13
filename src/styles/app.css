@@ -1000,9 +1000,12 @@ body:has(.settings-panel) .selection-bar {
   font-size: 14px;
 }
 
+/* As many choices as there are: they wrap onto new lines instead of out of the dialog. */
 .chip-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+  width: 100%;
 }
 
 .chip-row .chip {
@@ -1010,6 +1013,7 @@ body:has(.settings-panel) .selection-bar {
   padding: 0 12px;
   border-radius: 16px;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .chip[aria-checked="true"] {
