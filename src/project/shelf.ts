@@ -23,6 +23,8 @@ export interface ShelfBook {
   series: string | null;
   /** The book's place in its series, or null when it has none. */
   seriesNumber: number | null;
+  /** The step that holds the most words, which the cover on the shelf shows; null when missing. */
+  stage: SceneStatus | null;
 }
 
 const STATUS_LABELS: Record<SceneStatus, string> = {
@@ -38,17 +40,20 @@ export const KIND_LABELS: Record<string, string> = {
   annat: t("Annat"),
 };
 
-/** On a tie the earlier stage. */
+/** The step that holds the most words; on a tie the earlier one. */
+export function bookStage(scenes: Pick<SceneSummary, "words" | "status">[]): SceneStatus {
+  const wordsIn = (status: SceneStatus) =>
+    scenes.filter((scene) => scene.status === status).reduce((sum, scene) => sum + scene.words, 0);
+  return SCENE_STATUSES.reduce((best, status) => (wordsIn(status) > wordsIn(best) ? status : best));
+}
+
+/** The stage by the book's own name for it, when the writer has named the steps. */
 export function bookStatus(
   scenes: Pick<SceneSummary, "words" | "status">[],
   fields: Record<string, unknown> = {},
 ): string {
-  const wordsIn = (status: SceneStatus) =>
-    scenes.filter((scene) => scene.status === status).reduce((sum, scene) => sum + scene.words, 0);
-  const largest = SCENE_STATUSES.reduce((best, status) =>
-    wordsIn(status) > wordsIn(best) ? status : best,
-  );
-  return ownStepName(fields, largest) ?? STATUS_LABELS[largest];
+  const stage = bookStage(scenes);
+  return ownStepName(fields, stage) ?? STATUS_LABELS[stage];
 }
 
 export function bookProgress(scenes: Pick<SceneSummary, "words" | "status">[]): number {
@@ -118,6 +123,7 @@ const missingBook = (dir: string): ShelfBook => ({
   isMissing: true,
   series: null,
   seriesNumber: null,
+  stage: null,
 });
 
 async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook> {
@@ -136,6 +142,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
     isMissing: false,
     series: fields.series,
     seriesNumber: fields.seriesNumber,
+    stage: bookStage(scenes),
   };
 }
 

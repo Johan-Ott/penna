@@ -60,6 +60,7 @@ describe("readShelf", () => {
       ["Saltstank", true],
     ]);
     expect(books[0]).toMatchObject({ kind: "Roman", words: 2, status: "Klar", progress: 100 });
+    expect(books[0]?.stage).toBe("klar");
   });
 });
 

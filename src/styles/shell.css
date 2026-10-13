@@ -2584,6 +2584,108 @@
   font: 600 22px var(--font-prose);
 }
 
+.profile-title {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Frames around the writer's picture, unlocked under Stil in the profile. */
+.avatar.frame-tunn {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3px var(--text-label);
+}
+
+.avatar.frame-grafit {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--text-tree);
+}
+
+.avatar.frame-dubbel {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3px var(--text),
+    0 0 0 5px var(--bg),
+    0 0 0 6px var(--text);
+}
+
+.avatar.frame-manus {
+  outline: 2px dashed var(--text-muted);
+  outline-offset: 2px;
+}
+
+.avatar.frame-natt {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 5px #1c1c1c,
+    0 0 10px 5px rgba(0, 0, 0, 0.25);
+}
+
+.avatar.frame-rott {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--danger);
+}
+
+.avatar.frame-praglad {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 5px #8a8a8a,
+    0 3px 6px 4px rgba(0, 0, 0, 0.15);
+}
+
+.avatar.frame-guld {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px #c9a400,
+    0 0 0 5px #8a6f00;
+}
+
+.flair-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.flair-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-control);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.flair-option[aria-checked="true"] {
+  border-color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+
+.flair-option.locked {
+  border-style: dashed;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.flair-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.flair-hint {
+  font-size: 11px;
+  color: var(--text-label);
+}
+
 .profile-head .button {
   margin-left: auto;
 }

@@ -1,44 +1,18 @@
 import { Choice } from "../controls.js";
 import { useState } from "react";
-import { journeySummary } from "../../project/inkwell.js";
+import { earnedOf } from "../../project/flair.js";
 import type { Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
 import { Dialog } from "../controls.js";
-import { platform } from "../platform.js";
-import { Avatar } from "./Avatar.js";
+import { ProfileHead } from "./ProfileHead.js";
 import { Badges } from "./Badges.js";
+import { FlairPicker } from "./FlairPicker.js";
 import type { Profile } from "./useProfile.js";
-import { t, formatNumber } from "../../i18n/i18n.js";
-
-const PICTURE = { name: t("Bild"), extensions: ["jpg", "jpeg", "png"] };
-const SIDE = 192;
-
-// Cut to a square from the middle and made small, so the profile file stays small.
-async function smallPicture(bytes: Uint8Array) {
-  const image = await createImageBitmap(new Blob([bytes.slice()]));
-  const side = Math.min(image.width, image.height);
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = SIDE;
-  const left = (image.width - side) / 2;
-  const top = (image.height - side) / 2;
-  canvas.getContext("2d")?.drawImage(image, left, top, side, side, 0, 0, SIDE, SIDE);
-  return canvas.toDataURL("image/jpeg", 0.85);
-}
+import { t } from "../../i18n/i18n.js";
 
 interface Form extends Profile {
   name: string;
   bookAuthor: string;
-}
-
-function factsOf(journey: Journey) {
-  const summary = journeySummary(journey, dayKey(Date.now()));
-  const days = Object.values(journey.words).filter((words) => words > 0).length;
-  return [
-    summary.level.name,
-    summary.rank.name,
-    t("{count} ord", { count: formatNumber(summary.words) }),
-    days === 1 ? t("1 skrivdag") : t("{count} skrivdagar", { count: days }),
-  ].join(" · ");
 }
 
 function Field(props: {
@@ -57,29 +31,6 @@ function Field(props: {
         onChange={(event) => props.onChange(event.target.value)}
       />
     </label>
-  );
-}
-
-function ProfileHead(props: {
-  form: Form;
-  journey: Journey;
-  onPicture: (picture: string) => void;
-}) {
-  const pick = async () => {
-    const picked = await platform.pickFile(PICTURE);
-    if (picked) props.onPicture(await smallPicture(picked.bytes));
-  };
-  return (
-    <div className="profile-head">
-      <Avatar name={props.form.name} picture={props.form.picture} size={64} />
-      <span className="profile-who">
-        <span className="profile-name">{props.form.name || t("Ditt namn")}</span>
-        <span className="insight-muted">{factsOf(props.journey)}</span>
-      </span>
-      <button className="button secondary small" onClick={() => void pick()}>
-        {t("Byt bild")}
-      </button>
-    </div>
   );
 }
 
@@ -147,11 +98,27 @@ function ProfileFoot({ onDone }: { onDone: () => void }) {
   );
 }
 
-type Part = "om" | "utmarkelser";
+type Part = "om" | "stil" | "utmarkelser";
 const PARTS: [Part, string][] = [
   ["om", t("Om dig")],
+  ["stil", t("Stil")],
   ["utmarkelser", t("Utmärkelser")],
 ];
+
+function ProfilePart(props: {
+  part: Part;
+  form: Form;
+  set: (change: Partial<Form>) => void;
+  journey: Journey;
+  book: { name: string; held: Record<string, string> } | null;
+}) {
+  const { form, set } = props;
+  if (props.part === "om")
+    return <ProfileFields form={form} bookName={props.book?.name ?? null} set={set} />;
+  if (props.part === "utmarkelser") return <Badges journey={props.journey} book={props.book} />;
+  const earned = earnedOf(props.journey, dayKey(Date.now()));
+  return <FlairPicker earned={earned} frame={form.frame} title={form.title} onChange={set} />;
+}
 
 /** Författarprofil: who writes, kept in the Penna folder; no account, no sign-in. */
 export function ProfileDialog(props: {
@@ -170,11 +137,7 @@ export function ProfileDialog(props: {
     <Dialog label={t("Författarprofil")} className="profile-dialog" onClose={done}>
       <ProfileHead form={form} journey={props.journey} onPicture={(picture) => set({ picture })} />
       <Choice label={t("Visa")} value={part} options={PARTS} onSelect={setPart} />
-      {part === "om" ? (
-        <ProfileFields form={form} bookName={props.book?.name ?? null} set={set} />
-      ) : (
-        <Badges journey={props.journey} book={props.book} />
-      )}
+      <ProfilePart part={part} form={form} set={set} journey={props.journey} book={props.book} />
       <ProfileFoot onDone={done} />
     </Dialog>
   );

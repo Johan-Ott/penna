@@ -1,3 +1,5 @@
+import { earnedOf, wornFlair } from "../../project/flair.js";
+import { dayKey } from "../../project/stats.js";
 import type { AppState } from "../App.js";
 import type { Project } from "../useProject.js";
 import { Avatar } from "./Avatar.js";
@@ -41,8 +43,10 @@ export function ProfileLayer({ app, project }: { app: ProfileApp; project: Proje
 
 /** At the top of the sidebar: who writes, and the way into the profile. */
 /** The writer's picture in the top bar; it opens the profile. */
-export function ProfileButton({ app }: { app: Pick<AppState, "profile" | "startup"> }) {
+export function ProfileButton({ app }: { app: Pick<AppState, "profile" | "startup" | "journey"> }) {
   const name = app.startup.preferences.authorName;
+  const earned = earnedOf(app.journey.journey, dayKey(Date.now()));
+  const frame = wornFlair(app.profile.profile.frame, earned)?.id ?? "";
   return (
     <button
       className="topbar-button profile-button"
@@ -50,7 +54,7 @@ export function ProfileButton({ app }: { app: Pick<AppState, "profile" | "startu
       title={name || t("Din profil")}
       onClick={app.profile.open}
     >
-      <Avatar name={name} picture={app.profile.profile.picture} size={22} />
+      <Avatar name={name} picture={app.profile.profile.picture} size={22} frame={frame} />
     </button>
   );
 }

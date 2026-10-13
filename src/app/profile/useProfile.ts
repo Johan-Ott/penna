@@ -11,9 +11,12 @@ export interface Profile {
   link: string;
   /** A small picture as a data URL, or empty for the first letter of the name. */
   picture: string;
+  /** The frame around the picture and the title under the name, by id; empty for none. */
+  frame: string;
+  title: string;
 }
 
-const NO_PROFILE: Profile = { about: "", link: "", picture: "" };
+const NO_PROFILE: Profile = { about: "", link: "", picture: "", frame: "", title: "" };
 const profilePath = (library: string) => joinPath(library, "profil.json");
 const text = (value: unknown) => (typeof value === "string" ? value : "");
 
@@ -24,6 +27,8 @@ function profileFrom(fileText: string): Profile {
       about: text(parsed["about"]),
       link: text(parsed["link"]),
       picture: text(parsed["picture"]),
+      frame: text(parsed["frame"]),
+      title: text(parsed["title"]),
     };
   } catch {
     return NO_PROFILE;

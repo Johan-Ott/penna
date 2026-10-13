@@ -20,11 +20,15 @@ function seriesLine(book: ShelfBook) {
   return book.series && book.seriesNumber ? t("Bok {number}", { number: book.seriesNumber }) : null;
 }
 
+// CSS class names stay in plain letters.
+const stageClass = (book: ShelfBook) =>
+  book.stage ? `stage-${book.stage === "idé" ? "ide" : book.stage}` : "";
+
 function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
   if (pictureUrl) {
     return (
       <button
-        className="book-cover with-picture"
+        className={`book-cover with-picture ${stageClass(book)}`}
         aria-label={book.title}
         onClick={() => onOpen(book.dir)}
       >
@@ -33,7 +37,10 @@ function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
     );
   }
   return (
-    <button className={`book-cover ${coverLookOf(book.dir)}`} onClick={() => onOpen(book.dir)}>
+    <button
+      className={`book-cover ${coverLookOf(book.dir)} ${stageClass(book)}`}
+      onClick={() => onOpen(book.dir)}
+    >
       <span className="book-kind">{seriesLine(book) ?? book.kind}</span>
       <span className="book-title">{book.title}</span>
       <span className="book-words">

@@ -1120,6 +1120,33 @@ body:has(.settings-panel) .selection-bar {
   transition: transform 0.15s;
 }
 
+/* The cover grows with the book: loose as an idea, bound with a pressed title when it is done. */
+.book-cover.stage-ide {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  outline: 1px dashed rgba(127, 127, 127, 0.5);
+  outline-offset: -8px;
+}
+
+.book-cover.stage-redigering {
+  box-shadow:
+    inset 10px 0 0 rgba(0, 0, 0, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.book-cover.stage-klar {
+  box-shadow:
+    inset 10px 0 0 rgba(0, 0, 0, 0.22),
+    inset 0 3px 0 rgba(201, 164, 0, 0.6),
+    inset 0 -3px 0 rgba(201, 164, 0, 0.6),
+    0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.book-cover.stage-klar .book-title {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25),
+    0 -1px 0 rgba(0, 0, 0, 0.35);
+}
+
 .book-cover.with-picture {
   padding: 0;
   overflow: hidden;
