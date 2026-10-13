@@ -819,6 +819,11 @@
   background: var(--bg-panel);
 }
 
+/* On a phone the body is a card of its own, under the head as under a bar. */
+.insights-body {
+  display: contents;
+}
+
 .insights-head {
   display: flex;
   align-items: center;

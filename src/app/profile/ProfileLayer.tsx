@@ -5,31 +5,34 @@ import { bookBadgesHeld } from "../../project/bookBadges.js";
 import { ProfileDialog, type ProfileForm } from "./ProfileDialog.js";
 import { t } from "../../i18n/i18n.js";
 
+/** What the profile needs of the app, on the shelf as in a book. */
+type ProfileApp = Pick<AppState, "profile" | "startup" | "journey" | "updateFields">;
+
 const textOf = (value: unknown) => (typeof value === "string" ? value : "");
 
-function save(app: AppState, project: Project, form: ProfileForm) {
+function save(app: ProfileApp, project: Project | null, form: ProfileForm) {
   const { name, bookAuthor, ...profile } = form;
   app.profile.save(profile);
   if (name !== app.startup.preferences.authorName)
     app.startup.updatePreferences((current) => ({ ...current, authorName: name }));
-  if (bookAuthor !== textOf(project.fields["author"]))
+  if (project && bookAuthor !== textOf(project.fields["author"]))
     void app.updateFields({ author: bookAuthor || undefined });
 }
 
-/** The profile dialog, when the writer opened it from the sidebar. */
-export function ProfileLayer({ app, project }: { app: AppState; project: Project }) {
+/** The profile dialog, from the top bar; on the shelf no book is open. */
+export function ProfileLayer({ app, project }: { app: ProfileApp; project: Project | null }) {
   if (!app.profile.isOpen) return null;
   const initial = {
     ...app.profile.profile,
     name: app.startup.preferences.authorName,
-    bookAuthor: textOf(project.fields["author"]),
+    bookAuthor: textOf(project?.fields["author"]),
   };
+  const book = project && { name: project.name, held: bookBadgesHeld(project.fields) ?? {} };
   return (
     <ProfileDialog
       initial={initial}
-      bookName={project.name}
       journey={app.journey.journey}
-      bookBadges={bookBadgesHeld(project.fields) ?? {}}
+      book={book}
       onSave={(form) => save(app, project, form)}
       onClose={app.profile.close}
     />
@@ -38,7 +41,7 @@ export function ProfileLayer({ app, project }: { app: AppState; project: Project
 
 /** At the top of the sidebar: who writes, and the way into the profile. */
 /** The writer's picture in the top bar; it opens the profile. */
-export function ProfileButton({ app }: { app: AppState }) {
+export function ProfileButton({ app }: { app: Pick<AppState, "profile" | "startup"> }) {
   const name = app.startup.preferences.authorName;
   return (
     <button

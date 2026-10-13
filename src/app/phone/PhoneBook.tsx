@@ -7,7 +7,6 @@ import {
 } from "../../project/progress.js";
 import { dayKey } from "../../project/stats.js";
 import { chapterOf, manuscriptWords } from "../../project/treeLabels.js";
-import { BookRhythm } from "./BookRhythm.js";
 import type { AppState } from "../App.js";
 import { useMenuButton } from "../Menu.js";
 import { phoneMenu } from "./phoneMenu.js";
@@ -41,7 +40,8 @@ function todayFacts(app: AppState, project: Project) {
   const finish = finishDay(words, totalGoal, averagePerDay(app.stats, today), today);
   const { streak } = app.today;
   return [
-    streak === 1 ? t("1 dag i rad") : t("{days} dagar i rad", { days: streak }),
+    streak === 1 && t("1 dag i rad"),
+    streak > 1 && t("{days} dagar i rad", { days: streak }),
     finish && t("klart runt {day} i din takt", { day: shortDay(finish) }),
     daysLeft === 1 && t("1 dag till deadline"),
     daysLeft !== null && daysLeft !== 1 && t("{days} dagar till deadline", { days: daysLeft }),
@@ -76,7 +76,6 @@ function TodayCard({ app, project }: Pick<PhoneBookProps, "app" | "project">) {
         </span>
       )}
       <span className="phone-today-facts">{todayFacts(app, project).join(" · ")}</span>
-      <BookRhythm project={project} />
     </div>
   );
 }

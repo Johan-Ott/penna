@@ -43,13 +43,13 @@ export function TabBar(props: { tab: Tab; onTab: (tab: Tab) => void }) {
   );
 }
 
-// Publicera's bar, as Boken and Skriv have one: the tabs below are the way back.
-const PublishBar = ({ project }: { project: Project }) => (
+// A bar as Boken and Skriv have one; the tabs below are the way back.
+const ViewBar = ({ title, sub }: { title: string; sub?: string }) => (
   <header className="phone-bar">
     <span />
     <span className="phone-bar-title">
-      <span>{t("Publicera")}</span>
-      <span className="phone-bar-sub">{project.name}</span>
+      <span>{title}</span>
+      {sub && <span className="phone-bar-sub">{sub}</span>}
     </span>
   </header>
 );
@@ -67,6 +67,7 @@ export function ViewScreen(props: {
   const views = { app, project, onBack: props.onBack };
   return (
     <div className="phone-view">
+      {view === "innehall" && <ViewBar title={t("Innehåll")} />}
       {view === "innehall" && (
         <ContentsScreen
           app={app}
@@ -76,7 +77,7 @@ export function ViewScreen(props: {
         />
       )}
       {view === "las" && <ReadScreen {...views} />}
-      {view === "publicera" && <PublishBar project={project} />}
+      {view === "publicera" && <ViewBar title={t("Publicera")} sub={project.name} />}
       {view === "publicera" && <PublishScreen {...views} />}
       {view === "synk" && <SyncScreen {...views} />}
     </div>

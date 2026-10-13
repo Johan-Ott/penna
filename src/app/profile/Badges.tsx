@@ -74,7 +74,8 @@ export function Badges({
   book,
 }: {
   journey: Journey;
-  book: { name: string; held: Record<string, string> };
+  /** The open book's; none on the shelf. */
+  book: { name: string; held: Record<string, string> } | null;
 }) {
   const milestones = badges().filter((badge) => badge.group === "milstolpe");
   const unlocked = milestones.filter((badge) => journey.badges[badge.id]).length;
@@ -89,7 +90,7 @@ export function Badges({
           <Medal key={badge.id} badge={badge} day={journey.badges[badge.id]} />
         ))}
       </ul>
-      <BookMedals book={book} />
+      {book && <BookMedals book={book} />}
     </section>
   );
 }

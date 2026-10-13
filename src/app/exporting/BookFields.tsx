@@ -89,7 +89,6 @@ function CoverRow({ cover }: Pick<BookFieldsProps, "cover">) {
 export function BookFields(props: BookFieldsProps) {
   return (
     <div className="export-column">
-      <span className="export-heading">{t("Bokuppgifter")}</span>
       <Details {...props} />
       {props.choices.format === "ebok" && <CoverRow cover={props.cover} />}
       <span className="export-heading spaced">{t("Bokens delar")}</span>

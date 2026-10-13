@@ -152,22 +152,24 @@ export function InsightsPanel(props: PanelProps) {
   return (
     <aside className="insights-panel" aria-label={t("Insikter")}>
       <InsightsHead onClose={props.onClose} />
-      {hasStats && <ShownAs isColophon={isColophon} onChange={setColophon} />}
-      {!hasStats && <NoStats onWrite={props.onClose} />}
-      {isColophon ? (
-        <Colophon project={props.project} stats={props.stats} />
-      ) : (
-        <InsightsBody
-          project={props.project}
-          stats={props.stats}
-          journey={props.journey}
-          onGoals={() => setOpen("day")}
-          onJourney={() => setOpen("journey")}
-        />
-      )}
-      <button className="link-button quiet" onClick={() => setOpen("goals")}>
-        {t("Ändra mål och deadline")}
-      </button>
+      <div className="insights-body">
+        {hasStats && <ShownAs isColophon={isColophon} onChange={setColophon} />}
+        {!hasStats && <NoStats onWrite={props.onClose} />}
+        {isColophon ? (
+          <Colophon project={props.project} stats={props.stats} />
+        ) : (
+          <InsightsBody
+            project={props.project}
+            stats={props.stats}
+            journey={props.journey}
+            onGoals={() => setOpen("day")}
+            onJourney={() => setOpen("journey")}
+          />
+        )}
+        <button className="link-button quiet" onClick={() => setOpen("goals")}>
+          {t("Ändra mål och deadline")}
+        </button>
+      </div>
       <InsightDialogs {...props} open={open} onOpen={setOpen} onClose={() => setOpen(null)} />
     </aside>
   );

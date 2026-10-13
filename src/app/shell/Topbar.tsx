@@ -79,13 +79,14 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   );
 }
 
-export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu">) {
+export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu" | "profile">) {
   return (
     <header className="topbar" data-tauri-drag-region>
       <div className="topbar-start" data-tauri-drag-region>
         <IconButton label={t("Meny")} onClick={props.onMenu}>
           <MenuIcon />
         </IconButton>
+        {props.profile}
       </div>
       <span className="topbar-title" data-tauri-drag-region>
         {props.title}

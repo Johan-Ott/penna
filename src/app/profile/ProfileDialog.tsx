@@ -96,25 +96,30 @@ function AboutField(props: { value: string; onChange: (value: string) => void })
   );
 }
 
+// The pen name belongs to a book, so it is asked only while one is open.
+const PenName = (props: { form: Form; bookName: string; set: (change: Partial<Form>) => void }) => (
+  <Field
+    label={t("Författarnamn för {book}", { book: props.bookName })}
+    value={props.form.bookAuthor}
+    placeholder={t("Pseudonym, valfritt")}
+    onChange={(bookAuthor) => props.set({ bookAuthor })}
+  />
+);
+
 function ProfileFields({
   form,
   bookName,
   set,
 }: {
   form: Form;
-  bookName: string;
+  bookName: string | null;
   set: (change: Partial<Form>) => void;
 }) {
   return (
     <>
       <div className="profile-pair">
         <Field label={t("Namn")} value={form.name} onChange={(name) => set({ name })} />
-        <Field
-          label={t("Författarnamn för {book}", { book: bookName })}
-          value={form.bookAuthor}
-          placeholder={t("Pseudonym, valfritt")}
-          onChange={(bookAuthor) => set({ bookAuthor })}
-        />
+        {bookName !== null && <PenName form={form} bookName={bookName} set={set} />}
       </div>
       <AboutField value={form.about} onChange={(about) => set({ about })} />
       <Field
@@ -151,10 +156,9 @@ const PARTS: [Part, string][] = [
 /** Författarprofil: who writes, kept in the Penna folder; no account, no sign-in. */
 export function ProfileDialog(props: {
   initial: Form;
-  bookName: string;
   journey: Journey;
-  /** The open book's badges, by the day each was reached. */
-  bookBadges: Record<string, string>;
+  /** The open book, with its badges by the day each was reached; none on the shelf. */
+  book: { name: string; held: Record<string, string> } | null;
   onSave: (form: Form) => void;
   onClose: () => void;
 }) {
@@ -167,9 +171,9 @@ export function ProfileDialog(props: {
       <ProfileHead form={form} journey={props.journey} onPicture={(picture) => set({ picture })} />
       <Choice label={t("Visa")} value={part} options={PARTS} onSelect={setPart} />
       {part === "om" ? (
-        <ProfileFields form={form} bookName={props.bookName} set={set} />
+        <ProfileFields form={form} bookName={props.book?.name ?? null} set={set} />
       ) : (
-        <Badges journey={props.journey} book={{ name: props.bookName, held: props.bookBadges }} />
+        <Badges journey={props.journey} book={props.book} />
       )}
       <ProfileFoot onDone={done} />
     </Dialog>
