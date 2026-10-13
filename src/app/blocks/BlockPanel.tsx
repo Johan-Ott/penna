@@ -1,4 +1,11 @@
-import { useState, type PointerEvent, type ReactNode } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { browserStorage } from "../browserStorage.js";
 import { CloseButton } from "../controls.js";
 import { GripIcon } from "../shell/icons.js";
@@ -50,7 +57,25 @@ function useDrag(id: string) {
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", drop);
   };
-  return { place, onPointerDown };
+  return { place, setPlace, onPointerDown };
+}
+
+// A place kept from a larger window is moved inside this one, on opening and when it resizes.
+function useKeptInside(
+  panel: RefObject<HTMLElement | null>,
+  place: Place | null,
+  set: (place: Place) => void,
+) {
+  useLayoutEffect(() => {
+    const fit = () => {
+      if (!panel.current || !place) return;
+      const inside = clamped(panel.current, place);
+      if (inside.left !== place.left || inside.top !== place.top) set(inside);
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [panel, place, set]);
 }
 
 /** Without a kept place it opens above the dock, at the card's foot on the right. */
@@ -60,9 +85,16 @@ export function BlockPanel(props: {
   onClose: () => void;
   children: ReactNode;
 }) {
-  const { place, onPointerDown } = useDrag(props.id);
+  const { place, setPlace, onPointerDown } = useDrag(props.id);
+  const panel = useRef<HTMLElement>(null);
+  useKeptInside(panel, place, setPlace);
   return (
-    <section className="block-panel" aria-label={props.title} style={place ?? undefined}>
+    <section
+      ref={panel}
+      className="block-panel"
+      aria-label={props.title}
+      style={place ?? undefined}
+    >
       <header className="block-head" onPointerDown={onPointerDown}>
         <span className="block-title">
           <GripIcon />
