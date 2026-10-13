@@ -9,23 +9,17 @@ import { openBlocks, toggleBlock } from "./layout.js";
 import { LayoutButton } from "./LayoutButton.js";
 import { InSceneBlock } from "./InSceneBlock.js";
 import { ReferenceBlock } from "./ReferenceBlock.js";
-import { ScratchBlock } from "./ScratchBlock.js";
+import { StickyNotesLayer } from "./StickyNotes.js";
+import { useStickyNotes } from "./useStickyNotes.js";
 import { t } from "../../i18n/i18n.js";
 
 // The blocks as icons at the text's foot on the right, before Granska; each opens as a panel
 // that can be moved, and closing it makes it an icon again.
 
-type BlockId = "kladdlapp" | "iscenen" | "referens" | "kolofon";
 type Props = { app: AppState; project: Project; review: ReactNode };
-type Block = { id: BlockId; title: string; icon: ReactNode; body: (props: Props) => ReactNode };
+type Block = { id: string; title: string; icon: ReactNode; body: (props: Props) => ReactNode };
 
 const BLOCKS: Block[] = [
-  {
-    id: "kladdlapp",
-    title: t("Kladdlapp"),
-    icon: <NoteIcon />,
-    body: (props) => <ScratchBlock dir={props.project.dir} />,
-  },
   {
     id: "iscenen",
     title: t("I scenen"),
@@ -52,6 +46,10 @@ const BLOCKS: Block[] = [
     body: (props) => <ReferenceBlock project={props.project} />,
   },
 ];
+
+// Lappar are not a panel but notes of their own over the text; the dock shows and hides them.
+const NOTES = "lappar";
+const NOTES_BUTTON = { id: NOTES, title: t("Lappar"), icon: <NoteIcon />, body: () => null };
 
 // Insikter keeps its own open state, as Granska does; here it is one more icon.
 function InsightsButton({ app }: { app: AppState }) {
@@ -83,25 +81,36 @@ function DockButton(props: { block: Block; isOpen: boolean; onToggle: () => void
   );
 }
 
-export function BlocksDock(props: Props) {
-  const open = openBlocks.use();
-  const toggle = toggleBlock;
+function OpenPanels(props: Props & { open: string[] }) {
   return (
     <>
-      {BLOCKS.filter((block) => open.includes(block.id)).map((block) => (
-        <BlockPanel key={block.id} {...block} onClose={() => toggle(block.id)}>
+      {BLOCKS.filter((block) => props.open.includes(block.id)).map((block) => (
+        <BlockPanel key={block.id} {...block} onClose={() => toggleBlock(block.id)}>
           {block.body(props)}
         </BlockPanel>
       ))}
+    </>
+  );
+}
+
+export function BlocksDock(props: Props) {
+  const open = openBlocks.use();
+  const notes = useStickyNotes(props.project.dir);
+  const button = (block: Block) => (
+    <DockButton
+      key={block.id}
+      block={block}
+      isOpen={open.includes(block.id)}
+      onToggle={() => toggleBlock(block.id)}
+    />
+  );
+  return (
+    <>
+      {open.includes(NOTES) && <StickyNotesLayer key={props.project.dir} state={notes} />}
+      <OpenPanels {...props} open={open} />
       <div className="blocks-dock">
-        {BLOCKS.map((block) => (
-          <DockButton
-            key={block.id}
-            block={block}
-            isOpen={open.includes(block.id)}
-            onToggle={() => toggle(block.id)}
-          />
-        ))}
+        {button(NOTES_BUTTON)}
+        {BLOCKS.map(button)}
         <SprintButton look="dock-button" />
         <InsightsButton app={props.app} />
         <LayoutButton app={props.app} />
