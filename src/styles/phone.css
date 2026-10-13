@@ -391,7 +391,7 @@ body .selection-bar.phone .icon-button {
   left: 0;
   z-index: 5;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   height: var(--phone-tabs);
   padding-bottom: var(--safe-bottom);
   border-top: 1px solid var(--border-soft);
