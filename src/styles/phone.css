@@ -53,6 +53,12 @@
   padding: 16px;
 }
 
+/* Boken scrolls inside its card, so the card's rounded foot shows above the tabs. */
+.phone-app > .phone-screen:has(> .phone-card) {
+  height: calc(100dvh - var(--phone-tabs));
+  min-height: 0;
+}
+
 /* Boken: the day, Fortsätt skriva, the book and the notes as tiles */
 .phone-today {
   display: flex;
@@ -171,12 +177,17 @@
 /* The computer's white card, around every screen's content: one frame for the whole app. */
 .phone-card,
 .phone-text .writing,
-.phone-view > * {
+.phone-view > :not(.phone-bar) {
   margin: 0 8px 8px;
   overflow: hidden;
   border: 1px solid var(--border-card);
   border-radius: 12px;
   background: var(--bg);
+}
+
+.phone-card {
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .phone-text .page {
@@ -423,16 +434,21 @@ body .selection-bar.phone .icon-button {
 /* Innehåll, Läs, Publicera and Från synken fill the screen above the tabs. */
 .phone-view {
   position: fixed;
-  inset: var(--safe-top) 0 var(--phone-tabs);
+  inset: 0 0 var(--phone-tabs);
   z-index: 10;
   display: flex;
   flex-direction: column;
-  padding-top: 8px;
+  padding-top: max(8px, var(--safe-top));
   overflow: hidden;
   background: var(--bg-subtle);
 }
 
-.phone-view > * {
+/* With a bar of its own on top, as Boken and Skriv have. */
+.phone-view:has(> .phone-bar) {
+  padding-top: 0;
+}
+
+.phone-view > :not(.phone-bar) {
   flex-grow: 1;
   min-height: 0;
 }

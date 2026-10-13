@@ -43,6 +43,17 @@ export function TabBar(props: { tab: Tab; onTab: (tab: Tab) => void }) {
   );
 }
 
+// Publicera's bar, as Boken and Skriv have one: the tabs below are the way back.
+const PublishBar = ({ project }: { project: Project }) => (
+  <header className="phone-bar">
+    <span />
+    <span className="phone-bar-title">
+      <span>{t("Publicera")}</span>
+      <span className="phone-bar-sub">{project.name}</span>
+    </span>
+  </header>
+);
+
 /** Innehåll, Läs, Publicera or Från synken, as the writing mode says. */
 export function ViewScreen(props: {
   app: AppState;
@@ -65,6 +76,7 @@ export function ViewScreen(props: {
         />
       )}
       {view === "las" && <ReadScreen {...views} />}
+      {view === "publicera" && <PublishBar project={project} />}
       {view === "publicera" && <PublishScreen {...views} />}
       {view === "synk" && <SyncScreen {...views} />}
     </div>
