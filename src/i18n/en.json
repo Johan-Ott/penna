@@ -1344,5 +1344,12 @@
   "Ta bort?": "Remove?",
   "Lapp": "Note",
   "Lappens text": "The note's text",
-  "Skriv eller rita…": "Write or draw…"
+  "Skriv eller rita…": "Write or draw…",
+  "mål": "goal",
+  "Mål för {label}": "Goal for {label}",
+  "Scenen": "The scene",
+  "I dag": "Today",
+  "deadline {day}": "deadline {day}",
+  "Mål": "Goals",
+  "Ändra dagens och bokens mål": "Change the day's and the book's goals"
 }

@@ -80,8 +80,8 @@ Varje nod har ett `id`. Delar, kapitel, mappar och sorter har en `title` i träd
 **ingen** titel i trädet; den står i scenens egen fil.
 
 Valfria fält på en nod: `summary` (Vad händer?), `when` (När), `pov` (Vems ögon), `subtitle`,
-`epigraph`, `epigraphBy`, `labels` (id:n ur `project.json`s `labels`), och för hemligheter
-`reveal` och `knownBy`.
+`epigraph`, `epigraphBy`, `labels` (id:n ur `project.json`s `labels`), `goal` (ett kapitels
+eller en scens mål i ord), och för hemligheter `reveal` och `knownBy`.
 
 **Sorter med fasta id:n:** `karaktarer` (Personer), `platser`, `saker`, `anteckningar`
 (Övrigt) och `hemligheter`. Papperskorgen är mappen `trash`. Egna sorter har vanliga id:n.

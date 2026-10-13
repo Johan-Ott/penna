@@ -16,6 +16,22 @@ test("A celebration shows when the day's goal is met, and Dagens mål lists the 
   await expect(
     page.getByRole("status").filter({ hasText: "Dagens sida är skriven." }),
   ).toBeVisible();
-  await page.locator(".day-progress").click();
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
+  await page.locator(".insight-day").click();
   await expect(page.getByRole("dialog", { name: "Dagens mål" })).toContainText("Köket");
+});
+
+test("Mål under the day's words shows the scene and chapter, and keeps a goal for the chapter", async ({
+  page,
+}) => {
+  await page.locator(".day-progress").click();
+  const goals = page.getByRole("region", { name: "Mål" });
+  await expect(goals).toContainText("Scenen");
+  await goals.getByRole("textbox", { name: "Mål för Kapitel 1" }).fill("3000");
+  await goals.getByRole("textbox", { name: "Mål för Kapitel 1" }).press("Enter");
+  await page.getByRole("button", { name: "Stäng" }).last().click();
+
+  await page.locator(".day-progress").click();
+
+  await expect(page.getByRole("textbox", { name: "Mål för Kapitel 1" })).toHaveValue("3000");
 });

@@ -3489,6 +3489,59 @@
   touch-action: none;
 }
 
+/* Mål: just under the day's words in the top bar, a row for each goal. */
+.block-panel.goal-panel:not([style]) {
+  top: 48px;
+  right: auto;
+  bottom: auto;
+  left: calc(50vw - 160px);
+}
+
+/* Fixed to the window, as the day's words it opens under belong to the top bar. */
+.goal-panel {
+  position: fixed;
+  z-index: 8;
+  width: 320px;
+}
+
+.goal-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto 64px;
+  gap: 2px 6px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.goal-row .day-progress-bar {
+  grid-column: 1 / -1;
+  margin-bottom: 6px;
+}
+
+.goal-label {
+  color: var(--text-label);
+}
+
+.goal-words {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.goal-of {
+  color: var(--text-label);
+}
+
+.goal-input {
+  width: 64px;
+  padding: 2px 6px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
 /* I scenen and Referensbild, each as narrow as a note beside the text. */
 
 .in-scene {

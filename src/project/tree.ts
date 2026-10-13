@@ -27,6 +27,8 @@ export interface TreeNode {
   reveal?: string;
   /** A secret: who learns it, by their note's id, and in which scene. */
   knownBy?: Record<string, string>;
+  /** A chapter's or scene's own goal in words. */
+  goal?: number;
   children?: TreeNode[];
 }
 

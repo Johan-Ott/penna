@@ -78,12 +78,18 @@ export function useFloating(id: string, isOn = true) {
 export function BlockPanel(props: {
   id: string;
   title: string;
+  className?: string;
   onClose: () => void;
   children: ReactNode;
 }) {
   const { ref, style, onPointerDown } = useFloating(props.id);
   return (
-    <section ref={ref} className="block-panel" aria-label={props.title} style={style}>
+    <section
+      ref={ref}
+      className={props.className ? `block-panel ${props.className}` : "block-panel"}
+      aria-label={props.title}
+      style={style}
+    >
       <header className="block-head" onPointerDown={onPointerDown}>
         <span className="block-title">
           <GripIcon />
