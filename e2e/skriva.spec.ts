@@ -98,10 +98,8 @@ test("the palette's chips narrow the search to the kinds chosen", async ({ page 
 test("Insikter shows today's page, the week and the book's words per step", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Hon log.");
-  await page
-    .getByText(/^2 \/ 500 ord$/)
-    .first()
-    .click();
+  await expect(page.getByText(/^2 \/ 500 ord$/).first()).toBeVisible();
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
 
   const progress = page.getByRole("complementary", { name: "Insikter" });
   await expect(progress.getByText("Den här veckan")).toBeVisible();

@@ -16,6 +16,7 @@ import { sidebarProps, writingAreaProps } from "../paneProps.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";
 import { ReviewPill, Topbar } from "./Topbar.js";
 import { BlocksDock } from "../blocks/BlocksDock.js";
+import { DayGoalLayer, showDayGoal } from "../progress/DayGoalLayer.js";
 import { useAppMenu } from "./useAppMenu.js";
 import { useNavigation, type Place } from "./useNavigation.js";
 import { lastPageOf, pageFinder, scenePagesOf, usePageMap } from "../usePageMap.js";
@@ -51,7 +52,7 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       onMenu={props.onMenu}
       onToggleSidebar={writingMode.toggleSidebar}
       onView={writingMode.setView}
-      onProgress={() => writingMode.setProgressOpen(true)}
+      onProgress={showDayGoal}
       onSearch={app.palette.open}
       // The button took the cursor from the text; it goes back there, where the writer was.
       onFocus={() => (writingMode.onToggleFocus(), app.editor.requestFocus())}
@@ -78,6 +79,7 @@ function OverTheText({ app, project }: ScreenProps) {
           )
         }
       />
+      <DayGoalLayer app={app} project={project} />
       <ResumeScreen project={project} stats={app.stats} editor={app.editor} />
       <TextBands app={app} project={project} />
     </>

@@ -1330,5 +1330,8 @@
   "Referensbild": "Reference picture",
   "Ingen från anteckningarna nämns här än.": "No one from the notes is named here yet.",
   "Lägg till en bild bland anteckningarna med Lägg till fil…, så kan den visas här.": "Add a picture to the notes with Add file…, and it can show here.",
-  "Lösa tankar medan du skriver. De sparas i boken.": "Stray thoughts while you write. They are saved in the book."
+  "Lösa tankar medan du skriver. De sparas i boken.": "Stray thoughts while you write. They are saved in the book.",
+  "Layout {slot}": "Layout {slot}",
+  "Layouter": "Layouts",
+  "Spara som layout {slot}": "Save as layout {slot}"
 }

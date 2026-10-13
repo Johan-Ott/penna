@@ -11,7 +11,7 @@ test("reaching the daily goal is celebrated, and the ink shows in the journey", 
   await page.keyboard.insertText(` ${Array.from({ length: 520 }, () => "ord").join(" ")}`);
 
   await expect(page.getByRole("status").getByText("Dagens sida är skriven.")).toBeVisible();
-  await page.locator(".day-progress").click();
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
   await page.locator(".insight-journey").click();
   const journey = page.getByRole("dialog", { name: "Skrivarresan" });
   await expect(journey.getByText("520 ord sedan du började.", { exact: false })).toBeVisible();
@@ -19,7 +19,7 @@ test("reaching the daily goal is celebrated, and the ink shows in the journey", 
 });
 
 test("holiday mode is turned on from the inkwell", async ({ page }) => {
-  await page.locator(".day-progress").click();
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
   await page.locator(".insight-journey").click();
   await page.getByRole("button", { name: "Slå på semesterläge" }).click();
 
@@ -70,7 +70,7 @@ test("a chapter is shown alone in the sidebar, and Hela boken brings the book ba
 });
 
 test("today's card opens Dagens mål, and Ändra mål goes on to the goals", async ({ page }) => {
-  await page.locator(".day-progress").click();
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
   await page.locator(".insight-day").click();
 
   const day = page.getByRole("dialog", { name: "Dagens mål" });

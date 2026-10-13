@@ -35,3 +35,16 @@ test("I scenen lists who is named in the scene, and opens a note beside the text
 
   await expect(page.locator(".beside-pane")).toContainText("Arvid");
 });
+
+test("a layout keeps which panels are open, and brings them back", async ({ page }) => {
+  await page.getByRole("button", { name: "Kladdlapp", exact: true }).click();
+  await page.getByRole("button", { name: "Layouter" }).click();
+  await page.getByRole("menuitem", { name: "Spara som layout 1" }).click();
+  await page.getByRole("button", { name: "Kladdlapp", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Kladdlapp" })).toBeHidden();
+
+  await page.getByRole("button", { name: "Layouter" }).click();
+  await page.getByRole("menuitem", { name: "Layout 1", exact: true }).click();
+
+  await expect(page.getByRole("region", { name: "Kladdlapp" })).toBeVisible();
+});

@@ -1,30 +1,10 @@
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-  type PointerEvent,
-  type ReactNode,
-  type RefObject,
-} from "react";
-import { browserStorage } from "../browserStorage.js";
+import { useLayoutEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
 import { CloseButton } from "../controls.js";
 import { GripIcon } from "../shell/icons.js";
+import { keepPlaces, places, setPlace, type Place } from "./layout.js";
 
 // A block opened from the dock floats over the text, dragged by its head to where the writer
-// wants it; the place is kept for the next time.
-
-type Place = { left: number; top: number };
-
-const placeKey = (id: string) => `penna.block.${id}`;
-
-function readPlace(id: string): Place | null {
-  try {
-    const stored = browserStorage().getItem(placeKey(id));
-    return stored ? (JSON.parse(stored) as Place) : null;
-  } catch {
-    return null;
-  }
-}
+// wants it; the place is kept for the next time, and in the layouts.
 
 // Kept inside the card, so a block never ends up where it cannot be reached.
 function clamped(panel: HTMLElement, wanted: Place): Place {
@@ -41,7 +21,7 @@ function clamped(panel: HTMLElement, wanted: Place): Place {
 
 // The window follows the pointer until it lets go, wherever it goes meanwhile.
 function useDrag(id: string) {
-  const [place, setPlace] = useState(() => readPlace(id));
+  const place = places.use()[id] ?? null;
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
     const panel = event.currentTarget.parentElement;
     if (!panel || (event.target as HTMLElement).closest("button")) return;
@@ -50,17 +30,17 @@ function useDrag(id: string) {
     let last: Place | null = null;
     const move = (moved: globalThis.PointerEvent) => {
       last = clamped(panel, { left: moved.clientX - grab.x, top: moved.clientY - grab.y });
-      setPlace(last);
+      setPlace(id, last);
     };
     const drop = () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", drop);
-      if (last) browserStorage().setItem(placeKey(id), JSON.stringify(last));
+      if (last) keepPlaces();
     };
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", drop);
   };
-  return { place, setPlace, onPointerDown };
+  return { place, onPointerDown };
 }
 
 // A place kept from a larger window is moved inside this one, on opening and when it resizes.
@@ -84,9 +64,9 @@ function useKeptInside(
 /** A panel moved by its head and kept where it was left; `isOn` false leaves it to the CSS, as
  * on a phone, where panels cover the screen. */
 export function useFloating(id: string, isOn = true) {
-  const { place, setPlace, onPointerDown } = useDrag(id);
+  const { place, onPointerDown } = useDrag(id);
   const ref = useRef<HTMLElement>(null);
-  useKeptInside(ref, isOn ? place : null, setPlace);
+  useKeptInside(ref, isOn ? place : null, (inside) => setPlace(id, inside));
   return {
     ref,
     style: isOn && place ? place : undefined,

@@ -1,9 +1,11 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { AppState } from "../App.js";
-import { ImageIcon, NoteIcon, PeopleIcon } from "../shell/icons.js";
+import { ChartIcon, ImageIcon, NoteIcon, PeopleIcon } from "../shell/icons.js";
 import { SprintButton } from "../sprint/SprintBar.js";
 import type { Project } from "../useProject.js";
 import { BlockPanel } from "./BlockPanel.js";
+import { openBlocks, toggleBlock } from "./layout.js";
+import { LayoutButton } from "./LayoutButton.js";
 import { InSceneBlock } from "./InSceneBlock.js";
 import { ReferenceBlock } from "./ReferenceBlock.js";
 import { ScratchBlock } from "./ScratchBlock.js";
@@ -37,6 +39,22 @@ const BLOCKS: Block[] = [
   },
 ];
 
+// Insikter keeps its own open state, as Granska does; here it is one more icon.
+function InsightsButton({ app }: { app: AppState }) {
+  const { isProgressOpen, setProgressOpen } = app.writingMode;
+  return (
+    <button
+      className={isProgressOpen ? "dock-button chosen" : "dock-button"}
+      aria-label={t("Insikter")}
+      aria-pressed={isProgressOpen}
+      title={t("Insikter")}
+      onClick={() => setProgressOpen(!isProgressOpen)}
+    >
+      <ChartIcon />
+    </button>
+  );
+}
+
 function DockButton(props: { block: Block; isOpen: boolean; onToggle: () => void }) {
   return (
     <button
@@ -52,9 +70,8 @@ function DockButton(props: { block: Block; isOpen: boolean; onToggle: () => void
 }
 
 export function BlocksDock(props: Props) {
-  const [open, setOpen] = useState<BlockId[]>([]);
-  const toggle = (id: BlockId) =>
-    setOpen((now) => (now.includes(id) ? now.filter((each) => each !== id) : [...now, id]));
+  const open = openBlocks.use();
+  const toggle = toggleBlock;
   return (
     <>
       {BLOCKS.filter((block) => open.includes(block.id)).map((block) => (
@@ -72,6 +89,8 @@ export function BlocksDock(props: Props) {
           />
         ))}
         <SprintButton look="dock-button" />
+        <InsightsButton app={props.app} />
+        <LayoutButton app={props.app} />
         {props.review}
       </div>
     </>

@@ -177,3 +177,20 @@ export const ImageIcon = () => (
     <path d="m21 15-5-5L5 21" />
   </Icon>
 );
+
+export const LayoutIcon = () => (
+  <Icon>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M3 9h18" />
+    <path d="M9 21V9" />
+  </Icon>
+);
+
+export const ChartIcon = () => (
+  <Icon>
+    <path d="M4 20V10" />
+    <path d="M10 20V4" />
+    <path d="M16 20v-7" />
+    <path d="M21 20H3" />
+  </Icon>
+);

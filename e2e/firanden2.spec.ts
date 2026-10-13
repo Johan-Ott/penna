@@ -17,6 +17,5 @@ test("A celebration shows when the day's goal is met, and Dagens mål lists the 
     page.getByRole("status").filter({ hasText: "Dagens sida är skriven." }),
   ).toBeVisible();
   await page.locator(".day-progress").click();
-  await page.locator(".insight-day").click();
   await expect(page.getByRole("dialog", { name: "Dagens mål" })).toContainText("Köket");
 });
