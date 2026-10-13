@@ -15,10 +15,9 @@ interface BookProps {
   onRemove: (book: ShelfBook) => void;
 }
 
-function coverLine(book: ShelfBook) {
-  return book.series && book.seriesNumber
-    ? t("Bok {number}", { number: book.seriesNumber })
-    : book.kind;
+// "Bok 2" for a numbered book in a series; the kind of book otherwise.
+function seriesLine(book: ShelfBook) {
+  return book.series && book.seriesNumber ? t("Bok {number}", { number: book.seriesNumber }) : null;
 }
 
 function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
@@ -35,7 +34,7 @@ function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
   }
   return (
     <button className={`book-cover ${coverLookOf(book.dir)}`} onClick={() => onOpen(book.dir)}>
-      <span className="book-kind">{coverLine(book)}</span>
+      <span className="book-kind">{seriesLine(book) ?? book.kind}</span>
       <span className="book-title">{book.title}</span>
       <span className="book-words">
         {author || t("{count} ord", { count: formatNumber(book.words) })}
@@ -88,9 +87,22 @@ function ProgressBar({ book }: { book: ShelfBook }) {
 
 type BookMenuProps = Pick<BookProps, "book" | "onRemove"> & { onChooseCover: () => void };
 
-function BookMeta({ book, onRemove, onChooseCover }: BookMenuProps) {
+// A picture may carry no title, or one too small to read, so the name stands under it.
+function BookName({ book }: { book: ShelfBook }) {
+  const line = seriesLine(book);
+  return (
+    <div className="book-name">
+      <span className="book-name-title">{book.title}</span>
+      {line && <span className="book-name-series">{line}</span>}
+    </div>
+  );
+}
+
+function BookMeta(props: BookMenuProps & { hasPicture: boolean }) {
+  const { book, onRemove, onChooseCover } = props;
   return (
     <div className="book-meta">
+      {props.hasPicture && <BookName book={book} />}
       <div className="book-status">
         <span>{book.status}</span>
         <span className="book-percent">{book.progress}%</span>
@@ -144,7 +156,12 @@ function PresentBook(props: BookProps) {
     <div className="book">
       <Cover {...props} pictureUrl={cover.url} />
       <div className="shelf-board" />
-      <BookMeta book={props.book} onRemove={props.onRemove} onChooseCover={cover.choose} />
+      <BookMeta
+        book={props.book}
+        hasPicture={cover.url !== null}
+        onRemove={props.onRemove}
+        onChooseCover={cover.choose}
+      />
     </div>
   );
 }

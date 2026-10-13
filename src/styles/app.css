@@ -1208,6 +1208,23 @@ button.book-cover:hover {
   margin-top: 24px;
 }
 
+.book-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.book-name-title {
+  font: 600 16px/1.3 var(--font-prose);
+  overflow-wrap: anywhere;
+}
+
+.book-name-series {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
 .book-status {
   display: flex;
   justify-content: space-between;
