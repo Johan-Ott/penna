@@ -157,13 +157,17 @@ function TopbarEnd(props: TopbarProps) {
     <div className="topbar-end" data-tauri-drag-region>
       <RemoteBadge />
       {props.view === "skriv" && <LookButton />}
-      <IconButton label={t("Läs som bok · Ctrl+R")} onClick={props.onRead}>
+      <IconButton label={t("Läs som bok · Ctrl+R")} className="with-key" onClick={props.onRead}>
         <ReadIcon />
       </IconButton>
       <IconButton label={t("Sök · Ctrl+K")} onClick={props.onSearch}>
         <SearchIcon />
       </IconButton>
-      <IconButton label={t("Fokusläge · Ctrl+Shift+F")} onClick={props.onFocus}>
+      <IconButton
+        label={t("Fokusläge · Ctrl+Shift+F")}
+        className="with-key"
+        onClick={props.onFocus}
+      >
         <FocusIcon />
       </IconButton>
       <WindowControls />
