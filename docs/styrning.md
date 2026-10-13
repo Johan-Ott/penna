@@ -28,6 +28,20 @@ node scripts/penna.mjs tree
 
 Svaret kommer som JSON.
 
+## Utan att Penna är igång: --book
+
+Med `--book <bokmapp>` fungerar anropen även när Penna är av. Har Penna samma bok öppen går
+anropet genom appen, som vanligt; annars skrivs bokens filer direkt, med samma kod som appen
+använder. En Penna som startar eller redan bevakar mappen läser själv in ändringen.
+
+```bash
+node scripts/penna.mjs --book "C:/Users/Elin/Documents/Penna/Vintervägen.penna" tree
+node scripts/penna.mjs --book "…/Vintervägen.penna" write <scen-id> kapitel1.md
+```
+
+Det fungerar utan `--book` bara med appen igång. Bokens filer beskrivs i
+[format.md](format.md), för den som vill skriva dem själv.
+
 ## Anropen
 
 | Anrop                                                   | Vad det gör                                                                        |
@@ -40,6 +54,7 @@ Svaret kommer som JSON.
 | `text`                                                  | Den öppna textens innehåll                                                         |
 | `type <text>`                                           | Skriver vid markören i den öppna texten                                            |
 | `read <id>`                                             | En scens eller antecknings fil som den ligger på disk                              |
+| `write <id> <fil>`                                      | Ersätter scenens text med filens; titel och status behålls                         |
 | `add <scene\|chapter\|part\|folder> [titel] [efter-id]` | Ny del av boken                                                                    |
 | `note <sort> <namn>`                                    | Ny anteckning, till exempel `note Personer Greta`; en ny sort skapas om den saknas |
 | `rename <id> <titel>`                                   | Byter namn                                                                         |
@@ -54,5 +69,8 @@ Svaret kommer som JSON.
   den här datorn. Porten har inget lösenord, så vilket program på datorn som helst kan använda
   den under den starten.
 - Varje ändring väntar tills appen tagit emot den, så flera anrop i rad bygger på varandra.
-- Koden: `src/app/remote.ts` (läsa, kommandon, texten) och `src/app/remoteBook.ts` (ändra
-  boken). Testerna: `e2e/styrning.spec.ts`.
+- `state`, `commands`, `run`, `open`, `text` och `type` gäller den öppna appen och finns bara
+  genom den.
+- Koden: `src/app/remote.ts` (läsa, kommandon, texten), `src/app/remoteBook.ts` (ändra boken
+  genom appen) och `src/project/bookFiles.ts` (ändra boken i filerna). Testerna:
+  `e2e/styrning.spec.ts` och `tests/bookFiles.test.ts`.

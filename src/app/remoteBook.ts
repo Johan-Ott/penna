@@ -13,6 +13,8 @@ import {
 import { nodeLabel } from "../project/treeLabels.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import { scenePath } from "../storage/fileSystem.js";
+import { bookFileCalls } from "../project/bookFiles.js";
+import { writeOverScene } from "./sceneSession.js";
 import { platform } from "./platform.js";
 import type { AppState } from "./App.js";
 
@@ -105,12 +107,25 @@ function changeCalls(current: () => AppState) {
       return node ? change(insertAfter(removeNode(tree(), id), node, afterId)) : undefined;
     },
     trash: (id: string) => change(moveToTrash(tree(), id)),
-    /** A scene's or note's file as it lies on disk. */
-    read: (id: string) => platform.fileSystem.readText(scenePath(bookOf(current()).dir, id)),
   };
 }
+
+// A scene's own file, read and written as it lies on disk.
+const fileCalls = (current: () => AppState) => ({
+  /** A scene's or note's file as it lies on disk. */
+  read: (id: string) => platform.fileSystem.readText(scenePath(bookOf(current()).dir, id)),
+  /** The scene's text replaced, its front matter kept; an open scene is saved first and shows it. */
+  write: async (id: string, body: string) => {
+    const app = current();
+    const { dir } = bookOf(app);
+    const files = bookFileCalls({ fileSystem: platform.fileSystem, dir });
+    await writeOverScene(app.session, scenePath(dir, id), () => files.write(id, body));
+    await app.refresh();
+  },
+});
 
 export const bookCalls = (current: () => AppState) => ({
   ...makeCalls(current),
   ...changeCalls(current),
+  ...fileCalls(current),
 });
