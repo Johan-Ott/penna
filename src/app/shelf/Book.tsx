@@ -7,14 +7,21 @@ import { useShelfCover } from "./useShelfCover.js";
 
 interface BookProps {
   book: ShelfBook;
+  /** The writer's name from Inställningar, written on a cover without a picture. */
+  author: string;
   onOpen: (dir: string) => void;
   onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
 }
 
-function Cover({ book, onOpen }: Pick<BookProps, "book" | "onOpen">) {
-  const pictureUrl = useShelfCover(book.dir);
+function coverLine(book: ShelfBook) {
+  return book.series && book.seriesNumber
+    ? t("Bok {number}", { number: book.seriesNumber })
+    : book.kind;
+}
+
+function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
   if (pictureUrl) {
     return (
       <button
@@ -28,15 +35,20 @@ function Cover({ book, onOpen }: Pick<BookProps, "book" | "onOpen">) {
   }
   return (
     <button className={`book-cover ${coverLookOf(book.dir)}`} onClick={() => onOpen(book.dir)}>
-      <span className="book-kind">{book.kind}</span>
+      <span className="book-kind">{coverLine(book)}</span>
       <span className="book-title">{book.title}</span>
-      <span className="book-words">{t("{count} ord", { count: formatNumber(book.words) })}</span>
+      <span className="book-words">
+        {author || t("{count} ord", { count: formatNumber(book.words) })}
+      </span>
     </button>
   );
 }
 
-function BookMenu({ book, onRemove }: Pick<BookProps, "book" | "onRemove">) {
+type CoverProps = Pick<BookProps, "book" | "author" | "onOpen"> & { pictureUrl: string | null };
+
+function BookMenu({ book, onRemove, onChooseCover }: BookMenuProps) {
   const items = [
+    { label: t("Välj omslag…"), onSelect: onChooseCover },
     ...(platform.showInFolder
       ? [{ label: t("Visa i mappen"), onSelect: () => void platform.showInFolder?.(book.dir) }]
       : []),
@@ -74,7 +86,9 @@ function ProgressBar({ book }: { book: ShelfBook }) {
   );
 }
 
-function BookMeta({ book, onRemove }: Pick<BookProps, "book" | "onRemove">) {
+type BookMenuProps = Pick<BookProps, "book" | "onRemove"> & { onChooseCover: () => void };
+
+function BookMeta({ book, onRemove, onChooseCover }: BookMenuProps) {
   return (
     <div className="book-meta">
       <div className="book-status">
@@ -89,7 +103,7 @@ function BookMeta({ book, onRemove }: Pick<BookProps, "book" | "onRemove">) {
         <span className="book-updated">
           {book.updatedAt ? whenUpdated(book.updatedAt, Date.now()) : ""}
         </span>
-        <BookMenu book={book} onRemove={onRemove} />
+        <BookMenu book={book} onRemove={onRemove} onChooseCover={onChooseCover} />
       </div>
     </div>
   );
@@ -124,13 +138,18 @@ function MissingBook({
   );
 }
 
-export function Book(props: BookProps) {
-  if (props.book.isMissing) return <MissingBook {...props} />;
+function PresentBook(props: BookProps) {
+  const cover = useShelfCover(props.book.dir);
   return (
     <div className="book">
-      <Cover {...props} />
+      <Cover {...props} pictureUrl={cover.url} />
       <div className="shelf-board" />
-      <BookMeta book={props.book} onRemove={props.onRemove} />
+      <BookMeta book={props.book} onRemove={props.onRemove} onChooseCover={cover.choose} />
     </div>
   );
+}
+
+export function Book(props: BookProps) {
+  if (props.book.isMissing) return <MissingBook {...props} />;
+  return <PresentBook {...props} />;
 }

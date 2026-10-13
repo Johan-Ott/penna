@@ -5,8 +5,20 @@ import { BOOK_LANGUAGES } from "./bookLanguage.js";
 
 type Fields = Record<string, unknown>;
 
-export const BOOK_FIELDS = ["titel", "totalmål", "dagsmål", "deadline", "röst", "språk"];
-const NUMBER_FIELDS: Record<string, string> = { totalmål: "totalGoal", dagsmål: "dailyGoal" };
+export const BOOK_FIELDS = [
+  "titel",
+  "totalmål",
+  "dagsmål",
+  "deadline",
+  "röst",
+  "språk",
+  "serienummer",
+];
+const NUMBER_FIELDS: Record<string, string> = {
+  totalmål: "totalGoal",
+  dagsmål: "dailyGoal",
+  serienummer: "seriesNumber",
+};
 const DATE = /^\d{4}-\d\d-\d\d$/;
 
 function wholeNumber(value: string) {

@@ -20,6 +20,12 @@ describe("withBookField", () => {
     expect(fields["narration"]).toEqual({ voice: "jag", tense: "dåtid", deep: true });
   });
 
+  it("sets the book's number in its series", () => {
+    const fields = withBookField({}, "serienummer", "2");
+
+    expect(fields["seriesNumber"]).toBe(2);
+  });
+
   it("names the fields there are when the field is unknown", () => {
     expect(() => withBookField({}, "färg", "röd")).toThrow(/titel, totalmål/);
   });

@@ -101,12 +101,18 @@ export function sidebarProps(app: AppState, project: Project) {
     seriesNotes: app.series && <SeriesNotes {...seriesTreeProps(app, app.series)} />,
     canMergeOpenScene: app.sceneSplit.canMerge,
     onMergeWithNext: app.sceneSplit.merge,
-    onJoinSeries: (folder: string | null) => void app.seriesChoice.joinSeries(folder),
-    onCreateSeries: (title: string, noteIds: string[]) =>
-      void app.seriesChoice.createAndJoin(title, noteIds),
-    ...(app.series
-      ? { onMoveToSeries: (id: string) => void app.seriesChoice.moveToSeries([id]) }
-      : {}),
+    ...seriesChoiceProps(app),
+  };
+}
+
+function seriesChoiceProps(app: AppState) {
+  const choice = app.seriesChoice;
+  return {
+    onJoinSeries: (folder: string | null, seriesNumber: number | null) =>
+      void choice.joinSeries(folder, seriesNumber),
+    onCreateSeries: (title: string, noteIds: string[], seriesNumber: number | null) =>
+      void choice.createAndJoin(title, noteIds, seriesNumber),
+    ...(app.series ? { onMoveToSeries: (id: string) => void choice.moveToSeries([id]) } : {}),
   };
 }
 

@@ -38,7 +38,12 @@ async function moveToSeries(input: SeriesActionsInput, ids: string[]) {
   if (reopen) await openScene(session, series.dir, reopen);
 }
 
-async function createAndJoin(input: SeriesActionsInput, title: string, noteIds: string[]) {
+async function createAndJoin(
+  input: SeriesActionsInput,
+  title: string,
+  noteIds: string[],
+  seriesNumber: number | null,
+) {
   const { book, session } = input;
   if (!book || book.isReadOnly) return;
   const { canMove, reopen } = await closeIfOpen(session, noteIds);
@@ -52,14 +57,16 @@ async function createAndJoin(input: SeriesActionsInput, title: string, noteIds: 
   const ids = canMove ? noteIds : [];
   const moved = await moveNotesToSeries(platform.fileSystem, book, series, ids);
   await writeProjectFile(platform.fileSystem, series.dir, moved.seriesFields, moved.seriesTree);
-  await input.updateBook({ tree: moved.bookTree, fields: { series: folder } });
+  await input.updateBook({ tree: moved.bookTree, fields: { series: folder, seriesNumber } });
   if (reopen) await openScene(session, series.dir, reopen);
 }
 
 export function useSeriesActions(input: SeriesActionsInput) {
   return {
     moveToSeries: (ids: string[]) => moveToSeries(input, ids),
-    joinSeries: (folder: string | null) => input.updateBook({ fields: { series: folder } }),
-    createAndJoin: (title: string, noteIds: string[]) => createAndJoin(input, title, noteIds),
+    joinSeries: (folder: string | null, seriesNumber: number | null) =>
+      input.updateBook({ fields: { series: folder, seriesNumber } }),
+    createAndJoin: (title: string, noteIds: string[], seriesNumber: number | null) =>
+      createAndJoin(input, title, noteIds, seriesNumber),
   };
 }

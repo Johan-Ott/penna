@@ -16,8 +16,8 @@ interface SidebarProps extends TreeViewProps {
   /** The Penna folder, where the writer's own templates are kept. */
   libraryDir: string | null;
   seriesNotes: ReactNode;
-  onJoinSeries: (folder: string | null) => void;
-  onCreateSeries: (title: string, noteIds: string[]) => void;
+  onJoinSeries: (folder: string | null, seriesNumber: number | null) => void;
+  onCreateSeries: (title: string, noteIds: string[], seriesNumber: number | null) => void;
   isContentsShown: boolean;
   onShowContents: () => void;
   onShowShelf: () => void;

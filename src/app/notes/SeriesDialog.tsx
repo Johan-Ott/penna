@@ -11,8 +11,8 @@ import { t } from "../../i18n/i18n.js";
 
 interface SeriesDialogProps {
   book: Project;
-  onJoin: (folder: string | null) => void;
-  onCreate: (title: string, noteIds: string[]) => void;
+  onJoin: (folder: string | null, seriesNumber: number | null) => void;
+  onCreate: (title: string, noteIds: string[], seriesNumber: number | null) => void;
   onClose: () => void;
 }
 
@@ -102,19 +102,67 @@ function NewSeriesFields(props: NewSeriesProps) {
   );
 }
 
+function SeriesNumberField(props: { value: string; onChange: (value: string) => void }) {
+  return (
+    <label className="field">
+      <span className="field-label">{t("Nummer i serien")}</span>
+      <input
+        className="note-name"
+        type="number"
+        min={1}
+        value={props.value}
+        onChange={(event) => props.onChange(event.target.value)}
+      />
+    </label>
+  );
+}
+
+const numberOrNull = (value: string) => (/^\d+$/.test(value.trim()) ? Number(value) : null);
+
+// "1" for a book that has no number yet: most books joining a series start one.
+function useSeriesNumber(book: Project) {
+  const stored = book.fields["seriesNumber"];
+  const [seriesNumber, setSeriesNumber] = useState(
+    typeof stored === "number" ? String(stored) : "1",
+  );
+  return { seriesNumber, setSeriesNumber };
+}
+
 function useSeriesForm(props: SeriesDialogProps) {
   const current = props.book.fields["series"];
   const [choice, setChoice] = useState(typeof current === "string" ? current : "");
   const [name, setName] = useState("");
   const [isMoving, setMoving] = useState(true);
+  const { seriesNumber, setSeriesNumber } = useSeriesNumber(props.book);
   const noteIds = sortsOf(props.book.tree).flatMap((sort) => sceneIdsIn(props.book.tree, sort.id));
   const isReady = choice !== NEW || name.trim() !== "";
   const save = () => {
-    if (choice === NEW) props.onCreate(name.trim(), isMoving ? noteIds : []);
-    else props.onJoin(choice === "" ? null : choice);
+    const number = choice === "" ? null : numberOrNull(seriesNumber);
+    if (choice === NEW) props.onCreate(name.trim(), isMoving ? noteIds : [], number);
+    else props.onJoin(choice === "" ? null : choice, number);
     props.onClose();
   };
-  return { choice, setChoice, name, setName, isMoving, setMoving, noteIds, isReady, save };
+  const fields = { name, setName, isMoving, setMoving, seriesNumber, setSeriesNumber };
+  return { choice, setChoice, noteIds, isReady, save, ...fields };
+}
+
+function ChoiceFields({ form }: { form: ReturnType<typeof useSeriesForm> }) {
+  return (
+    <>
+      {form.choice === NEW && (
+        <NewSeriesFields
+          name={form.name}
+          onName={form.setName}
+          noteCount={form.noteIds.length}
+          isMoving={form.isMoving}
+          onFlip={() => form.setMoving(!form.isMoving)}
+        />
+      )}
+      {form.choice !== "" && (
+        <SeriesNumberField value={form.seriesNumber} onChange={form.setSeriesNumber} />
+      )}
+    </>
+  );
 }
 
 export function SeriesDialog(props: SeriesDialogProps) {
@@ -132,15 +180,7 @@ export function SeriesDialog(props: SeriesDialogProps) {
         onSubmit={(event) => (event.preventDefault(), form.isReady && form.save())}
       >
         <SeriesChips folders={folders} choice={form.choice} onChoose={form.setChoice} />
-        {form.choice === NEW && (
-          <NewSeriesFields
-            name={form.name}
-            onName={form.setName}
-            noteCount={form.noteIds.length}
-            isMoving={form.isMoving}
-            onFlip={() => form.setMoving(!form.isMoving)}
-          />
-        )}
+        <ChoiceFields form={form} />
         <DialogActions isReady={form.isReady} label={t("Spara")} onClose={props.onClose} />
       </form>
     </div>

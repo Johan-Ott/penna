@@ -20,8 +20,10 @@ function useSeriesChoice(app: AppState, project: Project) {
   const layer = isOpen && (
     <SeriesDialog
       book={project}
-      onJoin={(folder) => void app.seriesChoice.joinSeries(folder)}
-      onCreate={(title, noteIds) => void app.seriesChoice.createAndJoin(title, noteIds)}
+      onJoin={(folder, number) => void app.seriesChoice.joinSeries(folder, number)}
+      onCreate={(title, noteIds, number) =>
+        void app.seriesChoice.createAndJoin(title, noteIds, number)
+      }
       onClose={() => setOpen(false)}
     />
   );

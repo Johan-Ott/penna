@@ -5,6 +5,8 @@ import { t, formatNumber } from "../../i18n/i18n.js";
 
 interface BookshelfProps {
   libraryDir: string | null;
+  /** The writer's name, for the covers of books without a picture. */
+  author: string;
   knownProjects: string[];
   onOpen: (dir: string) => void;
   onNewProject: () => void;

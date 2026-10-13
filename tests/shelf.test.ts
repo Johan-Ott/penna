@@ -79,4 +79,23 @@ describe("shelfGroups", () => {
       ["Vintern", ["Isen", "Fyren"]],
     ]);
   });
+
+  it("orders a series by the books' numbers, and books without a number last", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/A.penna/project.json":
+        '{"title":"Tvåan","series":"V.serie","seriesNumber":2,"tree":[]}',
+      "/Penna/B.penna/project.json": '{"title":"Utan","series":"V.serie","tree":[]}',
+      "/Penna/C.penna/project.json":
+        '{"title":"Ettan","series":"V.serie","seriesNumber":1,"tree":[]}',
+    });
+    const books = await readShelf(files, "/Penna", []);
+
+    const [series] = shelfGroups(books);
+
+    expect(series?.books.map((book) => [book.title, book.seriesNumber])).toEqual([
+      ["Ettan", 1],
+      ["Tvåan", 2],
+      ["Utan", null],
+    ]);
+  });
 });

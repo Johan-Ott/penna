@@ -19,6 +19,7 @@ const SHOWN_FIELDS = [
   "narration",
   "language",
   "series",
+  "seriesNumber",
   "labels",
 ];
 

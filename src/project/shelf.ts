@@ -21,6 +21,8 @@ export interface ShelfBook {
   isMissing: boolean;
   /** The series the book belongs to, by name, or null. */
   series: string | null;
+  /** The book's place in its series, or null when it has none. */
+  seriesNumber: number | null;
 }
 
 const STATUS_LABELS: Record<SceneStatus, string> = {
@@ -83,9 +85,11 @@ async function readProjectFields(fileSystem: FileSystem, dir: string) {
     >;
     const tree = Array.isArray(parsed["tree"]) ? (parsed["tree"] as TreeNode[]) : [];
     const series = typeof parsed["series"] === "string" ? seriesTitle(parsed["series"]) : null;
-    return { title: parsed["title"], type: parsed["type"], tree, series };
+    const number = parsed["seriesNumber"];
+    const seriesNumber = typeof number === "number" ? number : null;
+    return { title: parsed["title"], type: parsed["type"], tree, series, seriesNumber };
   } catch {
-    return { title: undefined, type: undefined, tree: [], series: null };
+    return { title: undefined, type: undefined, tree: [], series: null, seriesNumber: null };
   }
 }
 
@@ -103,27 +107,27 @@ async function lastChange(fileSystem: FileSystem, dir: string, sceneIds: string[
   return known.length > 0 ? Math.max(...known) : null;
 }
 
+const missingBook = (dir: string): ShelfBook => ({
+  dir,
+  title: folderTitle(dir),
+  kind: "",
+  words: 0,
+  status: "",
+  progress: 0,
+  updatedAt: null,
+  isMissing: true,
+  series: null,
+  seriesNumber: null,
+});
+
 async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook> {
-  const title = folderTitle(dir);
-  if ((await fileSystem.list(dir)).length === 0) {
-    return {
-      dir,
-      title,
-      kind: "",
-      words: 0,
-      status: "",
-      progress: 0,
-      updatedAt: null,
-      isMissing: true,
-      series: null,
-    };
-  }
+  if ((await fileSystem.list(dir)).length === 0) return missingBook(dir);
   const fields = await readProjectFields(fileSystem, dir);
   const sceneIds = await bookSceneIds(fileSystem, dir, fields.tree);
   const scenes = Object.values(await readSceneSummaries(fileSystem, dir, sceneIds));
   return {
     dir,
-    title: typeof fields.title === "string" ? fields.title : title,
+    title: typeof fields.title === "string" ? fields.title : folderTitle(dir),
     kind: (typeof fields.type === "string" && KIND_LABELS[fields.type]) || t("Projekt"),
     words: scenes.reduce((sum, scene) => sum + scene.words, 0),
     status: bookStatus(scenes, fields),
@@ -131,6 +135,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
     updatedAt: await lastChange(fileSystem, dir, sceneIds),
     isMissing: false,
     series: fields.series,
+    seriesNumber: fields.seriesNumber,
   };
 }
 
@@ -150,10 +155,21 @@ export async function readShelf(
   return [...books.filter((book) => !book.isMissing), ...books.filter((book) => book.isMissing)];
 }
 
+// Numbered books first, by number; the rest after them as they were.
+const inSeriesOrder = (books: ShelfBook[]) =>
+  [...books].sort(
+    (one, other) =>
+      (one.seriesNumber ?? Number.MAX_SAFE_INTEGER) -
+      (other.seriesNumber ?? Number.MAX_SAFE_INTEGER),
+  );
+
 export function shelfGroups(books: ShelfBook[]) {
   const names = [...new Set(books.map((book) => book.series))];
   const ordered = [null, ...names.filter((name) => name !== null)];
   return ordered
-    .map((series) => ({ series, books: books.filter((book) => book.series === series) }))
+    .map((series) => ({
+      series,
+      books: inSeriesOrder(books.filter((book) => book.series === series)),
+    }))
     .filter((group) => group.books.length > 0);
 }

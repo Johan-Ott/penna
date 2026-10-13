@@ -171,6 +171,7 @@ function Shelf(props: StartScreenProps & { onNewProject: () => void }) {
         isPhone={isPhone}
         libraryDir={preferences.libraryDir}
         knownProjects={preferences.knownProjects}
+        author={preferences.authorName}
         onOpen={(dir) => void app.open(dir)}
         onNewProject={props.onNewProject}
         {...shelfHandlers(app, isPhone)}
