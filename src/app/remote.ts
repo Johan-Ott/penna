@@ -4,7 +4,9 @@ import { nodeLabel } from "../project/treeLabels.js";
 import { openInHome } from "./notes/noteHomes.js";
 import { searchPalette } from "./palette/paletteSearch.js";
 import type { AppState } from "./App.js";
+import { runBatch } from "../project/batch.js";
 import { bookCalls } from "./remoteBook.js";
+import { settingCallsInApp } from "./remoteBookSettings.js";
 
 // window.penna: the app's own commands and open book, for a tool on this computer to drive
 // Penna with as a game's console does; everything goes through what the app already does.
@@ -46,9 +48,24 @@ function stateOf(app: AppState) {
   };
 }
 
-function api(current: () => AppState) {
+// The open text: what it says, and typing in it as the writer would.
+const editorCalls = (current: () => AppState) => ({
+  text: () => {
+    const doc = current().editor.editorState?.doc;
+    return doc ? doc.textBetween(0, doc.content.size, "\n\n", " ") : "";
+  },
+  /** Typed at the cursor in the open text, and saved as anything typed is. */
+  type: (text: string) =>
+    current().editor.run((state, dispatch) => {
+      dispatch?.(state.tr.insertText(text));
+      return true;
+    }),
+});
+
+function calls(current: () => AppState) {
   return {
     ...bookCalls(current),
+    ...settingCallsInApp(current),
     state: () => stateOf(current()),
     tree: () => rows(current()),
     commands: () =>
@@ -66,17 +83,13 @@ function api(current: () => AppState) {
       app.writingMode.setView("skriv");
       openInHome(app.session, app.homes, id);
     },
-    text: () => {
-      const doc = current().editor.editorState?.doc;
-      return doc ? doc.textBetween(0, doc.content.size, "\n\n", " ") : "";
-    },
-    /** Typed at the cursor in the open text, and saved as anything typed is. */
-    type: (text: string) =>
-      current().editor.run((state, dispatch) => {
-        dispatch?.(state.tr.insertText(text));
-        return true;
-      }),
+    ...editorCalls(current),
   };
+}
+
+function api(current: () => AppState) {
+  const all = calls(current);
+  return { ...all, batch: (steps: unknown) => runBatch(all, steps) };
 }
 
 export type PennaApi = ReturnType<typeof api>;

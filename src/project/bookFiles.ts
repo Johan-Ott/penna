@@ -1,25 +1,24 @@
+import { t } from "../i18n/i18n.js";
 import {
-  joinSceneFile,
-  newSceneText,
   SCENE_STATUSES,
   splitSceneFile,
   withSceneStatus,
   withSceneTitle,
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, scenePath, type FileSystem } from "../storage/fileSystem.js";
-import { openProjectFolder } from "../storage/projectFolder.js";
+import { scenePath } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
+import { changeScene, changeTree, newScene, readBook, type BookFolder } from "./bookFolder.js";
+import { runBatch } from "./batch.js";
+import { commentCalls } from "./bookFileComments.js";
+import { seriesCalls, settingCalls } from "./bookFileSettings.js";
 import { withNodeText } from "./contents.js";
-import { readProjectFile, writeProjectFile } from "./projectFile.js";
-import { readSceneSummaries } from "./sceneSummaries.js";
+import { takeSnapshot } from "./snapshots.js";
 import {
   findNode,
   insertAfter,
   insertNode,
   moveToTrash,
-  reconcileScenes,
   removeNode,
   renameNode,
   sortsOf,
@@ -28,46 +27,10 @@ import {
 } from "./tree.js";
 import { nodeLabel } from "./treeLabels.js";
 
+export type { BookFolder } from "./bookFolder.js";
+
 // A book changed straight in its folder, without Penna running, with the app's own tree
 // functions; a running Penna sees the files change. docs/format.md describes the files.
-
-export type BookFolder = { fileSystem: FileSystem; dir: string };
-
-async function read({ fileSystem, dir }: BookFolder) {
-  const listing = await openProjectFolder(fileSystem, dir);
-  const file = await readProjectFile(fileSystem, dir, listing.scenes);
-  if (file.isNewerFormat) throw new Error("Boken är sparad av en nyare Penna och läses bara.");
-  const { tree } = reconcileScenes(file.tree, listing.scenes);
-  const summaries = await readSceneSummaries(fileSystem, dir, listing.scenes);
-  return { fields: file.fields, tree, summaries };
-}
-
-// From the tree as project.json has it: a scene file just written, not yet in the tree, would
-// otherwise be found as a loose scene and placed twice.
-async function changeTree(book: BookFolder, change: (tree: TreeNode[]) => TreeNode[]) {
-  const listing = await openProjectFolder(book.fileSystem, book.dir);
-  const file = await readProjectFile(book.fileSystem, book.dir, listing.scenes);
-  if (file.isNewerFormat) throw new Error("Boken är sparad av en nyare Penna och läses bara.");
-  await writeProjectFile(book.fileSystem, book.dir, file.fields, change(file.tree));
-}
-
-// A scene's file is its front matter, between --- lines, and its text in Markdown.
-async function changeScene(
-  book: BookFolder,
-  id: string,
-  change: (parts: { frontMatter: string; body: string }) => { frontMatter: string; body: string },
-) {
-  const path = scenePath(book.dir, id);
-  const parts = splitSceneFile(await book.fileSystem.readText(path));
-  await writeAtomic(book.fileSystem, path, joinSceneFile(change(parts)));
-}
-
-async function newScene(book: BookFolder, title: string) {
-  const id = newSceneId();
-  await book.fileSystem.makeDir(joinPath(book.dir, "scenes"));
-  await writeAtomic(book.fileSystem, scenePath(book.dir, id), newSceneText(id, title));
-  return id;
-}
 
 // A chapter starts with a scene, as in the app, so there is somewhere to write at once.
 async function newNode(book: BookFolder, kind: NodeKind, title: string): Promise<TreeNode> {
@@ -79,7 +42,7 @@ async function newNode(book: BookFolder, kind: NodeKind, title: string): Promise
 
 /** The tree as rows, as `penna.mjs tree` prints it with the app running. */
 export async function treeRows(book: BookFolder) {
-  const { tree, summaries } = await read(book);
+  const { tree, summaries } = await readBook(book);
   const walk = (nodes: TreeNode[], depth: number): object[] =>
     nodes.flatMap((node) => [
       { id: node.id, kind: node.kind, title: nodeLabel(node, tree, summaries), depth },
@@ -103,7 +66,7 @@ const makeCalls = (book: BookFolder) => ({
   },
   /** A note in a sort by its id or its name, as the tree shows it; a new sort if none is. */
   note: async (sort: string, name: string) => {
-    const { tree, summaries } = await read(book);
+    const { tree, summaries } = await readBook(book);
     const found = sortsOf(tree).find(
       (node) =>
         node.id === sort || nodeLabel(node, tree, summaries).toLowerCase() === sort.toLowerCase(),
@@ -127,8 +90,15 @@ const makeCalls = (book: BookFolder) => ({
 // A scene's own file: its text, its title and its step.
 const sceneCalls = (book: BookFolder) => ({
   read: (id: string) => book.fileSystem.readText(scenePath(book.dir, id)),
-  /** The scene's text replaced; its front matter, title and status are kept. */
-  write: (id: string, body: string) => changeScene(book, id, (parts) => ({ ...parts, body })),
+  /** The scene's text replaced, the text before kept as a version; title and status are kept. */
+  write: async (id: string, body: string) => {
+    const before = await book.fileSystem.readText(scenePath(book.dir, id));
+    if (splitSceneFile(before).body !== body) {
+      const when = { time: Date.now(), label: t("Före ändring utifrån") };
+      await takeSnapshot(book.fileSystem, { dir: book.dir, id }, before, when);
+    }
+    return changeScene(book, id, (parts) => ({ ...parts, body }));
+  },
   status: (id: string, status: string) => {
     if (!(SCENE_STATUSES as readonly string[]).includes(status))
       throw new Error(`Status är en av ${SCENE_STATUSES.join(", ")}.`);
@@ -142,7 +112,7 @@ const sceneCalls = (book: BookFolder) => ({
 // The tree: names, Vad händer?, När and Vems ögon, the order, and the trash.
 const treeCalls = (book: BookFolder) => ({
   rename: async (id: string, title: string) => {
-    if (findNode((await read(book)).tree, id)?.node.kind !== "scene")
+    if (findNode((await readBook(book)).tree, id)?.node.kind !== "scene")
       return changeTree(book, (tree) => renameNode(tree, id, title));
     return changeScene(book, id, (parts) => ({
       ...parts,
@@ -163,9 +133,15 @@ const treeCalls = (book: BookFolder) => ({
 });
 
 /** The calls of `penna.mjs`, on the files: the same names and arguments as through the app. */
-export const bookFileCalls = (book: BookFolder) => ({
-  tree: () => treeRows(book),
-  ...makeCalls(book),
-  ...sceneCalls(book),
-  ...treeCalls(book),
-});
+export function bookFileCalls(book: BookFolder) {
+  const calls = {
+    tree: () => treeRows(book),
+    ...makeCalls(book),
+    ...sceneCalls(book),
+    ...treeCalls(book),
+    ...settingCalls(book),
+    ...seriesCalls(book),
+    ...commentCalls(book),
+  };
+  return { ...calls, batch: (steps: unknown) => runBatch(calls, steps) };
+}

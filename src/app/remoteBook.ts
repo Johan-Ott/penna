@@ -24,7 +24,7 @@ import type { AppState } from "./App.js";
 type Field = "summary" | "when" | "pov";
 const FIELDS: Record<string, Field> = { vad: "summary", när: "when", pov: "pov" };
 
-function bookOf(app: AppState) {
+export function bookOf(app: AppState) {
   const project = app.project;
   if (!project || project.isReadOnly) throw new Error("Ingen bok att ändra är öppen.");
   return project;
@@ -42,7 +42,7 @@ function sortId(app: AppState, sort: string) {
 }
 
 // A change shows in the app's state a render later; the next call waits for it, at most a second.
-async function until(isDone: () => boolean) {
+export async function until(isDone: () => boolean) {
   for (let tries = 0; tries < 20 && !isDone(); tries++) {
     await new Promise((resolve) => setTimeout(resolve, 50));
   }

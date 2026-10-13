@@ -12,7 +12,12 @@ interface Penna {
   run: (name: string) => string | null;
   type: (text: string) => void;
   text: () => string;
-  tree: () => { id: string; title: string }[];
+  tree: () => { id: string; kind: string; title: string }[];
+  book: (
+    field?: string,
+    value?: string,
+  ) => Promise<{ totalGoal?: number; labels?: { name: string }[] }>;
+  label: (id: string, name: string) => Promise<void>;
   open: (id: string) => void;
 }
 type WithPenna = Window & { penna: Penna };
@@ -53,4 +58,19 @@ test("window.penna makes a named chapter, a person, and sets when a chapter happ
 
   await expect(page.locator(".tree")).toContainText("Stormen");
   await expect(page.locator(".tree")).toContainText("Greta");
+});
+
+test("window.penna sets the book's goal and puts a label on a chapter by its name", async ({
+  page,
+}) => {
+  const settings = await page.evaluate(async () => {
+    const penna = (window as unknown as WithPenna).penna;
+    await penna.book("totalmål", "90 000");
+    const chapter = penna.tree().find((row) => row.kind === "chapter");
+    if (chapter) await penna.label(chapter.id, "Ledtråd");
+    return penna.book();
+  });
+
+  expect(settings.totalGoal).toBe(90000);
+  expect(settings.labels?.map((label) => label.name)).toContain("Ledtråd");
 });

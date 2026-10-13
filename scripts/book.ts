@@ -12,13 +12,18 @@ const calls = bookFileCalls({
   fileSystem: nodeFileSystem,
   dir: resolve(dir).replaceAll("\\", "/"),
 });
-const run = (calls as Record<string, ((...values: string[]) => Promise<unknown>) | undefined>)[
+const run = (calls as Record<string, ((...values: unknown[]) => Promise<unknown>) | undefined>)[
   call
 ];
 if (!run) throw new Error(`Inget anrop heter ${call}. Anropen: ${Object.keys(calls).join(", ")}.`);
 
-// write takes its text from a file, as a scene is too long to give on the command line.
-const values =
-  call === "write" && args[1] ? [args[0] ?? "", await readFile(resolve(args[1]), "utf8")] : args;
+// write takes its text from a file, as a scene is too long to give on the command line; batch
+// takes its calls from a JSON file.
+async function valuesOf(): Promise<unknown[]> {
+  if (call === "batch" && args[0]) return [JSON.parse(await readFile(resolve(args[0]), "utf8"))];
+  if (call === "write" && args[1]) return [args[0] ?? "", await readFile(resolve(args[1]), "utf8")];
+  return args;
+}
+const values = await valuesOf();
 const answer = await run(...values);
 process.stdout.write(`${JSON.stringify(answer ?? null, null, 2)}\n`);

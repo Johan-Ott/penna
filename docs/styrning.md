@@ -42,26 +42,46 @@ node scripts/penna.mjs --book "…/Vintervägen.penna" write <scen-id> kapitel1.
 Det fungerar utan `--book` bara med appen igång. Bokens filer beskrivs i
 [format.md](format.md), för den som vill skriva dem själv.
 
+## Ny bok
+
+`new` gör en ny bok i Penna-biblioteket, med samma kod som Ny bok i appen. Penna behöver inte
+vara igång. En disposition i Markdown blir bokens träd, som när Importera läser den: `#` blir
+delar, `##` kapitel och texten under dem scener.
+
+```bash
+node scripts/penna.mjs new "C:/Users/Elin/Documents/Penna" Vintervägen disposition.md
+```
+
+Svaret är bokens mapp och första scenens id. Sedan fungerar de andra anropen med `--book`.
+
 ## Anropen
 
-| Anrop                                                   | Vad det gör                                                                        |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `state`                                                 | Bok, mapp, vy, öppen text och dagens ord                                           |
-| `tree`                                                  | Delar, kapitel, scener och anteckningar med id och titel                           |
-| `commands`                                              | Alla kommandon i paletten                                                          |
-| `run <kommando>`                                        | Kör ett palettkommando, till exempel `run "Ny scen"` eller `run Fokusläge`         |
-| `open <id>`                                             | Öppnar en scen eller anteckning                                                    |
-| `text`                                                  | Den öppna textens innehåll                                                         |
-| `type <text>`                                           | Skriver vid markören i den öppna texten                                            |
-| `read <id>`                                             | En scens eller antecknings fil som den ligger på disk                              |
-| `write <id> <fil>`                                      | Ersätter scenens text med filens; titel och status behålls                         |
-| `add <scene\|chapter\|part\|folder> [titel] [efter-id]` | Ny del av boken                                                                    |
-| `note <sort> <namn>`                                    | Ny anteckning, till exempel `note Personer Greta`; en ny sort skapas om den saknas |
-| `rename <id> <titel>`                                   | Byter namn                                                                         |
-| `set <id> vad\|när\|pov <text>`                         | Vad händer?, När eller Vems ögon, som i Innehåll                                   |
-| `status <id> <idé\|utkast\|redigering\|klar>`           | Scenens status                                                                     |
-| `move <id> <efter-id>`                                  | Flyttar till efter en annan nod                                                    |
-| `trash <id>`                                            | Lägger i papperskorgen                                                             |
+| Anrop                                                   | Vad det gör                                                                                    |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `state`                                                 | Bok, mapp, vy, öppen text och dagens ord                                                       |
+| `tree`                                                  | Delar, kapitel, scener och anteckningar med id och titel                                       |
+| `commands`                                              | Alla kommandon i paletten                                                                      |
+| `run <kommando>`                                        | Kör ett palettkommando, till exempel `run "Ny scen"` eller `run Fokusläge`                     |
+| `open <id>`                                             | Öppnar en scen eller anteckning                                                                |
+| `text`                                                  | Den öppna textens innehåll                                                                     |
+| `type <text>`                                           | Skriver vid markören i den öppna texten                                                        |
+| `read <id>`                                             | En scens eller antecknings fil som den ligger på disk                                          |
+| `write <id> <fil>`                                      | Ersätter scenens text med filens och sparar den förra som en version; titel och status behålls |
+| `add <scene\|chapter\|part\|folder> [titel] [efter-id]` | Ny del av boken                                                                                |
+| `note <sort> <namn>`                                    | Ny anteckning, till exempel `note Personer Greta`; en ny sort skapas om den saknas             |
+| `rename <id> <titel>`                                   | Byter namn                                                                                     |
+| `set <id> vad\|när\|pov <text>`                         | Vad händer?, När eller Vems ögon, som i Innehåll                                               |
+| `status <id> <idé\|utkast\|redigering\|klar>`           | Scenens status                                                                                 |
+| `move <id> <efter-id>`                                  | Flyttar till efter en annan nod                                                                |
+| `trash <id>`                                            | Lägger i papperskorgen                                                                         |
+| `book [fält värde]`                                     | Bokens inställningar, eller ett fält: titel, totalmål, dagsmål, deadline, röst, språk          |
+| `label <id> <namn> [av]`                                | Sätter en etikett på en nod; ett nytt namn blir en ny etikett, `av` tar bort den               |
+| `pieces <bit,bit…>`                                     | Lägger till bitar från Ny bok, till exempel `deckare,romans`: sorter och etiketter             |
+| `series <namn>`                                         | Lägger boken i en serie, och gör serien om den inte finns                                      |
+| `toSeries <id…>`                                        | Flyttar anteckningar till seriens, så att seriens böcker delar dem                             |
+| `comment <id> <citat> <text> [författare]`              | En kommentar på citatet i scenen, förankrad som i appen                                        |
+| `comments <id>`                                         | Scenens kommentarer                                                                            |
+| `batch <fil.json>`                                      | Flera anrop i följd: `[["add","chapter","Stormen"],["set","$0","vad","…"]]`                    |
 
 ## Bra att veta
 
@@ -74,3 +94,7 @@ Det fungerar utan `--book` bara med appen igång. Bokens filer beskrivs i
 - Koden: `src/app/remote.ts` (läsa, kommandon, texten), `src/app/remoteBook.ts` (ändra boken
   genom appen) och `src/project/bookFiles.ts` (ändra boken i filerna). Testerna:
   `e2e/styrning.spec.ts` och `tests/bookFiles.test.ts`.
+- `röst` skrivs som `jag dåtid djup`: jag, tredje eller allvetande, dåtid eller nutid, och djup
+  för djup POV. `$0`, `$1` och så vidare i en batch är svaret från anrop 0, 1 och så vidare.
+- `write` sparar alltid scenens förra text som en version ("Före ändring utifrån") i
+  Versioner, så att inget skrivet försvinner.
