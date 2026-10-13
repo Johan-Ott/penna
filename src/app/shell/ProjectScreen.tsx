@@ -175,7 +175,6 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   const classes = [
     "app",
     writingMode.isFocusMode && "focus-mode",
-    writingMode.isProgressOpen && "insights-open",
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
   ];
   return (

@@ -1,3 +1,7 @@
+import type { PointerEvent } from "react";
+import { useFloating } from "../blocks/BlockPanel.js";
+import { usePhone } from "../phone/usePhone.js";
+import { GripIcon } from "../shell/icons.js";
 import { CloseButton } from "../controls.js";
 import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
@@ -121,10 +125,17 @@ function InBook({ notes }: { notes: ProseNote[] }) {
   );
 }
 
-function ReviewHeader(props: { isShown: boolean; onClose: () => void }) {
+function ReviewHeader(props: {
+  isShown: boolean;
+  onClose: () => void;
+  onGrab: ((event: PointerEvent<HTMLElement>) => void) | undefined;
+}) {
   return (
-    <div className="review-header">
-      <span className="progress-title">{t("Granska")}</span>
+    <div className="review-header block-head" onPointerDown={props.onGrab}>
+      <span className="progress-title block-title">
+        <GripIcon />
+        {t("Granska")}
+      </span>
       <CloseButton
         label={t("Stäng granskning")}
         isPhoneBack={props.isShown}
@@ -145,9 +156,19 @@ export function ReviewPanel(props: ReviewPanelProps) {
   const count = found + props.commentCount + props.revisionCount;
   useCountInTopbar(count, props.onCount);
   const isShown = props.isOpen || props.isPinnedOpen;
+  const floating = useFloating("granska", !usePhone());
   return (
-    <aside className={isShown ? "review-panel open" : "review-panel"} aria-label={t("Granskning")}>
-      <ReviewHeader isShown={isShown} onClose={() => props.onOpenChange(false)} />
+    <aside
+      ref={floating.ref}
+      className={isShown ? "review-panel open" : "review-panel"}
+      aria-label={t("Granskning")}
+      style={floating.style}
+    >
+      <ReviewHeader
+        isShown={isShown}
+        onClose={() => props.onOpenChange(false)}
+        onGrab={floating.onPointerDown}
+      />
       {props.revisionSection}
       {review && props.narrationSection}
       {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}

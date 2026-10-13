@@ -1,3 +1,7 @@
+import type { PointerEvent } from "react";
+import { useFloating } from "../blocks/BlockPanel.js";
+import { usePhone } from "../phone/usePhone.js";
+import { GripIcon } from "../shell/icons.js";
 import { CloseButton } from "../controls.js";
 import { useState } from "react";
 import { dailyGoalOf, dayKey, type Stats } from "../../project/stats.js";
@@ -75,10 +79,16 @@ function InsightsBody(props: BodyProps) {
   );
 }
 
-const InsightsHead = ({ onClose }: { onClose: () => void }) => (
-  <div className="insights-head">
-    <span className="insights-title">{t("Insikter")}</span>
-    <CloseButton label={t("Stäng insikter")} isPhoneBack onClose={onClose} />
+const InsightsHead = (props: {
+  onClose: () => void;
+  onGrab: ((event: PointerEvent<HTMLElement>) => void) | undefined;
+}) => (
+  <div className="insights-head block-head" onPointerDown={props.onGrab}>
+    <span className="insights-title block-title">
+      <GripIcon />
+      {t("Insikter")}
+    </span>
+    <CloseButton label={t("Stäng insikter")} isPhoneBack onClose={props.onClose} />
   </div>
 );
 
@@ -137,29 +147,39 @@ function InsightDialogs(props: PanelProps & { open: Open; onOpen: (open: Open) =
   return null;
 }
 
+// The book's last page, or the cards of the day, the week and the book.
+function ShownPart(props: PanelProps & { isColophon: boolean; onOpen: (open: Open) => void }) {
+  if (props.isColophon) return <Colophon project={props.project} stats={props.stats} />;
+  return (
+    <InsightsBody
+      project={props.project}
+      stats={props.stats}
+      journey={props.journey}
+      onGoals={() => props.onOpen("day")}
+      onJourney={() => props.onOpen("journey")}
+    />
+  );
+}
+
 /** Insikter: beside the text, how the day, the week and the book are going. */
 export function InsightsPanel(props: PanelProps) {
   const [open, setOpen] = useState<Open>(null);
   const [isColophon, setColophon] = useState(false);
   useEscape(() => !open && props.onClose());
   const hasStats = Object.keys(props.stats).length > 0;
+  const floating = useFloating("insikter", !usePhone());
   return (
-    <aside className="insights-panel" aria-label={t("Insikter")}>
-      <InsightsHead onClose={props.onClose} />
+    <aside
+      ref={floating.ref}
+      className="insights-panel"
+      aria-label={t("Insikter")}
+      style={floating.style}
+    >
+      <InsightsHead onClose={props.onClose} onGrab={floating.onPointerDown} />
       <div className="insights-body">
         {hasStats && <ShownAs isColophon={isColophon} onChange={setColophon} />}
         {!hasStats && <NoStats onWrite={props.onClose} />}
-        {isColophon ? (
-          <Colophon project={props.project} stats={props.stats} />
-        ) : (
-          <InsightsBody
-            project={props.project}
-            stats={props.stats}
-            journey={props.journey}
-            onGoals={() => setOpen("day")}
-            onJourney={() => setOpen("journey")}
-          />
-        )}
+        <ShownPart {...props} isColophon={isColophon} onOpen={setOpen} />
         <button className="link-button quiet" onClick={() => setOpen("goals")}>
           {t("Ändra mål och deadline")}
         </button>

@@ -334,8 +334,10 @@ body .selection-bar.phone .icon-button {
   inset: 0;
   z-index: 20;
   width: auto;
+  max-height: none;
   padding-top: max(28px, var(--safe-top));
-  border-left: 0;
+  border: 0;
+  border-radius: 0;
   box-shadow: none;
 }
 

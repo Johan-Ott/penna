@@ -840,16 +840,13 @@
 }
 
 /* Framsteg, opened from the day's words */
-/* Insikter: a panel of cards beside the text; the text card makes room for it. */
-.app.insights-open > .main-card {
-  margin-right: 356px;
-}
-
+/* Insikter: a card of cards floating over the text, moved by its head like the blocks. */
 .insights-panel {
   position: fixed;
-  top: 44px;
-  right: 8px;
-  bottom: 8px;
+  top: 52px;
+  right: 16px;
+  z-index: 8;
+  max-height: calc(100vh - 68px);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -860,6 +857,11 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--bg-panel);
+  box-shadow: var(--shadow-dialog);
+}
+
+.insights-panel[style] {
+  right: auto;
 }
 
 /* On a phone the body is a card of its own, under the head as under a bar. */
@@ -922,10 +924,6 @@
   color: var(--text-label);
   font-size: 14px;
   font-style: italic;
-}
-
-.insights-title {
-  font: 600 18px var(--font-prose);
 }
 
 .insight-card,

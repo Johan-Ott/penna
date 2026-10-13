@@ -28,8 +28,11 @@ function readPlace(id: string): Place | null {
 
 // Kept inside the card, so a block never ends up where it cannot be reached.
 function clamped(panel: HTMLElement, wanted: Place): Place {
-  const room = panel.offsetParent?.getBoundingClientRect();
-  if (!room) return wanted;
+  // A fixed panel has no offset parent: the window is its room.
+  const room = panel.offsetParent?.getBoundingClientRect() ?? {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
   return {
     left: Math.min(Math.max(0, wanted.left), room.width - panel.offsetWidth),
     top: Math.min(Math.max(0, wanted.top), room.height - panel.offsetHeight),
@@ -78,6 +81,19 @@ function useKeptInside(
   }, [panel, place, set]);
 }
 
+/** A panel moved by its head and kept where it was left; `isOn` false leaves it to the CSS, as
+ * on a phone, where panels cover the screen. */
+export function useFloating(id: string, isOn = true) {
+  const { place, setPlace, onPointerDown } = useDrag(id);
+  const ref = useRef<HTMLElement>(null);
+  useKeptInside(ref, isOn ? place : null, setPlace);
+  return {
+    ref,
+    style: isOn && place ? place : undefined,
+    onPointerDown: isOn ? onPointerDown : undefined,
+  };
+}
+
 /** Without a kept place it opens above the dock, at the card's foot on the right. */
 export function BlockPanel(props: {
   id: string;
@@ -85,16 +101,9 @@ export function BlockPanel(props: {
   onClose: () => void;
   children: ReactNode;
 }) {
-  const { place, setPlace, onPointerDown } = useDrag(props.id);
-  const panel = useRef<HTMLElement>(null);
-  useKeptInside(panel, place, setPlace);
+  const { ref, style, onPointerDown } = useFloating(props.id);
   return (
-    <section
-      ref={panel}
-      className="block-panel"
-      aria-label={props.title}
-      style={place ?? undefined}
-    >
+    <section ref={ref} className="block-panel" aria-label={props.title} style={style}>
       <header className="block-head" onPointerDown={onPointerDown}>
         <span className="block-title">
           <GripIcon />
