@@ -1,4 +1,5 @@
 import { useRemote } from "./remote.js";
+import { StartPicture } from "./shell/WindowControls.js";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";
@@ -174,8 +175,7 @@ function useAppState() {
   const journey = useJourney(startup.preferences.libraryDir);
   const { stats, today, recordSave } = useWritingStats(project, journey.record);
   useReminder(startup.preferences.reminderHour, today.words);
-  const { isSearchOpen } = writingMode;
-  const search = useManuscriptSearch({ ...sceneState, project, refresh, isSearchOpen });
+  const search = useManuscriptSearch({ ...sceneState, project, refresh, ...writingMode });
   const renameOffer = useRenameOffer(search.scope, project);
   const treeHandlers = useTreeHandlers(core.actions, renameOffer.noteRenamed);
   listenToSaves(sceneState, recordSave, startup.preferences.isAutoSnapshotOn);
@@ -199,8 +199,7 @@ export function App() {
   useRemote(app);
   const Screen = usePhone() ? PhoneProject : ProjectScreen;
   const { project } = app;
-  // Starting, or reading a book from the shelf: the start picture shows meanwhile.
-  if (app.startup.isStarting || app.opening) return <div className="app-starting" />;
+  if (app.startup.isStarting || app.opening) return <StartPicture />;
   return (
     <>
       {project && <Screen app={app} project={project} />}

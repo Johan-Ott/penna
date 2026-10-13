@@ -2,11 +2,11 @@ import type { AppState } from "./App.js";
 import { useDriveBooksDialog } from "./shelf/DriveBooks.js";
 import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
-import { useState, type MouseEvent, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useMenuButton, type MenuItem } from "./Menu.js";
 import { appMenu, type AppMenuActions } from "./shell/appMenu.js";
-import { MenuIcon } from "./shell/icons.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
+import { PhoneShelf } from "./shelf/PhoneShelf.js";
 import { ProfileButton, ProfileLayer } from "./profile/ProfileLayer.js";
 import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
@@ -123,24 +123,6 @@ function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, is
   );
   return { open: menu.open, layers };
 }
-
-const PhoneShelf = (props: {
-  onMenu: (event: MouseEvent<HTMLElement>) => void;
-  profile: ReactNode;
-  children: ReactNode;
-}) => (
-  <div className="phone-screen">
-    <header className="phone-bar">
-      <span className="phone-bar-start">
-        <button className="topbar-button" aria-label={t("Meny")} onClick={props.onMenu}>
-          <MenuIcon />
-        </button>
-        {props.profile}
-      </span>
-    </header>
-    {props.children}
-  </div>
-);
 
 function ShelfFrame(
   props: StartScreenProps & { onNewProject: () => void; isPhone: boolean; children: ReactNode },

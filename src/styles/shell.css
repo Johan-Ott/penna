@@ -123,6 +123,22 @@
   justify-content: flex-end;
 }
 
+/* Where no top bar is, the window's buttons float at its top right, over the start picture too. */
+.window-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 110;
+  display: flex;
+  justify-content: flex-end;
+  height: 32px;
+}
+
+.window-bar .window-controls {
+  margin: 0;
+}
+
 /* The window has no frame: its own buttons end the top bar, flush with the window's edge. */
 .window-controls {
   display: flex;

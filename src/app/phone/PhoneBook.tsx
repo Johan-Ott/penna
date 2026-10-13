@@ -8,15 +8,11 @@ import {
 import { dayKey } from "../../project/stats.js";
 import { chapterOf, manuscriptWords } from "../../project/treeLabels.js";
 import type { AppState } from "../App.js";
-import { useMenuButton } from "../Menu.js";
-import { phoneMenu } from "./phoneMenu.js";
-import { ProfileButton } from "../profile/ProfileLayer.js";
 import { sidebarProps } from "../paneProps.js";
-import { ContentsIcon, MenuIcon, SearchIcon } from "../shell/icons.js";
-import { useMenuDialogs } from "../shell/useAppMenu.js";
+import { ContentsIcon } from "../shell/icons.js";
+import { PhoneBarStart, SearchButton } from "./PhoneBarStart.js";
 import { SyncNotices } from "../SyncLayer.js";
 import { TreeView } from "../tree/TreeView.js";
-import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import type { Project } from "../useProject.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
@@ -97,32 +93,16 @@ function ContinueButton({ project, continueId, onContinue }: PhoneBookProps) {
 }
 
 function PhoneBookHeader({ app, project, onContents }: HeaderProps) {
-  const dialogs = useMenuDialogs({ app, project });
-  const bookProps = sidebarProps(app, project);
-  const theme = useThemeDialog(bookProps);
-  const templates = useTemplatesDialog(bookProps);
-  const menu = useMenuButton(t("Meny"), phoneMenu(app, dialogs, { theme, templates }));
   return (
     <header className="phone-bar">
-      <span className="phone-bar-start">
-        <button className="topbar-button" aria-label={t("Meny")} onClick={menu.open}>
-          <MenuIcon />
-        </button>
-        <ProfileButton app={app} />
-      </span>
+      <PhoneBarStart app={app} project={project} />
       <span className="phone-bar-title prose">{project.name}</span>
       <span className="phone-bar-end">
         <button className="topbar-button" aria-label={t("Innehåll")} onClick={onContents}>
           <ContentsIcon />
         </button>
-        <button className="topbar-button" aria-label={t("Sök")} onClick={app.palette.open}>
-          <SearchIcon />
-        </button>
+        <SearchButton app={app} />
       </span>
-      {menu.menu}
-      {dialogs.layers}
-      {theme.dialog}
-      {templates.dialog}
     </header>
   );
 }

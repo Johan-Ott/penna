@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { AppState } from "../App.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "../shell/bookViews.js";
 import { BookIcon, PenIcon, TreeIcon } from "../shell/icons.js";
+import { PhoneBarStart, SearchButton } from "./PhoneBarStart.js";
 import type { Project } from "../useProject.js";
 import { usePageMap } from "../usePageMap.js";
 import type { View } from "../useWritingMode.js";
@@ -44,12 +45,15 @@ export function TabBar(props: { tab: Tab; onTab: (tab: Tab) => void }) {
 }
 
 // A bar as Boken and Skriv have one; the tabs below are the way back.
-const ViewBar = ({ title, sub }: { title: string; sub?: string }) => (
+const ViewBar = (props: { app: AppState; project: Project; title: string; sub?: string }) => (
   <header className="phone-bar">
-    <span />
+    <PhoneBarStart app={props.app} project={props.project} />
     <span className="phone-bar-title">
-      <span>{title}</span>
-      {sub && <span className="phone-bar-sub">{sub}</span>}
+      <span>{props.title}</span>
+      {props.sub && <span className="phone-bar-sub">{props.sub}</span>}
+    </span>
+    <span className="phone-bar-end">
+      <SearchButton app={props.app} />
     </span>
   </header>
 );
@@ -67,7 +71,7 @@ export function ViewScreen(props: {
   const views = { app, project, onBack: props.onBack };
   return (
     <div className="phone-view">
-      {view === "innehall" && <ViewBar title={t("Innehåll")} />}
+      {view === "innehall" && <ViewBar {...views} title={t("Innehåll")} />}
       {view === "innehall" && (
         <ContentsScreen
           app={app}
@@ -77,7 +81,7 @@ export function ViewScreen(props: {
         />
       )}
       {view === "las" && <ReadScreen {...views} />}
-      {view === "publicera" && <ViewBar title={t("Publicera")} sub={project.name} />}
+      {view === "publicera" && <ViewBar {...views} title={t("Publicera")} sub={project.name} />}
       {view === "publicera" && <PublishScreen {...views} />}
       {view === "synk" && <SyncScreen {...views} />}
     </div>

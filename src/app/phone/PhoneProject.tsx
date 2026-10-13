@@ -1,3 +1,4 @@
+import { WindowBar } from "../shell/WindowControls.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../../project/tree.js";
 import type { AppState } from "../App.js";
@@ -175,6 +176,7 @@ export function PhoneProject({ app, project }: Props) {
   const hasTabs = !isTextShown(screens.screen, app.writingMode.view) || !isKeyboardUp;
   return (
     <div className={hasTabs ? "phone-app with-tabs" : "phone-app"}>
+      <WindowBar />
       <OtherScreen app={app} project={project} screens={screens} />
       <TextScreen app={app} project={project} screens={screens} />
       {hasTabs && (

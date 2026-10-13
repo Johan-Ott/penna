@@ -15,7 +15,7 @@
 .phone-bar {
   display: grid;
   flex-shrink: 0;
-  grid-template-columns: 88px 1fr 88px;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
   align-items: center;
   padding: max(28px, var(--safe-top)) 6px 4px;
 }
@@ -356,11 +356,6 @@ body .selection-bar.phone .icon-button {
   user-select: text;
 }
 
-/* Over the text the right side holds both Granska and search */
-.phone-text .phone-bar {
-  grid-template-columns: 100px 1fr 100px;
-}
-
 /* The menu and the profile, as the computer has them at the top left. */
 .phone-bar-start {
   display: flex;
@@ -515,11 +510,13 @@ body .selection-bar.phone .icon-button {
 }
 
 /* The tools over the keyboard while writing. */
+/* Spread over the width while they fit, as the tabs under them are. */
 .phone-toolbar {
   display: flex;
   flex-shrink: 0;
   gap: 2px;
   align-items: center;
+  justify-content: space-between;
   padding: 4px 8px calc(4px + var(--safe-bottom));
   overflow-x: auto;
   border-top: 1px solid var(--border-soft);
@@ -1090,4 +1087,10 @@ body .phone-app .text-when input {
 .android .insights-close,
 .android .dialog-close {
   display: none;
+}
+
+/* A computer's window as narrow as a phone: its buttons sit over the room a phone keeps for its
+   status bar. */
+:root:has(.phone-app > .window-bar, .phone-screen > .window-bar) {
+  --safe-top: 32px;
 }

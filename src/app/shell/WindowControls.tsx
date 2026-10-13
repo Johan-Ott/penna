@@ -34,3 +34,22 @@ export function WindowControls() {
     </span>
   );
 }
+
+/** The window's buttons and a place to drag it, where no top bar is: on the start picture, and
+ * in a computer's window narrowed to the phone's screens. */
+export function WindowBar() {
+  if (!platform.windowControls) return null;
+  return (
+    <div className="window-bar" data-tauri-drag-region>
+      <WindowControls />
+    </div>
+  );
+}
+
+/** While Penna starts or reads a book from the shelf: the start picture, over this, and the
+ * window's buttons on top of it. */
+export const StartPicture = () => (
+  <div className="app-starting">
+    <WindowBar />
+  </div>
+);
