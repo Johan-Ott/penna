@@ -67,6 +67,8 @@ function OverTheText({ app, project }: ScreenProps) {
   return (
     <>
       <BlocksDock
+        app={app}
+        project={project}
         review={
           !writingMode.isReviewOpen && (
             <ReviewPill

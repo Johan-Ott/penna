@@ -22,7 +22,7 @@ async function openResearchFile(dir: string, name: string) {
   await platform.shareFile?.(name, bytes, mimeOf(name));
 }
 
-function usePictureUrl(dir: string, name: string) {
+export function usePictureUrl(dir: string, name: string) {
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (!isPictureFile(name)) return;

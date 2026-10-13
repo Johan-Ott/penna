@@ -153,3 +153,27 @@ export const GripIcon = () => (
     <circle cx="6" cy="10" r="1.2" />
   </svg>
 );
+
+export const NoteIcon = () => (
+  <Icon>
+    <path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9z" />
+    <path d="M15 3v6h6" />
+  </Icon>
+);
+
+export const PeopleIcon = () => (
+  <Icon>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+    <path d="M16 4.5a3.5 3.5 0 0 1 0 7" />
+    <path d="M18 14.5a6.5 6.5 0 0 1 3.5 5.5" />
+  </Icon>
+);
+
+export const ImageIcon = () => (
+  <Icon>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="9" cy="9" r="2" />
+    <path d="m21 15-5-5L5 21" />
+  </Icon>
+);

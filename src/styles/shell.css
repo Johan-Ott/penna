@@ -3343,6 +3343,82 @@
 }
 
 /* A writing sprint: the time left and the words so far, over the text. */
+/* Kladdlapp, I scenen and Referensbild, each as narrow as a note beside the text. */
+.scratch {
+  width: 260px;
+  height: 180px;
+  padding: 8px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 var(--font-prose);
+  resize: both;
+}
+
+.in-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 260px;
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.in-scene-note {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+}
+
+.in-scene-note:hover {
+  background: var(--surface-hover);
+}
+
+.in-scene-sort {
+  color: var(--text-label);
+  font-size: 11px;
+}
+
+.in-scene-line {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  color: var(--text-label);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reference {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reference-picture {
+  display: block;
+  max-width: 320px;
+  max-height: 50vh;
+  border-radius: var(--radius-button);
+}
+
+.reference-empty {
+  max-width: 240px;
+  margin: 0;
+}
+
 /* The sprint's block: four numbers to step, as a pomodoro timer has them, and Starta. */
 .sprint-settings {
   display: grid;
