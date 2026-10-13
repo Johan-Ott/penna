@@ -91,6 +91,7 @@ describe("readScrivener's notes", () => {
       "/Vinter.scriv/Files/Data/N1/content.rtf": "{\\rtf1 Fyrvaktarens dotter.\\par}",
       "/Vinter.scriv/Files/Data/N2/content.rtf": "{\\rtf1 Fyren t\\'e4ndes 1890.\\par}",
       "/Vinter.scriv/Files/Data/X/content.rtf": "{\\rtf1 Bort.\\par}",
+      "/Vinter.scriv/Files/Data/IMG/content.jpg": "bild",
     });
 
     const book = await readScrivener(files, "/Vinter.scriv");
@@ -102,7 +103,11 @@ describe("readScrivener's notes", () => {
     });
     expect(book.slice(1)).toMatchObject([
       { kind: "sort", title: "Characters", id: "karaktarer", children: [{ title: "Elin" }] },
-      { kind: "sort", title: "Research", children: [{ title: "Fyrar" }] },
+      {
+        kind: "sort",
+        title: "Research",
+        children: [{ title: "Fyrar" }, { title: "Karta", file: { name: "Karta.jpg" } }],
+      },
     ]);
     expect(JSON.stringify(book)).not.toContain("Gammalt");
   });

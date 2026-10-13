@@ -1,6 +1,7 @@
 import { DEMO_PROJECT_DIR, DEMO_PROJECT_FILES } from "../demo/demoProject.js";
 import type { ImportedNode } from "../import/markdownImport.js";
 import { newSceneText, withSceneStatus } from "../manuscript/sceneFile.js";
+import { createFileNote, saveResearchFile } from "./researchFiles.js";
 import { writeAtomic } from "../storage/atomicWrite.js";
 import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
@@ -43,6 +44,23 @@ export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string,
   return joinPath(libraryDir, candidate);
 }
 
+// A research file becomes a note of its own; a text, a scene file.
+async function writeScene(
+  fileSystem: FileSystem,
+  dir: string,
+  node: Extract<ImportedNode, { kind: "scene" }>,
+  id: string,
+) {
+  if (node.file) {
+    const name = await saveResearchFile(fileSystem, dir, node.file.name, node.file.bytes);
+    return createFileNote(fileSystem, dir, name);
+  }
+  const text = newSceneText(id, node.title);
+  const file = node.body ? withSceneStatus(text, "utkast") + node.body : text;
+  await writeAtomic(fileSystem, scenePath(dir, id), file);
+  return id;
+}
+
 async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
   const tree: TreeNode[] = [];
   for (const node of book) {
@@ -53,10 +71,7 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
       tree.push({ id, kind: node.kind, title: node.title, ...summary, children });
       continue;
     }
-    const text = newSceneText(id, node.title);
-    const file = node.body ? withSceneStatus(text, "utkast") + node.body : text;
-    await writeAtomic(fileSystem, scenePath(dir, id), file);
-    tree.push({ id, kind: "scene", ...summary });
+    tree.push({ id: await writeScene(fileSystem, dir, node, id), kind: "scene", ...summary });
   }
   return tree;
 }

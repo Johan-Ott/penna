@@ -1,7 +1,13 @@
 import { t } from "../i18n/i18n.js";
+/** A research file, such as a PDF, that becomes a note pointing to its copy in the book. */
+export interface ImportedFile {
+  name: string;
+  bytes: Uint8Array;
+}
+
 export type ImportedNode =
   | { kind: "part" | "chapter"; title: string; summary?: string; children: ImportedNode[] }
-  | { kind: "scene"; title: string; body: string; summary?: string }
+  | { kind: "scene"; title: string; body: string; summary?: string; file?: ImportedFile }
   /** Notes, such as Scrivener's Characters folder; `id` names one of Penna's own sorts. */
   | { kind: "sort"; title: string; id?: string; children: ImportedNode[] };
 

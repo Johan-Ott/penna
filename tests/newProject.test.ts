@@ -81,6 +81,22 @@ describe("createProject", () => {
     expect(tree.filter((node) => node.id === "karaktarer")).toHaveLength(1);
   });
 
+  it("writes an imported picture or PDF into filer/, as a note pointing to it", async () => {
+    const files = createMemoryFileSystem({});
+    const file = { name: "Karta.jpg", bytes: new TextEncoder().encode("bild") };
+    const research = { kind: "scene" as const, title: "Karta", body: "", file };
+    const imported = [{ kind: "sort" as const, title: "Research", children: [research] }];
+
+    const created = await createProject(files, "/Penna", details, imported);
+
+    expect(await files.readText(`${created.dir}/filer/Karta.jpg`)).toBe("bild");
+    const { tree } = await readProjectFile(files, created.dir, []);
+    const [note] = tree.find((node) => node.title === "Research")?.children ?? [];
+    expect(await files.readText(`${created.dir}/scenes/${note?.id ?? ""}.md`)).toContain(
+      'file: "Karta.jpg"',
+    );
+  });
+
   it("starts from a template: its parts and steps, notes, labels and goal", async () => {
     const files = createMemoryFileSystem({});
 

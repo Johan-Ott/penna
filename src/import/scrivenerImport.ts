@@ -1,6 +1,6 @@
 import { CHARACTERS_ID, PLACES_ID } from "../project/sorts.js";
 import { joinPath, type FileSystem } from "../storage/fileSystem.js";
-import { ImportError, type ImportedNode } from "./markdownImport.js";
+import { ImportError, type ImportedFile, type ImportedNode } from "./markdownImport.js";
 import { rtfToMarkdown } from "./rtf.js";
 import { t } from "../i18n/i18n.js";
 
@@ -66,11 +66,36 @@ interface ItemTexts {
   bodies: Map<string, string>;
   /** The index card's synopsis, which becomes Vad händer?. */
   synopses: Map<string, string>;
+  /** A picture's or PDF's file, named after its item. */
+  files: Map<string, ImportedFile>;
 }
+
+const isOwnFile = (name: string) => !/\.rtf$|synopsis\.txt$/i.test(name);
+
+// Scrivener 3 keeps it as Data/<UUID>/content.pdf, Scrivener 2 as Docs/<ID>.pdf.
+async function readFile(fileSystem: FileSystem, dir: string, item: BinderItem) {
+  const newer = (await fileSystem.list(joinPath(dir, `Files/Data/${item.id}`))).map(
+    (name) => `Files/Data/${item.id}/${name}`,
+  );
+  const older = (await fileSystem.list(joinPath(dir, "Files/Docs")))
+    .filter((name) => name.startsWith(`${item.id}.`))
+    .map((name) => `Files/Docs/${name}`);
+  const path = [...newer, ...older].find(
+    (each) => isOwnFile(each) && /content\.|Docs\//.test(each),
+  );
+  if (!path) return null;
+  const extension = path.slice(path.lastIndexOf("."));
+  return {
+    name: `${item.title}${extension}`,
+    bytes: await fileSystem.readBytes(joinPath(dir, path)),
+  };
+}
+
+const HAS_FILE = new Set(["Image", "PDF", "Other", "WebArchive"]);
 
 // Scrivener 3 keeps a text in Data/<UUID>, Scrivener 2 in Docs/<ID>.
 async function readTexts(fileSystem: FileSystem, dir: string, items: BinderItem[]) {
-  const texts: ItemTexts = { bodies: new Map(), synopses: new Map() };
+  const texts: ItemTexts = { bodies: new Map(), synopses: new Map(), files: new Map() };
   for (const item of items) {
     const read = (newer: string, older: string) =>
       readOrEmpty(fileSystem, joinPath(dir, `Files/Data/${item.id}/${newer}`)).then(
@@ -79,6 +104,8 @@ async function readTexts(fileSystem: FileSystem, dir: string, items: BinderItem[
     const rtf = await read("content.rtf", ".rtf");
     texts.bodies.set(item.id, rtf ? rtfToMarkdown(rtf) : "");
     texts.synopses.set(item.id, (await read("synopsis.txt", "_synopsis.txt")).trim());
+    const file = HAS_FILE.has(item.type) ? await readFile(fileSystem, dir, item) : null;
+    if (file) texts.files.set(item.id, file);
   }
   return texts;
 }
@@ -119,7 +146,7 @@ function draftBook(draft: BinderItem[], texts: ItemTexts): ImportedNode[] {
 }
 
 // Characters and places land in Penna's own sorts; any other folder beside the draft is a sort
-// of its own, such as Research. Pictures and PDFs there have no text and are left out.
+// of its own, such as Research, where pictures and PDFs become research files.
 const OWN_SORTS: [RegExp, string][] = [
   [/character|karakt|person|figur/i, CHARACTERS_ID],
   [/place|setting|location|plats|milj/i, PLACES_ID],
@@ -129,7 +156,9 @@ const LEFT_OUT = new Set(["DraftFolder", "TrashFolder"]);
 function noteSorts(binder: BinderItem[], texts: ItemTexts): ImportedNode[] {
   const notes = (item: BinderItem): ImportedNode[] => {
     const body = texts.bodies.get(item.id) ?? "";
-    const own: ImportedNode[] = body ? [{ kind: "scene", title: item.title, body }] : [];
+    const file = texts.files.get(item.id);
+    const scene = { kind: "scene" as const, title: item.title, body, ...(file ? { file } : {}) };
+    const own: ImportedNode[] = body || file ? [scene] : [];
     return [...own, ...item.children.flatMap(notes)];
   };
   return binder
