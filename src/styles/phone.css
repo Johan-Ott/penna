@@ -45,13 +45,12 @@
   font-weight: 400;
 }
 
-/* On the page itself, as the computer's sidebar is: no frame around it */
 .phone-card {
   display: flex;
   flex-grow: 1;
   flex-direction: column;
   gap: 18px;
-  padding: 8px 20px 20px;
+  padding: 16px;
 }
 
 /* Boken: the day, Fortsätt skriva, the book and the notes as tiles */
@@ -169,10 +168,10 @@
   min-height: 0;
 }
 
-/* The computer's white card, for the text and for Innehåll, Läs and Publicera's preview. */
+/* The computer's white card, around every screen's content: one frame for the whole app. */
+.phone-card,
 .phone-text .writing,
-.phone-view > :not(.publish),
-.phone-view .publish-preview {
+.phone-view > * {
   margin: 0 8px 8px;
   overflow: hidden;
   border: 1px solid var(--border-card);
@@ -433,7 +432,7 @@ body .selection-bar.phone .icon-button {
   background: var(--bg-subtle);
 }
 
-.phone-view > :not(.publish) {
+.phone-view > * {
   flex-grow: 1;
   min-height: 0;
 }
@@ -506,7 +505,7 @@ body .selection-bar.phone .icon-button {
 .phone-view .publish-preview {
   flex-shrink: 0;
   min-height: 480px;
-  margin-top: 16px;
+  margin: 16px 8px;
 }
 
 /* The tools over the keyboard while writing. */
