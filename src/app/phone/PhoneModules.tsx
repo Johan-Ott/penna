@@ -6,13 +6,23 @@ import { StickyNoteCard } from "../blocks/StickyNotes.js";
 import { useStickyNotes } from "../blocks/useStickyNotes.js";
 import { CloseButton } from "../controls.js";
 import { Colophon } from "../progress/Colophon.js";
-import { BookIcon, GridIcon, ImageIcon, NoteIcon, PeopleIcon } from "../shell/icons.js";
+import {
+  BookIcon,
+  ChartIcon,
+  GridIcon,
+  ImageIcon,
+  NoteIcon,
+  PeopleIcon,
+  ReviewIcon,
+  TimerIcon,
+} from "../shell/icons.js";
+import { setPanelOpen } from "../sprint/sprint.js";
 import { createStore } from "../store.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
-// The computer's blocks on a phone: a button in Skriv's bar lists them, and the one chosen opens
-// as a sheet from below over the text, as Granska and Insikter do. Same files, same notes.
+// The computer's blocks on a phone, in its dock's order, listed by one button in Skriv's bar;
+// the sprint, Insikter and Granska open in their own places, the others as a sheet from below.
 
 type ModuleId = "lappar" | "iscenen" | "referens" | "kolofon";
 type Props = { app: AppState; project: Project };
@@ -22,14 +32,30 @@ const shown = createStore<ModuleId | "lista" | null>(null);
 const MODULES: { id: ModuleId; title: string; icon: ReactNode }[] = [
   { id: "lappar", title: t("Lappar"), icon: <NoteIcon /> },
   { id: "iscenen", title: t("I scenen"), icon: <PeopleIcon /> },
-  { id: "referens", title: t("Referensbild"), icon: <ImageIcon /> },
   { id: "kolofon", title: t("Kolofon"), icon: <BookIcon /> },
+  { id: "referens", title: t("Referensbild"), icon: <ImageIcon /> },
 ];
 
-export function ModulesButton() {
+// The ones with a place of their own, opened there; the sheet closes for them.
+function openOwn(app: AppState): { title: string; icon: ReactNode; open: () => void }[] {
+  const { writingMode } = app;
+  return [
+    { title: t("Skrivsprint"), icon: <TimerIcon />, open: () => setPanelOpen(true) },
+    { title: t("Insikter"), icon: <ChartIcon />, open: () => writingMode.setProgressOpen(true) },
+    { title: t("Granska"), icon: <ReviewIcon />, open: () => writingMode.setReviewOpen(true) },
+  ];
+}
+
+export function ModulesButton({ app }: { app: AppState }) {
+  const count = app.writingMode.review.count ?? 0;
   return (
-    <button className="topbar-button" aria-label={t("Moduler")} onClick={() => shown.set("lista")}>
+    <button
+      className="topbar-button review-dock"
+      aria-label={t("Moduler")}
+      onClick={() => shown.set("lista")}
+    >
       <GridIcon />
+      {count > 0 && <span className="dock-badge">{count}</span>}
     </button>
   );
 }
@@ -57,13 +83,20 @@ function ModuleBody({ id, app, project }: Props & { id: ModuleId }) {
   return <Colophon project={project} stats={app.stats} />;
 }
 
-function ModuleList() {
+function ModuleList({ app }: { app: AppState }) {
+  const choose = (open: () => void) => () => (shown.set(null), open());
   return (
     <div className="phone-module-list">
       {MODULES.map((module) => (
         <button key={module.id} className="phone-module" onClick={() => shown.set(module.id)}>
           {module.icon}
           <span>{module.title}</span>
+        </button>
+      ))}
+      {openOwn(app).map((own) => (
+        <button key={own.title} className="phone-module" onClick={choose(own.open)}>
+          {own.icon}
+          <span>{own.title}</span>
         </button>
       ))}
     </div>
@@ -88,7 +121,11 @@ export function ModulesSheet({ app, project }: Props) {
         <CloseButton isPhoneBack onClose={() => shown.set(null)} />
       </header>
       <div className="phone-sheet-body">
-        {open === "lista" ? <ModuleList /> : <ModuleBody id={open} app={app} project={project} />}
+        {open === "lista" ? (
+          <ModuleList app={app} />
+        ) : (
+          <ModuleBody id={open} app={app} project={project} />
+        )}
       </div>
     </section>
   );

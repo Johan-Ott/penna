@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
-  await expect(page.getByRole("button", { name: "Skrivsprint" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Moduler" })).toBeVisible();
 
   await page.evaluate(() => history.back());
 
@@ -43,7 +43,8 @@ test("a person opens from Personer in the tree, and back returns to Boken", asyn
 test("Granska opens over the whole text and closes again", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
 
-  await page.getByRole("button", { name: /Granska/ }).click();
+  await page.getByRole("button", { name: "Moduler" }).click();
+  await page.getByRole("button", { name: "Granska" }).click();
   await expect(page.getByRole("complementary", { name: "Granskning" })).toBeVisible();
   await page.getByRole("button", { name: "Stäng granskning" }).click();
 
@@ -88,10 +89,8 @@ test("Android's back leaves Studio, then goes from Publicera to Innehåll", asyn
 
 test("Android's back closes Granska and stays in the text", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
-  await page
-    .getByRole("button", { name: /^Granska/ })
-    .first()
-    .click();
+  await page.getByRole("button", { name: "Moduler" }).click();
+  await page.getByRole("button", { name: "Granska" }).click();
   await expect(page.locator(".review-panel.open")).toBeVisible();
 
   await page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
