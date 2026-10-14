@@ -1,3 +1,4 @@
+import { ModulesSheet } from "./PhoneModules.js";
 import { WindowBar } from "../shell/WindowControls.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../../project/tree.js";
@@ -30,6 +31,7 @@ function Floating({ app, project }: Props) {
   return (
     <>
       <InsightsLayer app={app} project={project} />
+      <ModulesSheet app={app} project={project} />
       <ProfileLayer app={app} project={project} />
       {app.newNoteSort !== false && (
         <NewNoteDialog

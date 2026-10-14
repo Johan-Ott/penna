@@ -75,13 +75,19 @@ function ToolButton(props: {
 }
 
 function NoteHead(
-  props: Props & { shown: Box; tool: NoteTool | null; onTool: (tool: NoteTool | null) => void },
+  props: Props & {
+    shown: Box;
+    tool: NoteTool | null;
+    onTool: (tool: NoteTool | null) => void;
+    isInGrid: boolean;
+  },
 ) {
   const { note, state } = props;
   const addNext = () =>
     state.add({ left: props.shown.left + 24, top: props.shown.top + 24 }, note.color);
+  const drag = useNoteDrag(note, props.shown, state);
   return (
-    <header className="note-head" onPointerDown={useNoteDrag(note, props.shown, state)}>
+    <header className="note-head" onPointerDown={props.isInGrid ? undefined : drag}>
       <GripIcon />
       <ColorDots note={note} state={state} />
       <ToolButton tool="pen" chosen={props.tool} onChoose={props.onTool} />
@@ -117,19 +123,22 @@ function NoteBody(props: Props & { shown: Box; tool: NoteTool | null }) {
   );
 }
 
-export function StickyNoteCard({ note, state }: Props) {
+/** `isInGrid`: one of a phone's notes in a grid, neither moved nor sized, so the computer's
+ * place and size for it stay as they were. */
+export function StickyNoteCard({ note, state, isInGrid = false }: Props & { isInGrid?: boolean }) {
   const card = useRef<HTMLElement>(null);
+  const unplaced = useRef<HTMLElement>(null);
   const [tool, setTool] = useState<NoteTool | null>(null);
   const shown = placeInRoom(note, useRoomSize(card));
-  useKeptSize(card, note, shown, state);
+  useKeptSize(isInGrid ? unplaced : card, note, shown, state);
   return (
     <section
       ref={card}
-      className={`sticky-note ${note.color}`}
-      style={shown}
+      className={isInGrid ? `sticky-note in-grid ${note.color}` : `sticky-note ${note.color}`}
+      style={isInGrid ? undefined : shown}
       aria-label={t("Lapp")}
     >
-      <NoteHead note={note} state={state} shown={shown} tool={tool} onTool={setTool} />
+      <NoteHead {...{ note, state, shown, tool, isInGrid }} onTool={setTool} />
       <NoteBody note={note} state={state} shown={shown} tool={tool} />
     </section>
   );

@@ -113,7 +113,7 @@ test("the shelf on the phone has a menu with Inställningar, and no folder to pi
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Bokhylla" }).click();
 
-  await page.getByRole("button", { name: "Meny" }).click();
+  await page.getByRole("button", { name: "Meny", exact: true }).click();
   await expect(page.getByRole("menuitem", { name: "Öppna mapp…" })).toBeHidden();
   await page.getByRole("menuitem", { name: "Inställningar" }).click();
 
@@ -209,4 +209,12 @@ test("Öppna bredvid from Boken shows the other text over the whole screen", asy
   await page.getByRole("menuitem", { name: "Öppna bredvid" }).click();
 
   await expect(page.locator(".beside-pane")).toContainText("Isen bar.");
+});
+
+test("the computer's blocks open on a phone as a sheet from Skriv's bar", async ({ page }) => {
+  await page.locator(".phone-tabs").getByRole("button", { name: "Skriv" }).click();
+  await page.getByRole("button", { name: "Moduler" }).click();
+  await page.getByRole("button", { name: "I scenen" }).click();
+
+  await expect(page.getByRole("region", { name: "I scenen" })).toContainText("Elin");
 });

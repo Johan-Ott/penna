@@ -3,6 +3,7 @@ import { chapterOf } from "../../project/treeLabels.js";
 import { PhoneBarStart, SearchButton } from "./PhoneBarStart.js";
 import { ReviewButton } from "../shell/Topbar.js";
 import { SprintButton } from "../sprint/SprintBar.js";
+import { ModulesButton } from "./PhoneModules.js";
 import type { Project } from "../useProject.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
@@ -21,6 +22,7 @@ export function TextBar({ app, project }: Props) {
         <span className="phone-bar-sub">{t("{count} ord idag", { count: words })}</span>
       </span>
       <span className="phone-bar-end">
+        <ModulesButton />
         <SprintButton />
         <ReviewButton
           review={app.writingMode.review}

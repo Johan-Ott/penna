@@ -194,3 +194,12 @@ export const ChartIcon = () => (
     <path d="M21 20H3" />
   </Icon>
 );
+
+export const GridIcon = () => (
+  <Icon>
+    <rect x="4" y="4" width="6" height="6" rx="1" />
+    <rect x="14" y="4" width="6" height="6" rx="1" />
+    <rect x="4" y="14" width="6" height="6" rx="1" />
+    <rect x="14" y="14" width="6" height="6" rx="1" />
+  </Icon>
+);

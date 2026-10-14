@@ -1378,5 +1378,8 @@
   "I dag": "Today",
   "deadline {day}": "deadline {day}",
   "Mål": "Goals",
-  "Ändra dagens och bokens mål": "Change the day's and the book's goals"
+  "Ändra dagens och bokens mål": "Change the day's and the book's goals",
+  "Moduler": "Modules",
+  "+ Ny lapp": "+ New note",
+  "← Moduler": "← Modules"
 }
