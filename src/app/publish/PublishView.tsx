@@ -59,6 +59,14 @@ const FORMATS: [ExportFormat, string, string, string][] = [
     t("Exportera Markdown"),
     t("Hela boken i en textfil med rubriker, för bloggar, webbföljetonger och andra program."),
   ],
+  [
+    "mappar",
+    t("Markdown-mapp"),
+    t("Exportera Markdown-mapp"),
+    t(
+      "Varje scen som en egen fil med sin titel, i en mapp per del och kapitel, och anteckningarna för sig. En zip att packa upp.",
+    ),
+  ],
   ["text", t("Text"), t("Exportera text"), t("Bara texten, utan formatering.")],
   [
     "html",

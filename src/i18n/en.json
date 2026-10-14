@@ -1381,5 +1381,9 @@
   "Ändra dagens och bokens mål": "Change the day's and the book's goals",
   "Moduler": "Modules",
   "+ Ny lapp": "+ New note",
-  "← Moduler": "← Modules"
+  "← Moduler": "← Modules",
+  "Namnlös": "Untitled",
+  "Markdown-mapp": "Markdown folder",
+  "Exportera Markdown-mapp": "Export Markdown folder",
+  "Varje scen som en egen fil med sin titel, i en mapp per del och kapitel, och anteckningarna för sig. En zip att packa upp.": "Each scene as its own file named after its title, in a folder for each part and chapter, with the notes apart. A zip to unpack."
 }

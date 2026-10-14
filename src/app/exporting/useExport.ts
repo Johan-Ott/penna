@@ -26,7 +26,7 @@ export type ExportState =
   | { kind: "saved"; fileName: string; path: string }
   | { kind: "failed"; sceneTitle: string; reason: string };
 
-export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag" | PlainFormat;
+export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag" | "mappar" | PlainFormat;
 
 export interface ExportChoices {
   format: ExportFormat;
@@ -69,6 +69,7 @@ const FILE_KINDS: Record<ExportFormat, FileKind> = {
   markdown: { name: "Markdown", extension: "md" },
   text: { name: t("Text"), extension: "txt" },
   html: { name: t("Webbsida"), extension: "html" },
+  mappar: { name: t("Zip-arkiv"), extension: "zip" },
 };
 
 const fileNameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1);
@@ -82,6 +83,10 @@ interface ExportJob {
 }
 
 async function buildFile({ project, generalAuthor, choices, saveFields, onProgress }: ExportJob) {
+  if (choices.format === "mappar") {
+    const { markdownFolderZip } = await import("../../export/markdownFolder.js");
+    return markdownFolderZip(platform.fileSystem, project);
+  }
   const material = await bookMaterial(project, generalAuthor, onProgress);
   const language = bookLanguage(project.fields);
   if (isPlain(choices.format)) return plainFile(material, choices, language);
