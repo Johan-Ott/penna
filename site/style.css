@@ -1,7 +1,8 @@
 /* The app's own colours and typefaces, from src/styles/tokens.css: warm grays, black as the
    primary colour, Literata for what is read and Geist for what is used. */
 :root {
-  --bg: #f6f5f2;
+  --bg: #ffffff;
+  --bg-subtle: #f6f5f2;
   --card: #ffffff;
   --text: #111111;
   --muted: #5c5c5c;
@@ -9,7 +10,7 @@
   --primary: #111111;
   --on-primary: #ffffff;
   --accent: #3f6b4e;
-  --shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+  --shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
   --font-ui: "Geist Sans", system-ui, sans-serif;
   --font-prose: "Literata", Georgia, serif;
   color-scheme: light dark;
@@ -18,6 +19,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #191816;
+    --bg-subtle: #21201e;
     --card: #21201e;
     --text: #f2f0eb;
     --muted: #a29e98;
@@ -25,7 +27,7 @@
     --primary: #f2f0eb;
     --on-primary: #191816;
     --accent: #7fae8d;
-    --shadow: 0 18px 48px rgba(0, 0, 0, 0.6);
+    --shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -59,6 +61,11 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -66,83 +73,100 @@ body {
   font: 17px/1.65 var(--font-prose);
 }
 
-main {
-  max-width: 1080px;
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.wrap {
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 28px 16px 64px;
+  padding: 0 16px;
 }
 
 .narrow {
   max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+/* The bar at the top, which stays while the page scrolls. */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
 }
 
 nav {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 64px;
+  gap: 24px;
+  height: 64px;
   font: 15px var(--font-ui);
 }
 
-nav img {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-}
-
-nav .name {
+nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
   font: 700 20px var(--font-prose);
   text-decoration: none;
 }
 
-nav .language {
-  margin-left: auto;
-  color: var(--muted);
+nav .brand img {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
 }
 
-h1 {
-  max-width: 14em;
-  margin: 0 0 16px;
-  font-size: clamp(34px, 6vw, 56px);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-}
-
-h2 {
-  margin: 40px 0 8px;
-  font: 700 24px/1.3 var(--font-prose);
-}
-
-h3 {
-  margin: 0 0 6px;
-  font: 600 16px var(--font-ui);
-}
-
-.lead {
-  max-width: 34em;
-  color: var(--muted);
-  font-size: 20px;
-}
-
-a {
-  color: inherit;
-}
-
-.buttons {
+nav .links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 24px 0 8px;
+  gap: 24px;
+}
+
+nav .links a,
+nav .language {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+nav .links a:hover,
+nav .language:hover {
+  color: var(--text);
+}
+
+nav .button {
+  padding: 8px 14px;
+}
+
+@media (max-width: 760px) {
+  nav .links {
+    display: none;
+  }
 }
 
 .button {
-  padding: 11px 20px;
+  display: inline-block;
+  padding: 12px 22px;
   border: 1px solid var(--primary);
   border-radius: 6px;
   background: var(--primary);
   color: var(--on-primary);
   font: 15px var(--font-ui);
   text-decoration: none;
+  transition: opacity 120ms;
+}
+
+.button:hover {
+  opacity: 0.85;
 }
 
 .button.quiet {
@@ -151,86 +175,352 @@ a {
   border-color: var(--line);
 }
 
-.hint {
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font: 13px var(--font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pill {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
   color: var(--muted);
   font: 14px var(--font-ui);
 }
 
-.shot {
+.pill b {
+  color: var(--accent);
+  font-weight: normal;
+}
+
+/* The first view: the promise, the buttons, and the app with the phone in front of it. */
+.hero {
+  padding: 88px 0 0;
+  text-align: center;
+}
+
+h1 {
+  max-width: 13em;
+  margin: 0 auto 20px;
+  font-size: clamp(38px, 7vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  max-width: 32em;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 32px 0 12px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font: 14px var(--font-ui);
+}
+
+.stage {
+  position: relative;
+  margin-top: 64px;
+  padding: 48px 48px 0;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(
+    180deg,
+    var(--bg-subtle),
+    color-mix(in srgb, var(--accent) 14%, var(--bg-subtle))
+  );
+}
+
+.stage .window {
   display: block;
   width: 100%;
-  height: auto;
-  margin: 48px 0 0;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
   box-shadow: var(--shadow);
 }
 
-.grid {
+.stage .phone {
+  position: absolute;
+  right: 6%;
+  bottom: 0;
+  width: 19%;
+  min-width: 120px;
+  border: 6px solid var(--text);
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 760px) {
+  .hero {
+    padding-top: 56px;
+  }
+
+  .stage {
+    padding: 20px 16px 0;
+  }
+
+  .stage .phone {
+    display: none;
+  }
+}
+
+/* Three promises under the picture. */
+.promises {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-  margin-top: 56px;
+  gap: 32px;
+  padding: 56px 0;
+  border-bottom: 1px solid var(--line);
 }
 
-.card {
-  padding: 20px 22px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--card);
+.promises div {
+  display: flex;
+  gap: 14px;
 }
 
-.card p {
+.promises svg {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.promises h3 {
+  margin: 0 0 4px;
+  font: 600 16px var(--font-ui);
+}
+
+.promises p {
   margin: 0;
   color: var(--muted);
   font: 15px/1.55 var(--font-ui);
 }
 
-.pair {
+/* One feature each: words on one side, the app showing it on the other, sides in turn. */
+.feature {
   display: grid;
-  grid-template-columns: 1fr 260px;
-  gap: 40px;
+  grid-template-columns: 5fr 7fr;
+  gap: 64px;
   align-items: center;
-  margin-top: 72px;
+  padding: 96px 0;
 }
 
-.pair .shot {
+.feature:nth-of-type(even) .text {
+  order: 2;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font: 700 clamp(28px, 4vw, 40px) / 1.15 var(--font-prose);
+  letter-spacing: -0.01em;
+}
+
+.feature p {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.checks {
   margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 15px/1.5 var(--font-ui);
 }
 
-@media (max-width: 720px) {
-  .pair {
+.checks li {
+  position: relative;
+  margin-bottom: 10px;
+  padding-left: 28px;
+}
+
+.checks li::before {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  color: var(--accent);
+  content: "✓";
+}
+
+/* A part of the app, larger than life: the picture is wider than its frame and cut at the edge. */
+.frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 5 / 4;
+  border-radius: 20px;
+  background: var(--bg-subtle);
+}
+
+.frame img {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  width: 170%;
+  max-width: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.frame.right img {
+  right: 32px;
+  left: auto;
+}
+
+@media (max-width: 860px) {
+  .feature {
     grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 64px 0;
   }
 
-  .pair .phone {
-    max-width: 260px;
+  .feature:nth-of-type(even) .text {
+    order: 0;
   }
 }
 
-.promise {
-  margin-top: 72px;
-  padding: 28px;
-  border-left: 3px solid var(--accent);
-  background: var(--card);
-  border-radius: 0 12px 12px 0;
+/* Questions that open where they are. */
+.faq {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 96px 0;
 }
 
-.promise p {
+.faq h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+details {
+  border-bottom: 1px solid var(--line);
+}
+
+summary {
+  padding: 20px 0;
+  cursor: pointer;
+  font: 17px var(--font-ui);
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::after {
+  float: right;
+  color: var(--muted);
+  content: "+";
+}
+
+details[open] summary::after {
+  content: "−";
+}
+
+details p {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+/* The last word: a dark band to download from. */
+.closing {
+  padding: 88px 24px;
+  border-radius: 24px;
+  background: var(--primary);
+  color: var(--on-primary);
+  text-align: center;
+}
+
+.closing h2 {
+  margin-bottom: 12px;
+}
+
+.closing p {
   margin: 0;
+  opacity: 0.7;
 }
 
-footer {
+.closing .button {
+  border-color: var(--on-primary);
+  background: var(--on-primary);
+  color: var(--primary);
+}
+
+.closing .button.quiet {
+  background: transparent;
+  color: var(--on-primary);
+  border-color: color-mix(in srgb, var(--on-primary) 30%, transparent);
+}
+
+footer.wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
-  margin-top: 72px;
-  padding-top: 20px;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: 64px;
+  padding: 24px 16px 40px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font: 14px var(--font-ui);
 }
 
-.promise h2 {
-  margin-top: 0;
+footer .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+  color: var(--text);
+  font: 700 16px var(--font-prose);
+}
+
+footer .brand img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+/* The privacy policy: plain reading. */
+.narrow h1 {
+  margin: 56px 0 12px;
+  font-size: clamp(34px, 6vw, 48px);
+  text-align: left;
+}
+
+.narrow .lead {
+  margin: 0;
+}
+
+.narrow h2 {
+  margin: 40px 0 8px;
+  font-size: 24px;
+}
+
+.frame.tall {
+  aspect-ratio: auto;
+  padding-top: 32px;
+  text-align: center;
+}
+
+.frame.tall img {
+  position: static;
+  width: auto;
+  max-width: 300px;
+  border: 6px solid var(--text);
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
 }

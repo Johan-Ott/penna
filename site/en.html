@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Penna</title>
+    <title>Penna: a calm place to write your book</title>
     <meta
       name="description"
       content="Penna is a calm place to write novels, on your computer and your phone."
@@ -12,120 +12,292 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main>
-      <nav>
-        <img src="penna-logo.png" alt="" />
-        <a class="name" href="index.html">Penna</a>
-        <a class="language" href="index.html" lang="sv">På svenska</a>
+    <header class="top">
+      <nav class="wrap">
+        <a class="brand" href="en.html"><img src="penna-logo.png" alt="" />Penna</a>
+        <span class="links">
+          <a href="#features">Features</a>
+          <a href="#phone">Phone</a>
+          <a href="#questions">Questions</a>
+        </span>
+        <a class="language" href="index.html" lang="sv">Svenska</a>
+        <a class="button" href="#download">Download</a>
       </nav>
+    </header>
 
-      <h1>A calm place to write your book.</h1>
-      <p class="lead">
-        Penna keeps track of chapters, scenes, people and places, so you can write. On your computer
-        and your phone, with your own Google Drive in between if you like.
-      </p>
-      <div class="buttons">
-        <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
-          Download for Windows
-        </a>
-        <a
-          class="button quiet"
-          href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
-        >
-          Android
-        </a>
-      </div>
-      <p class="hint">Free. No account. macOS is coming.</p>
-
-      <picture>
-        <source srcset="bilder/skriv-mork.png" media="(prefers-color-scheme: dark)" />
-        <img
-          class="shot"
-          src="bilder/skriv.png"
-          width="1440"
-          height="900"
-          alt="Penna with a scene open, and the book’s parts, chapters and notes on the left"
-        />
-      </picture>
-
-      <div class="grid">
-        <div class="card">
-          <h3>The book as a tree</h3>
-          <p>Parts, chapters and scenes you move with a drag. Word counts at every level.</p>
-        </div>
-        <div class="card">
-          <h3>Notes that find the text</h3>
-          <p>
-            People, places and things. Their names become links in the manuscript, and a series
-            shares them between books.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Review</h3>
-          <p>Repetitions, narrative voice, pacing and what you promised the reader.</p>
-        </div>
-        <div class="card">
-          <h3>Read it as a book</h3>
-          <p>
-            See the text set as pages, and export to standard manuscript, e-book, print PDF or a
-            folder of plain files.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Goals and writing sprints</h3>
-          <p>
-            Daily goals, goals for scene, chapter and book, and an overview of how the book grows.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Notes and pictures</h3>
-          <p>
-            Sticky notes to write and draw on beside the text, and reference pictures for the scene.
-          </p>
-        </div>
-      </div>
-
-      <img
-        class="shot"
-        src="bilder/publicera.png"
-        width="1440"
-        height="900"
-        alt="Publish, with a preview of the book’s first pages"
-        loading="lazy"
-      />
-
-      <div class="pair">
-        <div>
-          <h2>In your pocket</h2>
-          <p>
-            The same book on your phone, for a scene on the bus or an idea before you fall asleep.
-            With Google Drive the text follows you between devices, and Penna only sees its own
-            files there.
-          </p>
-        </div>
-        <img
-          class="shot phone"
-          src="bilder/telefon.png"
-          width="390"
-          height="844"
-          alt="Penna on a phone, with the book’s tree"
-          loading="lazy"
-        />
-      </div>
-
-      <div class="promise">
-        <h2>Your texts are yours</h2>
-        <p>
-          Your books are plain files in a folder you choose. Penna has no accounts, collects nothing
-          and never uses your texts to train AI.
+    <main>
+      <section class="hero wrap">
+        <span class="pill"><b>Free</b> · Windows and Android · No account</span>
+        <h1>A calm place to write your book.</h1>
+        <p class="lead">
+          Penna keeps track of chapters, scenes, people and places, so you can write. On your
+          computer and your phone, with your own Google Drive in between if you like.
         </p>
+        <div class="buttons">
+          <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
+            Download for Windows
+          </a>
+          <a
+            class="button quiet"
+            href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+          >
+            Download for Android
+          </a>
+        </div>
+        <p class="hint">macOS is coming.</p>
+
+        <div class="stage">
+          <picture>
+            <source srcset="bilder/skriv-mork.png" media="(prefers-color-scheme: dark)" />
+            <img
+              class="window"
+              src="bilder/skriv.png"
+              width="1440"
+              height="900"
+              alt="Penna with a scene open, and the book’s parts, chapters and notes on the left"
+            />
+          </picture>
+          <img
+            class="phone"
+            src="bilder/telefon.png"
+            width="390"
+            height="844"
+            alt="The same book in Penna on a phone"
+          />
+        </div>
+      </section>
+
+      <section class="promises wrap">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M4 5h6l2 2h8v12H4z" />
+          </svg>
+          <span>
+            <h3>Your files</h3>
+            <p>Your books are plain files in a folder you choose, not in someone else’s cloud.</p>
+          </span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span>
+            <h3>No accounts</h3>
+            <p>No sign-in, no ads and no tracking of how you write.</p>
+          </span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3l7 3v6c0 4-3 7.5-7 9-4-1.5-7-5-7-9V6z" />
+          </svg>
+          <span>
+            <h3>Never AI training</h3>
+            <p>Your texts are never used to train AI, and never sold.</p>
+          </span>
+        </div>
+      </section>
+
+      <div id="features" class="wrap">
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">The book and its notes</p>
+            <h2>Everything about the book, where you write it.</h2>
+            <p>
+              Parts, chapters and scenes in a tree you rearrange with a drag. Beside them are
+              people, places and things, and their names find their own way into the text.
+            </p>
+            <ul class="checks">
+              <li>Word counts for every scene, chapter and part</li>
+              <li>A person shows their lines and where they are named</li>
+              <li>A series shares its notes between the books</li>
+            </ul>
+          </div>
+          <div class="frame">
+            <img
+              src="bilder/person.png"
+              width="1440"
+              height="900"
+              alt="The person Arvid, with his lines and the chapters that name him"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Review</p>
+            <h2>A second reader who never tires.</h2>
+            <p>
+              Review reads along with you and points out what you stop seeing yourself after the
+              third read-through.
+            </p>
+            <ul class="checks">
+              <li>Repetitions within a few sentences</li>
+              <li>Narrative voice, pacing and what you promised the reader</li>
+              <li>Suggestions you accept or reject one at a time</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/granska.png"
+              width="1440"
+              height="900"
+              alt="Review beside the text, with two repetitions to look at"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Read as a book</p>
+            <h2>See it as a book, long before it is one.</h2>
+            <p>
+              One press, and the text is set in spreads with drop caps and page numbers. Correct it
+              right on the page, and the correction is in the manuscript.
+            </p>
+            <ul class="checks">
+              <li>Turn the pages with the arrows, like a real book</li>
+              <li>Themes and typefaces for how the book should look</li>
+            </ul>
+          </div>
+          <div class="frame">
+            <img
+              src="bilder/las.png"
+              width="1440"
+              height="900"
+              alt="The first chapter set in a spread"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Notes and goals</p>
+            <h2>Room for your thoughts beside the text.</h2>
+            <p>
+              Sticky notes to write and draw on, in five colours, that stay where you put them. And
+              reference pictures for the scene you are writing.
+            </p>
+            <ul class="checks">
+              <li>A pen and an eraser on every note</li>
+              <li>Goals for the day, the scene, the chapter and the book</li>
+              <li>Writing sprints and an overview of how the book grows</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/lappar.png"
+              width="1440"
+              height="900"
+              alt="A yellow note beside the scene"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Publish</p>
+            <h2>From first draft to finished book.</h2>
+            <p>
+              When it is done, Penna makes a standard manuscript for publishers, an e-book, a print
+              PDF and a cover. You can also get the book as a folder of plain files.
+            </p>
+            <ul class="checks">
+              <li>A preview of the pages while you choose</li>
+              <li>Synopsis and cover letter, and where you have sent it</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/publicera.png"
+              width="1440"
+              height="900"
+              alt="Publish, with a preview of the book’s first pages"
+            />
+          </div>
+        </section>
+
+        <section id="phone" class="feature">
+          <div class="text">
+            <p class="eyebrow">Phone</p>
+            <h2>In your pocket.</h2>
+            <p>
+              The same book on your phone, for a scene on the bus or an idea before you fall asleep.
+              With Google Drive the text follows you between devices, and Penna only sees its own
+              files there.
+            </p>
+            <a
+              class="button"
+              href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+            >
+              Download for Android
+            </a>
+          </div>
+          <div class="frame tall">
+            <img
+              src="bilder/telefon.png"
+              width="390"
+              height="844"
+              alt="Penna on a phone, with the book’s tree"
+            />
+          </div>
+        </section>
       </div>
 
-      <footer>
-        <a href="privacy.html">Privacy policy</a>
-        <a href="mailto:johan.lonelodge@gmail.com">Support: johan.lonelodge@gmail.com</a>
-        <a href="https://github.com/Johan-Ott/penna/issues">Report a bug</a>
-      </footer>
+      <section id="questions" class="faq wrap">
+        <h2>Questions</h2>
+        <details>
+          <summary>What does Penna cost?</summary>
+          <p>Nothing. Penna is free and has no ads.</p>
+        </details>
+        <details>
+          <summary>Where are my books saved?</summary>
+          <p>
+            In a folder you choose, as plain files. You can back them up like any other files, and
+            export the book as Markdown if you want to take it somewhere else.
+          </p>
+        </details>
+        <details>
+          <summary>Does it work offline?</summary>
+          <p>Yes. Penna only needs the internet for Google Drive, updates and the dictionaries.</p>
+        </details>
+        <details>
+          <summary>Can I write on several devices?</summary>
+          <p>
+            Yes, with your own Google Drive. The book follows you between computer and phone, and
+            Penna only sees the files it created there itself.
+          </p>
+        </details>
+        <details>
+          <summary>Is Penna available for Mac and iPhone?</summary>
+          <p>macOS is coming. Right now Penna is available for Windows and Android.</p>
+        </details>
+      </section>
+
+      <section id="download" class="wrap">
+        <div class="closing">
+          <h2>Start your book today.</h2>
+          <p>Free, without an account. The example book shows how it all fits together.</p>
+          <div class="buttons">
+            <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
+              Download for Windows
+            </a>
+            <a
+              class="button quiet"
+              href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+            >
+              Download for Android
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <footer class="wrap">
+      <span class="brand"><img src="penna-logo.png" alt="" />Penna</span>
+      <a href="privacy.html">Privacy policy</a>
+      <a href="mailto:johan.lonelodge@gmail.com">Support</a>
+      <a href="https://github.com/Johan-Ott/penna/issues">Report a bug</a>
+    </footer>
   </body>
 </html>

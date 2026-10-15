@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Penna</title>
+    <title>Penna: ett lugnt ställe att skriva din bok</title>
     <meta
       name="description"
       content="Penna är ett lugnt skrivprogram för romaner, på datorn och telefonen."
@@ -12,115 +12,291 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main>
-      <nav>
-        <img src="penna-logo.png" alt="" />
-        <a class="name" href="index.html">Penna</a>
-        <a class="language" href="en.html" lang="en">In English</a>
+    <header class="top">
+      <nav class="wrap">
+        <a class="brand" href="index.html"><img src="penna-logo.png" alt="" />Penna</a>
+        <span class="links">
+          <a href="#funktioner">Funktioner</a>
+          <a href="#telefon">Telefonen</a>
+          <a href="#fragor">Frågor</a>
+        </span>
+        <a class="language" href="en.html" lang="en">English</a>
+        <a class="button" href="#ladda-ner">Ladda ner</a>
       </nav>
+    </header>
 
-      <h1>Ett lugnt ställe att skriva din bok.</h1>
-      <p class="lead">
-        Penna håller ordning på kapitel, scener, personer och platser, så att du kan skriva. På
-        datorn och på telefonen, med din egen Google Drive emellan om du vill.
-      </p>
-      <div class="buttons">
-        <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
-          Ladda ner för Windows
-        </a>
-        <a
-          class="button quiet"
-          href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
-        >
-          Android
-        </a>
-      </div>
-      <p class="hint">Gratis. Inget konto. macOS kommer.</p>
-
-      <picture>
-        <source srcset="bilder/skriv-mork.png" media="(prefers-color-scheme: dark)" />
-        <img
-          class="shot"
-          src="bilder/skriv.png"
-          width="1440"
-          height="900"
-          alt="Penna med en scen öppen, och bokens delar, kapitel och anteckningar till vänster"
-        />
-      </picture>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Boken som ett träd</h3>
-          <p>Delar, kapitel och scener som du flyttar med ett drag. Ordantal på varje nivå.</p>
-        </div>
-        <div class="card">
-          <h3>Anteckningar som hittar texten</h3>
-          <p>
-            Personer, platser och saker. Deras namn blir länkar i manuset, och en serie delar dem
-            mellan böckerna.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Granska</h3>
-          <p>Upprepningar, berättarröst, tempo och det du lovat läsaren.</p>
-        </div>
-        <div class="card">
-          <h3>Läs som en bok</h3>
-          <p>
-            Se texten satt som sidor, och exportera till standardmanus, e-bok, tryck-PDF eller en
-            mapp med vanliga filer.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Mål och skrivsprintar</h3>
-          <p>Dagsmål, mål för scen, kapitel och bok, och en överblick över hur boken växer.</p>
-        </div>
-        <div class="card">
-          <h3>Lappar och bilder</h3>
-          <p>Lappar att skriva och rita på bredvid texten, och referensbilder för scenen.</p>
-        </div>
-      </div>
-
-      <img
-        class="shot"
-        src="bilder/publicera.png"
-        width="1440"
-        height="900"
-        alt="Publicera, med förhandsvisning av bokens första sidor"
-        loading="lazy"
-      />
-
-      <div class="pair">
-        <div>
-          <h2>Med i fickan</h2>
-          <p>
-            Samma bok på telefonen, för en scen på bussen eller en idé innan du somnar. Med Google
-            Drive följer texten med mellan dina enheter, och Penna ser bara sina egna filer där.
-          </p>
-        </div>
-        <img
-          class="shot phone"
-          src="bilder/telefon.png"
-          width="390"
-          height="844"
-          alt="Penna på en telefon, med bokens träd"
-          loading="lazy"
-        />
-      </div>
-
-      <div class="promise">
-        <h2>Dina texter är dina</h2>
-        <p>
-          Böckerna ligger som vanliga filer i en mapp du väljer. Penna har inga konton, samlar inte
-          in något och använder aldrig dina texter för att träna AI.
+    <main>
+      <section class="hero wrap">
+        <span class="pill"><b>Gratis</b> · Windows och Android · Inget konto</span>
+        <h1>Ett lugnt ställe att skriva din bok.</h1>
+        <p class="lead">
+          Penna håller ordning på kapitel, scener, personer och platser, så att du kan skriva. På
+          datorn och på telefonen, med din egen Google Drive emellan om du vill.
         </p>
+        <div class="buttons">
+          <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
+            Ladda ner för Windows
+          </a>
+          <a
+            class="button quiet"
+            href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+          >
+            Ladda ner för Android
+          </a>
+        </div>
+        <p class="hint">macOS kommer.</p>
+
+        <div class="stage">
+          <picture>
+            <source srcset="bilder/skriv-mork.png" media="(prefers-color-scheme: dark)" />
+            <img
+              class="window"
+              src="bilder/skriv.png"
+              width="1440"
+              height="900"
+              alt="Penna med en scen öppen, och bokens delar, kapitel och anteckningar till vänster"
+            />
+          </picture>
+          <img
+            class="phone"
+            src="bilder/telefon.png"
+            width="390"
+            height="844"
+            alt="Samma bok i Penna på en telefon"
+          />
+        </div>
+      </section>
+
+      <section class="promises wrap">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M4 5h6l2 2h8v12H4z" />
+          </svg>
+          <span>
+            <h3>Dina filer</h3>
+            <p>Böckerna ligger som vanliga filer i en mapp du väljer, inte i någon annans moln.</p>
+          </span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span>
+            <h3>Inga konton</h3>
+            <p>Ingen inloggning, ingen reklam och ingen mätning av hur du skriver.</p>
+          </span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3l7 3v6c0 4-3 7.5-7 9-4-1.5-7-5-7-9V6z" />
+          </svg>
+          <span>
+            <h3>Aldrig AI-träning</h3>
+            <p>Dina texter används aldrig för att träna AI, och säljs aldrig.</p>
+          </span>
+        </div>
+      </section>
+
+      <div id="funktioner" class="wrap">
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Boken och anteckningarna</p>
+            <h2>Allt om boken, där du skriver den.</h2>
+            <p>
+              Delar, kapitel och scener i ett träd du flyttar med ett drag. Bredvid ligger personer,
+              platser och saker, och deras namn hittar själva in i texten.
+            </p>
+            <ul class="checks">
+              <li>Ordantal för varje scen, kapitel och del</li>
+              <li>En person visar sina repliker och var den nämns</li>
+              <li>En serie delar anteckningarna mellan böckerna</li>
+            </ul>
+          </div>
+          <div class="frame">
+            <img
+              src="bilder/person.png"
+              width="1440"
+              height="900"
+              alt="Personen Arvid, med repliker och kapitlen där han nämns"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Granska</p>
+            <h2>En andra läsare som aldrig tröttnar.</h2>
+            <p>
+              Granska läser med dig och säger till om det du själv slutar se efter tredje
+              genomläsningen.
+            </p>
+            <ul class="checks">
+              <li>Upprepningar inom några meningar</li>
+              <li>Berättarröst, tempo och det du lovat läsaren</li>
+              <li>Förslag du godtar eller avvisar ett i taget</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/granska.png"
+              width="1440"
+              height="900"
+              alt="Granska bredvid texten, med två upprepningar att se över"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Läs som bok</p>
+            <h2>Se den som en bok, långt innan den är en.</h2>
+            <p>
+              Ett tryck, och texten står satt i uppslag med anfang och sidnummer. Rätta direkt i
+              sidan, så är rättelsen i manuset.
+            </p>
+            <ul class="checks">
+              <li>Bläddra med pilarna, som i en riktig bok</li>
+              <li>Teman och typsnitt för hur boken ska se ut</li>
+            </ul>
+          </div>
+          <div class="frame">
+            <img
+              src="bilder/las.png"
+              width="1440"
+              height="900"
+              alt="Första kapitlet satt i ett uppslag"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Lappar och mål</p>
+            <h2>Tankarna får plats bredvid texten.</h2>
+            <p>
+              Lappar att skriva och rita på, i fem färger, som ligger kvar där du satte dem. Och
+              referensbilder för scenen du skriver.
+            </p>
+            <ul class="checks">
+              <li>Penna och sudd på varje lapp</li>
+              <li>Mål för dagen, scenen, kapitlet och boken</li>
+              <li>Skrivsprintar och en överblick över hur boken växer</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/lappar.png"
+              width="1440"
+              height="900"
+              alt="En gul lapp bredvid scenen"
+            />
+          </div>
+        </section>
+
+        <section class="feature">
+          <div class="text">
+            <p class="eyebrow">Publicera</p>
+            <h2>Från utkast till färdig bok.</h2>
+            <p>
+              När den är klar gör Penna standardmanus till förlaget, e-bok, tryck-PDF och omslag. Du
+              kan också få boken som en mapp med vanliga filer.
+            </p>
+            <ul class="checks">
+              <li>Förhandsvisning av sidorna medan du väljer</li>
+              <li>Synopsis och följebrev, och vart du har skickat</li>
+            </ul>
+          </div>
+          <div class="frame right">
+            <img
+              src="bilder/publicera.png"
+              width="1440"
+              height="900"
+              alt="Publicera, med förhandsvisning av bokens första sidor"
+            />
+          </div>
+        </section>
+
+        <section id="telefon" class="feature">
+          <div class="text">
+            <p class="eyebrow">Telefonen</p>
+            <h2>Med i fickan.</h2>
+            <p>
+              Samma bok på telefonen, för en scen på bussen eller en idé innan du somnar. Med Google
+              Drive följer texten med mellan dina enheter, och Penna ser bara sina egna filer där.
+            </p>
+            <a
+              class="button"
+              href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+            >
+              Ladda ner för Android
+            </a>
+          </div>
+          <div class="frame tall">
+            <img
+              src="bilder/telefon.png"
+              width="390"
+              height="844"
+              alt="Penna på en telefon, med bokens träd"
+            />
+          </div>
+        </section>
       </div>
 
-      <footer>
-        <a href="integritet.html">Integritetspolicy</a>
-        <a href="mailto:johan.lonelodge@gmail.com">Support: johan.lonelodge@gmail.com</a>
-        <a href="https://github.com/Johan-Ott/penna/issues">Rapportera ett fel</a>
-      </footer>
+      <section id="fragor" class="faq wrap">
+        <h2>Frågor</h2>
+        <details>
+          <summary>Vad kostar Penna?</summary>
+          <p>Ingenting. Penna är gratis och har ingen reklam.</p>
+        </details>
+        <details>
+          <summary>Var sparas mina böcker?</summary>
+          <p>
+            I en mapp du väljer, som vanliga filer. Du kan säkerhetskopiera dem som vilka filer som
+            helst, och exportera boken som Markdown om du vill ta den någon annanstans.
+          </p>
+        </details>
+        <details>
+          <summary>Fungerar det utan internet?</summary>
+          <p>Ja. Penna behöver nätet bara för Google Drive, uppdateringar och ordlistorna.</p>
+        </details>
+        <details>
+          <summary>Kan jag skriva på flera enheter?</summary>
+          <p>
+            Ja, med din egen Google Drive. Boken följer med mellan datorn och telefonen, och Penna
+            ser bara de filer den själv har skapat där.
+          </p>
+        </details>
+        <details>
+          <summary>Finns Penna för Mac och iPhone?</summary>
+          <p>macOS kommer. Just nu finns Penna för Windows och Android.</p>
+        </details>
+      </section>
+
+      <section id="ladda-ner" class="wrap">
+        <div class="closing">
+          <h2>Börja på din bok i dag.</h2>
+          <p>Gratis, utan konto. Exempelboken visar hur allt hänger ihop.</p>
+          <div class="buttons">
+            <a class="button" href="https://github.com/Johan-Ott/penna/releases/latest">
+              Ladda ner för Windows
+            </a>
+            <a
+              class="button quiet"
+              href="https://github.com/Johan-Ott/penna/releases/latest/download/Penna.apk"
+            >
+              Ladda ner för Android
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <footer class="wrap">
+      <span class="brand"><img src="penna-logo.png" alt="" />Penna</span>
+      <a href="integritet.html">Integritetspolicy</a>
+      <a href="mailto:johan.lonelodge@gmail.com">Support</a>
+      <a href="https://github.com/Johan-Ott/penna/issues">Rapportera ett fel</a>
+    </footer>
   </body>
 </html>
