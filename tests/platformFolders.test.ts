@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { androidSdk, appFolders } from "../scripts/platformFolders.mjs";
 
-const WINDOWS_ENV = { APPDATA: "/roaming", LOCALAPPDATA: "/local" };
+const WINDOWS_ENV = { APPDATA: "C:\\Roaming", LOCALAPPDATA: "C:\\Local" };
 
 describe("appFolders", () => {
   it("names both folders Windows keeps an app's files in", () => {
     const folders = appFolders("win32", WINDOWS_ENV, "/home/johan", "se.penna.test");
 
-    expect(folders).toEqual(["/roaming/se.penna.test", "/local/se.penna.test"]);
+    expect(folders).toEqual(["C:\\Roaming\\se.penna.test", "C:\\Local\\se.penna.test"]);
   });
 
   it("names the macOS folder that holds the WebView's localStorage", () => {
@@ -39,6 +39,6 @@ describe("androidSdk", () => {
   it("finds the SDK where Android Studio puts it on Windows", () => {
     const sdk = androidSdk("win32", WINDOWS_ENV, "/home/johan");
 
-    expect(sdk).toBe("/local/Android/Sdk");
+    expect(sdk).toBe("C:\\Local\\Android\\Sdk");
   });
 });
