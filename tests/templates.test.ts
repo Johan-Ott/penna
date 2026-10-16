@@ -35,17 +35,18 @@ describe("structures and pieces", () => {
     ]);
   });
 
-  it("are suggested from the kind of book and its pieces", () => {
-    expect(suggestedStructure("roman", ["romans", "deckare", "urban"])).toBe("deckare");
-    expect(suggestedStructure("roman", ["romans", "magi"])).toBe("romantasy");
-    expect(suggestedStructure("roman", ["romans"])).toBe("romans");
-    expect(suggestedStructure("roman", ["romans", "feelgood"])).toBe("romans");
-    expect(suggestedStructure("roman", [])).toBe("tre-akter");
-    expect(suggestedStructure("noveller", ["deckare"])).toBe("novell");
-    expect(suggestedStructure("fackbok", [])).toBe("fackbok");
-    expect(suggestedStructure("fackbok", ["memoar"])).toBe("memoar");
-    expect(suggestedStructure("roman", ["skrack", "romans"])).toBe("skrack");
-    expect(suggestedStructure("annat", [])).toBe("tom");
+  it("take their structure from the genre, whatever is blended in", () => {
+    expect(suggestedStructure("roman", "deckare", ["skrack", "romans"])).toBe("deckare");
+    expect(suggestedStructure("roman", "skrack", ["deckare"])).toBe("skrack");
+    expect(suggestedStructure("roman", "romans", ["magi"])).toBe("romantasy");
+    expect(suggestedStructure("roman", "magi", ["romans"])).toBe("romantasy");
+    expect(suggestedStructure("roman", "deckare", ["romans", "magi"])).toBe("deckare");
+    expect(suggestedStructure("roman", "romans", ["feelgood"])).toBe("romans");
+    expect(suggestedStructure("roman", "scifi", [])).toBe("tre-akter");
+    expect(suggestedStructure("roman", "", [])).toBe("tre-akter");
+    expect(suggestedStructure("noveller", "deckare", [])).toBe("novell");
+    expect(suggestedStructure("fackbok", "", ["memoar"])).toBe("memoar");
+    expect(suggestedStructure("annat", "", [])).toBe("tom");
   });
 
   it("keep Penna's standard labels to themselves when no piece adds any", () => {

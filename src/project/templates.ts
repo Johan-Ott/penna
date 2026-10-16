@@ -37,32 +37,51 @@ const texts = () => (uiLanguage() === "en" ? english : swedish);
 export const structures = (): BookTemplate[] => texts().structures;
 export const templatePieces = (): TemplatePiece[] => texts().pieces;
 
-/** The structure Penna suggests for a kind of book and the pieces the writer picked. */
-// The first piece in this order that the writer picked decides the novel's structure.
-const NOVEL_STRUCTURES: [piece: string, structure: string][] = [
-  ["deckare", "deckare"],
-  ["thriller", "thriller"],
-  ["skrack", "skrack"],
-  ["romans", "romans"],
-  ["feelgood", "feelgood"],
-  ["ungdom", "ungdom"],
-  ["barnbok", "barnbok"],
-  ["memoar", "memoar"],
-  ["magi", "hjaltens-resa"],
+// The pieces that are a genre of their own. A novel's genre decides its structure, and the
+// other pieces blend into it with their notes and labels.
+export const GENRES = [
+  "deckare",
+  "thriller",
+  "skrack",
+  "romans",
+  "magi",
+  "urban",
+  "scifi",
+  "historisk",
+  "feelgood",
+  "ungdom",
+  "litterar",
+  "barnbok",
 ];
 
-// A love story in a fantasy world braids both, unless a crime or a threat drives the book.
-const isRomantasy = (pieces: string[]) =>
-  pieces.includes("romans") &&
-  ["magi", "urban"].some((piece) => pieces.includes(piece)) &&
-  !["deckare", "thriller", "skrack"].some((piece) => pieces.includes(piece));
+const GENRE_STRUCTURES: Record<string, string> = {
+  deckare: "deckare",
+  thriller: "thriller",
+  skrack: "skrack",
+  romans: "romans",
+  feelgood: "feelgood",
+  ungdom: "ungdom",
+  barnbok: "barnbok",
+  magi: "hjaltens-resa",
+};
 
-export function suggestedStructure(type: string, pieces: string[]): string {
+// A love story in a fantasy world braids both, whichever of the two is the genre.
+const isRomantasy = (genre: string, pieces: string[]) => {
+  const all = [genre, ...pieces];
+  return (
+    all.includes("romans") &&
+    ["magi", "urban"].some((piece) => all.includes(piece)) &&
+    ["romans", "magi", "urban"].includes(genre)
+  );
+};
+
+/** The structure Penna suggests for a kind of book, its genre and the pieces blended in. */
+export function suggestedStructure(type: string, genre: string, pieces: string[]): string {
   if (type === "noveller") return "novell";
   if (type === "fackbok") return pieces.includes("memoar") ? "memoar" : "fackbok";
   if (type !== "roman") return "tom";
-  if (isRomantasy(pieces)) return "romantasy";
-  return NOVEL_STRUCTURES.find(([piece]) => pieces.includes(piece))?.[1] ?? "tre-akter";
+  if (isRomantasy(genre, pieces)) return "romantasy";
+  return GENRE_STRUCTURES[genre] ?? "tre-akter";
 }
 
 const unique = (values: string[]) => [...new Set(values)];

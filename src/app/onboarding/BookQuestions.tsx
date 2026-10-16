@@ -1,10 +1,9 @@
 import type { ProjectDetails } from "../../project/newProject.js";
 import { NarrationPicker } from "../review/NarrationPicker.js";
-import { PieceToggles } from "../templates/TemplateChoices.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
-// The questions of a new book, one step each: what kind, which pieces and how it is told, and
-// its title and goal. Penna's suggestion for the parts and chapters is the step between.
+// The first and last questions of a new book: what kind it is, and its title, voice and goals.
+// The step between, its shape, is BookShape.
 
 export type FieldProps = { details: ProjectDetails; onChange: (details: ProjectDetails) => void };
 
@@ -35,25 +34,29 @@ export function BookTypes({ details, onChange }: FieldProps) {
   );
 }
 
-export function StoryPieces({ details, onChange }: FieldProps) {
+const WORDS_PER_PAGE = 250;
+const numberFrom = (text: string) => Number(text.replace(/\D/g, ""));
+
+// The whole book's goal in words, and in pages, which is how a writer often thinks of it.
+function BookGoal({ details, onChange }: FieldProps) {
+  const words = details.totalGoal ?? 0;
   return (
-    <>
-      <p className="setting-hint">
-        {t("Välj så många som passar, eller inga alls. Du kan lägga till fler senare.")}
-      </p>
-      <PieceToggles
-        chosen={details.pieces}
-        onChange={(pieces) => onChange({ ...details, pieces })}
+    <label className="onboarding-field">
+      <span className="field-label">{t("Bokens längd i ord")}</span>
+      <input
+        inputMode="numeric"
+        value={words ? formatNumber(words) : ""}
+        placeholder={t("Inget mål")}
+        onChange={(event) =>
+          onChange({ ...details, totalGoal: numberFrom(event.target.value) || null })
+        }
       />
-      <span className="field-label">{t("Hur berättas den?")}</span>
-      <NarrationPicker
-        value={details.narration}
-        onChange={(narration) => onChange({ ...details, narration })}
-      />
-      <span className="setting-hint">
-        {t("Granska håller koll på att texten följer det, till exempel filterord i deep POV.")}
-      </span>
-    </>
+      {words > 0 && (
+        <span className="setting-hint">
+          {t("Cirka {pages} sidor", { pages: formatNumber(Math.round(words / WORDS_PER_PAGE)) })}
+        </span>
+      )}
+    </label>
   );
 }
 
@@ -65,9 +68,7 @@ function GoalFields({ details, onChange }: FieldProps) {
         <input
           inputMode="numeric"
           value={formatNumber(details.dailyGoal)}
-          onChange={(event) =>
-            onChange({ ...details, dailyGoal: Number(event.target.value.replace(/\D/g, "")) })
-          }
+          onChange={(event) => onChange({ ...details, dailyGoal: numberFrom(event.target.value) })}
         />
       </label>
       <label className="onboarding-field">
@@ -94,6 +95,15 @@ export function TitleAndGoal(props: FieldProps) {
           onChange={(event) => props.onChange({ ...props.details, title: event.target.value })}
         />
       </label>
+      <span className="field-label">{t("Hur berättas den?")}</span>
+      <NarrationPicker
+        value={props.details.narration}
+        onChange={(narration) => props.onChange({ ...props.details, narration })}
+      />
+      <span className="setting-hint">
+        {t("Granska håller koll på att texten följer det, till exempel filterord i deep POV.")}
+      </span>
+      <BookGoal {...props} />
       <GoalFields {...props} />
     </>
   );

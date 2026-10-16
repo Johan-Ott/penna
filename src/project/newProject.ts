@@ -12,15 +12,21 @@ import { manuscriptSceneIds, NOTES_ID, withSpecialFolders, type TreeNode } from 
 import { readOwnTemplates, OWN_PREFIX } from "./ownTemplates.js";
 import { composeTemplate, structures, templateBook, type BookTemplate } from "./templates.js";
 import { t } from "../i18n/i18n.js";
-import { writeWelcome } from "./welcome.js";
+import { writeStepsNote, writeWelcome } from "./welcome.js";
 
 export interface ProjectDetails {
   title: string;
   type: string;
   /** The structure it starts from, built in or the writer's own; see templates.ts. */
   structure: string;
-  /** The pieces added to it, such as Deckare and Romans. */
+  /** The genre that decided the structure, or "" for none. */
+  genre?: string;
+  /** The pieces blended in, such as Romans in a Deckare. */
   pieces: string[];
+  /** False for a writer who writes their way forward: one chapter, the steps kept as a note. */
+  isPlanned?: boolean;
+  /** Words for the whole book, when the writer changed the structure's own. */
+  totalGoal?: number | null;
   dailyGoal: number;
   /** YYYY-MM-DD, or "" when the writer has no deadline. */
   deadline: string;
@@ -84,7 +90,8 @@ async function templateFor(fileSystem: FileSystem, libraryDir: string, details: 
     : [];
   const all = [...structures(), ...own];
   const structure = all.find((each) => each.id === details.structure) ?? (all[0] as BookTemplate);
-  return composeTemplate(structure, details.pieces);
+  const pieces = [details.genre ?? "", ...details.pieces].filter(Boolean);
+  return composeTemplate(structure, pieces);
 }
 
 // The template's goal, labels and note sorts; Penna's standard labels when it adds none.
@@ -107,6 +114,34 @@ function templateParts(template: BookTemplate) {
   return { fields, sorts };
 }
 
+const bookFields = (details: ProjectDetails) => ({
+  title: details.title.trim() || t("Namnlöst projekt"),
+  type: details.type,
+  dailyGoal: details.dailyGoal,
+  ...(details.deadline ? { deadline: details.deadline } : {}),
+  ...(details.narration ? { narration: details.narration } : {}),
+});
+
+// A writer who finds the story while writing starts on one chapter, whatever the structure.
+const firstChapterOf = (template: BookTemplate): BookTemplate =>
+  template.parts.length
+    ? { ...template, parts: [{ title: "", chapters: [[t("Kapitel 1")]] }] }
+    : template;
+
+// The welcome, and the structure's steps for one who writes without them, lead the notes.
+const withNotesFirst = (tree: TreeNode[], ids: string[]) =>
+  tree.map((node) =>
+    node.id === NOTES_ID
+      ? {
+          ...node,
+          children: [
+            ...ids.map((id) => ({ id, kind: "scene" as const })),
+            ...(node.children ?? []),
+          ],
+        }
+      : node,
+  );
+
 /** An imported book, or the template's, with the welcome note under Övrigt. */
 export async function createProject(
   fileSystem: FileSystem,
@@ -117,25 +152,18 @@ export async function createProject(
   const template = await templateFor(fileSystem, libraryDir, details);
   const dir = await freeProjectDir(fileSystem, libraryDir, details.title);
   await fileSystem.makeDir(joinPath(dir, "scenes"));
-  const book = imported ?? templateBook(template, t("Scen 1"));
+  const isPlanned = details.isPlanned !== false || imported !== undefined;
+  const book =
+    imported ?? templateBook(isPlanned ? template : firstChapterOf(template), t("Scen 1"));
   const tree = await writeBook(fileSystem, dir, book);
   const sceneId = manuscriptSceneIds(tree)[0] ?? null;
   const fromTemplate = templateParts(template);
-  const fields = {
-    title: details.title.trim() || t("Namnlöst projekt"),
-    type: details.type,
-    dailyGoal: details.dailyGoal,
-    ...(details.deadline ? { deadline: details.deadline } : {}),
-    ...(details.narration ? { narration: details.narration } : {}),
-    ...fromTemplate.fields,
-  };
   const welcome = await writeWelcome(fileSystem, dir);
-  const withWelcome = withSpecialFolders([...tree, ...fromTemplate.sorts]).map((node) =>
-    node.id === NOTES_ID
-      ? { ...node, children: [{ id: welcome, kind: "scene" as const }, ...(node.children ?? [])] }
-      : node,
-  );
-  await writeProjectFile(fileSystem, dir, { ...fields, welcome }, withWelcome);
+  const steps = isPlanned ? [] : [await writeStepsNote(fileSystem, dir, template)];
+  const all = withSpecialFolders([...tree, ...fromTemplate.sorts]);
+  const goal = details.totalGoal ? { totalGoal: details.totalGoal } : {};
+  const fields = { ...bookFields(details), ...fromTemplate.fields, ...goal, welcome };
+  await writeProjectFile(fileSystem, dir, fields, withNotesFirst(all, [welcome, ...steps]));
   return { dir, sceneId: sceneId ?? welcome };
 }
 

@@ -126,6 +126,28 @@ describe("createProject", () => {
     );
   });
 
+  it("gives one who writes their way forward one chapter, the steps as a note, and their goal", async () => {
+    const files = createMemoryFileSystem({});
+
+    const created = await createProject(files, "/Penna", {
+      ...details,
+      structure: "deckare",
+      genre: "deckare",
+      pieces: ["skrack"],
+      isPlanned: false,
+      totalGoal: 95_000,
+    });
+
+    const project = await readProjectFile(files, created.dir, []);
+    expect(manuscriptSceneIds(project.tree)).toHaveLength(1);
+    const sorts = project.tree.filter((node) => node.kind === "sort").map((node) => node.title);
+    expect(sorts.slice(-2)).toEqual(["Ledtrådar", "Det som skrämmer"]);
+    expect(project.fields).toMatchObject({ totalGoal: 95_000 });
+    const notes = project.tree.find((node) => node.id === "anteckningar")?.children ?? [];
+    const steps = await files.readText(`${created.dir}/scenes/${notes[1]?.id ?? ""}.md`);
+    expect(steps).toContain("- Det falska spåret: En ledtråd som pekar fel");
+  });
+
   it("never writes into an existing project with the same name", async () => {
     const files = createMemoryFileSystem({ "/Penna/Vintervägen.penna/project.json": "{}" });
 

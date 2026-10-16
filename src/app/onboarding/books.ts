@@ -4,7 +4,7 @@ import {
   createProject,
   type ProjectDetails,
 } from "../../project/newProject.js";
-import { suggestedStructure } from "../../project/templates.js";
+import { structures, suggestedStructure } from "../../project/templates.js";
 import { platform } from "../platform.js";
 
 // How a book comes to the shelf: made new from a title and its kind, read in from a manuscript,
@@ -21,11 +21,26 @@ export async function libraryOf(libraryDir: string | null) {
 export const startDetails = (dailyGoal: number): ProjectDetails => ({
   title: "",
   type: "roman",
-  structure: suggestedStructure("roman", []),
+  structure: suggestedStructure("roman", "", []),
+  genre: "",
   pieces: [],
+  isPlanned: true,
+  totalGoal: null,
   dailyGoal,
   deadline: "",
   narration: null,
+});
+
+/** The details with the structure Penna suggests for them, and that structure's goal. */
+export function withSuggestion(details: ProjectDetails): ProjectDetails {
+  const structure = suggestedStructure(details.type, details.genre ?? "", details.pieces);
+  return withStructure(details, structure);
+}
+
+export const withStructure = (details: ProjectDetails, structure: string): ProjectDetails => ({
+  ...details,
+  structure,
+  totalGoal: structures().find((each) => each.id === structure)?.totalGoal ?? null,
 });
 
 export async function newBook(libraryDir: string, details: ProjectDetails) {

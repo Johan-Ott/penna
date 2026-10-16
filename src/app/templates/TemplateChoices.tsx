@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ProjectDetails } from "../../project/newProject.js";
 import { structures, templatePieces, type BookTemplate } from "../../project/templates.js";
-import { importTemplateFile, useOwnTemplates } from "./templateFiles.js";
+import { importTemplateFile } from "./templateFiles.js";
 import { t } from "../../i18n/i18n.js";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   libraryDir: string | null;
 };
 
-function StructureList(props: Props & { own: BookTemplate[] }) {
+export function StructureList(props: Omit<Props, "libraryDir"> & { own: BookTemplate[] }) {
   const { details, onChange } = props;
   return (
     <div className="template-list" role="radiogroup" aria-label={t("Struktur")}>
@@ -31,7 +31,11 @@ function StructureList(props: Props & { own: BookTemplate[] }) {
 }
 
 /** Pieces to add to the structure, as many as the book needs. */
-export function PieceToggles(props: { chosen: string[]; onChange: (pieces: string[]) => void }) {
+export function PieceToggles(props: {
+  chosen: string[];
+  except?: string;
+  onChange: (pieces: string[]) => void;
+}) {
   const flip = (id: string) =>
     props.onChange(
       props.chosen.includes(id)
@@ -40,34 +44,24 @@ export function PieceToggles(props: { chosen: string[]; onChange: (pieces: strin
     );
   return (
     <div className="chip-row piece-row" aria-label={t("Bitar")}>
-      {templatePieces().map((piece) => (
-        <button
-          key={piece.id}
-          className="chip"
-          aria-pressed={props.chosen.includes(piece.id)}
-          title={piece.hint}
-          onClick={() => flip(piece.id)}
-        >
-          {piece.name}
-        </button>
-      ))}
+      {templatePieces()
+        .filter((piece) => piece.id !== props.except)
+        .map((piece) => (
+          <button
+            key={piece.id}
+            className="chip"
+            aria-pressed={props.chosen.includes(piece.id)}
+            title={piece.hint}
+            onClick={() => flip(piece.id)}
+          >
+            {piece.name}
+          </button>
+        ))}
     </div>
   );
 }
 
-function Suggested(props: { structure: BookTemplate | undefined; onSwap: () => void }) {
-  return (
-    <div className="template-choice suggested">
-      <span className="template-name">{props.structure?.name}</span>
-      <span className="choice-hint">{props.structure?.hint || t("Din egen mall")}</span>
-      <button className="link-button" onClick={props.onSwap}>
-        {t("Byt struktur")}
-      </button>
-    </div>
-  );
-}
-
-function ImportLink(props: { libraryDir: string | null; onImported: () => void }) {
+export function ImportLink(props: { libraryDir: string | null; onImported: () => void }) {
   const [problem, setProblem] = useState("");
   const importOne = () =>
     void importTemplateFile(props.libraryDir)
@@ -81,25 +75,6 @@ function ImportLink(props: { libraryDir: string | null; onImported: () => void }
         {t("Importera mall…")}
       </button>
       {problem && <span className="setting-hint">{problem}</span>}
-    </>
-  );
-}
-
-/** Vårt förslag: the structure Penna suggests from the kind and the pieces, or another one. */
-export function TemplateSuggestion(props: Props) {
-  const { own, reload } = useOwnTemplates(props.libraryDir);
-  const [isSwapping, setSwapping] = useState(false);
-  const structure = [...structures(), ...own].find((each) => each.id === props.details.structure);
-  const choose = (details: ProjectDetails) => (setSwapping(false), props.onChange(details));
-  return (
-    <>
-      <span className="field-label">{t("Struktur")}</span>
-      {isSwapping ? (
-        <StructureList {...props} onChange={choose} own={own} />
-      ) : (
-        <Suggested structure={structure} onSwap={() => setSwapping(true)} />
-      )}
-      <ImportLink libraryDir={props.libraryDir} onImported={() => (setSwapping(true), reload())} />
     </>
   );
 }

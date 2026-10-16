@@ -1,33 +1,18 @@
 import { useState } from "react";
 import type { ProjectDetails } from "../../project/newProject.js";
-import { suggestedStructure } from "../../project/templates.js";
 import { Dialog } from "../controls.js";
-import { TemplateSuggestion } from "../templates/TemplateChoices.js";
-import { BookTypes, StoryPieces, TitleAndGoal, type FieldProps } from "./BookQuestions.js";
+import { BookTypes, TitleAndGoal, type FieldProps } from "./BookQuestions.js";
+import { BookShape } from "./BookShape.js";
+import { withSuggestion } from "./books.js";
 import { t } from "../../i18n/i18n.js";
 
-// Ny bok, a question at a time in one sheet: what kind, which pieces and how it is told,
-// Penna's suggestion for its parts and chapters, and its title and goal.
+// Ny bok, a question at a time in one sheet: what kind, its shape, and its title, voice and goals.
 
-const QUESTIONS = [
-  t("Vad skriver du?"),
-  t("Vad för sorts berättelse?"),
-  t("Vårt förslag"),
-  t("Titel och mål"),
-];
-
-// A fackbok has no story, so it goes past the pieces; the suggestion follows what was chosen.
-function nextStep(step: number, details: ProjectDetails) {
-  const next = step === 1 && details.type === "fackbok" ? 3 : step + 1;
-  const pieces = next === 3 && details.type === "fackbok" ? [] : details.pieces;
-  const suggested = { ...details, pieces, structure: suggestedStructure(details.type, pieces) };
-  return { next, details: next === 3 ? suggested : details };
-}
+const QUESTIONS = [t("Vad skriver du?"), t("Vilken bok?"), t("Titel, röst och mål")];
 
 function Question(props: FieldProps & { step: number; libraryDir: string }) {
   if (props.step === 1) return <BookTypes {...props} />;
-  if (props.step === 2) return <StoryPieces {...props} />;
-  if (props.step === 3) return <TemplateSuggestion {...props} libraryDir={props.libraryDir} />;
+  if (props.step === 2) return <BookShape {...props} />;
   return <TitleAndGoal {...props} />;
 }
 
@@ -69,14 +54,13 @@ function useAnswers(props: Props) {
   const [details, setDetails] = useState(props.start);
   const [isMaking, setMaking] = useState(false);
   const forward = () => {
-    if (step < QUESTIONS.length) {
-      const moved = nextStep(step, details);
-      return (setDetails(moved.details), setStep(moved.next));
-    }
+    // The shape starts from what Penna suggests for the kind of book.
+    if (step === 1) setDetails(withSuggestion(details));
+    if (step < QUESTIONS.length) return setStep(step + 1);
     setMaking(true);
     void props.onCreate(details).finally(() => setMaking(false));
   };
-  const back = () => setStep(step === 3 && details.type === "fackbok" ? 1 : step - 1);
+  const back = () => setStep(step - 1);
   return { step, details, setDetails, isMaking, forward, back };
 }
 

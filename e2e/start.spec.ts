@@ -9,7 +9,7 @@ test("the first start goes to the shelf, where a new book opens a scene to write
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  for (let step = 0; step < 2; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Isen");
   await page.getByRole("button", { name: "Skapa boken" }).click();
   await editor(page).click();
@@ -19,7 +19,7 @@ test("the first start goes to the shelf, where a new book opens a scene to write
   await expect(page.locator(".sidebar")).toContainText("Isen");
 });
 
-test("a new book takes as many pieces as the writer picks, and moves on only with Fortsätt", async ({
+test("a new book's genre gives its structure, and what it gets shows before it is made", async ({
   page,
 }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -27,17 +27,21 @@ test("a new book takes as many pieces as the writer picks, and moves on only wit
   await page.getByRole("button", { name: "+ Ny bok" }).click();
   await page.getByRole("button", { name: "Fortsätt" }).click();
 
-  for (const piece of ["Deckare", "Romans", "Thriller"]) {
+  await page.getByRole("button", { name: "Genre" }).click();
+  await page.getByRole("menuitemradio", { name: "Deckare" }).click();
+  for (const piece of ["Skräck", "Romans"]) {
     await page.getByRole("button", { name: piece, exact: true }).click();
   }
 
-  await expect(page.getByRole("dialog", { name: "Vad för sorts berättelse?" })).toBeVisible();
-  for (const piece of ["Deckare", "Romans", "Thriller"]) {
-    await expect(page.getByRole("button", { name: piece, exact: true })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-  }
+  const gets = page.getByRole("definition");
+  await expect(gets.first()).toContainText("Deckarens fyra delar");
+  await expect(page.locator(".book-gets")).toContainText("Det som skrämmer");
+  await expect(page.locator(".book-gets")).toContainText("Relationen");
+  await page.getByRole("radio", { name: /Jag skriver mig fram/ }).click();
+  await expect(gets.first()).toContainText("1 kapitel");
+  await page.getByRole("button", { name: "Fortsätt" }).click();
+  await expect(page.getByLabel("Bokens längd i ord")).toHaveValue(/90/);
+  await expect(page.getByText("Cirka 360 sidor")).toBeVisible();
 });
 
 test("an empty book opens on its welcome, which goes to the trash on request", async ({ page }) => {
@@ -46,7 +50,7 @@ test("an empty book opens on its welcome, which goes to the trash on request", a
   await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
   await page.getByRole("button", { name: "+ Ny bok" }).click();
   await page.getByRole("radio", { name: /Annat/ }).click();
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  for (let step = 0; step < 2; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Tom");
   await page.getByRole("button", { name: "Skapa boken" }).click();
 

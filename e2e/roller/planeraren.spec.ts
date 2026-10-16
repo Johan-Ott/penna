@@ -17,7 +17,7 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  for (let step = 0; step < 2; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Saltet");
   await page.getByRole("button", { name: "Skapa boken" }).click();
   await editor(page).click();
