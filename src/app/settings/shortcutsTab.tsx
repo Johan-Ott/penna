@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Row } from "../controls.js";
 import {
   COMMANDS,
+  MODIFIER_NAME,
   rebind,
   resetBindings,
   shortcutText,
@@ -15,14 +16,18 @@ import { t } from "../../i18n/i18n.js";
 // What the editor and the system own: shown, never moved, and never given to another command.
 const FIXED: [string, string][] = [
   [t("Lämna fokusläget"), "Esc"],
-  [t("Scenbrytning"), "Ctrl+Enter"],
-  [t("Infoga fotnot"), "Ctrl+Alt+F"],
-  [t("Fetstil"), "Ctrl+B"],
-  [t("Kursiv"), "Ctrl+I"],
-  [t("Större och mindre text"), "Ctrl++ och Ctrl+-"],
+  [t("Scenbrytning"), shortcutText({ key: "enter" })],
+  [t("Infoga fotnot"), shortcutText({ key: "f", alt: true })],
+  [t("Fetstil"), shortcutText({ key: "b" })],
+  [t("Kursiv"), shortcutText({ key: "i" })],
+  [t("Större och mindre text"), `${shortcutText({ key: "+" })} och ${shortcutText({ key: "-" })}`],
   [t("Byt namn i strukturen"), "F2"],
 ];
-const RESERVED = "A B C I S V X Y Z 0 - + = Enter Alt+F".split(" ");
+const RESERVED_KEYS = "a b c i s v x y z 0 - + = enter".split(" ");
+
+// Alt belongs to the footnote alone; the bare keys are the editor's and the system's.
+const isReserved = (binding: Binding) =>
+  !binding.shift && (binding.alt ? binding.key === "f" : RESERVED_KEYS.includes(binding.key));
 
 const MODIFIER_KEYS = ["control", "shift", "alt", "meta"];
 
@@ -35,11 +40,11 @@ function bindingFrom(event: KeyboardEvent): Binding | undefined {
 function problemWith(id: CommandId, binding: Binding) {
   const other = takenBy(id, binding);
   if (other) return t("Används redan av {name}", { name: COMMANDS[other].label });
-  const isReserved = RESERVED.some((keys) => shortcutText(binding) === `Ctrl+${keys}`);
-  return isReserved ? t("Används redan av Penna") : undefined;
+  return isReserved(binding) ? t("Används redan av Penna") : undefined;
 }
 
-// Pressing the button listens for the next keys with Ctrl held; Escape leaves them as they were.
+// Pressing the button listens for the next keys with the shortcut key held; Escape leaves them
+// as they were.
 function useKeyListener(id: CommandId, isListening: boolean, done: (problem?: string) => void) {
   useEffect(() => {
     if (!isListening) return;
@@ -66,7 +71,9 @@ function CommandRow({ id }: { id: CommandId }) {
     setListening(false);
     setProblem(found);
   });
-  const hint = isListening ? t("Tryck de nya tangenterna med Ctrl. Esc avbryter.") : problem;
+  const hint = isListening
+    ? t("Tryck de nya tangenterna med {modifier}. Esc avbryter.", { modifier: MODIFIER_NAME })
+    : problem;
   return (
     <Row label={COMMANDS[id].label} hint={hint}>
       <button className="shortcut-key" onClick={() => setListening(true)}>

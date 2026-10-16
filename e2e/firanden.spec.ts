@@ -28,7 +28,7 @@ test("holiday mode is turned on from the inkwell", async ({ page }) => {
 
 test("a book opens where the writer left off, and a key goes on from there", async ({ page }) => {
   await editor(page).locator("p").first().click();
-  await page.keyboard.press("Control+End");
+  await page.keyboard.press("ControlOrMeta+End");
   await page.keyboard.press("Enter");
   await page.keyboard.type("Hon log. Sedan gick hon");
   await page.waitForTimeout(1500);

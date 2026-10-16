@@ -25,7 +25,7 @@ test("Ctrl+S saves at once and says that Penna saves by itself", async ({ page }
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Spara nu.");
 
-  await page.keyboard.press("Control+s");
+  await page.keyboard.press("ControlOrMeta+s");
 
   await expect(page.getByRole("status").filter({ hasText: "Sparat" })).toBeVisible();
 });
@@ -49,7 +49,7 @@ test("undo takes back what was just typed", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Ångra mig.");
 
-  await page.keyboard.press("Control+z");
+  await page.keyboard.press("ControlOrMeta+z");
 
   await expect(editor(page)).not.toContainText("Ångra mig.");
 });
@@ -57,7 +57,7 @@ test("undo takes back what was just typed", async ({ page }) => {
 test("bold is set on the selected word", async ({ page }) => {
   await selectFirstWord(page);
 
-  await page.keyboard.press("Control+b");
+  await page.keyboard.press("ControlOrMeta+b");
 
   await expect(editor(page).locator("strong")).toHaveText("Brevet");
 });
@@ -65,7 +65,7 @@ test("bold is set on the selected word", async ({ page }) => {
 test("a footnote is inserted and its text written in the box", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
 
-  await page.keyboard.press("Control+Alt+f");
+  await page.keyboard.press("ControlOrMeta+Alt+f");
   await page.getByRole("textbox", { name: "Fotnotens text" }).fill("Brevet kom med postbåten.");
   await page.keyboard.press("Enter");
 
@@ -85,7 +85,7 @@ test("a new scene from the palette opens empty, ready to write", async ({ page }
 });
 
 test("the palette's chips narrow the search to the kinds chosen", async ({ page }) => {
-  await page.keyboard.press("Control+k");
+  await page.keyboard.press("ControlOrMeta+k");
   const palette = page.getByRole("dialog", { name: "Kommandopalett" });
 
   await palette.getByRole("button", { name: "Kapitel", exact: true }).click();
@@ -134,7 +134,7 @@ test("Innehåll's filter fades the chapters where a person is not named", async 
 test("the focus mode opens and Escape leaves it", async ({ page }) => {
   await editor(page).click();
 
-  await page.keyboard.press("Control+Shift+f");
+  await page.keyboard.press("ControlOrMeta+Shift+f");
   await expect(page.locator(".focus-mode")).toBeVisible();
   await page.keyboard.press("Escape");
 
@@ -144,7 +144,7 @@ test("the focus mode opens and Escape leaves it", async ({ page }) => {
 test("settings open with Ctrl+comma and show the sync tab", async ({ page }) => {
   await editor(page).click();
 
-  await page.keyboard.press("Control+,");
+  await page.keyboard.press("ControlOrMeta+,");
   await page.getByRole("button", { name: "Konto" }).click();
 
   await expect(page.getByText("Synk finns inte på den här enheten än.")).toBeVisible();
@@ -153,7 +153,7 @@ test("settings open with Ctrl+comma and show the sync tab", async ({ page }) => 
 test("Om Penna shows the errors since the start, here none", async ({ page }) => {
   await editor(page).click();
 
-  await page.keyboard.press("Control+,");
+  await page.keyboard.press("ControlOrMeta+,");
   await page.getByRole("button", { name: "Om Penna" }).click();
 
   await expect(page.getByText("Inga fel sedan starten.")).toBeVisible();
@@ -217,7 +217,7 @@ test("the focus mode button keeps the cursor in the text, so nothing typed is lo
   page,
 }) => {
   await cursorAfterFirstParagraph(page);
-  await page.getByRole("button", { name: "Fokusläge · Ctrl+Shift+F" }).click();
+  await page.getByRole("button", { name: /^Fokusläge/ }).click();
   await page.keyboard.press("Enter");
   await page.keyboard.type("Vädret håller.");
 

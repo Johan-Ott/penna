@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 
 test("a comment stands in the margin beside its words, and Klar ticks it off", async ({ page }) => {
   await selectFirstWord(page);
-  await page.keyboard.press("Control+Shift+m");
+  await page.keyboard.press("ControlOrMeta+Shift+m");
   await page.keyboard.type("Gulnat?");
   await page.getByRole("button", { name: "Kommentera", exact: true }).last().click();
 

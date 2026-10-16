@@ -5,6 +5,7 @@ import { DayProgress } from "./DayProgress.js";
 import type { MouseEvent, ReactNode } from "react";
 import type { Today } from "../useWritingStats.js";
 import type { View } from "../useWritingMode.js";
+import { IconButton } from "./IconButton.js";
 import { t } from "../../i18n/i18n.js";
 import {
   BackIcon,
@@ -34,26 +35,6 @@ export interface TopbarProps {
   onRead: () => void;
   /** The writer's picture, after Skriv and Publicera. */
   profile: ReactNode;
-}
-
-function IconButton(props: {
-  label: string;
-  className?: string;
-  onClick: (event: MouseEvent<HTMLElement>) => void;
-  isDisabled?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      className={props.className ? `topbar-button ${props.className}` : "topbar-button"}
-      aria-label={props.label}
-      title={props.label}
-      disabled={props.isDisabled}
-      onClick={props.onClick}
-    >
-      {props.children}
-    </button>
-  );
 }
 
 function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
@@ -156,14 +137,20 @@ function TopbarEnd(props: TopbarProps) {
     <div className="topbar-end" data-tauri-drag-region>
       <RemoteBadge />
       {props.view === "skriv" && <LookButton />}
-      <IconButton label={t("Läs som bok · Ctrl+R")} className="with-key" onClick={props.onRead}>
+      <IconButton
+        label={t("Läs som bok")}
+        shortcut="read"
+        className="with-key"
+        onClick={props.onRead}
+      >
         <ReadIcon />
       </IconButton>
-      <IconButton label={t("Sök · Ctrl+K")} onClick={props.onSearch}>
+      <IconButton label={t("Sök")} shortcut="palette" onClick={props.onSearch}>
         <SearchIcon />
       </IconButton>
       <IconButton
-        label={t("Fokusläge · Ctrl+Shift+F")}
+        label={t("Fokusläge")}
+        shortcut="focus"
         className="with-key"
         onClick={props.onFocus}
       >

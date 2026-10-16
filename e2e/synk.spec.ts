@@ -41,7 +41,7 @@ async function leaveSyncLog(page: Page) {
 test("what the sync brought is shown side by side, and a conflict is chosen", async ({ page }) => {
   await openExample(page);
   await leaveSyncLog(page);
-  await page.keyboard.press("Control+Shift+O");
+  await page.keyboard.press("ControlOrMeta+Shift+O");
   await page.getByText("Vintervägen").first().click();
 
   await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
@@ -62,10 +62,10 @@ test("what the sync brought is shown side by side, and a conflict is chosen", as
 test("taking back keeps what was written since the sync as a version", async ({ page }) => {
   await openExample(page);
   await leaveSyncLog(page);
-  await page.keyboard.press("Control+Shift+O");
+  await page.keyboard.press("ControlOrMeta+Shift+O");
   await page.getByText("Vintervägen").first().click();
   await page.locator(".ProseMirror").click();
-  await page.keyboard.press("Control+End");
+  await page.keyboard.press("ControlOrMeta+End");
   await page.keyboard.type(" Skrivet efter synken.");
 
   await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();

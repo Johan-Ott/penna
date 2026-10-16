@@ -20,7 +20,7 @@ import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
 import { formatEntries } from "./formatEntries.js";
 import { startSprint } from "../sprint/sprint.js";
-import { shortcutOf } from "../shortcuts.js";
+import { shortcutOf, shortcutText } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
@@ -146,12 +146,20 @@ const changeTo =
 
 function textEntries({ changeSettings: change }: PaletteContext): PaletteEntry[] {
   return [
-    command(t("Större text"), () => change((current) => changeSize(current, 1)), "Ctrl++"),
-    command(t("Mindre text"), () => change((current) => changeSize(current, -1)), "Ctrl+-"),
+    command(
+      t("Större text"),
+      () => change((current) => changeSize(current, 1)),
+      shortcutText({ key: "+" }),
+    ),
+    command(
+      t("Mindre text"),
+      () => change((current) => changeSize(current, -1)),
+      shortcutText({ key: "-" }),
+    ),
     command(
       t("Standardstorlek på texten"),
       () => change(changeTo({ size: DEFAULT_SETTINGS.size })),
-      "Ctrl+0",
+      shortcutText({ key: "0" }),
     ),
     ...FONTS.map(([font, label]) =>
       command(t("Typsnitt: {font}", { font: label }), () => change(changeTo({ font }))),

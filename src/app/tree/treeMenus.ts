@@ -1,6 +1,7 @@
 import { TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
 import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
 import type { MenuItem } from "../Menu.js";
+import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 /** Null leaves the place to the app. */
@@ -50,7 +51,11 @@ export function foldMenu(view: { foldAll: () => void; unfoldAll: () => void }): 
 
 export function addMenu(actions: Pick<TreeMenuActions, "add">): MenuItem[] {
   return [
-    { label: t("Ny scen"), shortcut: "Ctrl+Alt+N", onSelect: () => actions.add("scene", null) },
+    {
+      label: t("Ny scen"),
+      shortcut: shortcutOf("newScene"),
+      onSelect: () => actions.add("scene", null),
+    },
     { label: t("Nytt kapitel"), onSelect: () => actions.add("chapter", null) },
     { label: t("Ny del"), onSelect: () => actions.add("part", null) },
     { label: t("Ny mapp"), onSelect: () => actions.add("folder", null) },

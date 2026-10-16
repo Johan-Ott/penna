@@ -1,15 +1,12 @@
 import { useSyncExternalStore } from "react";
 import { browserStorage } from "./browserStorage.js";
+import { MODIFIER_NAME, shortcutText, type Binding } from "./shortcutKeys.js";
 import { t } from "../i18n/i18n.js";
+
+export { MODIFIER_NAME, shortcutText, type Binding };
 
 // The shortcuts a writer can change, with what they are from the start. A change is kept per
 // computer and only says how the command differs from its default.
-
-export interface Binding {
-  key: string;
-  shift?: boolean;
-  alt?: boolean;
-}
 
 export const COMMANDS = {
   palette: { label: t("Kommandopalett"), key: "k" },
@@ -59,15 +56,6 @@ export const takenBy = (id: CommandId, binding: Binding) =>
   (Object.keys(COMMANDS) as CommandId[]).find(
     (other) => other !== id && sameKeys(bindingOf(other), binding),
   );
-
-const keyName = (key: string) =>
-  key.length === 1 ? key.toUpperCase() : key.charAt(0).toUpperCase() + key.slice(1);
-
-/** "Ctrl+Shift+F", as menus and the palette show it. */
-export function shortcutText(binding: Binding) {
-  const parts = ["Ctrl", binding.shift && "Shift", binding.alt && "Alt", keyName(binding.key)];
-  return parts.filter(Boolean).join("+");
-}
 
 export const shortcutOf = (id: CommandId) => shortcutText(bindingOf(id));
 

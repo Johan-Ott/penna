@@ -79,7 +79,7 @@ test("the palette's label chip finds only what has the label", async ({ page }) 
     .click();
   await page.keyboard.press("Escape");
 
-  await page.keyboard.press("Control+k");
+  await page.keyboard.press("ControlOrMeta+k");
   const palette = page.getByRole("dialog", { name: "Kommandopalett" });
   await palette.getByRole("button", { name: "Tempo" }).click();
 

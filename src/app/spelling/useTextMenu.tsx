@@ -10,6 +10,7 @@ import {
 import type { useEditorView } from "../../editor/useEditorView.js";
 import { Menu, type MenuItem } from "../Menu.js";
 import { platform } from "../platform.js";
+import { shortcutText } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 type Place = { word: string; from: number; to: number };
@@ -29,10 +30,12 @@ function clipboardItems(view: EditorView): MenuItem[] {
     ...(view.state.selection.empty
       ? []
       : [
-          { label: t("Klipp ut"), shortcut: "Ctrl+X", onSelect: cut },
-          { label: t("Kopiera"), shortcut: "Ctrl+C", onSelect: copy },
+          { label: t("Klipp ut"), shortcut: shortcutText({ key: "x" }), onSelect: cut },
+          { label: t("Kopiera"), shortcut: shortcutText({ key: "c" }), onSelect: copy },
         ]),
-    ...(paste ? [{ label: t("Klistra in"), shortcut: "Ctrl+V", onSelect: paste }] : []),
+    ...(paste
+      ? [{ label: t("Klistra in"), shortcut: shortcutText({ key: "v" }), onSelect: paste }]
+      : []),
   ];
 }
 
@@ -40,7 +43,7 @@ function editItems(view: EditorView): MenuItem[] {
   const all = () => selectAll(view.state, view.dispatch);
   const items = [
     ...clipboardItems(view),
-    { label: t("Markera allt"), shortcut: "Ctrl+A", onSelect: all },
+    { label: t("Markera allt"), shortcut: shortcutText({ key: "a" }), onSelect: all },
   ];
   return items.map((item) => ({ ...item, onSelect: () => (item.onSelect?.(), view.focus()) }));
 }

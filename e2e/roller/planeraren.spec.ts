@@ -59,7 +59,7 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   await expect(contents.getByLabel("När?").first()).toHaveValue("Mars");
 
   // Everything planned is still there after the book is closed and opened again.
-  await page.keyboard.press("Control+Shift+O");
+  await page.keyboard.press("ControlOrMeta+Shift+O");
   await page.getByText("Saltet").first().click();
   await page.getByRole("button", { name: "Saltet" }).click();
   await expect(page.locator(".contents-view").getByLabel("Vad händer?").first()).toHaveValue(

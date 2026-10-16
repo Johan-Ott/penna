@@ -1,6 +1,6 @@
 import type { MenuItem } from "../Menu.js";
 import { checkForUpdates } from "../updates.js";
-import { shortcutOf } from "../shortcuts.js";
+import { shortcutOf, shortcutText } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface AppMenuActions {
@@ -73,7 +73,7 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
   };
   return [
     { label: t("Bokhylla"), shortcut: shortcutOf("shelf"), onSelect: actions.showShelf },
-    { label: t("Ny bok"), shortcut: "Ctrl+N", onSelect: actions.newProject },
+    { label: t("Ny bok"), shortcut: shortcutText({ key: "n" }), onSelect: actions.newProject },
     { label: t("Öppna mapp…"), onSelect: actions.openFolder },
     ...bookGroups(actions),
     {

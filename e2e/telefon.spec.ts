@@ -131,7 +131,7 @@ test("a person renamed is renamed in the manuscript too, and Ångra takes it bac
   await page.getByRole("treeitem", { name: /^Personer/ }).click();
   await page.getByRole("button", { name: "Meny för Elin" }).click();
   await page.getByRole("menuitem", { name: "Byt namn" }).click();
-  await page.keyboard.press("Control+a");
+  await page.keyboard.press("ControlOrMeta+a");
   await page.keyboard.type("Ella");
   await page.keyboard.press("Enter");
 

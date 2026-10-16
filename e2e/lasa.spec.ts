@@ -24,7 +24,7 @@ async function selectOnPage(page: Page, word: string) {
 }
 
 test("Läs som bok shows the book in spreads that turn with the arrows", async ({ page }) => {
-  await page.keyboard.press("Control+r");
+  await page.keyboard.press("ControlOrMeta+r");
 
   await expect(page.locator(".read-place")).toHaveText(/1\. Brevet · sida 1–2 av \d+/);
   await page.keyboard.press("ArrowRight");
@@ -34,7 +34,7 @@ test("Läs som bok shows the book in spreads that turn with the arrows", async (
 });
 
 test("a correction made in the page is in the text when the writer goes back", async ({ page }) => {
-  await page.keyboard.press("Control+r");
+  await page.keyboard.press("ControlOrMeta+r");
   await selectOnPage(page, "gult");
   await page.getByRole("button", { name: "Rätta", exact: true }).click();
   await page.getByRole("textbox", { name: "Rätta text" }).fill("gulnat");
@@ -46,7 +46,7 @@ test("a correction made in the page is in the text when the writer goes back", a
 });
 
 test("a comment made in the page marks the words in Skriv", async ({ page }) => {
-  await page.keyboard.press("Control+r");
+  await page.keyboard.press("ControlOrMeta+r");
   await selectOnPage(page, "handstilen");
   await page.getByRole("button", { name: "Kommentera" }).click();
   await page.getByRole("textbox", { name: "Kommentar" }).fill("Vems handstil?");
@@ -58,7 +58,7 @@ test("a comment made in the page marks the words in Skriv", async ({ page }) => 
 });
 
 test("Dela uppslag shows the spread on show as a picture to save", async ({ page }) => {
-  await page.keyboard.press("Control+r");
+  await page.keyboard.press("ControlOrMeta+r");
   await page.getByRole("button", { name: "Dela uppslag" }).click();
 
   const share = page.getByRole("dialog", { name: "Dela" });

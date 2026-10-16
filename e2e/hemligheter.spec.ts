@@ -26,7 +26,7 @@ test("a secret named before its reveal is flagged, and the person who learns it 
   await panel
     .getByRole("combobox", { name: "Lägg till en person som får veta" })
     .selectOption({ label: "Elin" });
-  await page.keyboard.press("Control+k");
+  await page.keyboard.press("ControlOrMeta+k");
   await page.keyboard.type("Elin");
   await page.keyboard.press("Enter");
 

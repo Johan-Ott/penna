@@ -1,4 +1,5 @@
 import { platform } from "../platform.js";
+import { isMac } from "../../thisComputer.js";
 import { t } from "../../i18n/i18n.js";
 
 // Thin strokes, as the window's own buttons draw them.
@@ -8,10 +9,11 @@ const Glyph = ({ path }: { path: string }) => (
   </svg>
 );
 
-/** Minimise, maximise and close, at the far end of the top bar; nothing in a browser or phone. */
+/** Minimise, maximise and close, at the far end of the top bar; nothing in a browser or phone,
+ * and nothing on a Mac, which keeps its own buttons. */
 export function WindowControls() {
   const controls = platform.windowControls;
-  if (!controls) return null;
+  if (!controls || isMac) return null;
   return (
     <span className="window-controls">
       <button className="window-control" aria-label={t("Minimera")} onClick={controls.minimize}>
@@ -36,9 +38,9 @@ export function WindowControls() {
 }
 
 /** The window's buttons and a place to drag it, where no top bar is: on the start picture, and
- * in a computer's window narrowed to the phone's screens. */
+ * in a computer's window narrowed to the phone's screens. A Mac has the system's own bar there. */
 export function WindowBar() {
-  if (!platform.windowControls) return null;
+  if (!platform.windowControls || isMac) return null;
   return (
     <div className="window-bar" data-tauri-drag-region>
       <WindowControls />

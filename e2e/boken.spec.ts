@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 test("a comment is written on the selected words and shown in Granska", async ({ page }) => {
   await selectFirstWord(page);
 
-  await page.keyboard.press("Control+Shift+m");
+  await page.keyboard.press("ControlOrMeta+Shift+m");
   await page.keyboard.type("Ska brevet vara gult?");
   await page.getByRole("button", { name: "Kommentera", exact: true }).last().click();
 
@@ -28,7 +28,7 @@ test("a scene is renamed from its menu in the tree", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
 
   await page.getByRole("menuitem", { name: "Byt namn" }).click();
-  await page.keyboard.press("Control+a");
+  await page.keyboard.press("ControlOrMeta+a");
   await page.keyboard.type("Isen bär");
   await page.keyboard.press("Enter");
 
@@ -48,7 +48,7 @@ test("the tree folds and unfolds all, and unfolds to a scene opened from the pal
   await page.getByRole("menuitem", { name: "Fäll ihop alla" }).click();
   await expect(treeRow(page, "Isen")).toBeHidden();
 
-  await page.keyboard.press("Control+k");
+  await page.keyboard.press("ControlOrMeta+k");
   await page.keyboard.type("Isen");
   await page.keyboard.press("Enter");
   await expect(treeRow(page, "Isen")).toBeVisible();
@@ -95,7 +95,7 @@ test("a chapter saved as a draft is put back after the text changed", async ({ p
 
 test("an open comment is listed as a task in Granska from another scene", async ({ page }) => {
   await selectFirstWord(page);
-  await page.keyboard.press("Control+Shift+m");
+  await page.keyboard.press("ControlOrMeta+Shift+m");
   await page.keyboard.type("Förstärk motivet");
   await page.getByRole("button", { name: "Kommentera", exact: true }).last().click();
   await expect(page.getByText("Förstärk motivet")).toBeVisible();
@@ -110,7 +110,7 @@ test("an open comment is listed as a task in Granska from another scene", async 
 
 test("Innehåll counts the open tasks and leads to Granska", async ({ page }) => {
   await selectFirstWord(page);
-  await page.keyboard.press("Control+Shift+m");
+  await page.keyboard.press("ControlOrMeta+Shift+m");
   await page.keyboard.type("Kolla tidslinjen");
   await page.getByRole("button", { name: "Kommentera", exact: true }).last().click();
   await expect(page.getByText("Kolla tidslinjen")).toBeVisible();
@@ -149,7 +149,7 @@ test("a name in the text opens the person's card", async ({ page }) => {
 test("a scene is split at the cursor, the rest becoming a new scene after it", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
 
-  await page.keyboard.press("Control+Shift+Enter");
+  await page.keyboard.press("ControlOrMeta+Shift+Enter");
 
   await expect(editor(page)).toContainText("Brevet låg på köksbordet");
   await expect(editor(page)).not.toContainText("Det kom i morse");
@@ -158,7 +158,7 @@ test("a scene is split at the cursor, the rest becoming a new scene after it", a
 
 test("replace all changes every match in the scene and Ångra takes it back", async ({ page }) => {
   await editor(page).click();
-  await page.keyboard.press("Control+f");
+  await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("isen");
   await page.getByRole("textbox", { name: "Ersätt med" }).fill("snön");
 
@@ -181,7 +181,7 @@ test("a fixed sort is renamed and thrown away, and a note moves to another sort"
 
   await treeRow(page, "Hemligheter").click({ button: "right" });
   await page.getByRole("menuitem", { name: "Byt namn" }).click();
-  await page.keyboard.press("Control+a");
+  await page.keyboard.press("ControlOrMeta+a");
   await page.keyboard.type("Gåtor");
   await page.keyboard.press("Enter");
   await expect(treeRow(page, "Gåtor")).toBeVisible();

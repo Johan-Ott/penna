@@ -130,6 +130,14 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   day's words that open Framsteg, search, focus), the sidebar beside a white card, and Publicera in
   their place. Innehåll lists chapters with what happens, when and status; Tidsordning is the
   order the writer drags them into (project.json `timeOrder`).
+- `src/thisComputer.ts` says whether this is a Mac, from the user agent, so the browser version
+  follows the same code. Three places ask: the window has no frame on Windows and draws Penna's
+  own buttons in the top bar (`shell/WindowControls.tsx`), while a Mac keeps its frame with
+  `TitleBarStyle::Overlay` and a hidden title and its own buttons sit over the top left, which
+  `main.tsx` leaves room for with a `mac` class on the page. Shortcut labels follow the computer
+  (`shortcuts.ts`): Ctrl+Shift+F on Windows, ⇧⌘F on a Mac, the keys being the same ones.
+  And `storage/saveError.ts` reads `(os error N)` by the system that numbered it, since a Mac
+  numbers io errors by errno and Windows does not.
 - Granskning (`app/review/`) works on the open scene only, as the spec says of visible text:
   repeated words (`manuscript/review.ts`, dots via `editor/repetitionMarks.ts`, sentences counted
   across paragraphs, names and small common words left out) and names one or two letters from a

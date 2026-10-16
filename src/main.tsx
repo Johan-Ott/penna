@@ -18,12 +18,17 @@ import { App } from "./app/App.js";
 import { recordUncaughtErrors } from "./app/errorLog.js";
 import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
 import { styledTooltips } from "./app/tooltips.js";
+import { isMac } from "./thisComputer.js";
+import { platform } from "./app/platform.js";
 
 recordUncaughtErrors();
 keepWebMenuOut();
 styledTooltips();
 // Android has a back button, so the page can leave out its own ways to close.
 document.documentElement.classList.toggle("android", /Android/i.test(navigator.userAgent));
+// A Mac's app window keeps its own buttons over the top left, so the top bar leaves room for
+// them. The browser version has no such window and needs none.
+document.documentElement.classList.toggle("mac-window", isMac && !!platform.windowControls);
 const root = document.getElementById("root");
 if (!root) throw new Error("index.html has no #root element for Penna to render into.");
 createRoot(root).render(

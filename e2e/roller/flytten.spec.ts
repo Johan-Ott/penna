@@ -53,7 +53,7 @@ test("a novel in Word moves into Penna on the first start, chapter by chapter", 
   await expect(editor).toContainText("stranden full av tång");
 
   await editor.click();
-  await page.keyboard.press("Control+End");
+  await page.keyboard.press("ControlOrMeta+End");
   await page.keyboard.press("Enter");
   await page.keyboard.type("Hon gick ner till vattnet.", { delay: 2 });
   await expect(editor).toContainText("Hon gick ner till vattnet.");

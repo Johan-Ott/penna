@@ -54,7 +54,7 @@ async function settleSelection(page: Page) {
 
 /** Runs a command from the palette by its name. */
 export async function runCommand(page: Page, name: string) {
-  await page.keyboard.press("Control+k");
+  await page.keyboard.press("ControlOrMeta+k");
   await page.keyboard.type(name);
   await page.keyboard.press("Enter");
 }

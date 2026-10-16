@@ -171,6 +171,13 @@
   margin-right: -24px;
 }
 
+/* A Mac draws its own window buttons over the top left corner of the app's window, so the bars
+   there start after them and Penna draws none of its own. */
+.mac-window .topbar,
+.mac-window .focus-header {
+  padding-left: 78px;
+}
+
 .topbar-button {
   display: flex;
   align-items: center;

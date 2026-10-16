@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test("search finds a name across the scene", async ({ page }) => {
   await editor(page).click();
 
-  await page.keyboard.press("Control+f");
+  await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("Elin");
 
   await expect(page.getByText(/^\d+ träffar$/)).toBeVisible();
@@ -25,7 +25,7 @@ test("across the manuscript the matches are listed by scene, and one opens its s
   page,
 }) => {
   await editor(page).click();
-  await page.keyboard.press("Control+f");
+  await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("Elin");
   await page.getByRole("button", { name: "Hela manuset" }).click();
 
@@ -38,7 +38,7 @@ test("across the manuscript the matches are listed by scene, and one opens its s
 
 test("a status chip narrows the manuscript's matches to scenes in that step", async ({ page }) => {
   await editor(page).click();
-  await page.keyboard.press("Control+f");
+  await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("Elin");
   await page.getByRole("button", { name: "Hela manuset" }).click();
 
@@ -54,7 +54,7 @@ test("a status chip narrows the manuscript's matches to scenes in that step", as
 
 test("Med anteckningar searches the notes' text too", async ({ page }) => {
   await editor(page).click();
-  await page.keyboard.press("Control+f");
+  await page.keyboard.press("ControlOrMeta+f");
   await page.keyboard.type("Trettioåtta");
   await page.getByRole("button", { name: "Hela manuset" }).click();
   await expect(page.getByText("Inga träffar")).toBeVisible();
