@@ -83,7 +83,49 @@ function SaveNow(props: { dirs: string[]; onSaved: () => void }) {
   );
 }
 
-function BookCopies(props: { app: BackupsApp; entry: BookBackups; onRestore: () => void }) {
+// A copy goes on the second press, as a note with something on it does.
+function RemoveCopy({ file, onRemoved }: { file: BackupFile; onRemoved: () => void }) {
+  const [isAsking, setAsking] = useState(false);
+  const remove = () =>
+    void platform.backups
+      ?.remove(file.path)
+      .then(onRemoved)
+      .catch(recordFailure("Kopian kunde inte tas bort"));
+  return (
+    <button
+      className={isAsking ? "link-button asking" : "link-button quiet"}
+      onClick={() => (isAsking ? remove() : setAsking(true))}
+      onMouseLeave={() => setAsking(false)}
+    >
+      {isAsking ? t("Ta bort?") : t("Ta bort")}
+    </button>
+  );
+}
+
+function CopyRow(props: { file: BackupFile; onPick: () => void; onRemoved: () => void }) {
+  const { file } = props;
+  return (
+    <div className="backup-row">
+      <span>
+        {when(file.time)}
+        {file.label && <span className="backup-label">{file.label}</span>}
+      </span>
+      <span className="backup-actions">
+        <button className="link-button" onClick={props.onPick}>
+          {t("Öppna som kopia")}
+        </button>
+        <RemoveCopy file={file} onRemoved={props.onRemoved} />
+      </span>
+    </div>
+  );
+}
+
+function BookCopies(props: {
+  app: BackupsApp;
+  entry: BookBackups;
+  onRestore: () => void;
+  onRemoved: () => void;
+}) {
   const { entry } = props;
   const pick = (file: BackupFile) =>
     void restore(props.app, entry.book, file)
@@ -93,15 +135,12 @@ function BookCopies(props: { app: BackupsApp; entry: BookBackups; onRestore: () 
     <section className="backup-book">
       <span className="design-section">{entry.book}</span>
       {entry.files.map((file) => (
-        <div key={file.path} className="backup-row">
-          <span>
-            {when(file.time)}
-            {file.label && <span className="backup-label">{file.label}</span>}
-          </span>
-          <button className="link-button" onClick={() => pick(file)}>
-            {t("Öppna som kopia")}
-          </button>
-        </div>
+        <CopyRow
+          key={file.path}
+          file={file}
+          onPick={() => pick(file)}
+          onRemoved={props.onRemoved}
+        />
       ))}
     </section>
   );
@@ -127,7 +166,13 @@ export function BackupsDialog(props: { app: BackupsApp; dirs: string[]; onClose:
       {props.dirs.length > 0 && <SaveNow dirs={props.dirs} onSaved={() => void reload()} />}
       {books?.length === 0 && <span>{t("Inga kopior än.")}</span>}
       {books?.map((entry) => (
-        <BookCopies key={entry.book} app={props.app} entry={entry} onRestore={props.onClose} />
+        <BookCopies
+          key={entry.book}
+          app={props.app}
+          entry={entry}
+          onRestore={props.onClose}
+          onRemoved={() => void reload()}
+        />
       ))}
     </Dialog>
   );
