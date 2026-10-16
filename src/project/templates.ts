@@ -43,7 +43,7 @@ const NOVEL_STRUCTURES: [piece: string, structure: string][] = [
   ["deckare", "deckare"],
   ["thriller", "thriller"],
   ["skrack", "skrack"],
-  ["romans", "romantasy"],
+  ["romans", "romans"],
   ["feelgood", "feelgood"],
   ["ungdom", "ungdom"],
   ["barnbok", "barnbok"],
@@ -51,10 +51,17 @@ const NOVEL_STRUCTURES: [piece: string, structure: string][] = [
   ["magi", "hjaltens-resa"],
 ];
 
+// A love story in a fantasy world braids both, unless a crime or a threat drives the book.
+const isRomantasy = (pieces: string[]) =>
+  pieces.includes("romans") &&
+  ["magi", "urban"].some((piece) => pieces.includes(piece)) &&
+  !["deckare", "thriller", "skrack"].some((piece) => pieces.includes(piece));
+
 export function suggestedStructure(type: string, pieces: string[]): string {
   if (type === "noveller") return "novell";
   if (type === "fackbok") return pieces.includes("memoar") ? "memoar" : "fackbok";
   if (type !== "roman") return "tom";
+  if (isRomantasy(pieces)) return "romantasy";
   return NOVEL_STRUCTURES.find(([piece]) => pieces.includes(piece))?.[1] ?? "tre-akter";
 }
 

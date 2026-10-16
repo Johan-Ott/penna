@@ -25,6 +25,7 @@ describe("structures and pieces", () => {
       "Riken",
       "Varelser",
       "Den dolda världen",
+      "Trådar",
     ]);
     expect(book.labels.map(([name]) => name)).toEqual(
       expect.arrayContaining(["Skriv om", "Ledtråd", "Romans", "Magi"]),
@@ -37,6 +38,8 @@ describe("structures and pieces", () => {
   it("are suggested from the kind of book and its pieces", () => {
     expect(suggestedStructure("roman", ["romans", "deckare", "urban"])).toBe("deckare");
     expect(suggestedStructure("roman", ["romans", "magi"])).toBe("romantasy");
+    expect(suggestedStructure("roman", ["romans"])).toBe("romans");
+    expect(suggestedStructure("roman", ["romans", "feelgood"])).toBe("romans");
     expect(suggestedStructure("roman", [])).toBe("tre-akter");
     expect(suggestedStructure("noveller", ["deckare"])).toBe("novell");
     expect(suggestedStructure("fackbok", [])).toBe("fackbok");

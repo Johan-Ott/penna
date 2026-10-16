@@ -112,12 +112,12 @@ describe("createProject", () => {
     expect(part?.children?.[0]).toMatchObject({
       kind: "chapter",
       title: "Brottet",
-      summary: "Brottet upptäcks, gärna redan i första kapitlet.",
+      summary: "Brottet upptäcks i första kapitlet, eller senast efter en tiondel av boken.",
     });
     expect(manuscriptSceneIds(project.tree)).toHaveLength(13);
     const sorts = project.tree.filter((node) => node.kind === "sort").map((node) => node.title);
-    expect(sorts.at(-1)).toBe("Ledtrådar");
-    expect(project.fields).toMatchObject({ totalGoal: 80_000 });
+    expect(sorts.slice(-2)).toEqual(["Ledtrådar", "Trådar"]);
+    expect(project.fields).toMatchObject({ totalGoal: 90_000 });
     expect((project.fields["labels"] as { name: string }[]).map((label) => label.name)).toContain(
       "Falskt spår",
     );

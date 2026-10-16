@@ -180,9 +180,55 @@
       ]
     },
     {
+      "id": "romans",
+      "name": "The romance in four phases",
+      "hint": "Two who meet, fall, pull back and fight for love. The ending is happy.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "The meeting",
+          "chapters": [
+            ["The first", "Them, their wound and what is missing in their life."],
+            ["The second", "Them, their wound and why love is not on the map."],
+            ["The meeting", "They meet, and something grates or sparks."],
+            ["Not a chance", "Why this cannot become anything."],
+            ["Bound together", "Something forces them to keep meeting."]
+          ]
+        },
+        {
+          "title": "Falling in love",
+          "chapters": [
+            ["A first sign", "A look or a moment that will not be forgotten."],
+            ["It grows", "They see each other as they are."],
+            ["Maybe after all", "This might work."],
+            ["The midpoint", "The kiss, the night or the promise. It seems to hold."]
+          ]
+        },
+        {
+          "title": "The retreat",
+          "chapters": [
+            ["The doubt", "The old wound makes itself felt."],
+            ["The wall", "One pulls back to stay safe."],
+            ["The break-up", "It ends, for a reason rooted in the wound."]
+          ]
+        },
+        {
+          "title": "Fighting for love",
+          "chapters": [
+            ["The dark night", "Life without the other, and what it costs."],
+            ["The realisation", "What has to change, inside."],
+            ["The grand gesture", "Someone risks everything."],
+            ["Happy ending", "What love looks like when it holds."]
+          ]
+        }
+      ]
+    },
+    {
       "id": "romantasy",
-      "name": "The romance in four parts",
-      "hint": "Two worlds meet, are drawn closer, betrayed, and choose.",
+      "name": "Romantasy",
+      "hint": "The romance's four phases braided with a fantasy plot: the world makes the obstacles, and love decides the battle.",
       "totalGoal": 110000,
       "sorts": [],
       "labels": [],
@@ -192,32 +238,32 @@
           "chapters": [
             ["The first world", "The main character, the burden and what they are willing to do."],
             ["The meeting", "The two meet, and the friction sparks."],
-            ["The second world", "The second voice: a secret and a world of their own."],
-            ["Enemies or allies", "A bargain or a bond ties them together."]
+            ["The second voice", "A secret and a world of their own."],
+            ["The bargain", "A quest, a pact or a bond ties them together."]
           ]
         },
         {
           "title": "Drawn closer",
           "chapters": [
-            ["The magic wakes", "A power or a heritage begins to show."],
-            ["Court intrigue", "Politics, loyalties and dangers around them."],
+            ["The magic wakes", "A power or a heritage begins to show, and it has a price."],
+            ["The powers around them", "Politics, loyalties and dangers."],
             ["Almost", "A moment that almost becomes more."],
-            ["The first kiss", "Pretending is no longer possible."]
+            ["The midpoint", "The first kiss, as the fantasy plot turns."]
           ]
         },
         {
           "title": "Betrayal and choice",
           "chapters": [
             ["The betrayal", "A secret comes out and everything falls apart."],
-            ["Apart", "They go separate ways, and war draws near."],
-            ["The choice", "The main character has to choose between love and duty."]
+            ["Apart", "They go separate ways when all seems lost."],
+            ["The choice", "Love or duty."]
           ]
         },
         {
           "title": "What remains",
           "chapters": [
-            ["The battle", "Magic, politics and love come to a head."],
-            ["The bond", "What they are to each other now."]
+            ["The battle", "The grand gesture is part of the deciding battle."],
+            ["The bond", "A happy ending, or a promise that holds until the next book."]
           ]
         }
       ]
@@ -226,16 +272,22 @@
       "id": "deckare",
       "name": "The mystery in four parts",
       "hint": "The crime, the investigation, the turn and the solution.",
-      "totalGoal": 80000,
+      "totalGoal": 90000,
       "sorts": [],
       "labels": [],
       "parts": [
         {
           "title": "The crime",
           "chapters": [
-            ["The crime", "The crime is discovered, ideally in the first chapter."],
+            [
+              "The crime",
+              "The crime is found in the first chapter, or within the first tenth of the book."
+            ],
             ["The investigator", "Who investigates, and why it is them."],
-            ["The first leads", "The scene, the witnesses and the first suspects."]
+            [
+              "The first leads",
+              "The scene, the witnesses and the suspects. The culprit is already among them."
+            ]
           ]
         },
         {
@@ -250,7 +302,10 @@
         {
           "title": "The turn",
           "chapters": [
-            ["The decisive clue", "A detail that was there all along."],
+            [
+              "The decisive clue",
+              "A detail the reader has seen all along: the solution must be possible to work out."
+            ],
             ["The investigator in danger", "The culprit realises the truth is close."],
             ["The confrontation", "The investigator and the culprit meet."]
           ]
@@ -268,7 +323,7 @@
       "id": "thriller",
       "name": "The thriller in four parts",
       "hint": "A threat, a chase, a twist and a reckoning against the clock.",
-      "totalGoal": 90000,
+      "totalGoal": 85000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -366,15 +421,21 @@
         {
           "title": "The setback",
           "chapters": [
-            ["The misunderstanding", "An old wound or a secret gets in the way."],
+            [
+              "The threat",
+              "The new life is at stake: the place may be lost, or the past comes back."
+            ],
             ["Apart", "It looks like it is over."]
           ]
         },
         {
           "title": "Home",
           "chapters": [
-            ["The courage", "Someone dares to say what needs saying."],
-            ["The warm ending", "Life as it turned out, better than the plan."]
+            [
+              "The community rallies",
+              "The people around step up, and someone dares to say what needs saying."
+            ],
+            ["The warm ending", "Life as it turned out, better than the plan, and hopeful."]
           ]
         }
       ]
@@ -415,8 +476,8 @@
     {
       "id": "barnbok",
       "name": "Chapter book for children",
-      "hint": "Short chapters with a clear question, an adventure and a safe ending.",
-      "totalGoal": 15000,
+      "hint": "Short chapters of a few pages, a clear question, an adventure and a safe ending. The child solves it.",
+      "totalGoal": 8000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -437,7 +498,7 @@
       "id": "memoar",
       "name": "Memoir",
       "hint": "A life told around one question: what happened, and what did it mean.",
-      "totalGoal": 70000,
+      "totalGoal": 80000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -490,8 +551,8 @@
     {
       "id": "novell",
       "name": "Short story",
-      "hint": "Five short steps for a story of a few thousand words.",
-      "totalGoal": 10000,
+      "hint": "Five short steps for a story of a few thousand words: start late, one conflict, few characters.",
+      "totalGoal": 4500,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -512,7 +573,7 @@
     {
       "id": "deckare",
       "name": "Mystery",
-      "hint": "Clues to keep track of, and suspects as a label on the people.",
+      "hint": "The clues and the suspects, so the solution can be worked out. The timeline follows When on the chapters.",
       "sorts": ["Clues"],
       "labels": [
         ["Suspect", "#7a5cc9"],
@@ -526,7 +587,7 @@
     {
       "id": "romans",
       "name": "Romance",
-      "hint": "A love story woven through the plot.",
+      "hint": "A love story through the plot, with a happy ending.",
       "sorts": ["The relationship"],
       "labels": [
         ["Romance", "#c9508f"],
@@ -537,7 +598,7 @@
     {
       "id": "magi",
       "name": "Fantasy and magic",
-      "hint": "A magic system, realms and creatures.",
+      "hint": "A magic system with rules, costs and limits, realms and creatures.",
       "sorts": ["Magic system", "Realms", "Creatures"],
       "labels": [["Magic", "#7a5cc9"]],
       "chapters": []
@@ -564,8 +625,8 @@
     {
       "id": "thriller",
       "name": "Thriller",
-      "hint": "The threat and the twists to keep track of.",
-      "sorts": ["The threat"],
+      "hint": "The villain's plan, the deadlines and the twists.",
+      "sorts": ["The villain's plan", "The threat"],
       "labels": [
         ["Twist", "#d4483b"],
         ["Time pressure", "#e08a1e"]
@@ -594,11 +655,12 @@
     {
       "id": "historisk",
       "name": "Historical novel",
-      "hint": "The era, the sources and what really happened.",
+      "hint": "The era, the sources, what really happened and where you took liberties.",
       "sorts": ["The era", "Sources"],
       "labels": [
         ["Historical fact", "#8a6d3b"],
-        ["Check facts", "#e08a1e"]
+        ["Check facts", "#e08a1e"],
+        ["Liberty taken", "#7a5cc9"]
       ],
       "chapters": []
     },
@@ -656,8 +718,8 @@
     {
       "id": "serie",
       "name": "Series",
-      "hint": "A last chapter that leads on to the next book.",
-      "sorts": [],
+      "hint": "Threads that run between the books, and a last chapter that leads on.",
+      "sorts": ["Threads"],
       "labels": [],
       "chapters": [["The hook", "A new threat or a secret that leads to the next book."]]
     }

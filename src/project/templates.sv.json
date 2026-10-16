@@ -168,9 +168,55 @@
       ]
     },
     {
+      "id": "romans",
+      "name": "Romansens fyra faser",
+      "hint": "Två som möts, faller, drar sig undan och kämpar för kärleken. Slutet är lyckligt.",
+      "totalGoal": 80000,
+      "sorts": [],
+      "labels": [],
+      "parts": [
+        {
+          "title": "Mötet",
+          "chapters": [
+            ["Den första", "Hen, såret och det som saknas i livet."],
+            ["Den andra", "Hen, såret och varför kärlek inte står på kartan."],
+            ["Mötet", "De möts, och något skaver eller gnistrar."],
+            ["Aldrig i livet", "Varför det här inte kan bli något."],
+            ["Bundna", "Något tvingar dem att fortsätta ses."]
+          ]
+        },
+        {
+          "title": "Förälskelsen",
+          "chapters": [
+            ["Ett första tecken", "En blick eller ett ögonblick som inte går att glömma."],
+            ["Det växer", "De ser varandra som de är."],
+            ["Kanske ändå", "Det kanske kan fungera."],
+            ["Mittpunkten", "Kyssen, natten eller löftet. Det ser ut att hålla."]
+          ]
+        },
+        {
+          "title": "Reträtten",
+          "chapters": [
+            ["Tvivlet", "Det gamla såret gör sig påmint."],
+            ["Muren", "Den ena drar sig undan för att skydda sig."],
+            ["Brytningen", "Det tar slut, av ett skäl som bottnar i såret."]
+          ]
+        },
+        {
+          "title": "Kampen för kärleken",
+          "chapters": [
+            ["Den mörka natten", "Livet utan den andra, och vad det kostar."],
+            ["Insikten", "Vad som måste ändras, inuti."],
+            ["Den stora gesten", "Någon vågar allt."],
+            ["Lyckligt slut", "Hur kärleken ser ut när den håller."]
+          ]
+        }
+      ]
+    },
+    {
       "id": "romantasy",
-      "name": "Romansens fyra delar",
-      "hint": "Två världar möts, dras närmare, sviks och väljer.",
+      "name": "Romantasy",
+      "hint": "Romansens fyra faser flätade med en fantasyhandling: världen skapar hindren, och kärleken avgör slaget.",
       "totalGoal": 110000,
       "sorts": [],
       "labels": [],
@@ -180,32 +226,32 @@
           "chapters": [
             ["Den första världen", "Huvudpersonen, bördan och vad hen är beredd att göra."],
             ["Mötet", "De två möts, och det gnistrar av motstånd."],
-            ["Den andra världen", "Den andra rösten: en hemlighet och en egen värld."],
-            ["Fiender eller allierade", "Ett tvång eller en pakt binder dem samman."]
+            ["Den andra rösten", "En hemlighet och en egen värld."],
+            ["Pakten", "Ett uppdrag, ett avtal eller ett tvång binder dem samman."]
           ]
         },
         {
           "title": "Dras närmare",
           "chapters": [
-            ["Magin vaknar", "En kraft eller ett arv börjar visa sig."],
-            ["Hovets intriger", "Politik, lojaliteter och faror runt dem."],
+            ["Magin vaknar", "En kraft eller ett arv börjar visa sig, och har ett pris."],
+            ["Makten runt dem", "Politik, lojaliteter och faror."],
             ["Nästan", "Ett ögonblick som nästan blir mer."],
-            ["Första kyssen", "Det går inte längre att låtsas."]
+            ["Mittpunkten", "Första kyssen, samtidigt som fantasyhandlingen vänder."]
           ]
         },
         {
           "title": "Svek och val",
           "chapters": [
             ["Sveket", "En hemlighet kommer fram och allt rasar."],
-            ["Isär", "De går skilda vägar, och kriget närmar sig."],
-            ["Valet", "Huvudpersonen måste välja mellan kärleken och plikten."]
+            ["Isär", "De går skilda vägar när allt verkar förlorat."],
+            ["Valet", "Kärleken eller plikten."]
           ]
         },
         {
           "title": "Det som återstår",
           "chapters": [
-            ["Slaget", "Magin, politiken och kärleken ställs på sin spets."],
-            ["Bandet", "Vad de är för varandra nu."]
+            ["Slaget", "Den stora gesten är en del av det avgörande slaget."],
+            ["Bandet", "Lyckligt slut, eller ett löfte som håller till nästa bok."]
           ]
         }
       ]
@@ -214,16 +260,22 @@
       "id": "deckare",
       "name": "Deckarens fyra delar",
       "hint": "Brottet, utredningen, vändningen och upplösningen.",
-      "totalGoal": 80000,
+      "totalGoal": 90000,
       "sorts": [],
       "labels": [],
       "parts": [
         {
           "title": "Brottet",
           "chapters": [
-            ["Brottet", "Brottet upptäcks, gärna redan i första kapitlet."],
+            [
+              "Brottet",
+              "Brottet upptäcks i första kapitlet, eller senast efter en tiondel av boken."
+            ],
             ["Utredaren", "Vem som utreder, och varför just hen."],
-            ["De första spåren", "Platsen, vittnena och de första misstänkta."]
+            [
+              "De första spåren",
+              "Platsen, vittnena och de misstänkta. Den skyldige finns redan bland dem."
+            ]
           ]
         },
         {
@@ -238,7 +290,10 @@
         {
           "title": "Vändningen",
           "chapters": [
-            ["Den avgörande ledtråden", "En detalj som funnits där hela tiden."],
+            [
+              "Den avgörande ledtråden",
+              "En detalj som läsaren har sett hela tiden: lösningen ska gå att räkna ut."
+            ],
             ["Utredaren i fara", "Den skyldige förstår att sanningen är nära."],
             ["Konfrontationen", "Utredaren och den skyldige möts."]
           ]
@@ -256,7 +311,7 @@
       "id": "thriller",
       "name": "Thrillerns fyra delar",
       "hint": "Ett hot, en jakt, en vändning och en uppgörelse mot klockan.",
-      "totalGoal": 90000,
+      "totalGoal": 85000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -354,15 +409,21 @@
         {
           "title": "Bakslaget",
           "chapters": [
-            ["Missförståndet", "Ett gammalt sår eller en hemlighet ställer till det."],
+            [
+              "Hotet",
+              "Det nya livet står på spel: platsen kan försvinna, eller det gamla kommer tillbaka."
+            ],
             ["Isär", "Det ser ut att vara över."]
           ]
         },
         {
           "title": "Hem",
           "chapters": [
-            ["Modet", "Någon vågar säga det som behöver sägas."],
-            ["Det varma slutet", "Livet som det blev, bättre än planen."]
+            [
+              "Gemenskapen sluter upp",
+              "Människorna runt omkring ställer upp, och någon vågar säga det som behöver sägas."
+            ],
+            ["Det varma slutet", "Livet som det blev, bättre än planen, och med hopp."]
           ]
         }
       ]
@@ -403,8 +464,8 @@
     {
       "id": "barnbok",
       "name": "Kapitelbok för barn",
-      "hint": "Korta kapitel med en tydlig fråga, ett äventyr och ett tryggt slut.",
-      "totalGoal": 15000,
+      "hint": "Korta kapitel på några sidor, en tydlig fråga, ett äventyr och ett tryggt slut. Barnet löser det själv.",
+      "totalGoal": 8000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -425,7 +486,7 @@
       "id": "memoar",
       "name": "Memoar",
       "hint": "Ett liv berättat kring en fråga: vad hände, och vad betydde det.",
-      "totalGoal": 70000,
+      "totalGoal": 80000,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -478,8 +539,8 @@
     {
       "id": "novell",
       "name": "Novell",
-      "hint": "Fem korta steg för en berättelse på några tusen ord.",
-      "totalGoal": 10000,
+      "hint": "Fem korta steg för en berättelse på några tusen ord: börja sent, en konflikt, få personer.",
+      "totalGoal": 4500,
       "sorts": [],
       "labels": [],
       "parts": [
@@ -500,7 +561,7 @@
     {
       "id": "deckare",
       "name": "Deckare",
-      "hint": "Ledtrådar att hålla reda på, och misstänkta som etikett på personerna.",
+      "hint": "Ledtrådarna och de misstänkta, så att lösningen går att räkna ut. Tidslinjen följer När på kapitlen.",
       "sorts": ["Ledtrådar"],
       "labels": [
         ["Misstänkt", "#7a5cc9"],
@@ -514,7 +575,7 @@
     {
       "id": "romans",
       "name": "Romans",
-      "hint": "En kärlekshistoria vävd genom handlingen.",
+      "hint": "En kärlekshistoria genom handlingen, med ett lyckligt slut.",
       "sorts": ["Relationen"],
       "labels": [
         ["Romans", "#c9508f"],
@@ -525,7 +586,7 @@
     {
       "id": "magi",
       "name": "Fantasy och magi",
-      "hint": "Ett magisystem, riken och varelser.",
+      "hint": "Ett magisystem med regler, kostnader och gränser, riken och varelser.",
       "sorts": ["Magisystem", "Riken", "Varelser"],
       "labels": [["Magi", "#7a5cc9"]],
       "chapters": []
@@ -552,8 +613,8 @@
     {
       "id": "thriller",
       "name": "Thriller",
-      "hint": "Hotet och vändningarna att hålla reda på.",
-      "sorts": ["Hotet"],
+      "hint": "Skurkens plan, tidsgränserna och vändningarna.",
+      "sorts": ["Skurkens plan", "Hotet"],
       "labels": [
         ["Vändning", "#d4483b"],
         ["Tidspress", "#e08a1e"]
@@ -582,11 +643,12 @@
     {
       "id": "historisk",
       "name": "Historisk roman",
-      "hint": "Epoken, källorna och vad som verkligen hände.",
+      "hint": "Epoken, källorna, vad som verkligen hände och var du har tagit dig friheter.",
       "sorts": ["Epoken", "Källor"],
       "labels": [
         ["Historiskt faktum", "#8a6d3b"],
-        ["Kolla fakta", "#e08a1e"]
+        ["Kolla fakta", "#e08a1e"],
+        ["Fri tolkning", "#7a5cc9"]
       ],
       "chapters": []
     },
@@ -644,8 +706,8 @@
     {
       "id": "serie",
       "name": "Serie",
-      "hint": "Ett sista kapitel som leder vidare till nästa bok.",
-      "sorts": [],
+      "hint": "Trådar som löper mellan böckerna, och ett sista kapitel som leder vidare.",
+      "sorts": ["Trådar"],
       "labels": [],
       "chapters": [["Kroken", "Ett nytt hot eller en hemlighet som leder till nästa bok."]]
     }
