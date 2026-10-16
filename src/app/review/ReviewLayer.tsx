@@ -1,15 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Node } from "prosemirror-model";
 import { SearchQuery } from "prosemirror-search";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { AppState } from "../App.js";
 import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
-import { narrationOf } from "../../manuscript/narration.js";
+import { narrationOf, type Narration } from "../../manuscript/narration.js";
 import { fadingPeople } from "../../project/fadingPeople.js";
 import { gestureNotes, similarNames } from "../../project/bookNotes.js";
 import { bookLanguage } from "../../project/bookLanguage.js";
-import { NarrationPicker } from "./NarrationPicker.js";
+import { NarrationPicker, narrationLine } from "./NarrationPicker.js";
 import { ReviewPanel } from "./ReviewPanel.js";
 import { useReview } from "./useReview.js";
 import { documentText } from "../../editor/documentText.js";
@@ -93,16 +93,33 @@ const bookNotesOf = (app: AppState, project: Project) => [
   ...gestureNotes(Object.values(app.notes.manuscript), bookLanguage(project.fields)),
 ];
 
+const NarrationLine = (props: { narration: Narration; onChange: () => void }) => (
+  <section className="review-section narration-line">
+    <span className="setting-hint">
+      {t("Berättarröst: {narration}", { narration: narrationLine(props.narration) })}
+    </span>
+    <button className="link-button quiet" onClick={props.onChange}>
+      {t("Ändra")}
+    </button>
+  </section>
+);
+
+// Once chosen, the narration is one line that Granska keeps to; the choice opens on Ändra.
 function NarrationSection({ app, fields }: { app: AppState; fields: Record<string, unknown> }) {
   const narration = narrationOf(fields);
+  const [isChoosing, setChoosing] = useState(false);
+  const save = (next: Narration | null) => void app.updateFields({ narration: next });
+  if (narration && !isChoosing)
+    return <NarrationLine narration={narration} onChange={() => setChoosing(true)} />;
   return (
     <section className="review-section">
       <span className="review-heading">{t("Berättarröst")}</span>
-      <NarrationPicker
-        value={narration}
-        onChange={(next) => void app.updateFields({ narration: next })}
-      />
-      {!narration && (
+      <NarrationPicker value={narration} onChange={save} />
+      {narration ? (
+        <button className="link-button quiet" onClick={() => setChoosing(false)}>
+          {t("Klar")}
+        </button>
+      ) : (
         <span className="setting-hint">
           {t("Välj hur boken berättas, så ser Granska till att texten håller sig till det.")}
         </span>

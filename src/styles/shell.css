@@ -3931,3 +3931,11 @@
 .note-mentions.note-voice {
   margin-bottom: 24px;
 }
+
+/* The chosen narration as one line, with Ändra at its end. */
+.review-section.narration-line {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}

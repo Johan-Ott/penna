@@ -63,3 +63,10 @@ export function NarrationPicker(props: {
     </div>
   );
 }
+
+/** The chosen narration in words, as one line: "Jag-form, nutid, deep POV". */
+export function narrationLine(value: Narration) {
+  const voice = VOICES.find(([id]) => id === value.voice)?.[1] ?? "";
+  const tense = TENSES.find(([id]) => id === value.tense)?.[1] ?? "";
+  return [voice, tense.toLowerCase(), value.deep ? t("deep POV") : ""].filter(Boolean).join(", ");
+}
