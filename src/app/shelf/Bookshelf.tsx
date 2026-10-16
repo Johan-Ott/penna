@@ -1,6 +1,7 @@
 import { shelfGroups, type ShelfBook } from "../../project/shelf.js";
 import { Book } from "./Book.js";
-import type { Fetching } from "./useCloudBooks.js";
+import { CloudBook } from "./CloudBook.js";
+import type { CloudBook as InCloud, Fetching } from "./useCloudBooks.js";
 import { useShelf } from "./useShelf.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
@@ -19,7 +20,14 @@ interface BookshelfProps {
   onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
-  cloud: { names: string[]; fetching: Fetching | null; onFetch: (name: string) => void };
+  /** Removes a book here and its copy in Drive; null when the writer is not signed in. */
+  onRemoveEverywhere: ((book: ShelfBook) => void) | null;
+  cloud: {
+    books: InCloud[];
+    fetching: Fetching | null;
+    onFetch: (name: string) => void;
+    remove: (book: InCloud) => void;
+  };
 }
 
 function summary(books: ShelfBook[]) {
@@ -43,42 +51,19 @@ function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
   );
 }
 
-const fetchText = ({ done, all }: Fetching) =>
-  all === 0 ? t("Hämtar…") : t("Hämtar {done} av {all}", { done, all });
-
-// A book in Drive, pale with a cloud, fetched and opened by a tap.
-function CloudBook(props: { name: string; fetching: Fetching | null; onFetch: () => void }) {
-  const isThis = props.fetching?.name === props.name;
-  return (
-    <div className="book">
-      <button
-        className="book-cover in-cloud"
-        disabled={props.fetching !== null}
-        onClick={props.onFetch}
-      >
-        <span className="book-kind">{t("I din Drive")}</span>
-        <span className="book-title">{props.name.replace(/\.penna$/, "")}</span>
-        <span className="book-words">
-          {isThis && props.fetching ? fetchText(props.fetching) : t("Tryck för att hämta")}
-        </span>
-      </button>
-      <div className="shelf-board" />
-    </div>
-  );
-}
-
 // Ny bok and the books in Drive lead the first row, so a new writer's shelf is one row.
 function Starts(props: BookshelfProps) {
   const { cloud } = props;
   return (
     <>
       <NewBook {...props} />
-      {cloud.names.map((name) => (
+      {cloud.books.map((book) => (
         <CloudBook
-          key={name}
-          name={name}
+          key={book.id}
+          book={book}
           fetching={cloud.fetching}
-          onFetch={() => cloud.onFetch(name)}
+          onFetch={() => cloud.onFetch(book.name)}
+          onRemove={() => cloud.remove(book)}
         />
       ))}
     </>

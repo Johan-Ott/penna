@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { joinPath } from "../../storage/fileSystem.js";
 import { googleDrive } from "../../sync/googleDrive.js";
 import { syncProject } from "../../sync/driveSync.js";
-import { STATE_FILE } from "../../sync/syncState.js";
+import { readState, STATE_FILE } from "../../sync/syncState.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 
@@ -14,7 +14,10 @@ const driveOf = () => {
   return signIn ? googleDrive(signIn.accessToken, signIn.fetch) : null;
 };
 
-async function booksOnDrive(libraryDir: string) {
+/** A book in Drive by its folder's name and id. */
+export type CloudBook = { name: string; id: string };
+
+async function booksOnDrive(libraryDir: string): Promise<CloudBook[]> {
   const drive = driveOf();
   const penna = drive && (await drive.findFolder("Penna", null));
   if (!drive || !penna) return [];
@@ -24,19 +27,28 @@ async function booksOnDrive(libraryDir: string) {
       platform.fileSystem.modifiedAt(joinPath(libraryDir, `${folder.name}/${STATE_FILE}`)),
     ),
   );
-  return folders.filter((_folder, index) => synced[index] === null).map((folder) => folder.name);
+  return folders
+    .filter((_folder, index) => synced[index] === null)
+    .map((folder) => ({ name: folder.name, id: folder.id }));
 }
+
+/** Where a book on this device keeps its copy in Drive, or null when it has none. */
+export const driveFolderOf = async (dir: string) =>
+  (await readState(platform.fileSystem, dir)).folderId;
+
+/** A folder in Drive to Drive's trash, where it can be restored for 30 days. */
+export const trashOnDrive = async (folderId: string) => driveOf()?.trash(folderId);
 
 /** How far a book's fetch has come, in files; `all` is 0 until Drive has been listed. */
 export type Fetching = { name: string; done: number; all: number };
 
 export function useCloudBooks(libraryDir: string | null, isSignedIn: boolean) {
-  const [names, setNames] = useState<string[]>([]);
+  const [books, setBooks] = useState<CloudBook[]>([]);
   const [fetching, setFetching] = useState<Fetching | null>(null);
   const look = useCallback(() => {
-    if (!libraryDir || !isSignedIn) return setNames([]);
+    if (!libraryDir || !isSignedIn) return setBooks([]);
     void booksOnDrive(libraryDir)
-      .then(setNames)
+      .then(setBooks)
       .catch(recordFailure("Böckerna i Drive kunde inte listas"));
   }, [libraryDir, isSignedIn]);
   useEffect(look, [look]);
@@ -54,5 +66,7 @@ export function useCloudBooks(libraryDir: string | null, isSignedIn: boolean) {
       look();
     }
   };
-  return { names, fetching, fetch };
+  const remove = (book: CloudBook) =>
+    void trashOnDrive(book.id).then(look).catch(recordFailure("Borttagningen i Drive"));
+  return { books, fetching, fetch, remove, look };
 }

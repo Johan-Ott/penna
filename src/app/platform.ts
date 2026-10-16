@@ -48,7 +48,8 @@ export interface Platform {
   /** Missing where Penna cannot sign in: the browser, and iPad for now. */
   googleSignIn?: GoogleSignIn;
   /** Asks first; true when the book was removed. Missing in the browser version. */
-  removeBook?: (dir: string, title: string) => Promise<boolean>;
+  /** `isEverywhere`: the question says the copy in Drive goes too; the caller removes it. */
+  removeBook?: (dir: string, title: string, isEverywhere?: boolean) => Promise<boolean>;
   /** Reaches the web outside the app's own rules, for feedback. */
   webFetch: typeof fetch;
   /** Copies of every book in Penna's own folder. Missing in the browser version. */

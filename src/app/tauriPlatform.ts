@@ -55,11 +55,13 @@ async function phoneMessage(dir: string, title: string) {
     : t("”{title}” raderas från telefonen för gott. Den finns inte i Google Drive.", { title });
 }
 
-async function removeBook(dir: string, title: string) {
-  const message = isPhone
-    ? await phoneMessage(dir, title)
-    : t("”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.", { title });
-  const isSure = await confirm(message, {
+async function removeBook(dir: string, title: string, isEverywhere = false) {
+  const here = t("”{title}” flyttas till papperskorgen, där du kan lägga tillbaka den.", { title });
+  const message = isPhone ? await phoneMessage(dir, title) : here;
+  const everywhere = t("”{title}” tas bort här och läggs i papperskorgen i din Drive i 30 dagar.", {
+    title,
+  });
+  const isSure = await confirm(isEverywhere ? everywhere : message, {
     title: t("Ta bort boken"),
     kind: "warning",
     okLabel: t("Ta bort"),

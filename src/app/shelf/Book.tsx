@@ -13,6 +13,7 @@ interface BookProps {
   onLocate: ((book: ShelfBook) => void) | null;
   onForget: (book: ShelfBook) => void;
   onRemove: (book: ShelfBook) => void;
+  onRemoveEverywhere: ((book: ShelfBook) => void) | null;
 }
 
 // "Bok 2" for a numbered book in a series; the kind of book otherwise.
@@ -52,15 +53,26 @@ function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
 
 type CoverProps = Pick<BookProps, "book" | "author" | "onOpen"> & { pictureUrl: string | null };
 
-function BookMenu({ book, onRemove, onChooseCover }: BookMenuProps) {
+// Signed in, a book can go from this device only, and come back from Drive, or from both.
+function removeItems({ book, onRemove, onRemoveEverywhere }: BookMenuProps) {
+  if (!platform.removeBook) return [];
+  const here = onRemoveEverywhere ? t("Ta bort härifrån…") : t("Ta bort boken…");
+  return [
+    { label: here, separatorBefore: true, onSelect: () => onRemove(book) },
+    ...(onRemoveEverywhere
+      ? [{ label: t("Ta bort här och i Drive…"), onSelect: () => onRemoveEverywhere(book) }]
+      : []),
+  ];
+}
+
+function BookMenu(props: BookMenuProps) {
+  const { book, onChooseCover } = props;
   const items = [
     { label: t("Välj omslag…"), onSelect: onChooseCover },
     ...(platform.showInFolder
       ? [{ label: t("Visa i mappen"), onSelect: () => void platform.showInFolder?.(book.dir) }]
       : []),
-    ...(platform.removeBook
-      ? [{ label: t("Ta bort boken…"), separatorBefore: true, onSelect: () => onRemove(book) }]
-      : []),
+    ...removeItems(props),
   ];
   const menu = useMenuButton(t("Bokens meny"), items);
   if (items.length === 0) return null;
@@ -92,7 +104,9 @@ function ProgressBar({ book }: { book: ShelfBook }) {
   );
 }
 
-type BookMenuProps = Pick<BookProps, "book" | "onRemove"> & { onChooseCover: () => void };
+type BookMenuProps = Pick<BookProps, "book" | "onRemove" | "onRemoveEverywhere"> & {
+  onChooseCover: () => void;
+};
 
 // A picture may carry no title, or one too small to read, so the name stands under it.
 function BookName({ book }: { book: ShelfBook }) {
@@ -106,7 +120,7 @@ function BookName({ book }: { book: ShelfBook }) {
 }
 
 function BookMeta(props: BookMenuProps & { hasPicture: boolean }) {
-  const { book, onRemove, onChooseCover } = props;
+  const { book } = props;
   return (
     <div className="book-meta">
       {props.hasPicture && <BookName book={book} />}
@@ -122,7 +136,7 @@ function BookMeta(props: BookMenuProps & { hasPicture: boolean }) {
         <span className="book-updated">
           {book.updatedAt ? whenUpdated(book.updatedAt, Date.now()) : ""}
         </span>
-        <BookMenu book={book} onRemove={onRemove} onChooseCover={onChooseCover} />
+        <BookMenu {...props} />
       </div>
     </div>
   );
@@ -167,6 +181,7 @@ function PresentBook(props: BookProps) {
         book={props.book}
         hasPicture={cover.url !== null}
         onRemove={props.onRemove}
+        onRemoveEverywhere={props.onRemoveEverywhere}
         onChooseCover={cover.choose}
       />
     </div>

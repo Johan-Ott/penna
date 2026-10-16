@@ -12,16 +12,13 @@ import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
-import type { ShelfBook } from "../project/shelf.js";
-import { forgetProject } from "./appPreferences.js";
 import { recordFailure } from "./errorLog.js";
 import { exampleBook, importedBook, libraryOf, newBook } from "./onboarding/books.js";
 import { NewBookDialog } from "./onboarding/NewBookDialog.js";
 import { Welcome } from "./onboarding/Welcome.js";
-import { platform } from "./platform.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
 import { useCloudBooks } from "./shelf/useCloudBooks.js";
-import type { PreferenceChange } from "./useStartup.js";
+import { shelfHandlers } from "./shelf/shelfHandlers.js";
 
 // Penna starts at the welcome the first time, and at the shelf after: every book is begun,
 // fetched or opened from there.
@@ -34,15 +31,6 @@ type App = Pick<AppState, "profile" | "journey" | "updateFields" | "startup"> & 
   newProjectAsked: { current: boolean };
 };
 type StartScreenProps = { app: App };
-
-async function locate(book: ShelfBook, update: (change: PreferenceChange) => void) {
-  const found = await platform.pickFolder();
-  if (!found || !(await platform.fileSystem.list(found)).includes("project.json")) return;
-  update((current) => ({
-    ...current,
-    knownProjects: current.knownProjects.map((dir) => (dir === book.dir ? found : dir)),
-  }));
-}
 
 // Each way a book reaches the shelf, opened as soon as it is there.
 function bookActions(app: App) {
@@ -65,18 +53,6 @@ function bookActions(app: App) {
         "Importen",
       ),
     example: () => void opened(library().then(exampleBook), "Exempelboken"),
-  };
-}
-
-function shelfHandlers(app: App, isPhone: boolean) {
-  const { updatePreferences } = app.startup;
-  return {
-    onLocate: isPhone ? null : (book: ShelfBook) => void locate(book, updatePreferences),
-    onForget: (book: ShelfBook) => updatePreferences((current) => forgetProject(current, book.dir)),
-    onRemove: (book: ShelfBook) =>
-      void platform.removeBook?.(book.dir, book.title).then((isRemoved) => {
-        if (isRemoved) updatePreferences((current) => forgetProject(current, book.dir));
-      }),
   };
 }
 
@@ -171,7 +147,7 @@ function Shelf({ app }: StartScreenProps) {
         onImport={books.import}
         onOpenExample={books.example}
         cloud={cloud}
-        {...shelfHandlers(app, isPhone)}
+        {...shelfHandlers(app.startup, isPhone, cloud.look)}
       />
       {isNewBookOpen && (
         <NewBookDialog onCreate={books.create} onClose={() => setNewBookOpen(false)} />

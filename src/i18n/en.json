@@ -1327,5 +1327,11 @@
   "Hämtar {done} av {all}": "Fetching {done} of {all}",
   "I din Drive": "In your Drive",
   "Tryck för att hämta": "Tap to fetch",
-  "Prova exempelboken": "Try the example book"
+  "Prova exempelboken": "Try the example book",
+  "Ta bort härifrån…": "Remove from here…",
+  "Ta bort här och i Drive…": "Remove here and in Drive…",
+  "Ta bort från Drive": "Remove from Drive",
+  "”{title}” flyttas till papperskorgen i din Drive, där den finns kvar i 30 dagar.": "“{title}” goes to the trash in your Drive, where it stays for 30 days.",
+  "Ta bort från Drive…": "Remove from Drive…",
+  "”{title}” tas bort här och läggs i papperskorgen i din Drive i 30 dagar.": "“{title}” is removed here and goes to the trash in your Drive for 30 days."
 }
