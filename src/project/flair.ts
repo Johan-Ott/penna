@@ -81,7 +81,20 @@ export function wornFlair(id: string, earned: Earned): Flair | null {
 }
 
 /** What the journey has counted up to today, as the flair asks for it. */
+// For trying the styles in Penna Test: only where Penna runs from the source, never in a release.
+const isAllOpen = () => {
+  try {
+    return import.meta.env.DEV && localStorage.getItem("penna.allt-upplast") === "ja";
+  } catch {
+    return false;
+  }
+};
+
 export function earnedOf(journey: Journey, today: string): Earned {
+  if (isAllOpen()) {
+    const all = Object.fromEntries(badges().map((badge) => [badge.id, today]));
+    return { words: 1_000_000, ink: 1_000_000, badges: all };
+  }
   const summary = journeySummary(journey, today);
   return { words: summary.words, ink: summary.ink, badges: journey.badges };
 }

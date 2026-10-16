@@ -85,7 +85,7 @@ function ImportLink(props: { libraryDir: string | null; onImported: () => void }
   );
 }
 
-/** Vårt förslag: the structure Penna suggests, or another one, and the pieces on top. */
+/** Vårt förslag: the structure Penna suggests from the kind and the pieces, or another one. */
 export function TemplateSuggestion(props: Props) {
   const { own, reload } = useOwnTemplates(props.libraryDir);
   const [isSwapping, setSwapping] = useState(false);
@@ -99,11 +99,6 @@ export function TemplateSuggestion(props: Props) {
       ) : (
         <Suggested structure={structure} onSwap={() => setSwapping(true)} />
       )}
-      <span className="field-label">{t("Bitar")}</span>
-      <PieceToggles
-        chosen={props.details.pieces}
-        onChange={(pieces) => props.onChange({ ...props.details, pieces })}
-      />
       <ImportLink libraryDir={props.libraryDir} onImported={() => (setSwapping(true), reload())} />
     </>
   );

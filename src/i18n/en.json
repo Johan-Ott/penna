@@ -852,7 +852,6 @@
   "Pseudonym, valfritt": "Pen name, optional",
   "Länk till din sida eller ditt nyhetsbrev": "Link to your site or newsletter",
   "Författarprofil": "Author profile",
-  "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.": "The profile is kept in your Penna folder and the name in the settings. No account, no sign-in.",
   "Din profil": "Your profile",
   "Visa bara kapitlet": "Show only this chapter",
   "← Hela boken": "← Whole book",
@@ -1349,5 +1348,6 @@
   "Titel och mål": "Title and goal",
   "Steg {step} av {steps}": "Step {step} of {steps}",
   "Skapa boken": "Create the book",
-  "Fortsätt": "Continue"
+  "Fortsätt": "Continue",
+  "Profilen sparas i din Penna-mapp. Loggar du in med Google följer den med till dina andra enheter.": "Your profile is kept in your Penna folder. Sign in with Google and it follows you to your other devices."
 }

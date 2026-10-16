@@ -88,7 +88,7 @@ function ProfileFoot({ onDone }: { onDone: () => void }) {
     <div className="profile-foot">
       <span className="setting-hint">
         {t(
-          "Profilen sparas i din Penna-mapp och namnet i inställningarna. Inget konto, ingen inloggning.",
+          "Profilen sparas i din Penna-mapp. Loggar du in med Google följer den med till dina andra enheter.",
         )}
       </span>
       <button className="button primary" onClick={onDone}>
