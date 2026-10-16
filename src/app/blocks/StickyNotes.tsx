@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { placeInRoom, rubOut } from "../../project/stickyNoteGeometry.js";
 import { NOTE_COLORS, type StickyNote } from "../../project/stickyNotes.js";
-import { GripIcon, PenIcon } from "../shell/icons.js";
+import { CloseIcon, GripIcon, PenIcon, PlusIcon } from "../shell/icons.js";
 import { EraserIcon } from "./EraserIcon.js";
 import { NoteDrawing, type NoteTool } from "./NoteDrawing.js";
 import { useKeptSize, useNoteDrag, useRoomSize } from "./stickyNoteHooks.js";
@@ -49,7 +49,7 @@ function RemoveButton({ note, state }: Props) {
       onClick={remove}
       onMouseLeave={() => setAsking(false)}
     >
-      {isAsking ? t("Ta bort?") : "×"}
+      {isAsking ? t("Ta bort?") : <CloseIcon />}
     </button>
   );
 }
@@ -88,7 +88,7 @@ function NoteHead(
       <ToolButton tool="pen" chosen={props.tool} onChoose={props.onTool} />
       <ToolButton tool="eraser" chosen={props.tool} onChoose={props.onTool} />
       <button className="note-tool" aria-label={t("Ny lapp")} onClick={addNext}>
-        +
+        <PlusIcon />
       </button>
       <RemoveButton note={note} state={state} />
     </header>

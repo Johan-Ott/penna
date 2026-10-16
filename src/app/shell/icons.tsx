@@ -195,6 +195,20 @@ export const ChartIcon = () => (
   </Icon>
 );
 
+export const PlusIcon = () => (
+  <Icon>
+    <path d="M12 5v14" />
+    <path d="M5 12h14" />
+  </Icon>
+);
+
+export const CloseIcon = () => (
+  <Icon>
+    <path d="M6 6l12 12" />
+    <path d="M18 6 6 18" />
+  </Icon>
+);
+
 export const GridIcon = () => (
   <Icon>
     <rect x="4" y="4" width="6" height="6" rx="1" />

@@ -5,6 +5,17 @@
   /* The Android app sets these itself, since its WebView reports the insets as 0. */
   --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
+
+  /* What may cover what. A dialog covers the app's own panels and the sidebar, while menus,
+     toasts, the window's own bar and tooltips cover the dialog. */
+  --layer-raised: 20;
+  --layer-float: 30;
+  --layer-sidebar: 40;
+  --layer-dialog: 50;
+  --layer-popover: 60;
+  --layer-toast: 70;
+  --layer-window: 80;
+  --layer-tooltip: 90;
   --bg: #ffffff;
   --bg-subtle: #f6f5f2;
   --bg-panel: #faf9f6;

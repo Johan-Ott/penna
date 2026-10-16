@@ -254,6 +254,7 @@ select:focus-visible {
 .dialog-backdrop {
   position: fixed;
   inset: 0;
+  z-index: var(--layer-dialog);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -435,7 +436,7 @@ select:focus-visible {
 /* Menus: right-click, the add button and the style picker share one look */
 .menu {
   position: fixed;
-  z-index: 20;
+  z-index: var(--layer-popover);
   display: flex;
   flex-direction: column;
   min-width: 220px;
@@ -531,7 +532,7 @@ body:has(.settings-panel) .selection-bar {
   position: absolute;
   top: 56px;
   right: 24px;
-  z-index: 5;
+  z-index: var(--layer-raised);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -710,7 +711,7 @@ body:has(.settings-panel) .selection-bar {
 .palette-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 30;
+  z-index: var(--layer-dialog);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -1889,7 +1890,7 @@ button.book-cover:hover {
 
 .mention-card {
   position: fixed;
-  z-index: 20;
+  z-index: var(--layer-popover);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1928,7 +1929,7 @@ button.book-cover:hover {
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 7;
+  z-index: var(--layer-float);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -2062,7 +2063,7 @@ button.book-cover:hover {
 /* Beside selected text: bold, italic, style and comment. */
 .selection-bar {
   position: fixed;
-  z-index: 20;
+  z-index: var(--layer-popover);
   display: flex;
   align-items: center;
   gap: 2px;
@@ -2308,7 +2309,7 @@ button.book-cover:hover {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 40;
+  z-index: var(--layer-dialog);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2333,7 +2334,7 @@ button.book-cover:hover {
 .footnote-popover {
   position: fixed;
   left: 50%;
-  z-index: 21;
+  z-index: calc(var(--layer-popover) + 1);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2665,7 +2666,7 @@ button.book-cover:hover {
   position: fixed;
   bottom: 24px;
   left: 50%;
-  z-index: 20;
+  z-index: var(--layer-toast);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -2971,7 +2972,7 @@ button.book-cover:hover {
   position: fixed;
   top: 60px;
   right: 20px;
-  z-index: 70;
+  z-index: var(--layer-toast);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -3333,7 +3334,7 @@ button.book-cover:hover {
 /* A misspelled word clicked on the computer: its corrections in a small bar just under it. */
 .click-corrections {
   position: fixed;
-  z-index: 20;
+  z-index: var(--layer-popover);
   display: flex;
   padding: 4px;
   border: 1px solid var(--border-control);
@@ -3357,7 +3358,7 @@ button.book-cover:hover {
 /* Penna's tooltip, in its own colours, over everything and never in the way of the pointer. */
 .tooltip {
   position: fixed;
-  z-index: 1000;
+  z-index: var(--layer-tooltip);
   max-width: 280px;
   padding: 4px 8px;
   border: 1px solid var(--border);
