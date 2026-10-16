@@ -108,31 +108,43 @@ function ModuleList({ app }: { app: AppState }) {
   );
 }
 
-/** The list, or the module chosen from it, as a sheet from below. */
+// A module chosen is a screen of its own, as the other panels: back to the list, its name, ×.
+function ModulePage({ id, app, project }: Props & { id: ModuleId }) {
+  const title = MODULES.find((module) => module.id === id)?.title;
+  return (
+    <section className="block-panel phone-module-page" aria-label={title}>
+      <header className="block-head">
+        <button
+          className="topbar-button phone-bar-back"
+          aria-label={t("Moduler")}
+          data-phone-back
+          onClick={() => shown.set("lista")}
+        >
+          ‹
+        </button>
+        <span className="block-title">{title}</span>
+        <CloseButton onClose={() => shown.set(null)} />
+      </header>
+      <ModuleBody id={id} app={app} project={project} />
+    </section>
+  );
+}
+
+/** The list as a sheet from below; a module chosen from it fills the screen. */
 export function ModulesSheet({ app, project }: Props) {
   const open = shown.use();
   if (!open) return null;
-  const title =
-    open === "lista" ? t("Moduler") : MODULES.find((module) => module.id === open)?.title;
+  if (open !== "lista") return <ModulePage id={open} app={app} project={project} />;
   return (
     <>
       <div className="phone-sheet-backdrop" onClick={() => shown.set(null)} />
-      <section className="phone-sheet" aria-label={title}>
+      <section className="phone-sheet" aria-label={t("Moduler")}>
         <header className="phone-sheet-head">
-          {open !== "lista" && (
-            <button className="link-button" onClick={() => shown.set("lista")}>
-              {t("← Moduler")}
-            </button>
-          )}
-          <span className="phone-sheet-title">{title}</span>
+          <span className="phone-sheet-title">{t("Moduler")}</span>
           <CloseButton isPhoneBack onClose={() => shown.set(null)} />
         </header>
         <div className="phone-sheet-body">
-          {open === "lista" ? (
-            <ModuleList app={app} />
-          ) : (
-            <ModuleBody id={open} app={app} project={project} />
-          )}
+          <ModuleList app={app} />
         </div>
       </section>
     </>

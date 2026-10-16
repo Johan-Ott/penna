@@ -1192,8 +1192,19 @@ body .phone-app .text-when input {
 /* Lappar on a phone: a grid of notes, written in and drawn on where they lie. */
 .phone-notes {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
+}
+
+/* A module's page: the panels' bar, and the back arrow in its first place. */
+.phone-module-page .block-head > .phone-bar-back {
+  grid-column: 1;
+}
+
+.phone-module-page .in-scene,
+.phone-module-page .reference-picture {
+  width: auto;
+  max-width: 100%;
 }
 
 .sticky-note.in-grid {
