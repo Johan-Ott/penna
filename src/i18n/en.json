@@ -1333,5 +1333,21 @@
   "Ta bort från Drive": "Remove from Drive",
   "”{title}” flyttas till papperskorgen i din Drive, där den finns kvar i 30 dagar.": "“{title}” goes to the trash in your Drive, where it stays for 30 days.",
   "Ta bort från Drive…": "Remove from Drive…",
-  "”{title}” tas bort här och läggs i papperskorgen i din Drive i 30 dagar.": "“{title}” is removed here and goes to the trash in your Drive for 30 days."
+  "”{title}” tas bort här och läggs i papperskorgen i din Drive i 30 dagar.": "“{title}” is removed here and goes to the trash in your Drive for 30 days.",
+  "1 bok · {words} ord": "1 book · {words} words",
+  "Inte hämtad hit": "Not fetched here",
+  "En lång berättelse": "One long story",
+  "En eller flera korta berättelser": "One or more short stories",
+  "Kunskap, minnen eller en idé": "Knowledge, memories or an idea",
+  "Något eget, du bygger det själv": "Something of your own, you build it",
+  "Välj så många som passar, eller inga alls. Du kan lägga till fler senare.": "Pick as many as fit, or none at all. You can add more later.",
+  "Hur berättas den?": "How is it told?",
+  "Granska håller koll på att texten följer det, till exempel filterord i deep POV.": "Review keeps the text to it, for example filter words in deep POV.",
+  "Deadline (valfritt)": "Deadline (optional)",
+  "Vad för sorts berättelse?": "What kind of story?",
+  "Vårt förslag": "Our suggestion",
+  "Titel och mål": "Title and goal",
+  "Steg {step} av {steps}": "Step {step} of {steps}",
+  "Skapa boken": "Create the book",
+  "Fortsätt": "Continue"
 }

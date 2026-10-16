@@ -17,18 +17,19 @@ export async function libraryOf(libraryDir: string | null) {
   return dir;
 }
 
-const details = (title: string, type: string, dailyGoal: number): ProjectDetails => ({
-  title,
-  type,
-  structure: suggestedStructure(type, []),
+/** What a new book starts from, before the writer has answered anything. */
+export const startDetails = (dailyGoal: number): ProjectDetails => ({
+  title: "",
+  type: "roman",
+  structure: suggestedStructure("roman", []),
   pieces: [],
   dailyGoal,
   deadline: "",
   narration: null,
 });
 
-export async function newBook(libraryDir: string, title: string, type: string, goal: number) {
-  return (await createProject(platform.fileSystem, libraryDir, details(title, type, goal))).dir;
+export async function newBook(libraryDir: string, details: ProjectDetails) {
+  return (await createProject(platform.fileSystem, libraryDir, details)).dir;
 }
 
 /** Null when the writer closes the file dialog without choosing. */
@@ -39,7 +40,7 @@ export async function importedBook(libraryDir: string, goal: number) {
   const made = await createProject(
     platform.fileSystem,
     libraryDir,
-    details(title, "roman", goal),
+    { ...startDetails(goal), title },
     book,
   );
   return made.dir;

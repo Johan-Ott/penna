@@ -34,10 +34,11 @@ function summary(books: ShelfBook[]) {
   const present = books.filter((book) => !book.isMissing);
   if (present.length === 0) return null;
   const words = present.reduce((sum, book) => sum + book.words, 0);
-  return t("{count} böcker · {words} ord totalt", {
-    count: present.length,
-    words: formatNumber(words),
-  });
+  const count = present.length;
+  const sum = formatNumber(words);
+  return count === 1
+    ? t("1 bok · {words} ord", { words: sum })
+    : t("{count} böcker · {words} ord totalt", { count, words: sum });
 }
 
 function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {

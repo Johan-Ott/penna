@@ -3425,41 +3425,30 @@ body:has(.welcome) {
   margin: 32px 24px 0;
 }
 
-/* Ny bok: the title, its kind, and Skapa. */
+/* Ny bok: one question at a time, the step and the buttons along its foot. */
 .new-book-dialog {
-  width: min(420px, calc(100vw - 32px));
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
 }
 
 .new-book-dialog form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.new-book-dialog .settings-text {
-  width: 100%;
-  height: 44px;
-  font-size: 16px;
+.new-book-dialog .dialog-actions {
+  align-items: center;
+  margin-top: 8px;
 }
 
-.new-book-kinds {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.new-book-dialog .dialog-actions .spacer {
+  flex-grow: 1;
 }
 
-.kind-chip {
-  min-height: 36px;
-  padding: 0 16px;
-  border: 1px solid var(--border-control);
-  border-radius: 18px;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
-}
-
-.kind-chip[aria-checked="true"] {
-  border-color: var(--primary);
-  background: var(--primary);
-  color: var(--on-primary);
+.field-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }

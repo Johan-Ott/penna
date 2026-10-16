@@ -75,9 +75,11 @@ export function CloudBook(props: {
         </span>
       </button>
       <div className="shelf-board" />
-      <div className="book-foot">
-        <span />
-        <CloudMenu book={props.book} onRemove={props.onRemove} />
+      <div className="book-meta">
+        <div className="book-foot">
+          <span className="book-updated">{t("Inte hämtad hit")}</span>
+          <CloudMenu book={props.book} onRemove={props.onRemove} />
+        </div>
       </div>
     </div>
   );

@@ -13,7 +13,8 @@ import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
 import { recordFailure } from "./errorLog.js";
-import { exampleBook, importedBook, libraryOf, newBook } from "./onboarding/books.js";
+import type { ProjectDetails } from "../project/newProject.js";
+import { exampleBook, importedBook, libraryOf, newBook, startDetails } from "./onboarding/books.js";
 import { NewBookDialog } from "./onboarding/NewBookDialog.js";
 import { Welcome } from "./onboarding/Welcome.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
@@ -42,9 +43,9 @@ function bookActions(app: App) {
     if (dir) await app.open(dir);
   };
   return {
-    create: (title: string, type: string) =>
+    create: (details: ProjectDetails) =>
       opened(
-        library().then((dir) => newBook(dir, title, type, goal)),
+        library().then((dir) => newBook(dir, details)),
         "Boken kunde inte skapas",
       ),
     import: () =>
@@ -150,7 +151,12 @@ function Shelf({ app }: StartScreenProps) {
         {...shelfHandlers(app.startup, isPhone, cloud.look)}
       />
       {isNewBookOpen && (
-        <NewBookDialog onCreate={books.create} onClose={() => setNewBookOpen(false)} />
+        <NewBookDialog
+          start={startDetails(preferences.defaultDailyGoal)}
+          libraryDir={preferences.libraryDir ?? ""}
+          onCreate={books.create}
+          onClose={() => setNewBookOpen(false)}
+        />
       )}
     </ShelfFrame>
   );

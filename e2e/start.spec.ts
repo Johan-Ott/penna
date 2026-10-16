@@ -9,9 +9,10 @@ test("the first start goes to the shelf, where a new book opens a scene to write
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
-  await page.getByRole("radio", { name: "Annat" }).click();
+  await page.getByRole("radio", { name: /Annat/ }).click();
+  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Isen");
-  await page.getByRole("button", { name: "Skapa" }).click();
+  await page.getByRole("button", { name: "Skapa boken" }).click();
   await editor(page).click();
   await page.keyboard.type("Det var kallt.");
 
