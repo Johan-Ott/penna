@@ -29,7 +29,7 @@ const SECTIONS: [string, string[]][] = [
       t(
         "Säkerhetskopior: hela boken kopieras när den öppnas och var halvtimme. Meny, Kopior och export, Säkerhetskopior.",
       ),
-      t("Synk: koppla din Google Drive under Synk så finns boken på alla dina enheter."),
+      t("Synk: logga in med Google under Konto så finns böckerna på alla dina enheter."),
     ],
   ],
   [

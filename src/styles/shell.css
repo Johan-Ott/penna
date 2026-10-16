@@ -610,8 +610,9 @@
   font: 15px/1.6 var(--font-prose);
 }
 
-/* A note is short; its mentions follow right under it instead of half a screen down. */
-.page:has(.note-mentions) .manuscript .ProseMirror {
+/* A note is short; what follows it, its mentions or who knows a secret, comes right under it
+   instead of half a screen down. */
+.page:has(.note-mentions, .secret-panel) .manuscript .ProseMirror {
   min-height: 0;
   padding-bottom: 40px;
 }
@@ -2545,8 +2546,8 @@
 
 .badge-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 14px 10px;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 12px 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -2572,7 +2573,10 @@
   font: 600 18px var(--font-prose);
 }
 
+/* A badge still to reach is small and quiet; what it takes shows when the pointer rests on it. */
 .badge.locked .badge-medal {
+  width: 32px;
+  height: 32px;
   border: 1.5px dashed var(--text-dim);
   background: transparent;
   box-shadow: none;
@@ -2586,6 +2590,11 @@
 
 .badge.locked .badge-name {
   color: var(--text-label);
+  font-size: 12px;
+}
+
+.badge.locked .badge-when {
+  display: none;
 }
 
 .badge-when {

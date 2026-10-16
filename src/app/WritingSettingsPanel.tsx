@@ -2,7 +2,6 @@ import {
   changeSize,
   nextLineHeight,
   nextWidth,
-  toggleDark,
   type FocusMode,
   type ProseFont,
   type WritingSettings,
@@ -194,12 +193,6 @@ export function WritingSettingsPanel(props: PanelProps) {
         hint={t("Var den tryckta bokens sidor börjar")}
         isOn={settings.showPages}
         onFlip={() => onChange(toggle("showPages"))}
-      />
-      <Toggle
-        label={t("Mörkt tema")}
-        hint={t("Följer annars systemet")}
-        isOn={settings.theme === "mörkt"}
-        onFlip={() => onChange(toggleDark)}
       />
     </div>
   );

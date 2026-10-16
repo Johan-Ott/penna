@@ -1553,7 +1553,8 @@ button.book-cover:hover {
 }
 
 /* Searching: each tab's matching rows under its name, and nothing where nothing matches. */
-.settings-search {
+.settings-tabs .settings-search {
+  box-sizing: border-box;
   width: 100%;
   margin-bottom: 10px;
 }
@@ -2560,9 +2561,13 @@ button.book-cover:hover {
   margin-bottom: 14px;
 }
 
+/* Help is read, not scanned: the text at a reading weight and colour, room between the lines. */
 .help-tab p {
   margin: 0;
-  line-height: 1.5;
+  max-width: 62ch;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.65;
 }
 
 .revision-scenes {
