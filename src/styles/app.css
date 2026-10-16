@@ -3432,7 +3432,7 @@ body:has(.welcome) {
   overflow-y: auto;
 }
 
-.new-book-dialog form {
+.new-book-form {
   display: flex;
   flex-direction: column;
   gap: 14px;

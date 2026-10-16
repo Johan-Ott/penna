@@ -31,7 +31,13 @@ function Question(props: FieldProps & { step: number; libraryDir: string }) {
   return <TitleAndGoal {...props} />;
 }
 
-function Steps(props: { step: number; isMaking: boolean; onBack: () => void }) {
+// Only Fortsätt moves on: the choices in a step are buttons too, and pressing one only chooses.
+function Steps(props: {
+  step: number;
+  isMaking: boolean;
+  onBack: () => void;
+  onForward: () => void;
+}) {
   const isLast = props.step === QUESTIONS.length;
   return (
     <div className="dialog-actions">
@@ -40,11 +46,11 @@ function Steps(props: { step: number; isMaking: boolean; onBack: () => void }) {
       </span>
       <span className="spacer" />
       {props.step > 1 && (
-        <button type="button" className="button ghost" onClick={props.onBack}>
+        <button className="button ghost" onClick={props.onBack}>
           {t("Tillbaka")}
         </button>
       )}
-      <button type="submit" className="button primary" disabled={props.isMaking}>
+      <button className="button primary" disabled={props.isMaking} onClick={props.onForward}>
         {isLast ? t("Skapa boken") : t("Fortsätt")}
       </button>
     </div>
@@ -78,15 +84,20 @@ export function NewBookDialog(props: Props) {
   const { step, details, setDetails, isMaking, forward, back } = useAnswers(props);
   return (
     <Dialog label={QUESTIONS[step - 1] ?? ""} className="new-book-dialog" onClose={props.onClose}>
-      <form onSubmit={(event) => (event.preventDefault(), forward())}>
+      <div
+        className="new-book-form"
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && event.target instanceof HTMLInputElement) forward();
+        }}
+      >
         <Question
           step={step}
           details={details}
           onChange={setDetails}
           libraryDir={props.libraryDir}
         />
-        <Steps step={step} isMaking={isMaking} onBack={back} />
-      </form>
+        <Steps step={step} isMaking={isMaking} onBack={back} onForward={forward} />
+      </div>
     </Dialog>
   );
 }
