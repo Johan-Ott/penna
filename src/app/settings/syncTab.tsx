@@ -1,63 +1,52 @@
-import type { DriveStatus, DriveSync } from "../useDriveSync.js";
+import type { DriveStatus } from "../useDriveSync.js";
+import { signIn, signOut } from "../googleAccount.js";
+import { recordFailure } from "../errorLog.js";
+import { platform } from "../platform.js";
 import { Row } from "../controls.js";
 import type { TabProps } from "./settingsTabs.js";
 import { t } from "../../i18n/i18n.js";
 
-function statusText(status: DriveStatus) {
-  if (status.kind === "syncing") return t("Synkar…");
-  if (status.kind === "failed") return status.message;
-  if (status.kind === "done") {
+function statusText(status: DriveStatus | undefined) {
+  if (status?.kind === "syncing") return t("Synkar…");
+  if (status?.kind === "failed") return status.message;
+  if (status?.kind === "done") {
     const time = new Date(status.doneAt).toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
     return t("Synkad {time}", { time });
   }
-  return "";
+  return t("Böcker, profil och inställningar följer med till dina andra enheter.");
 }
 
-function DriveRow({ drive }: { drive: DriveSync }) {
-  if (!drive.isOn) {
-    return (
-      <Row
-        label="Google Drive"
-        hint={t(
-          "Boken sparas också i Penna/<bok> i din Drive, och följer med till dina andra enheter.",
-        )}
-      >
-        <button className="button secondary small" onClick={() => void drive.connect()}>
-          {t("Koppla Drive")}
-        </button>
-      </Row>
-    );
-  }
+function SignInRow({ updatePreferences }: Pick<TabProps, "updatePreferences">) {
+  const start = () => void signIn(updatePreferences).catch(recordFailure("Inloggning med Google"));
   return (
-    <Row label="Google Drive" hint={statusText(drive.status)}>
-      <button className="button secondary small" onClick={() => void drive.syncNow()}>
-        {t("Synka nu")}
-      </button>
-      <button className="link-button" onClick={() => void drive.disconnect()}>
-        {t("Koppla från")}
+    <Row
+      label={t("Google-konto")}
+      hint={t("Logga in så sparas allt i mappen Penna i din egen Drive och följer med dig.")}
+    >
+      <button className="button primary small" onClick={start}>
+        {t("Logga in med Google")}
       </button>
     </Row>
   );
 }
 
-export function SyncTab({ book }: TabProps) {
-  if (!book) return <Row label={t("Öppna en bok för att synka den.")} />;
-  if (!book.drive.isAvailable) return <Row label={t("Synk finns inte på den här enheten än.")} />;
+/** One row: signed in with Google or not. Everything else follows on its own. */
+export function SyncTab({ book, preferences, updatePreferences }: TabProps) {
+  if (!platform.googleSignIn) return <Row label={t("Synk finns inte på den här enheten än.")} />;
+  if (!preferences.isDriveSyncOn) return <SignInRow updatePreferences={updatePreferences} />;
   return (
-    <>
-      <DriveRow drive={book.drive} />
-      {book.drive.status.kind === "signingIn" && (
-        <Row
-          label={t("Fortsätt i Googles inloggning.")}
-          hint={t("Penna kommer tillbaka av sig själv när du är klar.")}
-        />
+    <Row label={t("Google-konto")} hint={statusText(book?.drive.status)}>
+      {book && (
+        <button className="button secondary small" onClick={() => void book.drive.syncNow()}>
+          {t("Synka nu")}
+        </button>
       )}
-      {book.drive.status.kind === "failed" && !book.drive.isOn && (
-        <Row label={book.drive.status.message} />
-      )}
-    </>
+      <button className="link-button" onClick={() => void signOut(updatePreferences)}>
+        {t("Logga ut")}
+      </button>
+    </Row>
   );
 }

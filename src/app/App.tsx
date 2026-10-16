@@ -24,7 +24,7 @@ import { useDrafts, type Drafts } from "./drafts/useDrafts.js";
 import { openIfOnDisk, useOpenFirstScene, useSceneSession } from "./useSceneSession.js";
 import { useWritingMode } from "./useWritingMode.js";
 import { useJourney } from "./journey/useJourney.js";
-import { useProfile } from "./profile/useProfile.js";
+import { useSyncedProfile } from "./useAccountSync.js";
 import { useBookBadges, useMilestone } from "./journey/useMilestone.js";
 import { listenToSaves, useWritingStats } from "./useWritingStats.js";
 import { useManuscriptSearch } from "./useManuscriptSearch.js";
@@ -83,7 +83,7 @@ function useCoreState() {
   };
   const review = useReviewParts({ ...sceneState, project, author: startup.preferences.authorName });
   const writingMode = useWritingMode();
-  const profile = useProfile(startup.preferences.libraryDir);
+  const profile = useSyncedProfile(startup);
   return {
     sceneState,
     projectState,

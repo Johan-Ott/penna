@@ -35,15 +35,17 @@ function profileFrom(fileText: string): Profile {
   }
 }
 
-/** The profile in the Penna folder, so every device with the folder has it. No account. */
+/** The profile in the Penna folder; signed in with Google, it follows to every device. */
 export function useProfile(libraryDir: string | null) {
   const [profile, setProfile] = useState(NO_PROFILE);
+  const [isLoaded, setLoaded] = useState(false);
   const [isOpen, setOpen] = useState(false);
   useEffect(() => {
     void libraryOf(libraryDir)
       .then((library) => platform.fileSystem.readText(profilePath(library)))
       .then((fileText) => setProfile(profileFrom(fileText)))
-      .catch(() => setProfile(NO_PROFILE));
+      .catch(() => setProfile(NO_PROFILE))
+      .finally(() => setLoaded(true));
   }, [libraryDir]);
   const save = useCallback(
     (next: Profile) => {
@@ -61,5 +63,6 @@ export function useProfile(libraryDir: string | null) {
     },
     [libraryDir],
   );
-  return { profile, save, isOpen, open: () => setOpen(true), close: () => setOpen(false) };
+  const close = () => setOpen(false);
+  return { profile, save, isLoaded, isOpen, open: () => setOpen(true), close };
 }

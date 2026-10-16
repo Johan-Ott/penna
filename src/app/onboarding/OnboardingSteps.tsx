@@ -1,4 +1,5 @@
 import type { OnboardingState } from "./useOnboarding.js";
+import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 import { UiLanguageChoice } from "../settings/UiLanguageChoice.js";
 
@@ -40,13 +41,23 @@ function CheckMark() {
   );
 }
 
-export function WelcomeStep() {
+export function WelcomeStep({ onSignIn }: { onSignIn: () => void }) {
   return (
     <>
       <h1 className="onboarding-title large">{t("Välkommen till Penna.")}</h1>
       <p className="onboarding-text">
         {t("En lugn plats att skriva böcker. Det tar en minut att komma igång.")}
       </p>
+      {platform.googleSignIn && (
+        <div className="onboarding-field">
+          <button className="button secondary large" onClick={onSignIn}>
+            {t("Logga in med Google")}
+          </button>
+          <span className="setting-hint">
+            {t("Har du redan böcker i Penna på en annan enhet? Logga in så hämtar du dem.")}
+          </span>
+        </div>
+      )}
       <div className="onboarding-field">
         <span className="field-label">{t("Språk")}</span>
         <UiLanguageChoice />

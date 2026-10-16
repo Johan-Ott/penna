@@ -124,6 +124,20 @@ export function goBack(state: OnboardingState) {
   state.setBookStep(skipped ? 1 : state.bookStep - 1);
 }
 
+/** Logga in med Google on the first screen: Penna's folder is made, and the books are chosen
+ * on the shelf. */
+export async function signInFirst(
+  state: OnboardingState,
+  onSignIn: (libraryDir: string) => Promise<void>,
+) {
+  const libraryDir = state.libraryDir;
+  if (!libraryDir) return;
+  await state.attempt(async () => {
+    await platform.fileSystem.makeDir(libraryDir);
+    await onSignIn(libraryDir);
+  }, t("Inloggningen blev inte klar. Försök igen."));
+}
+
 /** The folder and project steps write to disk before moving on. */
 export async function continueFrom(state: OnboardingState) {
   const { step, libraryDir } = state;

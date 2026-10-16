@@ -6,7 +6,8 @@ import { backupNow } from "./useAutoBackup.js";
 import type { WriteGuard } from "../sync/localSide.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
-import { errorLog, recordFailure } from "./errorLog.js";
+import { errorLog } from "./errorLog.js";
+import { signIn, signOut } from "./googleAccount.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";
 import { t } from "../i18n/i18n.js";
@@ -88,17 +89,9 @@ function useDriveConnection(
 ) {
   const connect = async () => {
     setStatus({ kind: "signingIn" });
-    try {
-      await platform.googleSignIn?.connect();
-      updatePreferences((current) => ({ ...current, isDriveSyncOn: true }));
-    } catch (error) {
-      setStatus(failure(error));
-    }
+    await signIn(updatePreferences).catch((error: unknown) => setStatus(failure(error)));
   };
-  const disconnect = async () => {
-    updatePreferences((current) => ({ ...current, isDriveSyncOn: false }));
-    await platform.googleSignIn?.disconnect().catch(recordFailure("Utloggning från Google"));
-  };
+  const disconnect = () => signOut(updatePreferences);
   return { connect, disconnect };
 }
 

@@ -9,6 +9,7 @@ import {
   continueFrom,
   goBack,
   LAST_STEP,
+  signInFirst,
   useOnboarding,
   type OnboardingState,
 } from "./useOnboarding.js";
@@ -20,6 +21,8 @@ interface OnboardingProps {
   /** 1 for a first start; 4 when a returning writer makes a new project. */
   startStep: number;
   onFinish: (projectDir: string, libraryDir: string | null) => void;
+  /** Signed in from the first screen: no book yet, the shelf asks which to fetch. */
+  onSignIn: (libraryDir: string) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -39,8 +42,14 @@ function Progress({ step }: { step: number }) {
   );
 }
 
-function CurrentStep({ state, isFirst }: { state: OnboardingState; isFirst: boolean }) {
-  if (state.step === 1) return <WelcomeStep />;
+function CurrentStep(props: {
+  state: OnboardingState;
+  isFirst: boolean;
+  onSignIn: OnboardingProps["onSignIn"];
+}) {
+  const { state, isFirst } = props;
+  if (state.step === 1)
+    return <WelcomeStep onSignIn={() => void signInFirst(state, props.onSignIn)} />;
   if (state.step === 2) return <PromisesStep />;
   if (state.step === 3) return <FolderStep state={state} />;
   if (state.step === 4) return <ProjectStep state={state} isFirst={isFirst} />;
@@ -77,7 +86,10 @@ function Navigation({
   startStep,
   onFinish,
   onCancel,
-}: { state: OnboardingState } & Omit<OnboardingProps, "knownLibraryDir" | "defaultDailyGoal">) {
+}: { state: OnboardingState } & Omit<
+  OnboardingProps,
+  "knownLibraryDir" | "defaultDailyGoal" | "onSignIn"
+>) {
   const isBack = state.step > startStep || (state.step === 4 && state.bookStep > 1);
   return (
     <div className="onboarding-nav">
@@ -114,7 +126,7 @@ export function Onboarding(props: OnboardingProps) {
   const state = useOnboarding(props);
   const isPhone = usePhone();
   usePhoneFinish(isPhone, state, onFinish);
-  if (isPhone && state.step < 4) return <PhoneWelcome state={state} />;
+  if (isPhone && state.step < 4) return <PhoneWelcome state={state} onSignIn={props.onSignIn} />;
   return (
     <main className="onboarding">
       <div className="onboarding-card">
@@ -123,7 +135,7 @@ export function Onboarding(props: OnboardingProps) {
           <Progress step={state.step} />
         </div>
         <div className="onboarding-body">
-          <CurrentStep state={state} isFirst={startStep === 1} />
+          <CurrentStep state={state} isFirst={startStep === 1} onSignIn={props.onSignIn} />
           {state.problem && (
             <p className="onboarding-problem" role="alert">
               {state.problem}

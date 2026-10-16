@@ -1,5 +1,6 @@
 import type { AppState } from "./App.js";
 import { useDriveBooksDialog } from "./shelf/DriveBooks.js";
+import { signIn } from "./googleAccount.js";
 import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
@@ -86,12 +87,11 @@ const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
   { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
 ];
 
-// A book fetched from Drive keeps syncing, so signing in for it turns the sync on.
 const useShelfDrive = (app: StartScreenProps["app"]) =>
   useDriveBooksDialog({
     libraryDir: app.startup.preferences.libraryDir,
     onOpen: (dir) => void app.open(dir),
-    onSignedIn: () => app.startup.updatePreferences((now) => ({ ...now, isDriveSyncOn: true })),
+    updatePreferences: app.startup.updatePreferences,
   });
 
 // The shelf's menu, with the dialogs it opens.
@@ -191,6 +191,11 @@ export function StartScreen({ app }: StartScreenProps) {
         defaultDailyGoal={preferences.defaultDailyGoal}
         startStep={onboardingStep}
         onFinish={(projectDir, libraryDir) => finishOnboarding(app, projectDir, libraryDir)}
+        onSignIn={async (libraryDir) => {
+          await signIn(app.startup.updatePreferences);
+          app.startup.updatePreferences((now) => ({ ...now, isOnboardingDone: true, libraryDir }));
+          setOnboardingStep(0);
+        }}
         onCancel={() => setOnboardingStep(0)}
       />
     );
