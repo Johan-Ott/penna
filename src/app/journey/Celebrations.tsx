@@ -36,7 +36,7 @@ function useDismissLater(celebration: Celebration) {
 function CelebrationToast({ celebration }: ToastProps) {
   useDismissLater(celebration);
   return (
-    <div className="celebration" role="status">
+    <div className="celebration" role="status" onClick={() => dismissCelebration(celebration)}>
       <span className={isGreen(celebration) ? "celebration-badge green" : "celebration-badge"}>
         {glyphOf(celebration)}
       </span>
@@ -48,7 +48,7 @@ function CelebrationToast({ celebration }: ToastProps) {
   );
 }
 
-/** Up in the right corner for four seconds; never in the way of the text. */
+/** Up in the right corner for four seconds, or until tapped; never in the way of the text. */
 export function Celebrations() {
   const celebrations = useCelebrations();
   return (

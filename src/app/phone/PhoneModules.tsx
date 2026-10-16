@@ -5,9 +5,7 @@ import { ReferenceBlock } from "../blocks/ReferenceBlock.js";
 import { StickyNoteCard } from "../blocks/StickyNotes.js";
 import { useStickyNotes } from "../blocks/useStickyNotes.js";
 import { CloseButton } from "../controls.js";
-import { Colophon } from "../progress/Colophon.js";
 import {
-  BookIcon,
   ChartIcon,
   GridIcon,
   ImageIcon,
@@ -24,7 +22,7 @@ import { t } from "../../i18n/i18n.js";
 // The computer's blocks on a phone, in its dock's order, listed by one button in Skriv's bar;
 // the sprint, Insikter and Granska open in their own places, the others as a sheet from below.
 
-type ModuleId = "lappar" | "iscenen" | "referens" | "kolofon";
+type ModuleId = "lappar" | "iscenen" | "referens";
 type Props = { app: AppState; project: Project };
 
 const shown = createStore<ModuleId | "lista" | null>(null);
@@ -32,7 +30,6 @@ const shown = createStore<ModuleId | "lista" | null>(null);
 const MODULES: { id: ModuleId; title: string; icon: ReactNode }[] = [
   { id: "lappar", title: t("Lappar"), icon: <NoteIcon /> },
   { id: "iscenen", title: t("I scenen"), icon: <PeopleIcon /> },
-  { id: "kolofon", title: t("Kolofon"), icon: <BookIcon /> },
   { id: "referens", title: t("Referensbild"), icon: <ImageIcon /> },
 ];
 
@@ -87,10 +84,7 @@ function PhoneNotes({ project }: { project: Project }) {
 function ModuleBody({ id, app, project }: Props & { id: ModuleId }) {
   if (id === "lappar") return <PhoneNotes project={project} />;
   if (id === "iscenen") return <InSceneBlock app={app} />;
-  if (id === "referens") return <ReferenceBlock project={project} />;
-  if (Object.keys(app.stats).length === 0)
-    return <p className="setting-hint">{t("Kolofonen fylls i när du har skrivit några dagar.")}</p>;
-  return <Colophon project={project} stats={app.stats} />;
+  return <ReferenceBlock project={project} />;
 }
 
 function ModuleList({ app }: { app: AppState }) {

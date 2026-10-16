@@ -44,6 +44,12 @@ function pennaBack(depth: number) {
   return true;
 }
 
+// Outside a book, on the shelf and in the first steps, back still closes what lies on top or goes
+// one step back; with nothing left it leaves Penna, as Android expects.
+type BackPage = { pennaBack?: () => boolean };
+const outsideBook = () => pennaBack(1);
+(window as BackPage).pennaBack = outsideBook;
+
 /** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {
   const [stack, setStack] = useState<PhoneScreen[]>([{ kind: "book" }]);
@@ -61,9 +67,9 @@ export function usePhoneNavigation() {
   const back = useCallback(() => window.history.back(), []);
   useEffect(() => {
     const depth = stack.length;
-    const page = window as { pennaBack?: () => boolean };
+    const page = window as BackPage;
     page.pennaBack = () => pennaBack(depth);
-    return () => void delete page.pennaBack;
+    return () => void (page.pennaBack = outsideBook);
   }, [stack.length]);
   const screen = stack[stack.length - 1] ?? { kind: "book" };
   return { screen, depth: stack.length, show, back };

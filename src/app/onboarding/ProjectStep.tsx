@@ -84,7 +84,7 @@ export function ProjectStep({ state, isFirst }: { state: OnboardingState; isFirs
     <>
       <h1 className="onboarding-title">{isFirst ? t("Ditt första projekt") : t("Nytt projekt")}</h1>
       <div className="segmented fit" role="radiogroup" aria-label={t("Nytt eller befintligt")}>
-        {MODES.map(([mode, label]) => (
+        {MODES.filter(([mode]) => mode !== "open" || !state.isQuick).map(([mode, label]) => (
           <button
             key={mode}
             role="radio"

@@ -145,7 +145,7 @@ test("settings open with Ctrl+comma and show the sync tab", async ({ page }) => 
   await editor(page).click();
 
   await page.keyboard.press("Control+,");
-  await page.getByRole("button", { name: "Synk" }).click();
+  await page.getByRole("button", { name: "Konto" }).click();
 
   await expect(page.getByText("Synk finns inte på den här enheten än.")).toBeVisible();
 });

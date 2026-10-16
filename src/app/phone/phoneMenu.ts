@@ -38,7 +38,6 @@ export function phoneMenu(
   const help = { label: t("Hjälp"), onSelect: () => app.writingMode.settingsDialog.open(HELP_TAB) };
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
-    { label: t("Insikter"), onSelect: () => app.writingMode.setProgressOpen(true) },
     ...group(
       t("Boken"),
       [

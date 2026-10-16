@@ -88,13 +88,15 @@ function NoteHead(
   const drag = useNoteDrag(note, props.shown, state);
   return (
     <header className="note-head" onPointerDown={props.isInGrid ? undefined : drag}>
-      <GripIcon />
+      {!props.isInGrid && <GripIcon />}
       <ColorDots note={note} state={state} />
       <ToolButton tool="pen" chosen={props.tool} onChoose={props.onTool} />
       <ToolButton tool="eraser" chosen={props.tool} onChoose={props.onTool} />
-      <button className="note-tool" aria-label={t("Ny lapp")} onClick={addNext}>
-        +
-      </button>
+      {!props.isInGrid && (
+        <button className="note-tool" aria-label={t("Ny lapp")} onClick={addNext}>
+          +
+        </button>
+      )}
       <RemoveButton note={note} state={state} />
     </header>
   );

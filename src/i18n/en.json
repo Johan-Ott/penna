@@ -367,7 +367,6 @@
   "Svara": "Reply",
   "Svensk": "Swedish",
   "Svensk typografi medan du skriver": "Swedish typography as you write",
-  "Synk": "Sync",
   "Synk finns inte på den här enheten än.": "Sync is not available on this device yet.",
   "Synka nu": "Sync now",
   "Synkad {time}": "Synced {time}",
@@ -1390,5 +1389,6 @@
   "Hämta {count}": "Fetch {count}",
   "Alla dina böcker i Drive finns redan här.": "All your books in Drive are already here.",
   "Böckerna kunde inte hämtas klart: {reason}. Försök igen.": "The books could not be fetched completely: {reason}. Try again.",
-  "Dina böcker i Google Drive": "Your books in Google Drive"
+  "Dina böcker i Google Drive": "Your books in Google Drive",
+  "Konto": "Account"
 }

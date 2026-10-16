@@ -350,10 +350,19 @@ body .selection-bar.phone .icon-button {
   resize: none;
 }
 
+/* What a panel holds keeps its height and the panel scrolls, instead of squeezing its parts. */
+.phone-app .block-panel > *,
+.phone-app .insights-panel > *,
+.phone-app .insights-body > *,
+.phone-app .review-panel > * {
+  flex-shrink: 0;
+}
+
 .phone-app .block-head,
 .phone-app .insights-head {
   position: sticky;
   top: 0;
+  z-index: 2;
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px;
   align-items: center;
@@ -536,16 +545,15 @@ body .selection-bar.phone .icon-button {
   overflow: visible;
 }
 
-/* Back, or Publicera in the tabs, is the way out of Studio. */
-.phone-view .publish-back {
+/* The tabs lead back to the text, so Publicera has no Tillbaka of its own on a phone. */
+.phone-view .publish-steps > .publish-back {
   display: none;
 }
 
 /* The preview only with Design, and Exportera's button only where exporting is chosen. */
 .phone-view .publish:not(.step-design) .publish-preview,
 .phone-view .publish.step-design .publish-button,
-.phone-view .publish.step-details .publish-button,
-.phone-view .publish-step-head .link-button {
+.phone-view .publish.step-details .publish-button {
   display: none;
 }
 
@@ -981,6 +989,7 @@ body .phone-app .text-when input {
 }
 
 .phone-app .heatmap {
+  width: 100%;
   max-width: 240px;
   margin: 0 auto;
 }
@@ -989,6 +998,11 @@ body .phone-app .text-when input {
    back as soon as the text has the cursor. */
 .phone-app.with-tabs .phone-text:not(:focus-within) .phone-toolbar {
   display: none;
+}
+
+/* With the tabs under it, the tools need no room of their own for the phone's gesture bar. */
+.phone-app.with-tabs .phone-toolbar {
+  padding-bottom: 4px;
 }
 
 /* Sizes for a thumb and an arm's length, as phones' own apps use: text from 13 to 15 px and
@@ -1276,4 +1290,35 @@ body .phone-app .text-when input {
   border-radius: 10px;
   font-size: 12px;
   line-height: 20px;
+}
+
+/* A new book on a phone fills the screen, its choices scrolling and its buttons kept at the foot
+   within reach of the thumb. */
+@media (max-width: 600px) {
+  .onboarding:has(.onboarding-card) {
+    align-items: stretch;
+    padding: 0;
+    background: var(--bg);
+  }
+
+  .onboarding-card {
+    min-height: 100dvh;
+    padding: max(24px, var(--safe-top)) 20px 0;
+    border: 0;
+    border-radius: 0;
+    gap: 20px;
+  }
+
+  .onboarding-top .progress-dots {
+    display: none;
+  }
+
+  .onboarding-nav {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -20px;
+    padding: 12px 20px calc(12px + var(--safe-bottom));
+    border-top: 1px solid var(--border-soft);
+    background: var(--bg);
+  }
 }

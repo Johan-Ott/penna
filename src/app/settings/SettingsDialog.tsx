@@ -14,7 +14,7 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Allmänt"), GeneralTab],
   [t("Editor"), EditorTab],
   [t("Versioner"), VersionsTab],
-  [t("Synk"), SyncTab],
+  [t("Konto"), SyncTab],
   [t("Hjälp"), HelpTab],
   [t("Kortkommandon"), ShortcutsTab],
   [t("Om Penna"), AboutTab],

@@ -117,7 +117,9 @@ export function BookQuestion({ state }: { state: OnboardingState }) {
   return (
     <>
       <span className="choice-hint">
-        {t("Steg {step} av {steps}", { step: bookStep, steps: BOOK_STEPS })}
+        {state.isQuick
+          ? t("Steg {step} av {steps}", { step: bookStep === 1 ? 1 : 2, steps: 2 })
+          : t("Steg {step} av {steps}", { step: bookStep, steps: BOOK_STEPS })}
       </span>
       {bookStep === 1 ? (
         <span className="field-label">{question}</span>

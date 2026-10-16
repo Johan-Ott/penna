@@ -14,7 +14,7 @@ test("a novelist starts a book on her phone and writes the first chapter", async
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
   await page.getByRole("radio", { name: /Annat/ }).click();
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Fyrvaktarens dotter");
   await page.getByRole("button", { name: "Skapa boken" }).click();
   await page

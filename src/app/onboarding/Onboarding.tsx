@@ -99,7 +99,7 @@ function Navigation({
         </button>
       )}
       {isBack && (
-        <button className="link-button quiet" onClick={() => goBack(state)}>
+        <button className="link-button quiet" data-phone-back onClick={() => goBack(state)}>
           {t("Tillbaka")}
         </button>
       )}

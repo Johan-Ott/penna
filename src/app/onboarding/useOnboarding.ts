@@ -13,6 +13,7 @@ import { suggestedStructure } from "../../project/templates.js";
 import { importManuscript } from "../../import/importManuscript.js";
 import { ImportError } from "../../import/markdownImport.js";
 import { platform, type PickedFile } from "../platform.js";
+import { usePhone } from "../phone/usePhone.js";
 import { t } from "../../i18n/i18n.js";
 
 export type ProjectMode = "new" | "import" | "open";
@@ -86,6 +87,8 @@ export function useOnboarding({ knownLibraryDir, startStep, defaultDailyGoal }: 
   const [projectDir, setProjectDir] = useState<string | null>(null);
   const library = useLibraryChoice(knownLibraryDir);
   return {
+    /** On a phone a new book asks only what kind and its title; the rest is Penna's suggestion. */
+    isQuick: usePhone(),
     step,
     setStep,
     mode,
@@ -109,6 +112,10 @@ const isAsking = (state: OnboardingState) => state.step === 4 && state.mode === 
 // the writer reaches it, from what they answered so far.
 function nextBookStep(state: OnboardingState) {
   const { bookStep, details } = state;
+  if (state.isQuick) {
+    state.setDetails({ ...details, pieces: [], structure: suggestedStructure(details.type, []) });
+    return state.setBookStep(BOOK_STEPS);
+  }
   const skipsPieces = bookStep === 1 && details.type === "fackbok";
   const pieces = skipsPieces ? [] : details.pieces;
   const next = skipsPieces ? 3 : bookStep + 1;
@@ -120,6 +127,7 @@ function nextBookStep(state: OnboardingState) {
 /** Back one question in the new book, or one step in the onboarding. */
 export function goBack(state: OnboardingState) {
   if (!isAsking(state) || state.bookStep === 1) return state.setStep(state.step - 1);
+  if (state.isQuick) return state.setBookStep(1);
   const skipped = state.bookStep === 3 && state.details.type === "fackbok";
   state.setBookStep(skipped ? 1 : state.bookStep - 1);
 }
