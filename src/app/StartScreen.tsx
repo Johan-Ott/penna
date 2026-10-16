@@ -1,42 +1,39 @@
 import type { AppState } from "./App.js";
-import { useDriveBooksDialog } from "./shelf/DriveBooks.js";
 import { signIn } from "./googleAccount.js";
 import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
-import { useMenuButton, type MenuItem } from "./Menu.js";
-import { appMenu, type AppMenuActions } from "./shell/appMenu.js";
+import { useMenuButton } from "./Menu.js";
+import { appMenu, phoneShelfMenu } from "./shell/appMenu.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
 import { PhoneShelf } from "./shelf/PhoneShelf.js";
 import { ProfileButton, ProfileLayer } from "./profile/ProfileLayer.js";
 import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
-import { checkForUpdates } from "./updates.js";
 import { t } from "../i18n/i18n.js";
-import { copyExampleProject } from "../project/newProject.js";
 import type { ShelfBook } from "../project/shelf.js";
 import { forgetProject } from "./appPreferences.js";
-import { Onboarding } from "./onboarding/Onboarding.js";
+import { recordFailure } from "./errorLog.js";
+import { exampleBook, importedBook, libraryOf, newBook } from "./onboarding/books.js";
+import { NewBookDialog } from "./onboarding/NewBookDialog.js";
+import { Welcome } from "./onboarding/Welcome.js";
 import { platform } from "./platform.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
+import { useCloudBooks } from "./shelf/useCloudBooks.js";
 import type { PreferenceChange } from "./useStartup.js";
 
-interface StartScreenProps {
-  app: Pick<AppState, "profile" | "journey" | "updateFields" | "startup"> & {
-    open: (dir: string) => Promise<void>;
-    choose: () => Promise<void>;
-    writingMode: ReturnType<typeof useWritingMode>;
-    /** Nytt projekt was chosen in an open book: the shelf starts on the new project's step. */
-    newProjectAsked: { current: boolean };
-  };
-}
+// Penna starts at the welcome the first time, and at the shelf after: every book is begun,
+// fetched or opened from there.
 
-async function exampleDir(libraryDir: string | null) {
-  const target = libraryDir ?? `${(await platform.knownFolders()).documents}/Penna`;
-  await platform.fileSystem.makeDir(target);
-  return copyExampleProject(platform.fileSystem, target);
-}
+type App = Pick<AppState, "profile" | "journey" | "updateFields" | "startup"> & {
+  open: (dir: string) => Promise<void>;
+  choose: () => Promise<void>;
+  writingMode: ReturnType<typeof useWritingMode>;
+  /** Ny bok was chosen in an open book: the shelf opens with the new book's sheet. */
+  newProjectAsked: { current: boolean };
+};
+type StartScreenProps = { app: App };
 
 async function locate(book: ShelfBook, update: (change: PreferenceChange) => void) {
   const found = await platform.pickFolder();
@@ -47,24 +44,33 @@ async function locate(book: ShelfBook, update: (change: PreferenceChange) => voi
   }));
 }
 
-function finishOnboarding(
-  app: StartScreenProps["app"],
-  projectDir: string,
-  libraryDir: string | null,
-) {
-  app.startup.updatePreferences((current) => ({
-    ...current,
-    isOnboardingDone: true,
-    libraryDir: libraryDir ?? current.libraryDir,
-  }));
-  void app.open(projectDir);
+// Each way a book reaches the shelf, opened as soon as it is there.
+function bookActions(app: App) {
+  const { preferences } = app.startup;
+  const goal = preferences.defaultDailyGoal;
+  const library = () => libraryOf(preferences.libraryDir);
+  const opened = async (made: Promise<string | null>, what: string) => {
+    const dir = await made.catch(recordFailure(what));
+    if (dir) await app.open(dir);
+  };
+  return {
+    create: (title: string, type: string) =>
+      opened(
+        library().then((dir) => newBook(dir, title, type, goal)),
+        "Boken kunde inte skapas",
+      ),
+    import: () =>
+      void opened(
+        library().then((dir) => importedBook(dir, goal)),
+        "Importen",
+      ),
+    example: () => void opened(library().then(exampleBook), "Exempelboken"),
+  };
 }
 
-function shelfHandlers(app: StartScreenProps["app"], isPhone: boolean) {
-  const { preferences, updatePreferences } = app.startup;
+function shelfHandlers(app: App, isPhone: boolean) {
+  const { updatePreferences } = app.startup;
   return {
-    onOpenExample: () => void exampleDir(preferences.libraryDir).then(app.open),
-    onOpenFolder: isPhone ? null : () => void app.choose(),
     onLocate: isPhone ? null : (book: ShelfBook) => void locate(book, updatePreferences),
     onForget: (book: ShelfBook) => updatePreferences((current) => forgetProject(current, book.dir)),
     onRemove: (book: ShelfBook) =>
@@ -74,37 +80,15 @@ function shelfHandlers(app: StartScreenProps["app"], isPhone: boolean) {
   };
 }
 
-// A phone has no folders to pick and no shortcuts, so its menu is short.
-const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
-  { label: t("Nytt projekt"), onSelect: actions.newProject },
-  ...(actions.fetchFromDrive
-    ? [{ label: t("Hämta från Google Drive…"), onSelect: actions.fetchFromDrive }]
-    : []),
-  ...(actions.showBackups ? [{ label: t("Säkerhetskopior…"), onSelect: actions.showBackups }] : []),
-  { label: t("Inställningar"), separatorBefore: true, onSelect: actions.openSettings },
-  { label: t("Hjälp"), onSelect: actions.openShortcuts },
-  { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
-  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
-];
-
-const useShelfDrive = (app: StartScreenProps["app"]) =>
-  useDriveBooksDialog({
-    libraryDir: app.startup.preferences.libraryDir,
-    onOpen: (dir) => void app.open(dir),
-    updatePreferences: app.startup.updatePreferences,
-  });
-
 // The shelf's menu, with the dialogs it opens.
-function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, isPhone: boolean) {
+function useShelfMenu(app: App, onNewProject: () => void, isPhone: boolean) {
   const settings = app.writingMode.settingsDialog;
   const backups = useBackupsDialog(app, []);
   const feedback = useFeedbackDialog();
-  const drive = useShelfDrive(app);
   const actions = {
     showShelf: () => undefined,
     newProject: onNewProject,
     openFolder: () => void app.choose(),
-    fetchFromDrive: drive.open,
     ...{ showVersions: null, exportZip: null, importRevision: null, openTheme: null, sharing: [] },
     showBackups: backups.open,
     sendFeedback: feedback.open,
@@ -115,7 +99,6 @@ function useShelfMenu(app: StartScreenProps["app"], onNewProject: () => void, is
   const layers = (
     <>
       {menu.menu}
-      {drive.layer}
       {backups.layer}
       {feedback.layer}
       <SettingsLayer {...app.startup} {...app.writingMode} dialog={settings} book={null} />
@@ -152,53 +135,58 @@ function ShelfFrame(
   );
 }
 
-function useOnboardingStep(app: StartScreenProps["app"], projectStep: number) {
+function useNewBookSheet(app: App) {
   return useState(() => {
-    if (!app.startup.preferences.isOnboardingDone) return 1;
     const isAsked = app.newProjectAsked.current;
     app.newProjectAsked.current = false;
-    return isAsked ? projectStep : 0;
+    return isAsked;
   });
 }
 
-function Shelf(props: StartScreenProps & { onNewProject: () => void }) {
-  const { app } = props;
+// A book in Drive is fetched and opened by the tap on its cover.
+function useCloud(app: App) {
+  const { preferences } = app.startup;
+  const cloud = useCloudBooks(preferences.libraryDir, preferences.isDriveSyncOn);
+  const fetchAndOpen = async (name: string) => {
+    const dir = await cloud.fetch(name).catch(recordFailure("Hämtningen"));
+    if (dir) await app.open(dir);
+  };
+  return { ...cloud, onFetch: (name: string) => void fetchAndOpen(name) };
+}
+
+function Shelf({ app }: StartScreenProps) {
   const { preferences } = app.startup;
   const isPhone = usePhone();
+  const [isNewBookOpen, setNewBookOpen] = useNewBookSheet(app);
+  const books = bookActions(app);
+  const cloud = useCloud(app);
   return (
-    <ShelfFrame app={app} onNewProject={props.onNewProject} isPhone={isPhone}>
+    <ShelfFrame app={app} onNewProject={() => setNewBookOpen(true)} isPhone={isPhone}>
       <Bookshelf
-        isPhone={isPhone}
         libraryDir={preferences.libraryDir}
         knownProjects={preferences.knownProjects}
         author={preferences.authorName}
         onOpen={(dir) => void app.open(dir)}
-        onNewProject={props.onNewProject}
+        onNewProject={() => setNewBookOpen(true)}
+        onImport={books.import}
+        onOpenExample={books.example}
+        cloud={cloud}
         {...shelfHandlers(app, isPhone)}
       />
+      {isNewBookOpen && (
+        <NewBookDialog onCreate={books.create} onClose={() => setNewBookOpen(false)} />
+      )}
     </ShelfFrame>
   );
 }
 
 export function StartScreen({ app }: StartScreenProps) {
-  const { preferences } = app.startup;
-  const projectStep = preferences.libraryDir ? 4 : 3;
-  const [onboardingStep, setOnboardingStep] = useOnboardingStep(app, projectStep);
-  if (onboardingStep > 0) {
-    return (
-      <Onboarding
-        knownLibraryDir={preferences.libraryDir}
-        defaultDailyGoal={preferences.defaultDailyGoal}
-        startStep={onboardingStep}
-        onFinish={(projectDir, libraryDir) => finishOnboarding(app, projectDir, libraryDir)}
-        onSignIn={async (libraryDir) => {
-          await signIn(app.startup.updatePreferences);
-          app.startup.updatePreferences((now) => ({ ...now, isOnboardingDone: true, libraryDir }));
-          setOnboardingStep(0);
-        }}
-        onCancel={() => setOnboardingStep(0)}
-      />
-    );
-  }
-  return <Shelf app={app} onNewProject={() => setOnboardingStep(projectStep)} />;
+  const { preferences, updatePreferences } = app.startup;
+  if (preferences.isOnboardingDone) return <Shelf app={app} />;
+  const start = async (withGoogle: boolean) => {
+    const libraryDir = await libraryOf(preferences.libraryDir);
+    if (withGoogle) await signIn(updatePreferences);
+    updatePreferences((now) => ({ ...now, isOnboardingDone: true, libraryDir }));
+  };
+  return <Welcome onStart={start} />;
 }

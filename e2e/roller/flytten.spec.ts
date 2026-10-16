@@ -36,14 +36,11 @@ test("a novel in Word moves into Penna on the first start, chapter by chapter", 
   await page.setViewportSize({ width: 1400, height: 900 });
   const file = await manuscript(testInfo.outputDir);
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText("Välkommen till Penna.")).toBeVisible({ timeout: 50_000 });
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
 
-  await page.getByRole("radio", { name: "Importera" }).click();
   const chooser = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "Välj fil…" }).click();
+  await page.getByRole("button", { name: "Importera manus…" }).click();
   await (await chooser).setFiles(file);
-  await page.getByRole("button", { name: "Börja skriva" }).click();
 
   const sidebar = page.locator(".sidebar");
   await expect(sidebar).toContainText("Ett", { timeout: 30_000 });

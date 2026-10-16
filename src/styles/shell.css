@@ -3406,10 +3406,6 @@
   padding: 0;
 }
 
-.onboarding-body > .link-button.quiet {
-  align-self: flex-start;
-}
-
 .template-name {
   font-weight: 600;
 }

@@ -7,7 +7,6 @@ export interface AppMenuActions {
   newProject: () => void;
   openFolder: () => void;
   /** A book from Penna/ in Google Drive; left out where there is no Drive or no library. */
-  fetchFromDrive?: (() => void) | null;
   /** Null when no text is open, or on the bookshelf. */
   showVersions: (() => void) | null;
   /** Null on the bookshelf, where there is no book to pack. */
@@ -73,14 +72,8 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
   };
   return [
     { label: t("Bokhylla"), shortcut: "Ctrl+Shift+O", onSelect: actions.showShelf },
-    { label: t("Nytt projekt"), shortcut: "Ctrl+N", onSelect: actions.newProject },
-    ...group(t("Öppna och importera"), [
-      { label: t("Öppna mapp…"), onSelect: actions.openFolder },
-      { label: t("Importera manus…"), onSelect: actions.newProject },
-      ...(actions.fetchFromDrive
-        ? [{ label: t("Hämta från Google Drive…"), onSelect: actions.fetchFromDrive }]
-        : []),
-    ]),
+    { label: t("Ny bok"), shortcut: "Ctrl+N", onSelect: actions.newProject },
+    { label: t("Öppna mapp…"), onSelect: actions.openFolder },
     ...bookGroups(actions),
     {
       label: t("Inställningar"),
@@ -92,3 +85,12 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
     ...group(t("Hjälp"), helpItems(help, actions.sendFeedback)),
   ];
 }
+
+// A phone has no folders to pick and no shortcuts, so its menu is short.
+export const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
+  ...(actions.showBackups ? [{ label: t("Säkerhetskopior…"), onSelect: actions.showBackups }] : []),
+  { label: t("Inställningar"), onSelect: actions.openSettings },
+  { label: t("Hjälp"), onSelect: actions.openShortcuts },
+  { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
+  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
+];

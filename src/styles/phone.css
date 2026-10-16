@@ -200,16 +200,6 @@
   font-size: 26px;
 }
 
-.round-add {
-  width: 44px;
-  height: 44px;
-  border: 0;
-  border-radius: 22px;
-  background: var(--primary);
-  color: var(--on-primary);
-  font-size: 22px;
-}
-
 .phone-screen .books {
   display: grid;
   padding: 0;
@@ -254,42 +244,6 @@
   display: inline;
   margin-left: auto;
   color: var(--text-label);
-}
-
-/* The first start on a phone */
-.phone-welcome {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 100vh;
-  padding: 96px 24px 32px;
-  background: var(--bg);
-}
-
-.phone-welcome h1 {
-  margin: 12px 0 0;
-  font: 600 30px/1.2 var(--font-prose);
-}
-
-.phone-welcome-text,
-.phone-welcome-promise {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.phone-welcome-promise {
-  font-size: 12px;
-  text-align: center;
-}
-
-.phone-welcome .spacer {
-  flex-grow: 1;
-}
-
-.phone-welcome .button.large {
-  width: 100%;
-  height: 52px;
 }
 
 /* The selection bar on a phone: one slim dark row under the selected words. */
@@ -1197,37 +1151,6 @@ body .phone-app .text-when input {
 
 .phone-bar-start .profile-button-title {
   display: none;
-}
-
-/* A new book on a phone fills the screen, its choices scrolling and its buttons kept at the foot
-   within reach of the thumb. */
-@media (max-width: 600px) {
-  .onboarding:has(.onboarding-card) {
-    align-items: stretch;
-    padding: 0;
-    background: var(--bg);
-  }
-
-  .onboarding-card {
-    min-height: 100dvh;
-    padding: max(24px, var(--safe-top)) 20px 0;
-    border: 0;
-    border-radius: 0;
-    gap: 20px;
-  }
-
-  .onboarding-top .progress-dots {
-    display: none;
-  }
-
-  .onboarding-nav {
-    position: sticky;
-    bottom: 0;
-    margin: 0 -20px;
-    padding: 12px 20px calc(12px + var(--safe-bottom));
-    border-top: 1px solid var(--border-soft);
-    background: var(--bg);
-  }
 }
 
 .phone-bar-back {

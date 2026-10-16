@@ -8,7 +8,7 @@ export async function openExample(page: Page) {
     }
   });
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Öppna exempelprojektet" }).click();
+  await page.getByRole("button", { name: "Prova exempelboken" }).click();
   await expect(page.locator(".ProseMirror")).toContainText("Brevet låg på köksbordet");
 }
 

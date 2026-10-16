@@ -801,110 +801,11 @@ body:has(.settings-panel) .selection-bar {
   background: var(--bg);
 }
 
-.welcome-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Onboarding: one card with five steps */
-.onboarding {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 24px;
-  background: var(--bg-subtle);
-  font-size: 14px;
-}
-
-.onboarding-card {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  width: 560px;
-  max-width: 100%;
-  min-height: 620px;
-  padding: 40px 48px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--bg);
-}
-
-.onboarding-top,
-.onboarding-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.onboarding-nav .spacer {
-  flex-grow: 1;
-}
-
-.brand-mark.medium {
-  width: 36px;
-  height: 36px;
-}
-
-.progress-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.progress-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--border-control);
-  transition: width 0.2s;
-}
-
-.progress-dots .done,
-.progress-dots .current {
-  background: var(--primary);
-}
-
-.progress-dots .current {
-  width: 20px;
-}
-
-.onboarding-body {
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.onboarding-title {
-  margin: 0;
-  font: 600 30px/1.2 var(--font-prose);
-}
-
-.onboarding-title.large {
-  font-size: 34px;
-}
-
-.onboarding-text {
-  margin: 0;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.onboarding-field,
-.onboarding-form,
-.choice-list,
-.promise-text {
+/* A labelled field in a dialog: its name above it. */
+.onboarding-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.onboarding-form {
-  gap: 14px;
-}
-
-.promise-text {
-  gap: 2px;
 }
 
 .field-label {
@@ -936,12 +837,6 @@ body:has(.settings-panel) .selection-bar {
 .onboarding-field input:focus {
   border-color: var(--primary);
   outline: none;
-}
-
-.field-pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
 }
 
 .segmented.fit {
@@ -2149,32 +2044,6 @@ button.book-cover:hover {
   color: var(--text);
   font: inherit;
   resize: vertical;
-}
-
-/* Onboarding's import: a dashed area that takes a dropped manuscript. */
-.drop-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 180px;
-  border: 1px dashed var(--heat-1);
-  border-radius: 12px;
-  background: var(--bg-panel);
-  text-align: center;
-}
-
-.drop-zone.over {
-  border-color: var(--text);
-}
-
-.drop-zone .choice-hint {
-  line-height: 1.5;
-}
-
-.drop-zone + .link-button {
-  align-self: flex-start;
 }
 
 /* Beside selected text: bold, italic, style and comment. */
@@ -3491,4 +3360,105 @@ button.book-cover:hover {
 
 .review-panel > .review-header {
   padding-top: 12px;
+}
+
+/* The first start, on a computer and a phone alike: a narrow column, the two ways in at its foot. */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(420px, 100%);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(96px, calc(var(--safe-top) + 64px)) 24px max(32px, var(--safe-bottom));
+  background: var(--bg);
+}
+
+body:has(.welcome) {
+  background: var(--bg);
+}
+
+.welcome h1 {
+  margin: 12px 0 0;
+  font: 600 32px/1.2 var(--font-prose);
+}
+
+.welcome-text,
+.welcome-promise {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.welcome-promise {
+  font-size: 12px;
+  text-align: center;
+}
+
+.welcome .spacer {
+  flex-grow: 1;
+}
+
+.welcome .button.large {
+  width: 100%;
+  height: 52px;
+}
+
+/* A book in the writer's Drive that this device has not fetched: pale, with a dashed edge. */
+.book-cover.in-cloud {
+  border: 1px dashed var(--border-control);
+  background: var(--bg-subtle);
+  box-shadow: none;
+  color: var(--text-muted);
+}
+
+.book-cover.in-cloud:disabled {
+  cursor: progress;
+}
+
+/* Under the books: a manuscript or the example to begin from. */
+.shelf-starts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 32px 24px 0;
+}
+
+/* Ny bok: the title, its kind, and Skapa. */
+.new-book-dialog {
+  width: min(420px, calc(100vw - 32px));
+}
+
+.new-book-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.new-book-dialog .settings-text {
+  width: 100%;
+  height: 44px;
+  font-size: 16px;
+}
+
+.new-book-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.kind-chip {
+  min-height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--border-control);
+  border-radius: 18px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.kind-chip[aria-checked="true"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--on-primary);
 }

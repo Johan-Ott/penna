@@ -14,13 +14,13 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
 }) => {
   await page.setViewportSize({ width: 1400, height: 900 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText("Välkommen till Penna.")).toBeVisible({ timeout: 50_000 });
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
-  await page.getByRole("radio", { name: /Annat/ }).click();
-  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
+  await page.getByRole("button", { name: "Kom igång" }).click();
+  await page.getByRole("button", { name: "+ Ny bok" }).click();
+  await page.getByRole("radio", { name: "Annat" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Saltet");
-  await page.getByRole("button", { name: "Skapa boken" }).click();
-  await page.getByRole("button", { name: "Börja skriva" }).click();
+  await page.getByRole("button", { name: "Skapa" }).click();
+  await editor(page).click();
   await page.keyboard.type("Sigrid kom till ön i mars.", { delay: 2 });
 
   // The outline: a second chapter and a part, before much is written.

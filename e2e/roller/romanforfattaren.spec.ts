@@ -13,10 +13,10 @@ test("a novelist starts a book on her phone and writes the first chapter", async
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
-  await page.getByRole("radio", { name: /Annat/ }).click();
-  await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "+ Ny bok" }).click();
+  await page.getByRole("radio", { name: "Annat" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Fyrvaktarens dotter");
-  await page.getByRole("button", { name: "Skapa boken" }).click();
+  await page.getByRole("button", { name: "Skapa" }).click();
   await page
     .getByRole("button", { name: /Börja skriva|Fortsätt skriva/ })
     .first()
