@@ -1012,6 +1012,8 @@
   "Ny utmärkelse: {name}": "New badge: {name}",
   "Första resan": "First steps",
   "{done} av {count}": "{done} of {count}",
+  "Utan konto": "Without an account",
+  "Bokmappen i iCloud Drive, OneDrive eller Dropbox följer med dina datorer.": "A book folder in iCloud Drive, OneDrive or Dropbox follows your computers.",
   "Utmärkelser": "Badges",
   "Centrerat": "Centred",
   "Högerställt": "Right-aligned",

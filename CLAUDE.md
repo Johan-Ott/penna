@@ -44,6 +44,8 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   (`storage/syncFiles.ts`, `atomicWrite.ts`) and settled in `app/syncRepairs.ts`. What the
   writer chooses away goes to the project's `trash/` folder, never deleted. Crash text is settled
   in a dialog before any scene opens, because the next save would write over the temp file.
+  A book folder kept in iCloud Drive, OneDrive or Dropbox is the way to sync without an account,
+  named in Inställningar, Synk; docs/synk.md describes both ways a writer has.
 - Google Drive sync (Inställningar, Synk): the open book and its series sync with
   `Penna/<folder>` in the writer's Drive when the book opens and every five minutes
   (`app/useDriveSync.ts`, engine in `sync/driveSync.ts`, Drive's web API in `sync/googleDrive.ts`).

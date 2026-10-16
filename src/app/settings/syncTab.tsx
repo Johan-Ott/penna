@@ -33,8 +33,19 @@ function SignInRow({ updatePreferences }: Pick<TabProps, "updatePreferences">) {
   );
 }
 
-/** One row: signed in with Google or not. Everything else follows on its own. */
-export function SyncTab({ book, preferences, updatePreferences }: TabProps) {
+// A book is a folder like any other, so a sync service can carry it without Penna knowing.
+// Only where Penna has a folder on the device: a phone keeps its books in the app's own.
+function FolderRow() {
+  if (!platform.showInFolder) return null;
+  return (
+    <Row
+      label={t("Utan konto")}
+      hint={t("Bokmappen i iCloud Drive, OneDrive eller Dropbox följer med dina datorer.")}
+    />
+  );
+}
+
+function GoogleRow({ book, preferences, updatePreferences }: TabProps) {
   if (!platform.googleSignIn) return <Row label={t("Synk finns inte på den här enheten än.")} />;
   if (!preferences.isDriveSyncOn) return <SignInRow updatePreferences={updatePreferences} />;
   return (
@@ -48,5 +59,15 @@ export function SyncTab({ book, preferences, updatePreferences }: TabProps) {
         {t("Logga ut")}
       </button>
     </Row>
+  );
+}
+
+/** Two ways: a Google account, or a sync service carrying the folder. */
+export function SyncTab(props: TabProps) {
+  return (
+    <>
+      <GoogleRow {...props} />
+      <FolderRow />
+    </>
   );
 }
