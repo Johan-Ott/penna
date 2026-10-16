@@ -1355,5 +1355,9 @@
   "**Hjälp på vägen.** Exempelboken på bokhyllan visar allt Penna kan, med exempel. Hjälp finns under Inställningar.": "**Help along the way.** The example book on the shelf shows everything Penna does, with examples. Help is under Settings.",
   "När du inte behöver den här längre tar du bort den längst ner.": "When you no longer need this, remove it at the bottom.",
   "Välkommen": "Welcome",
-  "Första kapitlet": "First chapter"
+  "Första kapitlet": "First chapter",
+  "Används redan av {name}": "Already used by {name}",
+  "Används redan av Penna": "Already used by Penna",
+  "Tryck de nya tangenterna med Ctrl. Esc avbryter.": "Press the new keys with Ctrl. Esc cancels.",
+  "Återställ kortkommandona": "Reset the shortcuts"
 }

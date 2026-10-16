@@ -10,7 +10,7 @@ import { useRevisionImport } from "../review/RevisionImport.js";
 import { HELP_TAB } from "../settings/SettingsDialog.js";
 import type { Project } from "../useProject.js";
 import { openIfOnDisk } from "../useSceneSession.js";
-import { useShortcut } from "../useShortcut.js";
+import { useCommandKey } from "../useShortcut.js";
 import { appMenu } from "./appMenu.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -61,7 +61,7 @@ export function useMenuDialogs({ app, project }: { app: AppState; project: Proje
 export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
   const { backups, feedback, revision, theme, layers: dialogs } = useMenuDialogs({ app, project });
   const showShelf = () => void app.showShelf();
-  useShortcut("o", showShelf, { shift: true });
+  useCommandKey("shelf", showShelf);
   const items = appMenu({
     showShelf,
     newProject: () => {

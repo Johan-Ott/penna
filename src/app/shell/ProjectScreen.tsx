@@ -10,7 +10,7 @@ import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
-import { useShortcut } from "../useShortcut.js";
+import { useCommandKey } from "../useShortcut.js";
 import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";
@@ -158,8 +158,8 @@ function Floating({ app, project }: ScreenProps) {
 
 // The book's theme on the page, and the keys that work on every view of it.
 function useScreenKeysAndTheme({ app, project }: ScreenProps) {
-  useShortcut("enter", app.sceneSplit.split, { shift: true });
-  useShortcut("r", () => app.writingMode.read(null));
+  useCommandKey("splitScene", app.sceneSplit.split);
+  useCommandKey("read", () => app.writingMode.read(null));
   useBookTheme(project.fields);
 }
 

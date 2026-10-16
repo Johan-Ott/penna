@@ -16,7 +16,7 @@ import { earnBadge, earnInk } from "../journey/journeyEvents.js";
 import { INK } from "../../project/journey.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
-import { useShortcut } from "../useShortcut.js";
+import { useCommandKey } from "../useShortcut.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -103,7 +103,7 @@ export function useComments(parts: {
   const { editor } = parts;
   useCommentMarks(editor, comments, setFocused);
   const start = useCallback(() => setDraft(selectedAnchor(editor)), [editor]);
-  useShortcut("m", start, { shift: true });
+  useCommandKey("comment", start);
   const author = parts.author || t("Du");
   return {
     comments,

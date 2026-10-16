@@ -1,0 +1,79 @@
+import { useSyncExternalStore } from "react";
+import { browserStorage } from "./browserStorage.js";
+import { t } from "../i18n/i18n.js";
+
+// The shortcuts a writer can change, with what they are from the start. A change is kept per
+// computer and only says how the command differs from its default.
+
+export interface Binding {
+  key: string;
+  shift?: boolean;
+  alt?: boolean;
+}
+
+export const COMMANDS = {
+  palette: { label: t("Kommandopalett"), key: "k" },
+  search: { label: t("Sök och ersätt"), key: "f" },
+  focus: { label: t("Fokusläge"), key: "f", shift: true },
+  newScene: { label: t("Ny scen"), key: "n", alt: true },
+  splitScene: { label: t("Dela scenen vid markören"), key: "enter", shift: true },
+  comment: { label: t("Kommentera markeringen"), key: "m", shift: true },
+  readAloud: { label: t("Läs upp från markören"), key: "u", shift: true },
+  read: { label: t("Läs hela boken"), key: "r" },
+  shelf: { label: t("Bokhylla"), key: "o", shift: true },
+  settings: { label: t("Inställningar"), key: "," },
+  sidebar: { label: t("Visa sidomenyn i ett smalt fönster"), key: "." },
+} satisfies Record<string, Binding & { label: string }>;
+
+export type CommandId = keyof typeof COMMANDS;
+
+const KEY = "penna.kortkommandon";
+const listeners = new Set<() => void>();
+
+function changes(): Partial<Record<CommandId, Binding>> {
+  try {
+    return JSON.parse(browserStorage().getItem(KEY) ?? "{}") as Partial<Record<CommandId, Binding>>;
+  } catch {
+    return {};
+  }
+}
+
+let current = changes();
+
+export const bindingOf = (id: CommandId): Binding => current[id] ?? COMMANDS[id];
+
+const save = (next: typeof current) => {
+  current = next;
+  browserStorage().setItem(KEY, JSON.stringify(next));
+  listeners.forEach((listener) => listener());
+};
+
+export const rebind = (id: CommandId, binding: Binding) => save({ ...current, [id]: binding });
+export const resetBindings = () => save({});
+
+const sameKeys = (one: Binding, other: Binding) =>
+  one.key === other.key && !!one.shift === !!other.shift && !!one.alt === !!other.alt;
+
+/** The other command already on these keys, if any. */
+export const takenBy = (id: CommandId, binding: Binding) =>
+  (Object.keys(COMMANDS) as CommandId[]).find(
+    (other) => other !== id && sameKeys(bindingOf(other), binding),
+  );
+
+const keyName = (key: string) =>
+  key.length === 1 ? key.toUpperCase() : key.charAt(0).toUpperCase() + key.slice(1);
+
+/** "Ctrl+Shift+F", as menus and the palette show it. */
+export function shortcutText(binding: Binding) {
+  const parts = ["Ctrl", binding.shift && "Shift", binding.alt && "Alt", keyName(binding.key)];
+  return parts.filter(Boolean).join("+");
+}
+
+export const shortcutOf = (id: CommandId) => shortcutText(bindingOf(id));
+
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+
+export const useBinding = (id: CommandId) => useSyncExternalStore(subscribe, () => bindingOf(id));

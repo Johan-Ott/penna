@@ -74,3 +74,21 @@ test("window.penna sets the book's goal and puts a label on a chapter by its nam
   expect(settings.totalGoal).toBe(90000);
   expect(settings.labels?.map((label) => label.name)).toContain("Ledtråd");
 });
+
+test("a shortcut can be moved, and keys already in use are refused", async ({ page }) => {
+  await editor(page).click();
+  await page.keyboard.press("Control+,");
+  await page.getByRole("button", { name: "Kortkommandon" }).click();
+  const palette = page.locator(".settings-row", { hasText: "Kommandopalett" });
+
+  await palette.getByRole("button").click();
+  await page.keyboard.press("Control+Shift+f");
+  await expect(palette).toContainText("Används redan av Fokusläge");
+  await palette.getByRole("button").click();
+  await page.keyboard.press("Control+j");
+  await expect(palette).toContainText("Ctrl+J");
+
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Control+j");
+  await expect(page.getByRole("dialog", { name: "Kommandopalett" })).toBeVisible();
+});

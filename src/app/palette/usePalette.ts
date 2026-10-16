@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { usePhone } from "../phone/usePhone.js";
-import { useShortcut } from "../useShortcut.js";
+import { useCommandKey } from "../useShortcut.js";
 import { paletteEntries, type PaletteContext } from "./paletteEntries.js";
 
 export function usePalette(context: PaletteContext | null) {
   const [isOpen, setOpen] = useState(false);
   // A phone has no folders to pick, so that entry is left out there.
   const isPhone = usePhone();
-  useShortcut("k", () => setOpen((current) => !current));
+  useCommandKey("palette", () => setOpen((current) => !current));
   const entriesNow = () =>
     context ? paletteEntries(isPhone ? { ...context, chooseFolder: null } : context) : [];
   return {

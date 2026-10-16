@@ -1,8 +1,9 @@
 import { CloseButton } from "../controls.js";
 import { fold } from "../palette/paletteSearch.js";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { useEscape, useShortcut } from "../useShortcut.js";
-import { AboutTab, ShortcutsTab } from "./infoTabs.js";
+import { useEscape, useCommandKey } from "../useShortcut.js";
+import { AboutTab } from "./infoTabs.js";
+import { ShortcutsTab } from "./shortcutsTab.js";
 import { GeneralTab } from "./generalTab.js";
 import { HelpTab } from "./helpTab.js";
 import { SyncTab } from "./syncTab.js";
@@ -122,7 +123,7 @@ function SettingsDialog(props: TabProps & { startTab: number; onClose: () => voi
 
 export function useSettingsDialog() {
   const [openTab, setOpenTab] = useState<number | null>(null);
-  useShortcut(",", () => setOpenTab(0));
+  useCommandKey("settings", () => setOpenTab(0));
   return {
     openTab,
     open: (tab = 0) => setOpenTab(tab),

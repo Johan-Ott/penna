@@ -20,6 +20,7 @@ import { VIEWS, type View } from "../useWritingMode.js";
 import type { Card } from "../../project/cards.js";
 import { formatEntries } from "./formatEntries.js";
 import { startSprint } from "../sprint/sprint.js";
+import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface PaletteContext {
@@ -103,15 +104,15 @@ function placeEntries({ project, openScene }: PaletteContext): PaletteEntry[] {
 
 function writingEntries(context: PaletteContext): PaletteEntry[] {
   return [
-    command(t("Ny scen"), () => context.add("scene"), "Ctrl+Alt+N"),
+    command(t("Ny scen"), () => context.add("scene"), shortcutOf("newScene")),
     command(t("Nytt kapitel"), () => context.add("chapter")),
     command(t("Ny del"), () => context.add("part")),
     command(t("Ny mapp"), () => context.add("folder")),
     command(t("Ny anteckning"), context.newNote),
     command(t("Lägg till fil bland anteckningarna…"), context.addFile),
     ...sceneEntries(context),
-    command(t("Sök och ersätt"), context.openSearch, "Ctrl+F"),
-    command(t("Fokusläge"), context.toggleFocusMode, "Ctrl+Shift+F"),
+    command(t("Sök och ersätt"), context.openSearch, shortcutOf("search")),
+    command(t("Fokusläge"), context.toggleFocusMode, shortcutOf("focus")),
     command(t("Visa som ark eller löptext"), () =>
       context.changeSettings((now) => ({ ...now, paper: !now.paper })),
     ),
@@ -120,7 +121,7 @@ function writingEntries(context: PaletteContext): PaletteEntry[] {
       ? [command(t("Versioner av den här texten"), context.showSnapshots)]
       : []),
     command(t("Utkast…"), context.showDrafts),
-    command(t("Inställningar"), context.openSettings, "Ctrl+,"),
+    command(t("Inställningar"), context.openSettings, shortcutOf("settings")),
     ...viewEntries(context.showView),
     ...formatEntries(context),
   ];

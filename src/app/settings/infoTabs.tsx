@@ -4,32 +4,6 @@ import { errorLog } from "../errorLog.js";
 import { Row } from "../controls.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
-const SHORTCUTS: [string, string][] = [
-  [t("Kommandopalett"), "Ctrl K"],
-  [t("Sök och ersätt"), "Ctrl F"],
-  [t("Fokusläge"), "Ctrl Shift F"],
-  [t("Lämna fokusläget"), "Esc"],
-  [t("Ny scen"), "Ctrl Alt N"],
-  [t("Scenbrytning"), "Ctrl Enter"],
-  [t("Infoga fotnot"), "Ctrl Alt F"],
-  [t("Dela scenen vid markören"), "Ctrl Shift Enter"],
-  [t("Kommentera markeringen"), "Ctrl Shift M"],
-  [t("Fetstil"), "Ctrl B"],
-  [t("Kursiv"), "Ctrl I"],
-  [t("Större och mindre text"), "Ctrl + och Ctrl −"],
-  [t("Byt namn i strukturen"), "F2"],
-  [t("Inställningar"), "Ctrl ,"],
-  [t("Visa sidomenyn i ett smalt fönster"), "Ctrl ."],
-];
-
-export function ShortcutsTab() {
-  return SHORTCUTS.map(([label, keys]) => (
-    <Row key={label} label={label}>
-      <kbd>{keys}</kbd>
-    </Row>
-  ));
-}
-
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
 function ErrorReportButton() {
   const [isCopied, setCopied] = useState(false);

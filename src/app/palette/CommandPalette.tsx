@@ -9,6 +9,7 @@ import {
 import { usePhone } from "../phone/usePhone.js";
 import type { Label } from "../../project/labels.js";
 import { PaletteFilters, usePaletteFilter } from "./PaletteFilters.js";
+import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 // A command's group is a search key; a note's group is its sort's name, already translated.
@@ -151,7 +152,7 @@ function searchEntry(query: string, onSearch: (text: string) => void): PaletteEn
       label,
       group: "Kommandon",
       run: () => onSearch(text),
-      shortcut: "Ctrl+F",
+      shortcut: shortcutOf("search"),
     },
   ];
 }

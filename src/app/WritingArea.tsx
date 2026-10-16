@@ -12,7 +12,7 @@ import { FocusHeader } from "./FocusHeader.js";
 import { usePanels } from "./settingsPanel.js";
 import type { Today } from "./useWritingStats.js";
 import { ReadOnlyNotice, SaveToast, TreeFailureToast, SavedNowToast } from "./SaveToast.js";
-import { useEscape, useShortcut } from "./useShortcut.js";
+import { useEscape, useCommandKey } from "./useShortcut.js";
 import { useTextSizeKeys, type SettingsChange } from "./useWritingSettings.js";
 import { WritingSettingsPanel } from "./WritingSettingsPanel.js";
 import { SheetEdges, type SheetProps } from "./SheetEdges.js";
@@ -68,9 +68,9 @@ function manuscriptClass(settings: WritingSettings, isFocusMode: boolean) {
 
 function useWritingKeys(props: WritingAreaProps, panels: ReturnType<typeof usePanels>) {
   useTextSizeKeys(props.onChangeSettings);
-  useShortcut("f", () => props.setSearchOpen(true));
-  useShortcut("f", props.onToggleFocus, { shift: true });
-  useShortcut("n", props.onNewScene, { alt: true });
+  useCommandKey("search", () => props.setSearchOpen(true));
+  useCommandKey("focus", props.onToggleFocus);
+  useCommandKey("newScene", props.onNewScene);
   useEscape(() => {
     if (panels.isSettingsOpen) panels.setSettingsOpen(false);
     else if (props.isFocusMode) props.onToggleFocus();

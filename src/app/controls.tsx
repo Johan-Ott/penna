@@ -6,7 +6,7 @@ import { t } from "../i18n/i18n.js";
 
 // The app's own controls; use them instead of native ones so every choice looks the same.
 
-export function Row(props: { label: string; hint?: string; children?: ReactNode }) {
+export function Row(props: { label: string; hint?: string | undefined; children?: ReactNode }) {
   return (
     <div className="settings-row">
       <span className="setting-text">

@@ -1600,6 +1600,18 @@ button.book-cover:hover {
   text-align: right;
 }
 
+.shortcut-key {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.shortcut-key:hover kbd {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
 .settings-row kbd {
   padding: 2px 8px;
   border: 1px solid var(--border-control);

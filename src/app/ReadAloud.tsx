@@ -2,7 +2,7 @@ import { bookLanguage } from "../project/bookLanguage.js";
 import type { AppState } from "./App.js";
 import { canSpeak, paragraphsToRead, speak, stopSpeaking, useSpeaking } from "./speech.js";
 import type { Project } from "./useProject.js";
-import { useEscape, useShortcut } from "./useShortcut.js";
+import { useEscape, useCommandKey } from "./useShortcut.js";
 import { t } from "../i18n/i18n.js";
 
 /** Reads the selection, or from the cursor on, in the book's language. */
@@ -23,7 +23,7 @@ export const speechContext = (
 export function ReadAloud({ app, project }: { app: AppState; project: Project }) {
   const isSpeaking = useSpeaking();
   const toggle = () => (isSpeaking ? stopSpeaking() : readAloudFrom(app, project));
-  useShortcut("u", toggle, { shift: true });
+  useCommandKey("readAloud", toggle);
   useEscape(() => {
     if (isSpeaking) stopSpeaking();
   });
