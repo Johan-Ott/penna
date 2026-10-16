@@ -37,12 +37,22 @@ const MODULES: { id: ModuleId; title: string; icon: ReactNode }[] = [
 ];
 
 // The ones with a place of their own, opened there; the sheet closes for them.
-function openOwn(app: AppState): { title: string; icon: ReactNode; open: () => void }[] {
+function openOwn(app: AppState) {
   const { writingMode } = app;
   return [
-    { title: t("Skrivsprint"), icon: <TimerIcon />, open: () => setPanelOpen(true) },
-    { title: t("Insikter"), icon: <ChartIcon />, open: () => writingMode.setProgressOpen(true) },
-    { title: t("Granska"), icon: <ReviewIcon />, open: () => writingMode.setReviewOpen(true) },
+    { title: t("Skrivsprint"), icon: <TimerIcon />, open: () => setPanelOpen(true), count: 0 },
+    {
+      title: t("Insikter"),
+      icon: <ChartIcon />,
+      open: () => writingMode.setProgressOpen(true),
+      count: 0,
+    },
+    {
+      title: t("Granska"),
+      icon: <ReviewIcon />,
+      open: () => writingMode.setReviewOpen(true),
+      count: writingMode.review.count ?? 0,
+    },
   ];
 }
 
@@ -97,6 +107,7 @@ function ModuleList({ app }: { app: AppState }) {
         <button key={own.title} className="phone-module" onClick={choose(own.open)}>
           {own.icon}
           <span>{own.title}</span>
+          {own.count > 0 && <span className="dock-badge">{own.count}</span>}
         </button>
       ))}
     </div>
@@ -110,23 +121,26 @@ export function ModulesSheet({ app, project }: Props) {
   const title =
     open === "lista" ? t("Moduler") : MODULES.find((module) => module.id === open)?.title;
   return (
-    <section className="phone-sheet" aria-label={title}>
-      <header className="phone-sheet-head">
-        {open !== "lista" && (
-          <button className="link-button" onClick={() => shown.set("lista")}>
-            {t("← Moduler")}
-          </button>
-        )}
-        <span className="phone-sheet-title">{title}</span>
-        <CloseButton isPhoneBack onClose={() => shown.set(null)} />
-      </header>
-      <div className="phone-sheet-body">
-        {open === "lista" ? (
-          <ModuleList app={app} />
-        ) : (
-          <ModuleBody id={open} app={app} project={project} />
-        )}
-      </div>
-    </section>
+    <>
+      <div className="phone-sheet-backdrop" onClick={() => shown.set(null)} />
+      <section className="phone-sheet" aria-label={title}>
+        <header className="phone-sheet-head">
+          {open !== "lista" && (
+            <button className="link-button" onClick={() => shown.set("lista")}>
+              {t("← Moduler")}
+            </button>
+          )}
+          <span className="phone-sheet-title">{title}</span>
+          <CloseButton isPhoneBack onClose={() => shown.set(null)} />
+        </header>
+        <div className="phone-sheet-body">
+          {open === "lista" ? (
+            <ModuleList app={app} />
+          ) : (
+            <ModuleBody id={open} app={app} project={project} />
+          )}
+        </div>
+      </section>
+    </>
   );
 }

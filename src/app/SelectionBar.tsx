@@ -63,12 +63,20 @@ function useIsBarWanted(editor: Editor) {
   return hasFocus;
 }
 
-// On a phone the bar goes below the selection: Android's own menu takes the place above.
+// On a phone the bar waits just above the tools over the keyboard, out of the way of the fingers
+// that drag the selection's ends.
+const phoneBarTop = () =>
+  (document.querySelector(".phone-toolbar")?.getBoundingClientRect().top ??
+    window.visualViewport?.height ??
+    window.innerHeight) -
+  BAR_HEIGHT -
+  8;
+
 function barPosition(editor: Editor, isPhone: boolean) {
   const view = editor.viewRef.current;
   const selection = editor.editorState?.selection;
   if (!view || !(selection instanceof TextSelection) || selection.empty) return null;
-  if (isPhone) return { top: view.coordsAtPos(selection.to).bottom + 40 };
+  if (isPhone) return { top: phoneBarTop() };
   const start = view.coordsAtPos(selection.from);
   if (start.top > BAR_HEIGHT * 2) return { left: start.left, top: start.top - BAR_HEIGHT - 6 };
   return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };

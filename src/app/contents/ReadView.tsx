@@ -125,7 +125,7 @@ function ReadFoot(props: {
 }) {
   return (
     <footer className="read-foot">
-      <span>1</span>
+      <span>{t("Titel")}</span>
       <input
         type="range"
         aria-label={t("Sida")}

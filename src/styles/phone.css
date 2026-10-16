@@ -354,16 +354,20 @@ body .selection-bar.phone .icon-button {
 .phone-app .insights-head {
   position: sticky;
   top: 0;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
   min-height: 44px;
   margin: 0 -12px;
-  padding: max(28px, var(--safe-top)) 56px 4px;
+  padding: max(28px, var(--safe-top)) 6px 4px;
   background: var(--bg-subtle);
   cursor: default;
 }
 
 .phone-app .block-title,
 .phone-app .insights-title {
+  grid-column: 2;
+  justify-content: center;
   color: var(--text);
   font-size: 15px;
   font-weight: 600;
@@ -375,9 +379,7 @@ body .selection-bar.phone .icon-button {
 
 .phone-app .block-head .close-button,
 .phone-app .insights-head .close-button {
-  position: absolute;
-  right: 6px;
-  bottom: 4px;
+  grid-column: 3;
   width: 44px;
   height: 44px;
   font-size: 22px;
@@ -1091,11 +1093,6 @@ body .phone-app .text-when input {
   }
 }
 
-/* Android's back closes these, so the phone needs no × of its own. */
-.android .close-button {
-  display: none;
-}
-
 /* A computer's window as narrow as a phone: its buttons sit over the room a phone keeps for its
    status bar. */
 :root:has(.phone-app > .window-bar, .phone-screen > .window-bar) {
@@ -1257,4 +1254,26 @@ body .phone-app .text-when input {
 
 .phone-bar-start .profile-button-title {
   display: none;
+}
+
+/* Under the sheet the screen dims, and a tap there closes the sheet. */
+.phone-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.phone-module {
+  position: relative;
+}
+
+.phone-module .dock-badge {
+  position: static;
+  min-width: 20px;
+  height: 20px;
+  margin-left: auto;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 20px;
 }
