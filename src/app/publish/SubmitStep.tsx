@@ -8,7 +8,6 @@ import {
   type SubmissionStatus,
 } from "../../project/submissions.js";
 import { newSceneId } from "../../storage/sceneId.js";
-import { Dialog } from "../controls.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
@@ -154,12 +153,12 @@ function SubmissionsTab({ project, onSaveFields }: { project: Project; onSaveFie
 }
 
 /** Till förlag: the synopsis, the cover letter and the list of where the manuscript has been sent. */
-export function SubmitDialog(props: {
+export function SubmitStep(props: {
   project: Project;
-  author: string;
+  generalAuthor: string;
   onSaveFields: SaveFields;
-  onClose: () => void;
 }) {
+  const author = String(props.project.fields["author"] ?? "") || props.generalAuthor;
   const [tab, setTab] = useState<Tab>("synopsis");
   const tabs: [Tab, string][] = [
     ["synopsis", t("Synopsis")],
@@ -167,7 +166,7 @@ export function SubmitDialog(props: {
     ["inskick", t("Inskick")],
   ];
   return (
-    <Dialog label={t("Till förlag")} className="submit-dialog" onClose={props.onClose}>
+    <section className="submit-step" aria-label={t("Till förlag")}>
       <div className="segmented small" role="radiogroup" aria-label={t("Visa")}>
         {tabs.map(([id, label]) => (
           <button key={id} role="radio" aria-checked={tab === id} onClick={() => setTab(id)}>
@@ -178,27 +177,8 @@ export function SubmitDialog(props: {
       {tab === "inskick" ? (
         <SubmissionsTab {...props} />
       ) : (
-        <TextTab key={tab} {...props} tab={tab} />
+        <TextTab key={tab} {...props} author={author} tab={tab} />
       )}
-    </Dialog>
-  );
-}
-
-/** In Publicera beside Studio: what goes to publishers and agents, apart from the manuscript. */
-export function SubmitLink(props: {
-  project: Project;
-  generalAuthor: string;
-  onSaveFields: SaveFields;
-}) {
-  const [isOpen, setOpen] = useState(false);
-  const author = String(props.project.fields["author"] ?? "") || props.generalAuthor;
-  return (
-    <>
-      <button className="studio-link" onClick={() => setOpen(true)}>
-        <span className="studio-item-name">{t("Till förlag")}</span>
-        <span className="insight-muted">{t("Synopsis, följebrev och vart du har skickat")}</span>
-      </button>
-      {isOpen && <SubmitDialog {...props} author={author} onClose={() => setOpen(false)} />}
-    </>
+    </section>
   );
 }

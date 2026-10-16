@@ -1,5 +1,5 @@
 import { CoverFields } from "./CoverFields.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
 import { DesignControls } from "../bookdesign/DesignControls.js";
@@ -14,8 +14,8 @@ import {
   type ExportFormat,
 } from "../exporting/useExport.js";
 import { Choice } from "../controls.js";
-import { SubmitLink } from "./SubmitDialog.js";
-import { PublishTiles, StepHead, type Step } from "./PublishTiles.js";
+import { SubmitStep } from "./SubmitStep.js";
+import { PublishTiles, publishStep, StepHead } from "./PublishTiles.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -116,7 +116,9 @@ type Publishing = ReturnType<typeof usePublishing>;
 
 function usePublishing(props: PublishProps) {
   const { project } = props;
-  const [step, setStep] = useState<Step | null>(null);
+  const step = publishStep.use();
+  const setStep = publishStep.set;
+  useEffect(() => () => publishStep.set(null), []);
   const [choices, setChoices] = useState(() => startChoices(project));
   const exporter = useExport(project, props.generalAuthor, props.onSaveFields);
   const cover = useCover(project);
@@ -130,6 +132,7 @@ function OpenStep({ props, publishing }: { props: PublishProps; publishing: Publ
     props.onSaveFields({ design: { ...design, ...change } });
   if (step === "design")
     return <DesignControls design={design} save={saveDesign} dir={props.project.dir} />;
+  if (step === "forlag") return null;
   if (step === "details")
     return (
       <BookFields {...props} cover={publishing.cover} choices={choices} setChoices={setChoices} />
@@ -145,7 +148,6 @@ function StepsOrTiles({ props, publishing }: { props: PublishProps; publishing: 
     return (
       <>
         <PublishTiles formatName={formatName} onStep={setStep} onStudio={props.onStudio} />
-        <SubmitLink {...props} />
       </>
     );
   return (
@@ -158,6 +160,7 @@ function StepsOrTiles({ props, publishing }: { props: PublishProps; publishing: 
 
 function PublishPreview({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
   const { choices } = publishing;
+  if (publishing.step === "forlag") return <SubmitStep {...props} />;
   if (publishing.step === null || publishing.step === "design") {
     return <PrintPreview project={props.project} generalAuthor={props.generalAuthor} />;
   }

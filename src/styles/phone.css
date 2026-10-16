@@ -545,13 +545,29 @@ body .selection-bar.phone .icon-button {
   overflow: visible;
 }
 
-/* The tabs lead back to the text, so Publicera has no Tillbaka of its own on a phone. */
-.phone-view .publish-steps > .publish-back {
+/* The tabs lead back to the text, and the top bar names an open part and leads back from it,
+   so the card has no way back of its own on a phone. */
+.phone-view .publish-steps > .publish-back,
+.phone-view .publish-step-head {
   display: none;
 }
 
+.phone-view .publish.step-forlag .publish-preview {
+  min-height: 0;
+  margin: 0;
+  border: 0;
+}
+
+.phone-view .submit-step {
+  padding: 16px 8px;
+}
+
+body .phone-view .submit-text {
+  min-height: 50dvh;
+}
+
 /* The preview only with Design, and Exportera's button only where exporting is chosen. */
-.phone-view .publish:not(.step-design) .publish-preview,
+.phone-view .publish:not(.step-design, .step-forlag) .publish-preview,
 .phone-view .publish.step-design .publish-button,
 .phone-view .publish.step-details .publish-button {
   display: none;
@@ -1321,4 +1337,9 @@ body .phone-app .text-when input {
     border-top: 1px solid var(--border-soft);
     background: var(--bg);
   }
+}
+
+.phone-bar-back {
+  font-size: 30px;
+  line-height: 1;
 }

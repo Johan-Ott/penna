@@ -1,12 +1,19 @@
+import { createStore } from "../store.js";
 import { t } from "../../i18n/i18n.js";
 
-export type Step = "design" | "details" | "export";
+export type Step = "design" | "details" | "export" | "forlag";
+
+/** The part of Publicera that is open, so a phone's top bar can name it and lead back. */
+export const publishStep = createStore<Step | null>(null);
 
 const LABELS: Record<Step, string> = {
   design: t("Design"),
   details: t("Bokuppgifter"),
   export: t("Exportera"),
+  forlag: t("Till förlag"),
 };
+
+export const stepLabel = (step: Step) => LABELS[step];
 
 function Tile(props: { name: string; hint: string; onOpen: () => void }) {
   return (
@@ -17,7 +24,7 @@ function Tile(props: { name: string; hint: string; onOpen: () => void }) {
   );
 }
 
-/** Publicera's start: four tiles, each opening its part, so nothing is a long list to scroll. */
+/** Publicera's start: five tiles, each opening its part, so nothing is a long list to scroll. */
 export function PublishTiles(props: {
   formatName: string;
   onStep: (step: Step) => void;
@@ -37,6 +44,11 @@ export function PublishTiles(props: {
       />
       <Tile name={LABELS.export} hint={props.formatName} onOpen={() => props.onStep("export")} />
       <Tile name={t("Studio")} hint={t("Bilder och nyhetsbrev")} onOpen={props.onStudio} />
+      <Tile
+        name={LABELS.forlag}
+        hint={t("Synopsis, följebrev och vart du har skickat")}
+        onOpen={() => props.onStep("forlag")}
+      />
     </div>
   );
 }

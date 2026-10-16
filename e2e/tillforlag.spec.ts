@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("the synopsis is kept, and a submission is added and answered", async ({ page }) => {
-  const dialog = page.getByRole("dialog", { name: "Till förlag" });
+  const dialog = page.getByRole("region", { name: "Till förlag" });
   await dialog.getByRole("textbox", { name: "Synopsis" }).fill("Elin får ett brev.");
   await dialog.getByRole("radio", { name: "Inskick" }).click();
   await dialog.getByRole("button", { name: "Lägg till inskick" }).click();

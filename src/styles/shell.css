@@ -1447,6 +1447,11 @@
   margin: 4px 0 8px;
 }
 
+/* Till förlag, the fifth, has the whole row rather than half of it. */
+.publish-tiles > .publish-tile:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
 .publish-tile {
   display: flex;
   flex-direction: column;
@@ -3295,9 +3300,26 @@
 }
 
 /* Till förlag: a roomy text for the synopsis and letter, and a row per submission. */
-.submit-dialog {
-  width: min(620px, calc(100vw - 48px));
+/* Till förlag in the room the preview has otherwise: a column to write in, on the page's colour. */
+.publish.step-forlag .publish-preview {
+  align-items: flex-start;
+  background: var(--bg);
+}
+
+.publish.step-forlag .publish-button {
+  display: none;
+}
+
+.submit-step > * {
+  flex-shrink: 0;
+}
+
+.submit-step {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+  width: min(640px, 100%);
+  padding: 32px 24px;
 }
 
 /* The synopsis and the letter are written here, so the field is the dialog's width, in the
