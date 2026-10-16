@@ -15,6 +15,20 @@ describe("syncProject", () => {
     expect(await phone.readText(`${BOOK}/scenes/S1.md`)).toBe("Brevet låg där.");
   });
 
+  it("tells how far it has come, file by file, so a fetch can show its progress", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    await syncProject(computer, cloud.drive, BOOK, { now: NOW });
+    const steps: string[] = [];
+
+    await syncProject(phone, cloud.drive, BOOK, {
+      now: NOW,
+      onProgress: (done, all) => steps.push(`${done}/${all}`),
+    });
+
+    expect(steps.length).toBeGreaterThan(0);
+    expect(steps.at(-1)).toBe(`${steps.length}/${steps.length}`);
+  });
+
   it("sends what changed here and fetches what changed in Drive", async () => {
     const { cloud, computer, phone } = twoDevices();
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });

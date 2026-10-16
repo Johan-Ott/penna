@@ -328,29 +328,59 @@ body .selection-bar.phone .icon-button {
   color: var(--text-dim);
 }
 
-/* A phone's panels have their bar above what scrolls, on the screen's own colour. */
-.phone-app .block-head {
-  position: static;
-  background: transparent;
-}
-
-/* A phone's panels fill the screen, so there is nothing to resize. */
-.phone-app .review-panel,
-.phone-app .insights-panel {
+/* On a phone every panel is a screen of its own: the bar at the top under the phone's status
+   bar, its title in the middle and × to the right, and what it holds scrolling under it. */
+.phone-app .block-panel,
+.phone-app .insights-panel,
+.phone-app .review-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  gap: 10px;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  max-height: none;
+  padding: 0 12px calc(16px + var(--safe-bottom));
+  overflow-y: auto;
+  border: 0;
+  border-radius: 0;
+  background: var(--bg-subtle);
+  box-shadow: none;
   resize: none;
 }
 
-/* Granska covers the whole text on a phone, under the bar, instead of a narrow strip beside it */
-.phone-text .review-panel {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  width: auto;
-  max-height: none;
-  padding-top: max(28px, var(--safe-top));
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+.phone-app .block-head,
+.phone-app .insights-head {
+  position: sticky;
+  top: 0;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0 -12px;
+  padding: max(28px, var(--safe-top)) 56px 4px;
+  background: var(--bg-subtle);
+  cursor: default;
+}
+
+.phone-app .block-title,
+.phone-app .insights-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.phone-app .block-title svg {
+  display: none;
+}
+
+.phone-app .block-head .close-button,
+.phone-app .insights-head .close-button {
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  width: 44px;
+  height: 44px;
+  font-size: 22px;
 }
 
 /* A long press on a button or a heading does nothing; only the writer's own text can be marked */
@@ -706,12 +736,23 @@ body .selection-bar.phone .icon-button {
   color: var(--text-muted);
 }
 
-/* Läs som bok on a phone: one page, where you are and Dela uppslag above it; Skriv is the way back. */
+/* Läs som bok on a phone: one page, with ← back, where you are and Dela uppslag above it, all
+   under the phone's status bar. */
 .phone-app .read-head {
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  height: auto;
+  min-height: 52px;
+  padding: max(16px, var(--safe-top)) 6px 0;
 }
 
-.phone-app .read-back,
+.phone-app .read-back {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 20px;
+}
+
+.phone-app .read-back-words,
 .phone-app .read-key,
 .phone-app .read-head-end .link-button {
   display: none;
@@ -754,52 +795,6 @@ body .selection-bar.phone .icon-button {
 
 .phone-app .read-turn {
   width: 32px;
-}
-
-/* Insikter as the other screens: a bar on grey, the cards on the white card under it. */
-.phone-app .insights-panel {
-  inset: 0 0 var(--phone-tabs);
-  gap: 0;
-  width: auto;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  background: var(--bg-subtle);
-}
-
-.phone-app .insights-head {
-  position: relative;
-  justify-content: center;
-  min-height: 44px;
-  padding: max(28px, var(--safe-top)) 6px 4px;
-}
-
-.phone-app .insights-title {
-  font-weight: 600;
-}
-
-.phone-app .insights-head .close-button {
-  position: absolute;
-  right: 6px;
-  bottom: 4px;
-  width: 44px;
-  height: 44px;
-  font-size: 22px;
-}
-
-.phone-app .insights-body {
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 0;
-  margin: 0 8px 8px;
-  padding: 12px;
-  overflow-y: auto;
-  border: 1px solid var(--border-card);
-  border-radius: 12px;
-  background: var(--bg);
 }
 
 /* Nämns i: the chapter above the line it is named in, as the narrow screen has room for. */
@@ -1200,4 +1195,66 @@ body .phone-app .text-when input {
 .phone-sheet .reference-picture {
   width: auto;
   max-width: 100%;
+}
+
+/* The sprint's settings fill the screen's width, with arrows a finger can hit. */
+.phone-app .sprint-settings {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.phone-app .sprint-setting {
+  border: 1px solid var(--border-card);
+}
+
+.phone-app .sprint-setting button {
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.phone-app .sprint-setting-label {
+  font-size: 12px;
+}
+
+.phone-app .sprint-setting-value {
+  font-size: 28px;
+}
+
+.phone-app .sprint-setting-unit {
+  font-size: 12px;
+}
+
+/* A new connection on a phone: which note, then what they are to each other, each on its own
+   line, and the buttons under them. */
+.phone-app .connection-form {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.phone-app .connection-form > :not(button) {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.phone-app .connection-form input {
+  height: 40px;
+}
+
+.phone-app .connection-form button {
+  flex: 1 1 0;
+  min-height: 40px;
+}
+
+/* The picture beside the menu, with room for its frame; the worn title has no room on a phone. */
+.phone-bar-start .profile-button {
+  margin-left: 10px;
+}
+
+.phone-bar-start .profile-button.with-title {
+  width: 44px;
+  padding: 0;
+}
+
+.phone-bar-start .profile-button-title {
+  display: none;
 }

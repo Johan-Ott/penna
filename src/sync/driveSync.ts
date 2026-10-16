@@ -174,12 +174,21 @@ async function syncFile(run: Run, path: string, local: Uint8Array | undefined) {
   if (!(await isInStep(run, path, local, remote))) await settle(run, path, local, remote);
 }
 
+// Each file is read again just before its turn, so text saved during the sync is what counts.
+async function syncEach(run: Run, all: string[], onProgress?: (done: number, all: number) => void) {
+  const paths = all.filter((path) => !isLeftOut(path));
+  for (const [index, path] of paths.entries()) {
+    await syncFile(run, path, await readLocal(run.book, path));
+    onProgress?.(index + 1, paths.length);
+  }
+}
+
 /** The guard wraps each write over a file here, so the app can keep the open scene safe. */
 export async function syncProject(
   fileSystem: FileSystem,
   drive: Drive,
   dir: string,
-  options: { now: number; guard?: WriteGuard },
+  options: { now: number; guard?: WriteGuard; onProgress?: (done: number, all: number) => void },
 ) {
   const { now, guard = (_path, write) => write() } = options;
   const state = await readState(fileSystem, dir);
@@ -193,10 +202,7 @@ export async function syncProject(
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const logger = syncLogger();
   const run: Run = { book, drive, now, rootId, remote, state, result, logger };
-  // Each file is read again just before its turn, so text saved during the sync is what counts.
-  for (const path of new Set([...local.keys(), ...remote.files.keys()])) {
-    if (!isLeftOut(path)) await syncFile(run, path, await readLocal(book, path));
-  }
+  await syncEach(run, [...new Set([...local.keys(), ...remote.files.keys()])], options.onProgress);
   await fileSystem.makeDir(dir);
   const saved: SyncState = { dir, folderId: rootId, files: state.files };
   await writeState(fileSystem, dir, saved);

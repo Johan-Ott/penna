@@ -1385,5 +1385,8 @@
   "Namnlös": "Untitled",
   "Markdown-mapp": "Markdown folder",
   "Exportera Markdown-mapp": "Export Markdown folder",
-  "Varje scen som en egen fil med sin titel, i en mapp per del och kapitel, och anteckningarna för sig. En zip att packa upp.": "Each scene as its own file named after its title, in a folder for each part and chapter, with the notes apart. A zip to unpack."
+  "Varje scen som en egen fil med sin titel, i en mapp per del och kapitel, och anteckningarna för sig. En zip att packa upp.": "Each scene as its own file named after its title, in a folder for each part and chapter, with the notes apart. A zip to unpack.",
+  "Hämtar {done} av {all} filer…": "Fetching {done} of {all} files…",
+  "Boken kunde inte hämtas klart: {reason}. Försök igen.": "The book could not be fetched completely: {reason}. Try again.",
+  "Tillbaka till texten": "Back to the text"
 }

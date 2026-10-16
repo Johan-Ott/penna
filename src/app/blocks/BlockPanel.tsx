@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
 import { CloseButton } from "../controls.js";
+import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
 import { keepPlaces, places, setPlace, type Place } from "./layout.js";
 
@@ -82,7 +83,7 @@ export function BlockPanel(props: {
   onClose: () => void;
   children: ReactNode;
 }) {
-  const { ref, style, onPointerDown } = useFloating(props.id);
+  const { ref, style, onPointerDown } = useFloating(props.id, !usePhone());
   return (
     <section
       ref={ref}
@@ -95,7 +96,7 @@ export function BlockPanel(props: {
           <GripIcon />
           {props.title}
         </span>
-        <CloseButton onClose={props.onClose} />
+        <CloseButton isPhoneBack onClose={props.onClose} />
       </header>
       {props.children}
     </section>

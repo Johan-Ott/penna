@@ -131,7 +131,7 @@ function PaletteInput(props: {
       <SearchIcon />
       <input
         autoFocus
-        placeholder={t("Sök scen, kapitel, karaktär eller kommando")}
+        placeholder={usePhone() ? t("Sök…") : t("Sök scen, kapitel, karaktär eller kommando")}
         aria-label={t("Sök scen, kapitel, karaktär eller kommando")}
         value={props.query}
         onChange={(event) => props.onQuery(event.target.value)}

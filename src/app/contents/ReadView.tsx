@@ -143,8 +143,9 @@ function ReadFoot(props: {
 function ReadHead(props: ReadViewProps & { place: string; share: ReactNode }) {
   return (
     <header className="read-head">
-      <button className="read-back" onClick={props.onBack}>
-        {t("← Tillbaka till texten")} <span className="read-key">Esc</span>
+      <button className="read-back" aria-label={t("Tillbaka till texten")} onClick={props.onBack}>
+        ← <span className="read-back-words">{t("Tillbaka till texten")}</span>{" "}
+        <span className="read-key">Esc</span>
       </button>
       <span className="read-place">{props.place}</span>
       <span className="read-head-end">

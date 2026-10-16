@@ -2059,6 +2059,7 @@
     flex-direction: row;
     width: auto;
     flex-wrap: wrap;
+    gap: 6px;
     padding: 4px 16px 10px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
@@ -2071,6 +2072,12 @@
     padding: 0 14px;
     border: 1px solid var(--border-soft);
     border-radius: 18px;
+  }
+
+  .settings-tabs .settings-search {
+    flex: 0 0 100%;
+    width: auto;
+    margin-bottom: 4px;
   }
 
   .settings-content {

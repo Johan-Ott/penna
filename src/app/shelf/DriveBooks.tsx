@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { joinPath } from "../../storage/fileSystem.js";
 import { googleDrive } from "../../sync/googleDrive.js";
 import { syncProject } from "../../sync/driveSync.js";
+import { STATE_FILE } from "../../sync/syncState.js";
 import { Dialog } from "../controls.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 
-// The books in Penna/ in the writer's Drive that this computer does not have yet.
+// The books in Penna/ in the writer's Drive that this device does not have yet. A fetch that
+// stopped halfway has a folder but no sync state, so it is listed again to finish.
 async function booksOnDrive(libraryDir: string) {
   const signIn = platform.googleSignIn;
   if (!signIn) return [];
@@ -14,19 +16,24 @@ async function booksOnDrive(libraryDir: string) {
   const penna = await drive.findFolder("Penna", null);
   if (!penna) return [];
   const folders = (await drive.list(penna)).filter((file) => file.isFolder);
-  const isHere = await Promise.all(
-    folders.map((folder) => platform.folderExists(joinPath(libraryDir, folder.name))),
+  const synced = await Promise.all(
+    folders.map((folder) =>
+      platform.fileSystem.modifiedAt(joinPath(libraryDir, `${folder.name}/${STATE_FILE}`)),
+    ),
   );
-  return folders.filter((_folder, index) => !isHere[index]).map((folder) => folder.name);
+  return folders.filter((_folder, index) => synced[index] === null).map((folder) => folder.name);
 }
 
+type Progress = { name: string; done: number; all: number };
+
 // A book fetched is synced into an empty folder of the same name, as every sync finds it.
-async function fetchBook(libraryDir: string, name: string) {
+async function fetchBook(libraryDir: string, name: string, onProgress: (step: Progress) => void) {
   const signIn = platform.googleSignIn;
   if (!signIn) return null;
   const dir = joinPath(libraryDir, name);
   await syncProject(platform.fileSystem, googleDrive(signIn.accessToken, signIn.fetch), dir, {
     now: Date.now(),
+    onProgress: (done, all) => onProgress({ name, done, all }),
   });
   return dir;
 }
@@ -51,9 +58,14 @@ interface Props {
   onClose: () => void;
 }
 
+const stepText = (progress: Progress) =>
+  progress.all === 0
+    ? t("Hämtar…")
+    : t("Hämtar {done} av {all} filer…", { done: progress.done, all: progress.all });
+
 function BookList(props: {
   names: string[];
-  fetching: string | null;
+  fetching: Progress | null;
   onTake: (name: string) => void;
 }) {
   if (props.names.length === 0)
@@ -69,27 +81,41 @@ function BookList(props: {
     >
       <span className="studio-item-name">{name.replace(/\.penna$/, "")}</span>
       <span className="insight-muted">
-        {props.fetching === name ? t("Hämtar…") : t("Hämta och öppna")}
+        {props.fetching?.name === name ? stepText(props.fetching) : t("Hämta och öppna")}
       </span>
     </button>
   ));
 }
 
+// Fetching shows how far it has come, and says so when it stops, so the book can be tried again.
+function useFetch(props: Props) {
+  const [fetching, setFetching] = useState<Progress | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
+  const take = async (name: string) => {
+    setFailure(null);
+    setFetching({ name, done: 0, all: 0 });
+    try {
+      const dir = await fetchBook(props.libraryDir, name, setFetching);
+      if (!dir) return;
+      props.onClose();
+      props.onOpen(dir);
+    } catch (error) {
+      setFailure(String(error));
+    } finally {
+      setFetching(null);
+    }
+  };
+  return { fetching, failure, take };
+}
+
 function DriveBooksDialog(props: Props) {
   const [attempt, setAttempt] = useState(0);
-  const [fetching, setFetching] = useState<string | null>(null);
+  const { fetching, failure, take } = useFetch(props);
   const found = useFound(props.libraryDir, attempt);
   const connect = async () => {
     await platform.googleSignIn?.connect();
     props.onSignedIn();
     setAttempt((count) => count + 1);
-  };
-  const take = async (name: string) => {
-    setFetching(name);
-    const dir = await fetchBook(props.libraryDir, name).finally(() => setFetching(null));
-    if (!dir) return;
-    props.onClose();
-    props.onOpen(dir);
   };
   return (
     <Dialog label={t("Hämta från Google Drive")} className="drive-books" onClose={props.onClose}>
@@ -101,6 +127,11 @@ function DriveBooksDialog(props: Props) {
       )}
       {found.kind === "books" && (
         <BookList names={found.names} fetching={fetching} onTake={(name) => void take(name)} />
+      )}
+      {failure && (
+        <p className="backup-problem" role="alert">
+          {t("Boken kunde inte hämtas klart: {reason}. Försök igen.", { reason: failure })}
+        </p>
       )}
     </Dialog>
   );
