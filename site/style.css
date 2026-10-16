@@ -383,6 +383,12 @@ h2 {
   left: auto;
 }
 
+.frame.middle img {
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 @media (max-width: 860px) {
   .feature {
     grid-template-columns: 1fr;

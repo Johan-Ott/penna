@@ -3300,8 +3300,14 @@
   gap: 12px;
 }
 
+/* The synopsis and the letter are written here, so the field is the dialog's width, in the
+   book's typeface. */
 .submit-text {
+  box-sizing: border-box;
+  width: 100%;
   min-height: 280px;
+  padding: 12px 14px;
+  font: 15px/1.6 var(--font-prose);
   resize: vertical;
 }
 
