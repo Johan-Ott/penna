@@ -36,3 +36,11 @@ jobs:
           releaseDraft: true
           includeUpdaterJson: true
           args: ${{ matrix.args }} --config src-tauri/tauri.release.conf.json
+      # The same installer under a name that never changes, so the website can link straight to
+      # releases/latest/download/Penna-setup.exe and the file downloads without a GitHub page.
+      - shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp src-tauri/target/release/bundle/nsis/Penna_*_x64-setup.exe Penna-setup.exe
+          gh release upload "${{ github.ref_name }}" Penna-setup.exe --clobber
