@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { placeInRoom, withoutStrokesNear } from "../../project/stickyNoteGeometry.js";
+import { placeInRoom, rubOut } from "../../project/stickyNoteGeometry.js";
 import { NOTE_COLORS, type StickyNote } from "../../project/stickyNotes.js";
 import { GripIcon, PenIcon } from "../shell/icons.js";
 import { EraserIcon } from "./EraserIcon.js";
@@ -98,7 +98,7 @@ function NoteHead(
 function NoteBody(props: Props & { shown: Box; tool: NoteTool | null }) {
   const { note, state } = props;
   const erase = (point: [number, number]) =>
-    state.change(note.id, { strokes: withoutStrokesNear(note.strokes, point) });
+    state.change(note.id, { strokes: rubOut(note.strokes, point) });
   return (
     <div className="note-body">
       <textarea

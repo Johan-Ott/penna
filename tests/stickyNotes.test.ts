@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readStickyNotes, type Stroke } from "../src/project/stickyNotes";
-import { placeInRoom, withoutStrokesNear } from "../src/project/stickyNoteGeometry";
+import { placeInRoom, rubOut } from "../src/project/stickyNoteGeometry";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 describe("readStickyNotes", () => {
@@ -19,20 +19,37 @@ describe("readStickyNotes", () => {
   });
 });
 
-describe("withoutStrokesNear", () => {
-  it("erases the lines the eraser passes over and keeps the others", () => {
-    const across: Stroke = [
-      [0, 50],
-      [100, 50],
-    ];
-    const elsewhere: Stroke = [
-      [0, 10],
-      [100, 10],
-    ];
+describe("rubOut", () => {
+  const across: Stroke = [
+    [0, 50],
+    [100, 50],
+  ];
+  const elsewhere: Stroke = [
+    [0, 10],
+    [100, 10],
+  ];
 
-    const left = withoutStrokesNear([across, elsewhere], [50, 52]);
+  it("takes only the part of a line the eraser passes over, and leaves the ends", () => {
+    const left = rubOut([across, elsewhere], [50, 52]);
 
-    expect(left).toEqual([elsewhere]);
+    expect(left).toHaveLength(3);
+    expect(left[0]?.at(-1)?.[0]).toBeLessThan(42);
+    expect(left[1]?.[0]?.[0]).toBeGreaterThan(58);
+    expect(left[2]?.at(-1)).toEqual([100, 10]);
+  });
+
+  it("takes a short line it covers whole", () => {
+    expect(
+      rubOut(
+        [
+          [
+            [48, 50],
+            [52, 50],
+          ],
+        ],
+        [50, 50],
+      ),
+    ).toEqual([]);
   });
 });
 
