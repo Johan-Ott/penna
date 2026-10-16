@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logo from "../../assets/penna-logo.png";
 import { platform } from "../platform.js";
+import { WindowBar } from "../shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
 
 // The first start, the same on a computer and a phone: signed in with Google, so the books
@@ -35,7 +36,8 @@ export function Welcome({ onStart }: { onStart: (withGoogle: boolean) => Promise
     );
   const canSignIn = platform.googleSignIn !== undefined;
   return (
-    <main className="welcome">
+    <main className="welcome" data-tauri-drag-region>
+      <WindowBar />
       <img className="brand-mark large" src={logo} alt="" />
       <h1>{t("Skriv var du än är.")}</h1>
       <p className="welcome-text">

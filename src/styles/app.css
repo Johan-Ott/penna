@@ -3372,6 +3372,7 @@ button.book-cover:hover {
   margin: 0 auto;
   padding: max(96px, calc(var(--safe-top) + 64px)) 24px max(32px, var(--safe-bottom));
   background: var(--bg);
+  user-select: none;
 }
 
 body:has(.welcome) {
