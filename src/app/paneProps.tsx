@@ -12,6 +12,7 @@ import { ReviewLayer } from "./review/ReviewLayer.js";
 import { FootnotePopover } from "./FootnotePopover.js";
 import { SelectionBar } from "./SelectionBar.js";
 import { TextHeader } from "./TextHeader.js";
+import { SceneStrip } from "./phone/SceneStrip.js";
 import { openInHome } from "./notes/noteHomes.js";
 import { SeriesNotes } from "./tree/TreeView.js";
 import type { OpenScene } from "./sceneSession.js";
@@ -32,13 +33,16 @@ function focusLocation(project: Project, scene: OpenScene | null) {
 
 function sceneHeader(app: AppState, project: Project, sceneId: string) {
   return (
-    <TextHeader
-      project={project}
-      sceneId={sceneId}
-      onChangeTree={(tree: TreeNode[]) => void app.updateTree(tree)}
-      onReadChapter={(chapterId) => app.writingMode.read(chapterId)}
-      onShowVersions={app.snapshots.show}
-    />
+    <>
+      <TextHeader
+        project={project}
+        sceneId={sceneId}
+        onChangeTree={(tree: TreeNode[]) => void app.updateTree(tree)}
+        onReadChapter={(chapterId) => app.writingMode.read(chapterId)}
+        onShowVersions={app.snapshots.show}
+      />
+      <SceneStrip app={app} />
+    </>
   );
 }
 

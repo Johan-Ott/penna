@@ -1365,8 +1365,6 @@
   "deadline {day}": "deadline {day}",
   "Mål": "Goals",
   "Ändra dagens och bokens mål": "Change the day's and the book's goals",
-  "Moduler": "Modules",
-  "+ Ny lapp": "+ New note",
   "Namnlös": "Untitled",
   "Markdown-mapp": "Markdown folder",
   "Exportera Markdown-mapp": "Export Markdown folder",
@@ -1389,5 +1387,6 @@
   "Alla dina böcker i Drive finns redan här.": "All your books in Drive are already here.",
   "Böckerna kunde inte hämtas klart: {reason}. Försök igen.": "The books could not be fetched completely: {reason}. Try again.",
   "Dina böcker i Google Drive": "Your books in Google Drive",
-  "Konto": "Account"
+  "Konto": "Account",
+  "{count} att se över": "{count} to look at"
 }

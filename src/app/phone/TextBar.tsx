@@ -1,13 +1,12 @@
 import type { AppState } from "../App.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import { PhoneBarStart, SearchButton } from "./PhoneBarStart.js";
-import { ModulesButton } from "./PhoneModules.js";
 import type { Project } from "../useProject.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 
 type Props = { app: AppState; project: Project };
 
-// The tabs below lead away, so the bar has no way back; Moduler holds the sprint and Granska.
+// The tabs below lead away, so the bar has no way back; what is in the scene is atop the text.
 export function TextBar({ app, project }: Props) {
   const scene = app.scene;
   const chapter = scene ? chapterOf(project.tree, scene.id) : null;
@@ -20,7 +19,6 @@ export function TextBar({ app, project }: Props) {
         <span className="phone-bar-sub">{t("{count} ord idag", { count: words })}</span>
       </span>
       <span className="phone-bar-end">
-        <ModulesButton app={app} />
         <SearchButton app={app} />
       </span>
     </header>

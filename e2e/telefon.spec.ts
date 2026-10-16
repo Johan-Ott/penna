@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Fortsätt skriva opens the text, and back returns to Boken", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
-  await expect(page.getByRole("button", { name: "Moduler" })).toBeVisible();
+  await expect(editor(page)).toBeVisible();
 
   await page.evaluate(() => history.back());
 
@@ -43,8 +43,7 @@ test("a person opens from Personer in the tree, and back returns to Boken", asyn
 test("Granska opens over the whole text and closes again", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
 
-  await page.getByRole("button", { name: "Moduler" }).click();
-  await page.getByRole("button", { name: "Granska" }).click();
+  await page.getByRole("button", { name: /att se över/ }).click();
   await expect(page.getByRole("complementary", { name: "Granskning" })).toBeVisible();
   await page.getByRole("button", { name: "Stäng granskning" }).click();
 
@@ -89,8 +88,7 @@ test("Android's back leaves Studio, then goes from Publicera to Innehåll", asyn
 
 test("Android's back closes Granska and stays in the text", async ({ page }) => {
   await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
-  await page.getByRole("button", { name: "Moduler" }).click();
-  await page.getByRole("button", { name: "Granska" }).click();
+  await page.getByRole("button", { name: /att se över/ }).click();
   await expect(page.locator(".review-panel.open")).toBeVisible();
 
   await page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
@@ -210,10 +208,11 @@ test("Öppna bredvid from Boken shows the other text over the whole screen", asy
   await expect(page.locator(".beside-pane")).toContainText("Isen bar.");
 });
 
-test("the computer's blocks open on a phone as a sheet from Skriv's bar", async ({ page }) => {
+test("who is named in the scene is atop the text, and opens the note", async ({ page }) => {
   await page.locator(".phone-tabs").getByRole("button", { name: "Skriv" }).click();
-  await page.getByRole("button", { name: "Moduler" }).click();
-  await page.getByRole("button", { name: "I scenen" }).click();
+  const strip = page.getByRole("navigation", { name: "I scenen" });
+  await expect(strip).toContainText("Elin");
+  await strip.getByRole("button", { name: "Arvid" }).click();
 
-  await expect(page.getByRole("region", { name: "I scenen" })).toContainText("Elin");
+  await expect(page.locator(".beside-pane")).toBeVisible();
 });

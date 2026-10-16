@@ -31,7 +31,7 @@ function useFirstLines(refs: { dir: string; id: string }[]) {
 }
 
 // The linked notes named in the open scene's text, but not the scene itself if it is a note.
-function useNamedHere(app: AppState) {
+export function useNamedHere(app: AppState) {
   const sceneId = app.scene?.id ?? null;
   const text = app.editor.editorState?.doc.textContent ?? "";
   const { cards } = app.notes;

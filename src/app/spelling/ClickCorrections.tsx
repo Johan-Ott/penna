@@ -24,7 +24,7 @@ function useClicked(editor: Editor) {
 }
 
 // The word the cursor stands in, when Granska has marked it as said again close by.
-function repeatedAtCaret(editor: Editor) {
+export function repeatedAtCaret(editor: Editor) {
   const view = editor.viewRef.current;
   const state = editor.editorState;
   if (!view || !state) return null;
@@ -33,7 +33,7 @@ function repeatedAtCaret(editor: Editor) {
   return element?.closest(".repeat")?.textContent ?? null;
 }
 
-function RepeatNote({ word, onReview }: { word: string; onReview: () => void }) {
+export function RepeatNote({ word, onReview }: { word: string; onReview: () => void }) {
   return (
     <>
       <span className="click-note">{t("”{word}” står flera gånger nära varandra", { word })}</span>

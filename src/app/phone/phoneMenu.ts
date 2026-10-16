@@ -3,6 +3,7 @@ import type { MenuItem } from "../Menu.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { HELP_TAB } from "../settings/SettingsDialog.js";
 import { group, helpItems } from "../shell/appMenu.js";
+import { setPanelOpen } from "../sprint/sprint.js";
 import type { useMenuDialogs } from "../shell/useAppMenu.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -38,6 +39,7 @@ export function phoneMenu(
   const help = { label: t("Hjälp"), onSelect: () => app.writingMode.settingsDialog.open(HELP_TAB) };
   return [
     { label: t("Bokhylla"), onSelect: () => void app.showShelf() },
+    { label: t("Skrivsprint"), onSelect: () => setPanelOpen(true) },
     ...group(
       t("Boken"),
       [
