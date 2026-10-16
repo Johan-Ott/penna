@@ -3,7 +3,6 @@ import type { AppState } from "../App.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "../shell/bookViews.js";
 import { BookIcon, PenIcon, TreeIcon } from "../shell/icons.js";
 import { PhoneBarStart, SearchButton } from "./PhoneBarStart.js";
-import { publishStep, stepLabel } from "../publish/PublishTiles.js";
 import type { Project } from "../useProject.js";
 import { usePageMap } from "../usePageMap.js";
 import type { View } from "../useWritingMode.js";
@@ -59,30 +58,6 @@ const ViewBar = (props: { app: AppState; project: Project; title: string; sub?: 
   </header>
 );
 
-// A part of Publicera opened is a page of its own: back and its name in the bar, as phones do.
-function PublishBar(props: { app: AppState; project: Project }) {
-  const step = publishStep.use();
-  if (!step) return <ViewBar {...props} title={t("Publicera")} sub={props.project.name} />;
-  return (
-    <header className="phone-bar">
-      <span className="phone-bar-start">
-        <button
-          className="topbar-button phone-bar-back"
-          aria-label={t("Tillbaka")}
-          data-phone-back
-          onClick={() => publishStep.set(null)}
-        >
-          ‹
-        </button>
-      </span>
-      <span className="phone-bar-title">
-        <span>{stepLabel(step)}</span>
-      </span>
-      <span className="phone-bar-end" />
-    </header>
-  );
-}
-
 /** Innehåll, Läs, Publicera or Från synken, as the writing mode says. */
 export function ViewScreen(props: {
   app: AppState;
@@ -106,7 +81,7 @@ export function ViewScreen(props: {
         />
       )}
       {view === "las" && <ReadScreen {...views} />}
-      {view === "publicera" && <PublishBar app={app} project={project} />}
+      {view === "publicera" && <ViewBar {...views} title={t("Publicera")} sub={project.name} />}
       {view === "publicera" && <PublishScreen {...views} />}
       {view === "synk" && <SyncScreen {...views} />}
     </div>

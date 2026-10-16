@@ -1076,7 +1076,6 @@
   "Inskick": "Submissions",
   "Till förlag": "To publishers",
   "Visa": "Show",
-  "Synopsis, följebrev och vart du har skickat": "Synopsis, cover letter and where you have sent it",
   "Första kapitlet klart": "First chapter done",
   "Sätt alla scener i ett kapitel som Klar.": "Mark every scene in a chapter as Done.",
   "Tio kapitel": "Ten chapters",
@@ -1208,9 +1207,6 @@
   "Dela och samarbeta": "Share and collaborate",
   "Kopior och export": "Copies and export",
   "Om dig": "About you",
-  "Tema, sidor och typsnitt": "Theme, pages and type",
-  "Titel, författare och omslag": "Title, author and cover",
-  "Bilder och nyhetsbrev": "Pictures and newsletters",
   "Visa som ark eller löptext": "Show as sheets or running text",
   "Sidomenyn följer texten": "The sidebar follows the text",
   "Den fälls ut till texten du öppnar.": "It unfolds to the text you open.",
@@ -1347,5 +1343,6 @@
   "Skapa boken": "Create the book",
   "Fortsätt": "Continue",
   "Profilen sparas i din Penna-mapp. Loggar du in med Google följer den med till dina andra enheter.": "Your profile is kept in your Penna folder. Sign in with Google and it follows you to your other devices.",
-  "Synk: logga in med Google under Konto så finns böckerna på alla dina enheter.": "Sync: sign in with Google under Account and your books are on all your devices."
+  "Synk: logga in med Google under Konto så finns böckerna på alla dina enheter.": "Sync: sign in with Google under Account and your books are on all your devices.",
+  "Delar": "Parts"
 }

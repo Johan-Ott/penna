@@ -33,7 +33,6 @@ test("a book is designed, given its details, and exported for print and as an e-
   await page.getByRole("button", { name: "Klar", exact: true }).click();
   await expect(page.locator(".publish")).toContainText("Ornament");
 
-  await page.getByRole("button", { name: "← Publicera" }).click();
   await page
     .locator(".publish-tile")
     .filter({ hasText: /^Bokuppgifter/ })
@@ -41,7 +40,6 @@ test("a book is designed, given its details, and exported for print and as an e-
   await page.getByLabel("Författarnamn").fill("Elin Berg");
   await page.getByLabel("Författarnamn").press("Tab");
 
-  await page.getByRole("button", { name: "← Publicera" }).click();
   await page
     .locator(".publish-tile")
     .filter({ hasText: /^Exportera/ })

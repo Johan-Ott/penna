@@ -1,5 +1,5 @@
 import { CoverFields } from "./CoverFields.js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
 import { DesignControls } from "../bookdesign/DesignControls.js";
@@ -15,7 +15,7 @@ import {
 } from "../exporting/useExport.js";
 import { Choice } from "../controls.js";
 import { SubmitStep } from "./SubmitStep.js";
-import { PublishTiles, publishStep, StepHead } from "./PublishTiles.js";
+import { PublishTabs, type Step } from "./PublishTiles.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -116,9 +116,7 @@ type Publishing = ReturnType<typeof usePublishing>;
 
 function usePublishing(props: PublishProps) {
   const { project } = props;
-  const step = publishStep.use();
-  const setStep = publishStep.set;
-  useEffect(() => () => publishStep.set(null), []);
+  const [step, setStep] = useState<Step>("design");
   const [choices, setChoices] = useState(() => startChoices(project));
   const exporter = useExport(project, props.generalAuthor, props.onSaveFields);
   const cover = useCover(project);
@@ -140,19 +138,11 @@ function OpenStep({ props, publishing }: { props: PublishProps; publishing: Publ
   return <ExportStep {...props} choices={choices} setChoices={setChoices} />;
 }
 
-// The tiles, or the part one of them opened.
+// The tabs, and the part that is open under them.
 function StepsOrTiles({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
-  const { step, setStep, choices } = publishing;
-  const formatName = FORMATS.find(([id]) => id === choices.format)?.[1] ?? "";
-  if (step === null)
-    return (
-      <>
-        <PublishTiles formatName={formatName} onStep={setStep} onStudio={props.onStudio} />
-      </>
-    );
   return (
     <>
-      <StepHead step={step} onBack={() => setStep(null)} />
+      <PublishTabs step={publishing.step} onStep={publishing.setStep} onStudio={props.onStudio} />
       <OpenStep props={props} publishing={publishing} />
     </>
   );
@@ -161,7 +151,7 @@ function StepsOrTiles({ props, publishing }: { props: PublishProps; publishing: 
 function PublishPreview({ props, publishing }: { props: PublishProps; publishing: Publishing }) {
   const { choices } = publishing;
   if (publishing.step === "forlag") return <SubmitStep {...props} />;
-  if (publishing.step === null || publishing.step === "design") {
+  if (publishing.step === "design") {
     return <PrintPreview project={props.project} generalAuthor={props.generalAuthor} />;
   }
   return (

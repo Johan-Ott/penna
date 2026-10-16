@@ -1440,53 +1440,35 @@
   margin: 4px 8px 8px;
 }
 
-/* Publicera's start: its parts as tiles, two by two. */
-.publish-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 4px 0 8px;
-}
-
-/* Till förlag, the fifth, has the whole row rather than half of it. */
-.publish-tiles > .publish-tile:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
+/* Publicera's parts as tabs: a row of words, the open one marked, as Inställningar's are. */
+.publish-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .publish-tile {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 84px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--bg);
-  color: var(--text);
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--text-muted);
   font: 14px var(--font-ui);
-  text-align: left;
 }
 
 .publish-tile:hover {
-  border-color: var(--border-control);
+  background: var(--surface-hover);
+  color: var(--text);
 }
 
-.publish-tile-name {
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.publish-step-head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.publish-step-title {
-  margin: 0;
-  font: 600 18px var(--font-ui);
+.publish-tile.chosen {
+  background: var(--surface-selected);
+  color: var(--text);
+  font-weight: 500;
 }
 
 .publish-steps .export-column {

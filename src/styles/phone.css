@@ -499,11 +499,20 @@ body .selection-bar.phone .icon-button {
   overflow: visible;
 }
 
-/* The tabs lead back to the text, and the top bar names an open part and leads back from it,
-   so the card has no way back of its own on a phone. */
-.phone-view .publish-steps > .publish-back,
-.phone-view .publish-step-head {
+/* The tabs below lead back to the text, so Publicera has no way back of its own on a phone; its
+   parts are one row to swipe. */
+.phone-view .publish-steps > .publish-back {
   display: none;
+}
+
+.phone-view .publish-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.phone-view .publish-tile {
+  flex-shrink: 0;
 }
 
 .phone-view .publish.step-forlag .publish-preview {
@@ -1151,11 +1160,6 @@ body .phone-app .text-when input {
 
 .phone-bar-start .profile-button-title {
   display: none;
-}
-
-.phone-bar-back {
-  font-size: 30px;
-  line-height: 1;
 }
 
 /* Who and what is named in the scene, and what Granska has to look at, atop the text. */
