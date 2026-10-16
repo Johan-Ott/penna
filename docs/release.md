@@ -9,7 +9,8 @@
 - Släppbygget kompilerar (`npx tauri build --no-bundle`) och startar på introduktionen.
 - Version 0.1.0 (`npm run version -- X.Y.Z` sätter den överallt).
 - Signerade uppdateringar: appen frågar GitHub Releases vid start.
-- `.github/workflows/release.yml`: en tagg `vX.Y.Z` bygger Windows och macOS till ett utkast.
+- `.github/workflows/release.yml`: en tagg `vX.Y.Z` bygger Windows till ett utkast. macOS väntar
+  på Apple Developer-kontot i punkt 3.
 - Typsnittens licenser ligger i `public/fonts/`; Om Penna nämner typsnitten och Typst.
 
 ## Johan gör, en gång

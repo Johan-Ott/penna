@@ -12,13 +12,16 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { androidSdk } from "./platformFolders.mjs";
 
 const say = (text) => process.stdout.write(`\n${text}\n`);
 const newest = (dir) => readdirSync(dir).sort().at(-1);
 
-const sdk = process.env.ANDROID_HOME ?? join(process.env.LOCALAPPDATA ?? "", "Android", "Sdk");
+const sdk = process.env.ANDROID_HOME ?? androidSdk(process.platform, process.env, homedir());
 const ndk = process.env.NDK_HOME ?? join(sdk, "ndk", newest(join(sdk, "ndk")));
 const buildTools = join(sdk, "build-tools", newest(join(sdk, "build-tools")));
+// apksigner is a .bat on Windows and a shell script on macOS.
+const signer = join(buildTools, process.platform === "win32" ? "apksigner.bat" : "apksigner");
 const environment = { ...process.env, ANDROID_HOME: sdk, NDK_HOME: ndk };
 const testKey = join(homedir(), ".android", "debug.keystore");
 const releaseKey = join(homedir(), ".penna", "penna-release.jks");
@@ -99,7 +102,5 @@ const hasReleaseKey = existsSync(releaseKey) && existsSync(releasePass);
 const key = hasReleaseKey
   ? `--ks ${releaseKey} --ks-pass file:${releasePass}`
   : `--ks ${testKey} --ks-pass pass:android`;
-step("Filen signeras", join(buildTools, "apksigner.bat"), [
-  `sign ${key} --out ${join("out", "Penna.apk")} ${aligned}`,
-]);
+step("Filen signeras", signer, [`sign ${key} --out ${join("out", "Penna.apk")} ${aligned}`]);
 say(hasReleaseKey ? "Klart: out/Penna.apk" : "Klart, men med testnyckeln: inte för release.");

@@ -192,7 +192,8 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   never the real app.
 - `npm run app:test` starts Penna Test: the real app with identifier `se.penna.test`
   (`src-tauri/tauri.test.conf.json`), so its books, backups, settings and Google sign-in are its
-  own, under `%APPDATA%\se.penna.test`. Its WebView listens on port 9333;
+  own, under `%APPDATA%\se.penna.test` on Windows and `~/Library/Application Support`,
+  `~/Library/Caches` and `~/Library/WebKit` on macOS. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
   answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
 - `node scripts/penna.mjs [--app] <call> [args]` makes one call to `window.penna` (`app/remote.ts`)
@@ -222,8 +223,9 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
 
 - `npm run build:windows`: the Windows installer in `out/` (no update files, no signing key).
 - `npm run build:android`: `out/Penna.apk` for arm64 phones, signed with Android's test key so it
-  installs from a file. It finds the Android SDK and NDK under `%LOCALAPPDATA%\Android\Sdk` and
-  makes `src-tauri/gen/android` the first time (gen is not committed). Our own Kotlin files in
+  installs from a file. The SDK and NDK come from `ANDROID_HOME`, else from Android Studio's own
+  folder (`%LOCALAPPDATA%\Android\Sdk`, on macOS `~/Library/Android/sdk`), and it makes
+  `src-tauri/gen/android` the first time (gen is not committed). Our own Kotlin files in
   `src-tauri/android/` are copied in on every build, and the Google Play sign-in library is added
   to its Gradle file. `MainActivity.kt` puts Penna in the background on back from the shelf,
   since Tauri hangs on its splash if Android closes the window and reopens it.
@@ -240,8 +242,10 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
 ## Releasing
 
 - `npm run version -- 1.0.3` sets the version in package.json, tauri.conf.json and Cargo.toml.
-  Commit, tag `v1.0.3` and push: `.github/workflows/release.yml` builds Windows and macOS with
-  `tauri.release.conf.json` (bundling and updater files on) into a draft GitHub release.
+  Commit, tag `v1.0.3` and push: `.github/workflows/release.yml` builds Windows with
+  `tauri.release.conf.json` (bundling and updater files on) into a draft GitHub release. The
+  matrix has no macOS runner: an unsigned Mac app does not open, so macOS waits for an Apple
+  Developer account (docs/release.md).
 - Publishing the draft makes its `latest.json` the newest; the app asks for it once at start
   (`UpdateNotice.tsx`) and offers to restart into the new version. Updates are signed: the public
   key is in tauri.conf.json, the private key is `~/.tauri/penna-updater.key` on Johan's computer
