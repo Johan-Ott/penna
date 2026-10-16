@@ -50,7 +50,14 @@ export async function createBookFromOutline(
   outline?: string,
 ) {
   checkChoices(choices);
-  const imported = outline ? withFirstScenes(splitManuscript(outline)) : undefined;
+  // Without an outline the book still gets a first chapter, so a tool has somewhere to write.
+  const imported = withFirstScenes(
+    splitManuscript(
+      outline ??
+        `## ${t("Första kapitlet")}
+`,
+    ),
+  );
   const details = { ...DETAILS_FROM_OUTSIDE, ...choices };
   return createProject(fileSystem, libraryDir, details, imported);
 }

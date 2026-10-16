@@ -17,7 +17,6 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
-  await page.getByRole("radio", { name: /Annat/ }).click();
   for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Saltet");
   await page.getByRole("button", { name: "Skapa boken" }).click();
@@ -43,7 +42,7 @@ test("a planner lays out a book, keeps her characters, and plans it in Innehåll
   // The new note opens, and the tree unfolds Personer to show it.
   await expect(sidebar(page)).toContainText("Sigrid");
 
-  await sidebar(page).getByRole("treeitem").filter({ hasText: "Första scenen" }).first().click();
+  await sidebar(page).getByRole("treeitem").filter({ hasText: "Scen 1" }).first().click();
   await expect(editor(page).locator(".mention").first()).toContainText("Sigrid");
   await editor(page).locator(".mention").first().click();
   await expect(page.locator(".mention-card")).toContainText("Sigrid");

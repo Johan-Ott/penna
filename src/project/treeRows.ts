@@ -1,4 +1,5 @@
 import { findNode, moveNode, TRASH_ID, type FoundNode, type TreeNode } from "./tree.js";
+import { isSpecial } from "./sorts.js";
 
 export interface TreeRow {
   node: TreeNode;
@@ -60,8 +61,14 @@ export function sidebarSections(rows: TreeRow[]) {
   return sections;
 }
 
-export const withoutEmptySorts = (rows: TreeRow[]) =>
-  rows.filter((row) => !(row.node.kind === "sort" && (row.node.children ?? []).length === 0));
+const isEmptySortRow = (row: TreeRow) =>
+  row.node.kind === "sort" && (row.node.children ?? []).length === 0;
+
+export const withoutEmptySorts = (rows: TreeRow[]) => rows.filter((row) => !isEmptySortRow(row));
+
+/** Penna's own sorts wait until they hold a note; one the writer or a template added shows. */
+export const withoutEmptyFixedSorts = (rows: TreeRow[]) =>
+  rows.filter((row) => !(isEmptySortRow(row) && isSpecial(row.node.id)));
 
 /** Every part, chapter or folder that has something to fold away. */
 export const foldableIds = (nodes: TreeNode[]): string[] =>

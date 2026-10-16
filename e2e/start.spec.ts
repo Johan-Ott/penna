@@ -9,7 +9,6 @@ test("the first start goes to the shelf, where a new book opens a scene to write
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
-  await page.getByRole("radio", { name: /Annat/ }).click();
   for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Isen");
   await page.getByRole("button", { name: "Skapa boken" }).click();
@@ -39,4 +38,21 @@ test("a new book takes as many pieces as the writer picks, and moves on only wit
       "true",
     );
   }
+});
+
+test("an empty book opens on its welcome, which goes to the trash on request", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 820 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
+  await page.getByRole("button", { name: "+ Ny bok" }).click();
+  await page.getByRole("radio", { name: /Annat/ }).click();
+  for (let step = 0; step < 3; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByPlaceholder("Arbetstitel duger").fill("Tom");
+  await page.getByRole("button", { name: "Skapa boken" }).click();
+
+  await expect(editor(page)).toContainText("inte en del av boken");
+  await expect(page.locator(".sidebar")).not.toContainText("Personer");
+  await page.getByRole("button", { name: "Ta bort välkomsten" }).click();
+
+  await expect(page.locator(".sidebar")).not.toContainText("Välkommen");
 });

@@ -3,16 +3,11 @@
     {
       "id": "tom",
       "name": "Tom bok",
-      "hint": "Ett kapitel och en scen. Du bygger resten.",
+      "hint": "Inga kapitel, inga anteckningar. Du bygger allt själv.",
       "totalGoal": null,
       "sorts": [],
       "labels": [],
-      "parts": [
-        {
-          "title": "",
-          "chapters": [["Första kapitlet", ""]]
-        }
-      ],
+      "parts": [],
       "scene": "Första scenen"
     },
     {

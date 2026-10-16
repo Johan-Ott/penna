@@ -8,10 +8,11 @@ import { newSceneId } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
 import type { Narration } from "../manuscript/narration.js";
-import { manuscriptSceneIds, withSpecialFolders, type TreeNode } from "./tree.js";
+import { manuscriptSceneIds, NOTES_ID, withSpecialFolders, type TreeNode } from "./tree.js";
 import { readOwnTemplates, OWN_PREFIX } from "./ownTemplates.js";
 import { composeTemplate, structures, templateBook, type BookTemplate } from "./templates.js";
 import { t } from "../i18n/i18n.js";
+import { writeWelcome } from "./welcome.js";
 
 export interface ProjectDetails {
   title: string;
@@ -106,7 +107,7 @@ function templateParts(template: BookTemplate) {
   return { fields, sorts };
 }
 
-/** An imported book, or the template's: by default one chapter and one scene, to start at once. */
+/** An imported book, or the template's, with the welcome note under Övrigt. */
 export async function createProject(
   fileSystem: FileSystem,
   libraryDir: string,
@@ -128,13 +129,14 @@ export async function createProject(
     ...(details.narration ? { narration: details.narration } : {}),
     ...fromTemplate.fields,
   };
-  await writeProjectFile(
-    fileSystem,
-    dir,
-    fields,
-    withSpecialFolders([...tree, ...fromTemplate.sorts]),
+  const welcome = await writeWelcome(fileSystem, dir);
+  const withWelcome = withSpecialFolders([...tree, ...fromTemplate.sorts]).map((node) =>
+    node.id === NOTES_ID
+      ? { ...node, children: [{ id: welcome, kind: "scene" as const }, ...(node.children ?? [])] }
+      : node,
   );
-  return { dir, sceneId };
+  await writeProjectFile(fileSystem, dir, { ...fields, welcome }, withWelcome);
+  return { dir, sceneId: sceneId ?? welcome };
 }
 
 export async function copyExampleProject(fileSystem: FileSystem, libraryDir: string) {

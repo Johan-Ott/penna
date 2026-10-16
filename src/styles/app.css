@@ -3466,3 +3466,8 @@ body:has(.welcome) {
 .link-button.asking {
   color: var(--danger);
 }
+
+.welcome-remove {
+  align-self: flex-start;
+  margin: 8px 0 80px;
+}

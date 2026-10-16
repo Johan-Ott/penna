@@ -1,5 +1,9 @@
 import type { DragEvent, ReactNode } from "react";
-import { withoutEmptySorts, type TreeRow as Row } from "../../project/treeRows.js";
+import {
+  withoutEmptyFixedSorts,
+  withoutEmptySorts,
+  type TreeRow as Row,
+} from "../../project/treeRows.js";
 import { Menu } from "../Menu.js";
 import { addMenu, foldMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
@@ -68,13 +72,14 @@ function SectionHeading(props: {
   );
 }
 
-// The book's own sorts only show when they hold something.
+// Penna's own sorts show once they hold a note; + Ny anteckning offers them all.
 function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: Tree }) {
   if (!props.seriesNotes) {
+    const notes = withoutEmptyFixedSorts(tree.sections.notes);
     return (
       <>
-        <SectionHeading label={t("Anteckningar")} />
-        <Rows rows={tree.sections.notes} props={props} tree={tree} />
+        {notes.length > 0 && <SectionHeading label={t("Anteckningar")} />}
+        <Rows rows={notes} props={props} tree={tree} />
       </>
     );
   }

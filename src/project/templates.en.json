@@ -3,16 +3,11 @@
     {
       "id": "tom",
       "name": "Empty book",
-      "hint": "One chapter and one scene. You build the rest.",
+      "hint": "No chapters, no notes. You build it all.",
       "totalGoal": null,
       "sorts": [],
       "labels": [],
-      "parts": [
-        {
-          "title": "",
-          "chapters": [["First chapter", ""]]
-        }
-      ],
+      "parts": [],
       "scene": "First scene"
     },
     {

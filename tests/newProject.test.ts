@@ -35,7 +35,7 @@ describe("createProject", () => {
     expect((await readProjectFile(files, created.dir, [])).fields["narration"]).toEqual(narration);
   });
 
-  it("makes a project folder with a first chapter and scene, ready to write in", async () => {
+  it("makes an empty book with only a welcome note, which it opens on", async () => {
     const files = createMemoryFileSystem({});
 
     const created = await createProject(files, "/Penna", details);
@@ -43,7 +43,10 @@ describe("createProject", () => {
     const project = await readProjectFile(files, created.dir, []);
     expect(created.dir).toBe("/Penna/Vintervägen.penna");
     expect(project.fields).toMatchObject({ title: "Vintervägen", type: "roman", dailyGoal: 1000 });
-    expect(manuscriptSceneIds(project.tree)).toEqual([created.sceneId]);
+    expect(manuscriptSceneIds(project.tree)).toEqual([]);
+    expect(project.fields["welcome"]).toBe(created.sceneId);
+    const notes = project.tree.find((node) => node.id === "anteckningar");
+    expect(notes?.children?.map((node) => node.id)).toEqual([created.sceneId]);
     expect((await openProjectFolder(files, created.dir)).scenes).toEqual([created.sceneId]);
   });
 

@@ -2,7 +2,7 @@ import { ClickCorrections } from "./spelling/ClickCorrections.js";
 import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
-import { CHARACTERS_ID, SECRETS_ID, type TreeNode } from "../project/tree.js";
+import { CHARACTERS_ID, moveToTrash, SECRETS_ID, type TreeNode } from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./notes/NotePage.js";
@@ -46,6 +46,20 @@ function sceneHeader(app: AppState, project: Project, sceneId: string) {
   );
 }
 
+// The welcome's way out: it goes to the trash, and the book forgets it was ever there.
+function WelcomeFoot(props: { app: AppState; project: Project; id: string }) {
+  if (props.project.fields["welcome"] !== props.id) return null;
+  const remove = () => {
+    const tree = moveToTrash(props.project.tree, props.id);
+    if (tree) void props.app.updateProject({ tree, fields: { welcome: undefined } });
+  };
+  return (
+    <button className="button secondary welcome-remove" onClick={remove}>
+      {t("Ta bort välkomsten")}
+    </button>
+  );
+}
+
 // A secret's page says who learns it when; a person's page what they know. Book notes only.
 function SecretParts(props: NotePageProps & { sortId: string; app: AppState }) {
   const parts = { ...props, onChangeTree: (tree: TreeNode[]) => void props.app.updateTree(tree) };
@@ -75,6 +89,7 @@ function textParts(app: AppState, project: Project) {
     header: <NoteHeader {...noteProps} sortId={sortId} />,
     footer: (
       <>
+        <WelcomeFoot app={app} project={project} id={scene.id} />
         {!isInSeries && <SecretParts {...noteProps} sortId={sortId} app={app} />}
         {sortId === CHARACTERS_ID && <NoteVoice {...noteProps} />}
         <NoteMentions {...noteProps} />
