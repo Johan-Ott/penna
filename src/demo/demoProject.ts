@@ -1,3 +1,5 @@
+import { COMMENT, connections, GUIDE, GUIDE_IDS, SECRET, secretNode, STICKY } from "./demoGuide.js";
+
 export const DEMO_PROJECT_DIR = "/Vintervägen.penna";
 
 // The example shows what Penna does: chapters with what happens and when, a subtitle and an
@@ -83,6 +85,7 @@ const PROJECT = {
   title: "Vintervägen",
   type: "roman",
   dailyGoal: 500,
+  connections: connections(SCENE_IDS),
   tree: [
     {
       id: "01J9Z4K2QX00000000000000P1",
@@ -107,7 +110,7 @@ const PROJECT = {
           subtitle: "Arvid",
           summary: "Arvid går upp i fyren och minns natten då ljusen syntes på isen.",
           when: "Samma natt",
-          children: [{ id: SCENE_IDS.fyren, kind: "scene" }],
+          children: [{ id: SCENE_IDS.fyren, kind: "scene", labels: ["kolla-fakta"] }],
         },
       ],
     },
@@ -125,8 +128,8 @@ const PROJECT = {
           epigraphBy: "Ordspråk från skärgården",
           when: "April",
           children: [
-            { id: SCENE_IDS.smaltningen, kind: "scene" },
-            { id: SCENE_IDS.hamnen, kind: "scene" },
+            { id: SCENE_IDS.smaltningen, kind: "scene", labels: ["skriv-om"] },
+            { id: SCENE_IDS.hamnen, kind: "scene", labels: ["lucka"] },
           ],
         },
       ],
@@ -153,6 +156,18 @@ const PROJECT = {
       title: "Saker",
       children: [{ id: SCENE_IDS.kuvertet, kind: "scene" }],
     },
+    {
+      id: "anteckningar",
+      kind: "sort",
+      title: "Övrigt",
+      children: [{ id: GUIDE_IDS.guide, kind: "scene" }],
+    },
+    {
+      id: "hemligheter",
+      kind: "sort",
+      title: "Hemligheter",
+      children: [secretNode(SCENE_IDS.smaltningen, SCENE_IDS.arvid, SCENE_IDS.fyren)],
+    },
   ],
 };
 
@@ -169,4 +184,10 @@ export const DEMO_PROJECT_FILES: Record<string, string> = {
   ...scene(SCENE_IDS.maja, "Maja", "utkast", MAJA),
   ...scene(SCENE_IDS.island, "Ön", "utkast", ISLAND),
   ...scene(SCENE_IDS.kuvertet, "Kuvertet", "utkast", KUVERTET),
+  ...scene(GUIDE_IDS.guide, "Börja här", "klar", GUIDE),
+  ...scene(GUIDE_IDS.secret, "Henrik lever", "utkast", SECRET),
+  [`${DEMO_PROJECT_DIR}/comments/${SCENE_IDS.fyren}.json`]: `${JSON.stringify(COMMENT, null, 2)}
+`,
+  [`${DEMO_PROJECT_DIR}/lappar.json`]: `${JSON.stringify(STICKY, null, 2)}
+`,
 };

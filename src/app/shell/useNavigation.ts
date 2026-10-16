@@ -34,10 +34,31 @@ export function useNavigation(current: Place, goTo: (place: Place) => void) {
     arriving.current = { place, until: Date.now() + ARRIVAL_MS };
     goToRef.current(place);
   };
+  useMouseSideButtons(step);
   return {
     canGoBack: index > 0,
     canGoForward: index < places.length - 1,
     back: () => step(-1),
     forward: () => step(1),
   };
+}
+
+// A mouse's side buttons step back and forward as the arrows do, instead of the web view's own
+// history, which has nothing to go back to.
+function useMouseSideButtons(step: (direction: 1 | -1) => void) {
+  const stepRef = useRef(step);
+  stepRef.current = step;
+  useEffect(() => {
+    const onButton = (event: MouseEvent) => {
+      if (event.button !== 3 && event.button !== 4) return;
+      event.preventDefault();
+      if (event.type === "mouseup") stepRef.current(event.button === 3 ? -1 : 1);
+    };
+    window.addEventListener("mousedown", onButton);
+    window.addEventListener("mouseup", onButton);
+    return () => {
+      window.removeEventListener("mousedown", onButton);
+      window.removeEventListener("mouseup", onButton);
+    };
+  }, []);
 }

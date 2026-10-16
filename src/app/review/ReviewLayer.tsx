@@ -18,6 +18,7 @@ import { BookTasks } from "./BookTasks.js";
 import { SceneSecretWarnings } from "../notes/SecretPanel.js";
 import { sidebarProps } from "../paneProps.js";
 import { RevisionSection } from "./RevisionSection.js";
+import { usePhone } from "../phone/usePhone.js";
 import { SuggestStart } from "./Suggesting.js";
 import type { useComments } from "./useComments.js";
 import { t } from "../../i18n/i18n.js";
@@ -64,7 +65,8 @@ function CommentsAndTasks(props: ShownProps) {
 
 // Opened while a comment is written, and closed once it is sent if it then stands in the margin.
 // Opened by itself for an editor's changes, too, so they are seen.
-function useOpening(app: AppState, isWriting: boolean) {
+function useOpening(app: AppState, isWriting: boolean, focused: string | null) {
+  useOpenedByClick(app, focused);
   const { setReviewOpen, settings } = app.writingMode;
   const hasRevision = app.revision.isOpen;
   const wasWriting = useRef(false);
@@ -73,6 +75,15 @@ function useOpening(app: AppState, isWriting: boolean) {
     else if (wasWriting.current && settings.commentsInMargin) setReviewOpen(false);
     wasWriting.current = isWriting;
   }, [isWriting, hasRevision, setReviewOpen, settings.commentsInMargin]);
+}
+
+// A click on commented words shows the comment: in the margin when it stands there, else in Granska.
+function useOpenedByClick(app: AppState, focused: string | null) {
+  const { setReviewOpen, settings } = app.writingMode;
+  const isInMargin = settings.commentsInMargin && !usePhone();
+  useEffect(() => {
+    if (focused && !isInMargin) setReviewOpen(true);
+  }, [focused, isInMargin, setReviewOpen]);
 }
 
 // About the whole book, beside the open scene: people who fade out, names alike, worn gestures.
@@ -104,7 +115,7 @@ function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
   const review = useReview({ ...props, cards: app.notes.cards, repeatWindow });
-  useOpening(app, props.comments.draft !== null);
+  useOpening(app, props.comments.draft !== null, props.comments.focused);
   return (
     <ReviewPanel
       review={isReviewOn ? review : null}

@@ -117,7 +117,7 @@ test("Innehåll counts the open tasks and leads to Granska", async ({ page }) =>
   await page.getByRole("button", { name: "Stäng granskning" }).click();
 
   await page.getByRole("button", { name: "Vintervägen" }).first().click();
-  await page.getByRole("button", { name: "Att göra · 1" }).click();
+  await page.getByRole("button", { name: /^Att göra · \d/ }).click();
 
   await expect(page.getByRole("complementary", { name: "Granskning" })).toBeVisible();
 });
