@@ -1,4 +1,5 @@
 import { CloseButton } from "../controls.js";
+import { useEditorState } from "../../editor/editorStore.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useState } from "react";
 import { plainText } from "../../manuscript/compare.js";
@@ -49,9 +50,9 @@ function titleOf(app: AppState, beside: Beside) {
 }
 
 // A version is compared with the open text when that is the one, otherwise with its saved text.
-function besideBody(app: AppState, beside: Beside, doc: Node | null) {
+function besideBody(app: AppState, beside: Beside, doc: Node | null, open: Node | undefined) {
   if (beside.kind === "text") return <SceneText doc={doc ?? undefined} />;
-  const live = app.scene?.id === beside.sceneId ? app.editor.editorState?.doc : doc;
+  const live = app.scene?.id === beside.sceneId ? open : doc;
   const now = live ? live.textBetween(0, live.content.size, "\n\n") : "";
   return <DiffText before={plainText(beside.snapshot.body, "\n\n")} now={now} />;
 }
@@ -60,6 +61,7 @@ function besideBody(app: AppState, beside: Beside, doc: Node | null) {
 export function BesidePane({ app, project }: { app: AppState; project: Project }) {
   const { beside, setBeside } = app.writingMode;
   const doc = useBesideDoc(beside, project);
+  const open = useEditorState(app.editor)?.doc;
   if (!beside) return null;
   return (
     <aside className="beside-pane" aria-label={t("Bredvid")}>
@@ -67,7 +69,7 @@ export function BesidePane({ app, project }: { app: AppState; project: Project }
         <span className="beside-title">{titleOf(app, beside)}</span>
         <CloseButton onClose={() => setBeside(null)} />
       </div>
-      <div className="beside-body manuscript">{besideBody(app, beside, doc)}</div>
+      <div className="beside-body manuscript">{besideBody(app, beside, doc, open)}</div>
     </aside>
   );
 }

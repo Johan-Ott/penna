@@ -21,6 +21,13 @@
   margin: 0;
 }
 
+/* A long chapter: the paragraphs out of sight are not laid out or drawn on each key, only when
+   they scroll near. Never the one being written in, or a fast key after Enter can be lost. */
+.writing .ProseMirror > p:not(.focused-block) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 3em;
+}
+
 /* Book style: every paragraph is indented except the first after a break or a style. */
 .manuscript p + p,
 .manuscript p + .page-mark + p {

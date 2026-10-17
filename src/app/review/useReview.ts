@@ -1,7 +1,7 @@
 import { readSceneBodies } from "../../project/sceneSummaries.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useMemo, useState } from "react";
-import { PAUSE_MS, sceneRepetitions } from "../../editor/repetitionMarks.js";
+import { sceneRepetitions } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { nameSuspects } from "../../manuscript/review.js";
 import { narrationNotes, narrationOf } from "../../manuscript/narration.js";
@@ -57,16 +57,6 @@ function othersThan(project: Project, sceneId: string, cards: Card[]) {
   return people.map((card) => card.name).filter((name) => !pov.includes(name));
 }
 
-// The text as it was at the writer's last pause, so Granska does not count on every key.
-function useSettled(doc: Node) {
-  const [settled, setSettled] = useState(doc);
-  useEffect(() => {
-    const timer = setTimeout(() => setSettled(doc), PAUSE_MS);
-    return () => clearTimeout(timer);
-  }, [doc]);
-  return settled;
-}
-
 // Asked of Penna's own dictionary at each pause, so only where the platform has one.
 function useSplitCompounds(text: string, language: string) {
   const [notes, setNotes] = useState<ProseNote[]>([]);
@@ -82,8 +72,8 @@ function useSplitCompounds(text: string, language: string) {
   return notes;
 }
 
-export function useReview({ project, scene, doc: current, cards, repeatWindow }: ReviewInput) {
-  const doc = useSettled(current);
+/** `doc` is the text at the writer's last pause, so Granska does not count on every key. */
+export function useReview({ project, scene, doc, cards, repeatWindow }: ReviewInput) {
   const chapterTexts = useChapterTexts(project, scene.id);
   const sceneText = doc.textBetween(0, doc.content.size, "\n");
   const inChapter = useMemo(() => {

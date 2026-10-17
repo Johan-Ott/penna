@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSettledDoc } from "../../editor/editorStore.js";
 import { documentText } from "../../editor/documentText.js";
 import { acceptChange, refreshRevision } from "../../editor/revisionMarks.js";
 import type { useEditorView } from "../../editor/useEditorView.js";
@@ -40,12 +41,9 @@ function useRevisedText({ project, scene }: Parts) {
 }
 
 function useChanges(editor: Editor, revised: string | null) {
-  const doc = editor.editorState?.doc;
-  const [settled, setSettled] = useState(doc);
-  useEffect(() => {
-    const timer = setTimeout(() => setSettled(doc), SETTLE_MS);
-    return () => clearTimeout(timer);
-  }, [doc]);
+  const paused = useSettledDoc(editor, SETTLE_MS);
+  const [settled, setSettled] = useState(paused);
+  useEffect(() => setSettled(paused), [paused]);
   const changes = useMemo(
     () =>
       revised === null || !settled ? [] : revisionChanges(documentText(settled).text, revised),
@@ -58,7 +56,7 @@ function useChanges(editor: Editor, revised: string | null) {
     run(refreshRevision, false);
   }, [changes, modes, run]);
   // After Godta the list is counted again at once, so a quick next click hits the next change.
-  const settleNow = () => setSettled(editor.viewRef.current?.state.doc);
+  const settleNow = () => setSettled(editor.viewRef.current?.state.doc ?? null);
   return { changes, settleNow };
 }
 

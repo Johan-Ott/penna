@@ -1,3 +1,4 @@
+import { useRootClass } from "./useRootClass.js";
 import {
   changeSize,
   nextLineHeight,
@@ -176,6 +177,7 @@ function FocusSwitch({ focusMode }: { focusMode: PanelProps["focusMode"] | undef
 
 export function WritingSettingsPanel(props: PanelProps) {
   const { settings, onChange } = props;
+  useRootClass("look-shown");
   return (
     <div className="settings-panel" role="dialog" aria-label={t("Skrivinställningar")}>
       <TypographySettings {...props} />

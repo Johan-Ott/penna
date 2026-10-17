@@ -51,7 +51,7 @@ function stateOf(app: AppState) {
 // The open text: what it says, and typing in it as the writer would.
 const editorCalls = (current: () => AppState) => ({
   text: () => {
-    const doc = current().editor.editorState?.doc;
+    const doc = current().editor.viewRef.current?.state.doc;
     return doc ? doc.textBetween(0, doc.content.size, "\n\n", " ") : "";
   },
   /** Typed at the cursor in the open text, and saved as anything typed is. */

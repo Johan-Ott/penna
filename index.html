@@ -92,7 +92,7 @@
           transform: translateX(250%);
         }
       }
-      #root:not(:empty):not(:has(.app-starting)) + #boot {
+      html:not(.starting) #root:not(:empty) + #boot {
         visibility: hidden;
         opacity: 0;
       }

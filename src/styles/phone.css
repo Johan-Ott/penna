@@ -1093,7 +1093,7 @@ body .phone-app .text-when input {
 
 /* A computer's window as narrow as a phone: its buttons sit over the room a phone keeps for its
    status bar. */
-:root:has(.phone-app > .window-bar, .phone-screen > .window-bar) {
+:root.phone-window {
   --safe-top: 32px;
 }
 

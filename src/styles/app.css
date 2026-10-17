@@ -543,7 +543,7 @@ select:focus-visible {
 
 /* Writing settings popover */
 /* The selection's bar steps aside while the text's look is being changed. */
-body:has(.settings-panel) .selection-bar {
+html.look-shown .selection-bar {
   display: none;
 }
 
@@ -672,7 +672,7 @@ body:has(.settings-panel) .selection-bar {
 }
 
 /* In typewriter mode the chapter heading and the first line can also reach typewriter height. */
-.page:has(.manuscript.typewriter) {
+.manuscript.typewriter {
   padding-top: 40vh;
 }
 
@@ -3528,7 +3528,7 @@ button.book-cover:hover {
   user-select: none;
 }
 
-body:has(.welcome) {
+html.welcome-shown body {
   background: var(--bg);
 }
 

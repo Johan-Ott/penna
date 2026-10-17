@@ -1,4 +1,6 @@
+import { useLayoutEffect, useRef } from "react";
 import { platform } from "../platform.js";
+import { useRootClass } from "../useRootClass.js";
 import { isMac } from "../../thisComputer.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -40,9 +42,16 @@ export function WindowControls() {
 /** The window's buttons and a place to drag it, where no top bar is: on the start picture, and
  * in a computer's window narrowed to the phone's screens. A Mac has the system's own bar there. */
 export function WindowBar() {
+  const bar = useRef<HTMLDivElement>(null);
+  // Over a phone's screen the bar takes the room a phone keeps for its status bar.
+  useLayoutEffect(() => {
+    if (!bar.current?.parentElement?.matches(".phone-app, .phone-screen")) return;
+    document.documentElement.classList.add("phone-window");
+    return () => document.documentElement.classList.remove("phone-window");
+  }, []);
   if (!platform.windowControls || isMac) return null;
   return (
-    <div className="window-bar" data-tauri-drag-region>
+    <div ref={bar} className="window-bar" data-tauri-drag-region>
       <WindowControls />
     </div>
   );
@@ -50,8 +59,11 @@ export function WindowBar() {
 
 /** While Penna starts or reads a book from the shelf: the start picture, over this, and the
  * window's buttons on top of it. */
-export const StartPicture = () => (
-  <div className="app-starting">
-    <WindowBar />
-  </div>
-);
+export function StartPicture() {
+  useRootClass("starting");
+  return (
+    <div className="app-starting">
+      <WindowBar />
+    </div>
+  );
+}

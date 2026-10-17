@@ -52,11 +52,14 @@ interface PageLook {
   isFocusMode: boolean;
   opensChapter?: boolean | undefined;
   bookLook?: BookLook | undefined;
+  /** A note, which is laid out as a sheet rather than as a book page. */
+  isNote?: boolean;
 }
 
-export function pageClass({ settings, isFocusMode, opensChapter, bookLook }: PageLook) {
+export function pageClass({ settings, isFocusMode, opensChapter, bookLook, isNote }: PageLook) {
   return [
     "page",
+    isNote && "note",
     settings.paper && !isFocusMode && "paper",
     settings.bookType && `book-type ${bookLook?.classes ?? ""}`,
     opensChapter && "opens-chapter",

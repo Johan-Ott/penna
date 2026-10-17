@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logo from "../../assets/penna-logo.png";
 import { platform } from "../platform.js";
+import { useRootClass } from "../useRootClass.js";
 import { WindowBar } from "../shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -30,6 +31,7 @@ function WayIn({ onStart, canSignIn }: { onStart: Start; canSignIn: boolean }) {
 
 export function Welcome({ onStart }: { onStart: (withGoogle: boolean) => Promise<void> }) {
   const [problem, setProblem] = useState<string | null>(null);
+  useRootClass("welcome-shown");
   const start = (withGoogle: boolean) =>
     void onStart(withGoogle).catch(() =>
       setProblem(t("Inloggningen blev inte klar. Försök igen.")),

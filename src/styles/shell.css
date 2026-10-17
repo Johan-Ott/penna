@@ -643,13 +643,13 @@
 
 /* A note is short; what follows it, its mentions or who knows a secret, comes right under it
    instead of half a screen down. */
-.page:has(.note-mentions, .secret-panel) .manuscript .ProseMirror {
+.page.note .manuscript .ProseMirror {
   min-height: 0;
   padding-bottom: 40px;
 }
 
 /* A note is a sheet, not a book page: its paragraphs stand apart instead of indenting. */
-.page:has(.note-mentions, .secret-panel) .manuscript p + p {
+.page.note .manuscript p + p {
   margin-top: 0.6em;
   text-indent: 0;
 }

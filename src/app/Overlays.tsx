@@ -1,4 +1,6 @@
 import { labelsOf } from "../project/labels.js";
+import { useSettledDoc } from "../editor/editorStore.js";
+import { PAUSE_MS } from "../editor/repetitionMarks.js";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { useCallback, useMemo } from "react";
 import { useAutoBackup } from "./useAutoBackup.js";
@@ -167,6 +169,8 @@ function readDraftBeside(app: OverlayParts, draft: Draft) {
 }
 
 export function Overlays({ app }: { app: OverlayParts }) {
+  // A version is compared with the text as it stood at the last pause.
+  const doc = useSettledDoc(app.editor, PAUSE_MS);
   return (
     <>
       <ConflictLayer {...app} />
@@ -174,7 +178,7 @@ export function Overlays({ app }: { app: OverlayParts }) {
       <SnapshotsLayer
         state={app.snapshots}
         sceneTitle={app.scene?.title ?? ""}
-        doc={app.editor.editorState?.doc ?? null}
+        doc={doc}
         onBeside={(snapshot) => compareBeside(app, snapshot)}
       />
       <DraftsLayer

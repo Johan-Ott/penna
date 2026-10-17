@@ -2,6 +2,7 @@ import { LEAF } from "./documentText.js";
 import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey, type Command } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
+import { recountAfterPause } from "./repetitionMarks.js";
 
 export interface MentionMatcher {
   id: string;
@@ -68,11 +69,12 @@ export function mentionsPlugin(
     key: mentionsKey,
     state: {
       init: (_config, state) => mentionDecorations(state.doc, matchers()),
-      apply: (transaction, old, _oldState, state) =>
-        transaction.docChanged || transaction.getMeta(mentionsKey)
-          ? mentionDecorations(state.doc, matchers())
-          : old,
+      apply: (transaction, old, _oldState, state) => {
+        if (transaction.getMeta(mentionsKey)) return mentionDecorations(state.doc, matchers());
+        return transaction.docChanged ? old.map(transaction.mapping, transaction.doc) : old;
+      },
     },
+    view: recountAfterPause(refreshMentions),
     props: {
       decorations: (state) => mentionsKey.getState(state),
       handleClick: (_view, _position, event) => {

@@ -26,7 +26,7 @@ function useClicked(editor: Editor) {
 // The word the cursor stands in, when Granska has marked it as said again close by.
 export function repeatedAtCaret(editor: Editor) {
   const view = editor.viewRef.current;
-  const state = editor.editorState;
+  const state = view?.state;
   if (!view || !state) return null;
   const { node } = view.domAtPos(state.selection.from);
   const element = node instanceof Element ? node : node.parentElement;
@@ -46,7 +46,7 @@ export function RepeatNote({ word, onReview }: { word: string; onReview: () => v
 
 function caretPlace(editor: Editor) {
   const view = editor.viewRef.current;
-  const from = editor.editorState?.selection.from;
+  const from = view?.state.selection.from;
   return view && from !== undefined ? view.coordsAtPos(from) : null;
 }
 

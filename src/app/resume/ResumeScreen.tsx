@@ -1,4 +1,5 @@
 import { WindowBar } from "../shell/WindowControls.js";
+import { useEditorState } from "../../editor/editorStore.js";
 import { useEffect } from "react";
 import { cursorAt } from "../../editor/commands.js";
 import { positionAfter } from "../../editor/documentText.js";
@@ -82,7 +83,7 @@ export function ResumeScreen(props: {
   const place = useResume();
   const isPhone = usePhone();
   const { editor } = props;
-  const doc = editor.editorState?.doc;
+  const doc = useEditorState(editor)?.doc;
   const position = place && doc ? positionAfter(doc, place.before ?? "", place.position) : 0;
   const goOn = () => {
     if (!place) return;

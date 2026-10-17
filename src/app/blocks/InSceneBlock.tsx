@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSettledDoc } from "../../editor/editorStore.js";
+import { PAUSE_MS } from "../../editor/repetitionMarks.js";
 import { plainText } from "../../manuscript/compare.js";
 import { countMentions } from "../../project/cards.js";
 import { readSceneBodies } from "../../project/sceneSummaries.js";
@@ -33,7 +35,8 @@ function useFirstLines(refs: { dir: string; id: string }[]) {
 // The linked notes named in the open scene's text, but not the scene itself if it is a note.
 export function useNamedHere(app: AppState) {
   const sceneId = app.scene?.id ?? null;
-  const text = app.editor.editorState?.doc.textContent ?? "";
+  // Who is named follows the text at each pause, not at each key.
+  const text = useSettledDoc(app.editor, PAUSE_MS)?.textContent ?? "";
   const { cards } = app.notes;
   return useMemo(() => {
     if (!sceneId) return [];

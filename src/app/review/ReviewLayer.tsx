@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { useSettledDoc } from "../../editor/editorStore.js";
+import { PAUSE_MS } from "../../editor/repetitionMarks.js";
 import type { Node } from "prosemirror-model";
 import { SearchQuery } from "prosemirror-search";
 import type { NameSuspect } from "../../manuscript/review.js";
@@ -167,7 +169,7 @@ function isWanted({ writingMode, comments, revision }: AppState) {
 
 export function ReviewLayer({ app, project }: { app: AppState; project: Project }) {
   const { scene, writingMode, comments } = app;
-  const doc = app.editor.editorState?.doc;
+  const doc = useSettledDoc(app.editor, PAUSE_MS);
   if (!isWanted(app) || writingMode.isFocusMode || !scene || !doc) return null;
   return <ShownReview app={app} project={project} scene={scene} doc={doc} comments={comments} />;
 }

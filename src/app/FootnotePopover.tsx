@@ -1,4 +1,5 @@
 import { NodeSelection, TextSelection } from "prosemirror-state";
+import { useEditorState } from "../editor/editorStore.js";
 import { selectedFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
 import { t } from "../i18n/i18n.js";
@@ -44,7 +45,7 @@ function FootnoteText(props: { editor: Editor; position: number; text: string })
 
 export function FootnotePopover({ editor }: { editor: Editor }) {
   const view = editor.viewRef.current;
-  const selection = editor.editorState?.selection;
+  const selection = useEditorState(editor)?.selection;
   const footnote = selection ? selectedFootnote(selection) : null;
   if (!view || !footnote) return null;
   const { position, node } = footnote;

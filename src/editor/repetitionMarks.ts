@@ -36,18 +36,18 @@ export const refreshRepetitions: Command = (state, dispatch) => {
 /** How long the writer pauses before the marks are counted again over the whole scene. */
 export const PAUSE_MS = 300;
 
-// While typing the marks only move along with the text; a pause counts them again.
-function recountAfterPause(): PluginView {
+/** While typing, marks only move along with the text; a pause counts them again with `recount`. */
+export const recountAfterPause = (recount: Command) => (): PluginView => {
   let timer: ReturnType<typeof setTimeout> | undefined;
   return {
     update: (view, previous) => {
       if (view.state.doc === previous.doc) return;
       clearTimeout(timer);
-      timer = setTimeout(() => refreshRepetitions(view.state, view.dispatch), PAUSE_MS);
+      timer = setTimeout(() => recount(view.state, view.dispatch), PAUSE_MS);
     },
     destroy: () => clearTimeout(timer),
   };
-}
+};
 
 /** `window` is asked on each count; null turns the marks off. */
 export function repetitionsPlugin(window: () => number | null) {
@@ -64,7 +64,7 @@ export function repetitionsPlugin(window: () => number | null) {
         return transaction.docChanged ? old.map(transaction.mapping, transaction.doc) : old;
       },
     },
-    view: recountAfterPause,
+    view: recountAfterPause(refreshRepetitions),
     props: { decorations: (state) => repetitionsKey.getState(state) },
   });
 }

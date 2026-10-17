@@ -1,4 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
+import { useSettledDoc } from "../../editor/editorStore.js";
+import { PAUSE_MS } from "../../editor/repetitionMarks.js";
 import type { Comment } from "../../project/comments.js";
 import { snapshotWhen } from "../../project/snapshots.js";
 import type { AppState } from "../App.js";
@@ -76,7 +78,7 @@ function Note({ app, comment, replies }: { app: AppState; comment: Comment; repl
 export function MarginNotes({ app }: { app: AppState }) {
   const all = app.comments.comments;
   const shown = all.filter((comment) => !comment.replyTo && !comment.resolved);
-  const box = usePlacement(shown, app.editor.editorState?.doc);
+  const box = usePlacement(shown, useSettledDoc(app.editor, PAUSE_MS) ?? undefined);
   const { settings, isFocusMode } = app.writingMode;
   if (!settings.commentsInMargin || isFocusMode || shown.length === 0) return null;
   return (

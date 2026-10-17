@@ -5,6 +5,7 @@ import { EditorView } from "prosemirror-view";
 import { useCallback, useRef, useState } from "react";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
 import { createEditorState, type EditorSwitches } from "./editorState.js";
+import { createEditorStore, type EditorStore } from "./editorStore.js";
 import type { MentionMatcher } from "./mentions.js";
 import type { CommentAnchor } from "./commentMarks.js";
 import { pictureNodeView, type PictureUrl } from "./pictureView.js";
@@ -123,7 +124,7 @@ function useFocusRequest(viewRef: React.RefObject<EditorView | null>) {
 function useMount(
   viewRef: React.RefObject<EditorView | null>,
   switches: ViewSwitches,
-  setEditorState: (state: EditorState | null) => void,
+  store: EditorStore,
   onDocChangeRef: React.RefObject<(doc: Node) => void>,
 ) {
   // A new mount (the phone turned, the screen changed) carries on with the open text; an empty
@@ -138,28 +139,28 @@ function useMount(
           element,
           switches,
           (next, docChanged) => {
-            setEditorState(next);
+            store.set(next);
             if (docChanged) onDocChangeRef.current(next.doc);
           },
           state,
         )
       : null;
-    setEditorState(viewRef.current?.state ?? null);
+    store.set(viewRef.current?.state ?? null);
   }, []);
 }
 
-/** React re-renders on every transaction through `editorState`. */
+/** Components that show the text read it with useEditorState(editor); the rest is not redrawn. */
 export function useEditorView(onDocChange: (doc: Node) => void) {
   const viewRef = useRef<EditorView | null>(null);
   const onDocChangeRef = useRef(onDocChange);
   onDocChangeRef.current = onDocChange;
   const { switches, modes } = useModeSwitches();
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [store] = useState(createEditorStore);
 
-  const mount = useMount(viewRef, switches, setEditorState, onDocChangeRef);
+  const mount = useMount(viewRef, switches, store, onDocChangeRef);
   const load = useCallback((doc: Node) => {
     viewRef.current?.updateState(createEditorState(doc, switches));
-    setEditorState(viewRef.current?.state ?? null);
+    store.set(viewRef.current?.state ?? null);
   }, []);
 
   const run = useCallback((command: Command, shouldFocus = true) => {
@@ -168,5 +169,5 @@ export function useEditorView(onDocChange: (doc: Node) => void) {
   }, []);
 
   const focus = useFocusRequest(viewRef);
-  return { mount, load, run, editorState, viewRef, modes, ...focus };
+  return { mount, load, run, store, viewRef, modes, ...focus };
 }

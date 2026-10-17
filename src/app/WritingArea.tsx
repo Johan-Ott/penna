@@ -1,4 +1,5 @@
 import { useEffect, type CSSProperties, type ReactNode } from "react";
+import { useEditorState } from "../editor/editorStore.js";
 import { GuideTip } from "./guide/GuideTip.js";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { refreshPageMarks } from "../editor/pageMarks.js";
@@ -99,7 +100,10 @@ function Page(props: WritingAreaProps) {
   const { editor, settings, isFocusMode, hasScene } = props;
   const textMenu = useTextMenu(editor);
   return (
-    <div className={pageClass(props)} style={pageStyle(props) as CSSProperties}>
+    <div
+      className={pageClass({ ...props, isNote: Boolean(props.footer) })}
+      style={pageStyle(props) as CSSProperties}
+    >
       <div className="sheet">
         {!hasScene && <EmptyScene onNewScene={props.onNewScene} />}
         {hasScene && !isFocusMode && props.header}
@@ -127,15 +131,7 @@ function Floating(props: WritingAreaProps & { isSettingsOpen: boolean }) {
           showsFocusOptions={props.isFocusMode}
         />
       )}
-      {props.isSearchOpen && (
-        <SearchPanel
-          key={props.searchSeed}
-          {...props.editor}
-          initialSearch={props.searchSeed}
-          manuscript={props.manuscriptSearch}
-          onClose={() => props.setSearchOpen(false)}
-        />
-      )}
+      {props.isSearchOpen && <OpenSearch {...props} />}
       {props.selectionBar}
       <SaveToast status={props.saveStatus} onRetry={props.onRetrySave} />
       <SavedNowToast onSave={props.onSaveNow} />
@@ -172,10 +168,24 @@ function useEditorModes(props: WritingAreaProps) {
   );
 }
 
+// Search follows the text as it changes, so it listens to the editor itself.
+function OpenSearch(props: WritingAreaProps) {
+  return (
+    <SearchPanel
+      key={props.searchSeed}
+      {...props.editor}
+      editorState={useEditorState(props.editor)}
+      initialSearch={props.searchSeed}
+      manuscript={props.manuscriptSearch}
+      onClose={() => props.setSearchOpen(false)}
+    />
+  );
+}
+
 // Focus mode has its own header, with Aa; otherwise Aa is in the top bar.
 function WritingHead(props: WritingAreaProps & { panels: ReturnType<typeof usePanels> }) {
   const { panels } = props;
-  const doc = props.editor.editorState?.doc;
+  const doc = useEditorState(props.editor)?.doc;
   const toggleSettings = () => panels.setSettingsOpen(!panels.isSettingsOpen);
   return (
     <>

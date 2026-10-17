@@ -1,4 +1,5 @@
 import { TextSelection, type Command, type EditorState } from "prosemirror-state";
+import { useEditorState } from "../editor/editorStore.js";
 import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
@@ -74,7 +75,7 @@ const phoneBarTop = () =>
 
 function barPosition(editor: Editor, isPhone: boolean) {
   const view = editor.viewRef.current;
-  const selection = editor.editorState?.selection;
+  const selection = view?.state.selection;
   if (!view || !(selection instanceof TextSelection) || selection.empty) return null;
   if (isPhone) return { top: phoneBarTop() };
   const start = view.coordsAtPos(selection.from);
@@ -128,11 +129,12 @@ function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { is
 /** Marks, a comment or a footnote for the selected words, and the words as a picture to share. */
 export function SelectionBar(props: BarProps) {
   const { editor } = props;
+  const editorState = useEditorState(editor);
   const isWanted = useIsBarWanted(editor);
   const isPhone = usePhone();
   const position = isWanted ? barPosition(editor, isPhone) : null;
   if (!position) return null;
-  const marks = { editorState: editor.editorState, run: editor.run };
+  const marks = { editorState, run: editor.run };
   return (
     <div
       className={isPhone ? "selection-bar phone" : "selection-bar"}
@@ -143,9 +145,9 @@ export function SelectionBar(props: BarProps) {
     >
       <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
-      {!isPhone && <StylePicker editorState={editor.editorState} run={editor.run} />}
+      {!isPhone && <StylePicker editorState={editorState} run={editor.run} />}
       <BarActions {...props} isPhone={isPhone} />
-      {!isPhone && <SelectedWords editorState={editor.editorState} />}
+      {!isPhone && <SelectedWords editorState={editorState} />}
     </div>
   );
 }

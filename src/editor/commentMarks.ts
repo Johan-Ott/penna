@@ -38,10 +38,11 @@ export function commentsPlugin(comments: () => CommentAnchor[], onComment: (id: 
     key: commentsKey,
     state: {
       init: (_config, state) => commentDecorations(state.doc, comments()),
-      apply: (transaction, old, _oldState, state) =>
-        transaction.docChanged || transaction.getMeta(commentsKey)
-          ? commentDecorations(state.doc, comments())
-          : old,
+      // A quote moves with the text as it is typed; the comments changing find them anew.
+      apply: (transaction, old, _oldState, state) => {
+        if (transaction.getMeta(commentsKey)) return commentDecorations(state.doc, comments());
+        return transaction.docChanged ? old.map(transaction.mapping, transaction.doc) : old;
+      },
     },
     props: {
       decorations: (state) => commentsKey.getState(state),

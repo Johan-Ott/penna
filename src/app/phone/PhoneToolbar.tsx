@@ -1,4 +1,5 @@
 import { redo, undo } from "prosemirror-history";
+import { useEditorState } from "../../editor/editorStore.js";
 import { useState } from "react";
 import { insertSceneBreak } from "../../editor/commands.js";
 import { insertFootnote } from "../../editor/footnoteEditing.js";
@@ -32,7 +33,7 @@ function Tools(props: { app: AppState; project: Project; onSettings: () => void 
   const { editor } = props.app;
   return (
     <>
-      <StylePicker editorState={editor.editorState} run={editor.run} />
+      <StylePicker editorState={useEditorState(editor)} run={editor.run} />
       {tools(props.app, props.project, props.onSettings).map(([label, symbol, onPress]) => (
         <button key={label} className="phone-tool" aria-label={label} onClick={onPress}>
           {symbol}
