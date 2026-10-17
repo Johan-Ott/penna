@@ -66,6 +66,24 @@
         animation: boot-line 1.1s ease-in-out infinite;
         content: "";
       }
+      /* A tip comes in only when the start takes a while. */
+      #boot p {
+        max-width: 300px;
+        min-height: 3em;
+        margin: 0 24px;
+        color: color-mix(in srgb, var(--boot-line) 60%, transparent);
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+        text-align: center;
+        opacity: 0;
+        animation: boot-tip 500ms ease-out 2.5s forwards;
+      }
+      @keyframes boot-tip {
+        to {
+          opacity: 1;
+        }
+      }
       @keyframes boot-line {
         from {
           transform: translateX(-100%);
@@ -93,7 +111,9 @@
     <div id="boot" aria-hidden="true">
       <img src="/src/assets/penna-logo.png" alt="" />
       <span></span>
+      <p id="boot-tip"></p>
     </div>
+    <script src="/boot-tip.js"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
