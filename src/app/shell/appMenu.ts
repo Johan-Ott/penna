@@ -31,7 +31,7 @@ type BookAction = "showVersions" | "exportZip" | "importRevision" | "showBackups
 const BOOK_ITEMS: [BookAction, string][] = [
   ["showVersions", t("Versioner av den här texten")],
   ["exportZip", t("Exportera allt som zip")],
-  ["importRevision", t("Läs in redaktörens Word-fil…")],
+  ["importRevision", t("Läs in kommenterad Word-fil…")],
   ["showBackups", t("Säkerhetskopior…")],
 ];
 

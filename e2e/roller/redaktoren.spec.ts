@@ -44,7 +44,7 @@ test("a manuscript goes to the editor in Word and comes back with changes to tak
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
-  await page.getByRole("menuitem", { name: "Läs in redaktörens Word-fil…" }).click();
+  await page.getByRole("menuitem", { name: "Läs in kommenterad Word-fil…" }).click();
   await (await chooser).setFiles(edited);
   await expect(page.getByText(/Redaktören har ändrat i \d+ scener/)).toBeVisible();
   await page.getByRole("button", { name: "Stäng", exact: true }).click();

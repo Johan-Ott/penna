@@ -18,7 +18,7 @@ const versionsItem = (app: AppState): MenuItem[] => {
 const sharingAndCopies = (app: AppState, dialogs: ReturnType<typeof useMenuDialogs>) => [
   ...group(t("Dela och samarbeta"), [
     ...(app.project ? collaborationItems(app.project, app.zip.run) : []),
-    { label: t("Läs in redaktörens Word-fil…"), onSelect: dialogs.revision.open },
+    { label: t("Läs in kommenterad Word-fil…"), onSelect: dialogs.revision.open },
   ]),
   ...group(t("Kopior och export"), [
     ...versionsItem(app),

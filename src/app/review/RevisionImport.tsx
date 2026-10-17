@@ -2,6 +2,13 @@ import { useState } from "react";
 import { documentText } from "../../editor/documentText.js";
 import { readBookScenes } from "../../export/book.js";
 import { writeRevision } from "../../project/revisions.js";
+import {
+  newComment,
+  readComments as loadComments,
+  writeComments,
+  type Comment,
+} from "../../project/comments.js";
+import type { WordComment } from "../../import/docxComments.js";
 import { Dialog } from "../controls.js";
 import { recordFailure } from "../errorLog.js";
 import { platform } from "../platform.js";
@@ -10,10 +17,11 @@ import { t } from "../../i18n/i18n.js";
 
 const WORD = { name: t("Word-dokument"), extensions: ["docx"] };
 
-/** What reading the file found: the scenes the editor changed, and how many scenes it held. */
+/** What reading the file found: the scenes changed, how many scenes it held, and new comments. */
 interface ReadBack {
   changed: string[];
   found: number;
+  comments: number;
 }
 
 // Only scenes whose text differs get an editor's version; the rest are left alone.
@@ -31,7 +39,27 @@ async function readEditorsFile(project: Project): Promise<ReadBack | null> {
     await writeRevision(platform.fileSystem, project.dir, sceneId, text);
     changed.push(sceneId);
   }
-  return { changed, found: texts.size };
+  const comments = await readComments(project, picked.bytes);
+  return { changed, found: texts.size, comments };
+}
+
+const isSame = (one: Comment, other: WordComment) =>
+  one.quote === other.quote && one.body === other.body && one.author === other.author;
+
+// Each comment joins its scene's own, unless it is there already from reading the file before.
+async function readComments(project: Project, docx: Uint8Array) {
+  const { docxComments } = await import("../../import/docxComments.js");
+  const { fileSystem } = platform;
+  let added = 0;
+  for (const found of await docxComments(docx)) {
+    if (!project.scenes.includes(found.sceneId)) continue;
+    const existing = await loadComments(fileSystem, project.dir, found.sceneId);
+    if (existing.some((comment) => isSame(comment, found))) continue;
+    const comment = newComment(found, found.body, found.author || t("Testläsare"));
+    await writeComments(fileSystem, project.dir, found.sceneId, [...existing, comment]);
+    added++;
+  }
+  return added;
 }
 
 function ChangedScenes(props: {
@@ -65,7 +93,7 @@ function ReadBackMessage(props: {
   onOpenScene: (id: string) => void;
 }) {
   const { readBack } = props;
-  if (readBack.found === 0) {
+  if (readBack.found === 0 && readBack.comments === 0) {
     return (
       <p>
         {t(
@@ -74,12 +102,21 @@ function ReadBackMessage(props: {
       </p>
     );
   }
-  if (readBack.changed.length === 0)
-    return <p>{t("Redaktören har inte ändrat något i texten.")}</p>;
-  return <ChangedScenes {...props} />;
+  return (
+    <>
+      {readBack.comments > 0 && (
+        <p>{t("{count} nya kommentarer finns nu i Granska.", { count: readBack.comments })}</p>
+      )}
+      {readBack.changed.length > 0 ? (
+        <ChangedScenes {...props} />
+      ) : (
+        <p>{t("Ingen har ändrat något i texten.")}</p>
+      )}
+    </>
+  );
 }
 
-/** "Läs in redaktörens Word-fil": the menu item, and the answer once the file is read. */
+/** "Läs in kommenterad Word-fil": the menu item, and the answer once the file is read. */
 export function useRevisionImport(
   project: Project,
   onRead: () => void,
@@ -95,7 +132,7 @@ export function useRevisionImport(
       .catch(recordFailure("Redigering"));
   const close = () => setReadBack(null);
   const layer = readBack && (
-    <Dialog label={t("Redaktörens ändringar")} onClose={close}>
+    <Dialog label={t("Ändringar och kommentarer")} onClose={close}>
       <ReadBackMessage
         project={project}
         readBack={readBack}

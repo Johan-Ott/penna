@@ -43,7 +43,7 @@ const SECTIONS: [string, string[]][] = [
         "Exportera som PDF för tryck, som e-bok (EPUB), som manus i Word, eller tryckomslaget med rygg.",
       ),
       t(
-        "Till en redaktör: exportera manus i Word, låt redaktören skriva i filen och läs in den under Meny, Dela och samarbeta, Läs in redaktörens Word-fil. Varje ändring visas under Granska, att godta eller avvisa.",
+        "Till en redaktör eller testläsare: välj Skicka till redaktör eller testläsare, så får du ett Word-manus. De ändrar och kommenterar i Word, Google Docs eller Pages, och du läser in filen under Meny, Dela och samarbeta, Läs in kommenterad Word-fil. Ändringarna och kommentarerna hamnar i Granska.",
       ),
     ],
   ],

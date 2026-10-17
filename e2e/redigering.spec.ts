@@ -45,7 +45,7 @@ test("an editor's Word file is read back, and their changes are accepted or reje
   const chooser = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
-  await page.getByRole("menuitem", { name: "Läs in redaktörens Word-fil…" }).click();
+  await page.getByRole("menuitem", { name: "Läs in kommenterad Word-fil…" }).click();
   await (await chooser).setFiles(file);
   await expect(page.getByText("Redaktören har ändrat i 1 scener")).toBeVisible();
   await page.getByRole("button", { name: "Stäng", exact: true }).click();
@@ -57,4 +57,61 @@ test("an editor's Word file is read back, and their changes are accepted or reje
 
   await expect(panel.getByText("Alla ändringar är genomgångna.")).toBeVisible();
   await expect(editor(page)).not.toContainText("Med posten");
+});
+
+// The first scene as a test reader sends it back: unchanged, with a comment on one word.
+async function readersFile(folder: string) {
+  const { CommentRangeEnd, CommentRangeStart, CommentReference } = await import("docx");
+  const doc = new Document({
+    comments: {
+      children: [
+        {
+          id: 0,
+          author: "Testläsaren",
+          children: [new Paragraph({ children: [new TextRun("Vem skickade det?")] })],
+        },
+      ],
+    },
+    sections: [
+      {
+        children: [
+          new Paragraph({
+            children: [
+              new Bookmark({ id: `penna_${KOKET}`, children: [] }),
+              new TextRun("Brevet låg på köksbordet när Elin kom in från kylan. "),
+              new CommentRangeStart(0),
+              new TextRun("Kuvertet"),
+              new CommentRangeEnd(0),
+              new TextRun({ children: [new CommentReference(0)] }),
+              new TextRun(" var gult av ålder."),
+              new Bookmark({ id: `pennaend_${KOKET}`, children: [] }),
+            ],
+          }),
+        ],
+      },
+    ],
+  });
+  mkdirSync(folder, { recursive: true });
+  const path = join(folder, "kommenterad.docx");
+  writeFileSync(path, await Packer.toBuffer(doc));
+  return path;
+}
+
+test("a test reader's comments in Word come into Granska, on the words they are on", async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1400, height: 900 });
+  await openExample(page);
+  const file = await readersFile(testInfo.outputDir);
+
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
+  await page.getByRole("menuitem", { name: "Läs in kommenterad Word-fil…" }).click();
+  await (await chooser).setFiles(file);
+  await expect(page.getByText("1 nya kommentarer finns nu i Granska.")).toBeVisible();
+  await page.getByRole("button", { name: "Stäng", exact: true }).click();
+
+  await expect(page.getByText("Vem skickade det?").first()).toBeVisible();
+  await expect(editor(page).locator(".commented", { hasText: "Kuvertet" })).toBeVisible();
 });

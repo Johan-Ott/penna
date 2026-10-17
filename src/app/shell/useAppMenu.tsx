@@ -35,7 +35,9 @@ export function useMenuDialogs({ app, project }: { app: AppState; project: Proje
   const dirs = [project.dir, app.series?.dir].filter((dir) => dir !== undefined);
   const backups = useBackupsDialog(app, dirs);
   const feedback = useFeedbackDialog();
-  const revision = useRevisionImport(project, app.revision.reload, (id) =>
+  // Read anew after the file, so the new comments show in Granska at once.
+  const afterRead = () => (app.revision.reload(), void app.refresh());
+  const revision = useRevisionImport(project, afterRead, (id) =>
     openIfOnDisk(app.session, project, id),
   );
   const series = useSeriesChoice(app, project);

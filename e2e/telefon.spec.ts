@@ -198,7 +198,7 @@ test("the phone's menu has Serie… under Boken, and the editor's Word file", as
   await page.keyboard.press("Escape");
   await menu();
   await page.getByRole("menuitem", { name: "Dela och samarbeta" }).click();
-  await expect(page.getByRole("menuitem", { name: /redaktörens Word-fil/ })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: /kommenterad Word-fil/ })).toBeVisible();
 });
 
 test("Öppna bredvid from Boken shows the other text over the whole screen", async ({ page }) => {
