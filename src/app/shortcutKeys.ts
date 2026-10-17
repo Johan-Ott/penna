@@ -1,4 +1,4 @@
-import { isMac } from "../thisComputer.js";
+import { isMac } from "@llkit/thisComputer.js";
 
 // How a key combination is written down, apart from the commands that carry them.
 

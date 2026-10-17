@@ -7,7 +7,7 @@ import {
 } from "../project/sceneSummaries.js";
 import { reconcileScenes, type TreeNode } from "../project/tree.js";
 import { openProjectFolder, type OpenedProject } from "../storage/projectFolder.js";
-import { describeSaveError, type SaveFailure } from "../storage/saveError.js";
+import { describeSaveError, type SaveFailure } from "@llkit/storage/saveError.js";
 import { errorLog, recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 

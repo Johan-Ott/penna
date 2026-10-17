@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeSaveError } from "../src/storage/saveError";
+import { describeSaveError } from "@llkit/storage/saveError.js";
 
 const nodeError = (code: string) => Object.assign(new Error(code), { code });
 

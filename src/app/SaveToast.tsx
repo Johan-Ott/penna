@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { SaveStatus } from "../storage/autosave.js";
-import type { SaveFailure } from "../storage/saveError.js";
+import type { SaveStatus } from "@llkit/storage/autosave.js";
+import type { SaveFailure } from "@llkit/storage/saveError.js";
 import { t, formatNumber } from "../i18n/i18n.js";
 import { useShortcut } from "./useShortcut.js";
 

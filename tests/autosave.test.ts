@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createAutosave, type SaveStatus } from "../src/storage/autosave";
+import { createAutosave, type SaveStatus } from "@llkit/storage/autosave.js";
 
 const blockedError = Object.assign(new Error("blocked"), { code: "EPERM" });
 

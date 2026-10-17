@@ -1,31 +1,15 @@
+import { addEnglish } from "@llkit/i18n.js";
 import english from "./en.json";
 
-// Looked up by the Swedish text.
-const ENGLISH: Record<string, string> = english;
+// Penna's texts, looked up by llkit's i18n; Penna imports t and the rest from here.
+addEnglish(english);
 
-export type UiLanguage = "sv" | "en";
-
-export const UI_LANGUAGES: [UiLanguage, string][] = [
-  ["sv", "Svenska"],
-  ["en", "English"],
-];
-
-let current: UiLanguage = "sv";
-
-/** Set once at start, before anything is drawn; a change reloads the window. */
-export function setUiLanguage(language: UiLanguage) {
-  current = language;
-}
-
-/** The Swedish text is the key, so the code reads as the app does. `{name}` comes from `values`. */
-export function t(swedish: string, values: Record<string, string | number> = {}) {
-  const text = current === "en" ? (ENGLISH[swedish] ?? swedish) : swedish;
-  return text.replace(/\{(\w+)\}/g, (all, name: string) => String(values[name] ?? all));
-}
-
-export const uiLanguage = () => current;
-
-export const numberLocale = () => (current === "en" ? "en-GB" : "sv-SE");
-
-/** A count as the interface's language writes it: 1 234 in Swedish, 1,234 in English. */
-export const formatNumber = (count: number) => Math.round(count).toLocaleString(numberLocale());
+export {
+  formatNumber,
+  numberLocale,
+  setUiLanguage,
+  t,
+  uiLanguage,
+  UI_LANGUAGES,
+  type UiLanguage,
+} from "@llkit/i18n.js";

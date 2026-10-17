@@ -12,7 +12,7 @@ import {
 } from "../manuscript/sceneFile.js";
 import { serializeMarkdown } from "../manuscript/serializeMarkdown.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
-import { createAutosave, type SaveStatus } from "../storage/autosave.js";
+import { createAutosave, type SaveStatus } from "@llkit/storage/autosave.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { takeSnapshot } from "../project/snapshots.js";

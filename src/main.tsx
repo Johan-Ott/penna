@@ -18,7 +18,7 @@ import { App } from "./app/App.js";
 import { recordUncaughtErrors } from "@llkit/errorLog.js";
 import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
 import { styledTooltips } from "@llkit/tooltips.js";
-import { isMac } from "./thisComputer.js";
+import { isMac } from "@llkit/thisComputer.js";
 import { platform } from "./app/platform.js";
 
 recordUncaughtErrors();

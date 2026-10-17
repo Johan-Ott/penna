@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../project/tree.js";
 import type { Project } from "./useProject.js";
 import { useEditorView } from "../editor/useEditorView.js";
-import type { SaveStatus } from "../storage/autosave.js";
+import type { SaveStatus } from "@llkit/storage/autosave.js";
 import { errorLog } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import { greetBack, placeIn, showResume } from "./resume/lastPlace.js";

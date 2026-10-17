@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import KIT_ENGLISH from "../llkit/en.json";
 import ENGLISH from "../src/i18n/en.json";
 import { setUiLanguage, t } from "../src/i18n/i18n";
 
@@ -15,11 +16,14 @@ function sourceFiles(dir: string): string[] {
 // Every `t("…")` in the app, read straight from the source as a reviewer would. A text with
 // quotes in it is written t('…').
 const TRANSLATED = /\bt\(\s*(?:"((?:[^"\\]|\\.)*)"|'([^'\\]*)')/g;
-const usedTexts = sourceFiles("src").flatMap((path) =>
-  [...readFileSync(path, "utf8").matchAll(TRANSLATED)].map(
-    (match) => match[2] ?? JSON.parse(`"${match[1] ?? ""}"`),
-  ),
-);
+const textsIn = (dir: string) =>
+  sourceFiles(dir).flatMap((path) =>
+    [...readFileSync(path, "utf8").matchAll(TRANSLATED)].map(
+      (match) => match[2] ?? JSON.parse(`"${match[1] ?? ""}"`),
+    ),
+  );
+const usedTexts = textsIn("src");
+const kitTexts = textsIn("llkit");
 
 afterEach(() => setUiLanguage("sv"));
 
@@ -37,9 +41,14 @@ describe("t", () => {
   });
 
   it("has English for every text the app asks to translate", () => {
-    const missing = [...new Set(usedTexts)].filter((text) => !(text in ENGLISH));
+    const known = (text: string) => text in ENGLISH || text in KIT_ENGLISH;
 
-    expect(missing).toEqual([]);
+    expect([...new Set(usedTexts)].filter((text) => !known(text))).toEqual([]);
+  });
+
+  it("keeps llkit's texts in llkit, since llkit knows nothing of the app", () => {
+    expect([...new Set(kitTexts)].filter((text) => !(text in KIT_ENGLISH))).toEqual([]);
+    expect(Object.keys(KIT_ENGLISH).filter((text) => !kitTexts.includes(text))).toEqual([]);
   });
 
   it("keeps no English for texts the app no longer uses", () => {
