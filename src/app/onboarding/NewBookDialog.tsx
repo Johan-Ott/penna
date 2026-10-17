@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ProjectDetails } from "../../project/newProject.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { BookTypes, TitleAndGoal, type FieldProps } from "./BookQuestions.js";
 import { BookShape } from "./BookShape.js";
 import { withSuggestion } from "./books.js";

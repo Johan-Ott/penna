@@ -1,4 +1,4 @@
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import { checkForUpdates } from "../updates.js";
 import { restartGuide } from "../guide/guide.js";
 import { shortcutOf } from "../shortcuts.js";

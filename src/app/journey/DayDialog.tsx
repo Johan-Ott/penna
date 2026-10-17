@@ -1,7 +1,7 @@
 import { journeySummary } from "../../project/inkwell.js";
 import { INK, type Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { textsToday } from "./todayTexts.js";
 import { numberLocale, t, formatNumber } from "../../i18n/i18n.js";
 

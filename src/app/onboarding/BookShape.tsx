@@ -7,7 +7,7 @@ import {
   type BookTemplate,
 } from "../../project/templates.js";
 import { ImportLink, PieceToggles, StructureList } from "../templates/TemplateChoices.js";
-import { Dropdown } from "../controls.js";
+import { Dropdown } from "@llkit/controls.js";
 import { defaultLabels } from "../../project/labels.js";
 import { useOwnTemplates } from "../templates/templateFiles.js";
 import { withStructure, withSuggestion } from "./books.js";

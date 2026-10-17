@@ -1,7 +1,7 @@
 import type { BookDesign } from "../../export/bookDesign.js";
 import { openingFor, type ChapterOpening } from "../../export/openings.js";
 import { PictureRow } from "../bookdesign/PictureRow.js";
-import { Dropdown } from "../controls.js";
+import { Dropdown } from "@llkit/controls.js";
 import { t } from "../../i18n/i18n.js";
 
 /** The chapter's choice: "" for the book's standard template, and its own pictures by area. */

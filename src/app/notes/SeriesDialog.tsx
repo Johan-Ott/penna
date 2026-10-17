@@ -3,10 +3,10 @@ import { parentOf } from "../../project/libraryFolders.js";
 import { listSeries, seriesTitle } from "../../project/series.js";
 import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import { platform } from "../platform.js";
-import { Switch } from "../controls.js";
+import { Switch } from "@llkit/controls.js";
 import type { Project } from "../useProject.js";
-import { useEscape } from "../useShortcut.js";
-import { DialogActions } from "../controls.js";
+import { useEscape } from "@llkit/keys.js";
+import { DialogActions } from "@llkit/controls.js";
 import { t } from "../../i18n/i18n.js";
 
 interface SeriesDialogProps {

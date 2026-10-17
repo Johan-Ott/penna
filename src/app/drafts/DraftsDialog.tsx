@@ -3,7 +3,7 @@ import { draftDir, type Draft } from "../../project/drafts.js";
 import { snapshotWhen } from "../../project/snapshots.js";
 import { findNode } from "../../project/tree.js";
 import { nodeLabel } from "../../project/treeLabels.js";
-import { Choice, Dialog } from "../controls.js";
+import { Choice, Dialog } from "@llkit/controls.js";
 import type { Project } from "../useProject.js";
 import type { Drafts } from "./useDrafts.js";
 import { t, formatNumber } from "../../i18n/i18n.js";

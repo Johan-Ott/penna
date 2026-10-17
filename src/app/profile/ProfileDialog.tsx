@@ -1,9 +1,9 @@
-import { Choice } from "../controls.js";
+import { Choice } from "@llkit/controls.js";
 import { useState } from "react";
 import { earnedOf } from "../../project/flair.js";
 import type { Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { ProfileHead } from "./ProfileHead.js";
 import { Badges } from "./Badges.js";
 import { FlairPicker } from "./FlairPicker.js";

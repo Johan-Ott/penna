@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
-import { CloseButton } from "../controls.js";
+import { CloseButton } from "@llkit/controls.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
 import { keepPlaces, places, setPlace, type Place } from "./layout.js";

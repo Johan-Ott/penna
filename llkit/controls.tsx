@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useMenuButton } from "./Menu.js";
-import { useEscape } from "./useShortcut.js";
-import { t } from "../i18n/i18n.js";
+import { useEscape } from "./keys.js";
+import { t } from "./i18n.js";
 
 // The app's own controls; use them instead of native ones so every choice looks the same.
 

@@ -1,4 +1,5 @@
 /* The window: a top bar over the sidebar and a white card, on grey. */
+
 .app,
 .shelf-app {
   display: grid;
@@ -37,6 +38,7 @@
 
 /* Folded away, the sidebar floats out while the pointer rests on its button or on it, and
    lingers a moment so the pointer can cross the gap between them. */
+
 .app.sidebar-closed > .sidebar {
   position: fixed;
   top: 44px;
@@ -82,6 +84,7 @@
 }
 
 /* Focus mode: only the text, edge to edge. */
+
 .app.focus-mode {
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
@@ -102,7 +105,9 @@
 }
 
 /* Top bar */
+
 /* The sides never shrink below their buttons, so a narrow window keeps its own controls. */
+
 .topbar {
   display: grid;
   grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
@@ -124,6 +129,7 @@
 }
 
 /* Where no top bar is, the window's buttons float at its top right, over the start picture too. */
+
 .window-bar {
   position: fixed;
   top: 0;
@@ -140,6 +146,7 @@
 }
 
 /* The window has no frame: its own buttons end the top bar, flush with the window's edge. */
+
 .window-controls {
   display: flex;
   align-self: stretch;
@@ -173,6 +180,7 @@
 
 /* A Mac draws its own window buttons over the top left corner of the app's window, so the bars
    there start after them and Penna draws none of its own. */
+
 .mac-window .topbar,
 .mac-window .focus-header {
   padding-left: 78px;
@@ -228,6 +236,7 @@
 }
 
 /* Penna can be driven from outside for this start: said in the bar, never hidden. */
+
 .remote-badge {
   margin-right: 6px;
   padding: 2px 8px;
@@ -242,6 +251,7 @@
 }
 
 /* The day's words with the sprint's clock beside them, in the middle of the bar. */
+
 .topbar-day {
   display: flex;
   gap: 2px;
@@ -267,6 +277,7 @@
 }
 
 /* A narrow window gives up the day's bar first, then Läs and Fokusläge, which have their keys. */
+
 @media (max-width: 1100px) {
   .topbar .day-progress-bar {
     display: none;
@@ -298,6 +309,7 @@
 }
 
 /* Sidebar: the book's title, Boken, Anteckningar, and Papperskorg at the bottom */
+
 .app > .sidebar {
   display: flex;
   flex-direction: column;
@@ -309,6 +321,7 @@
 }
 
 /* The book's title and the tree's tools stay put; only the book under them scrolls. */
+
 .app > .sidebar {
   overflow: hidden;
 }
@@ -441,6 +454,7 @@
 }
 
 /* Above the text: "Kapitel 8 · Köket" and when, or a note's sort, name and connections */
+
 .text-header,
 .note-header,
 .note-mentions {
@@ -476,6 +490,7 @@
 }
 
 /* As wide as what is written in it, so När's button hugs its words. */
+
 .text-when input {
   field-sizing: content;
   min-width: 3em;
@@ -500,6 +515,7 @@
 }
 
 /* What the chapter is for: quiet, under its title, and only on the screen. */
+
 .chapter-task {
   display: block;
   box-sizing: border-box;
@@ -524,6 +540,7 @@
 }
 
 /* A research note's file: the picture itself, or the file's name to open it by */
+
 .research-file {
   margin-top: 16px;
 }
@@ -643,18 +660,21 @@
 
 /* A note is short; what follows it, its mentions or who knows a secret, comes right under it
    instead of half a screen down. */
+
 .page.note .manuscript .ProseMirror {
   min-height: 0;
   padding-bottom: 40px;
 }
 
 /* A note is a sheet, not a book page: its paragraphs stand apart instead of indenting. */
+
 .page.note .manuscript p + p {
   margin-top: 0.6em;
   text-indent: 0;
 }
 
 /* The card over a linked name */
+
 .mention-card {
   gap: 8px;
   width: 310px;
@@ -682,6 +702,7 @@
 }
 
 /* Granska: opened from its button in the top bar, beside the text */
+
 .writing-body {
   position: relative;
 }
@@ -694,27 +715,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-/* The one × that closes whatever lies over the text: a panel or a dialog. */
-.close-button {
-  display: inline-grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: transparent;
-  color: var(--text-label);
-  font-size: 20px;
-  line-height: 1;
-}
-
-.close-button:hover {
-  background: var(--surface-hover);
-  color: var(--text);
 }
 
 .topbar-button {
@@ -743,6 +743,7 @@
 }
 
 /* Innehåll */
+
 .contents-view {
   position: absolute;
   inset: 0;
@@ -785,11 +786,13 @@
 }
 
 /* Innehåll has the room for its four orders on one row. */
+
 .contents-bar .segmented {
   display: flex;
 }
 
 /* What the short columns hold, once, over the chapters. */
+
 .contents-columns {
   display: grid;
   grid-template-columns: 16px 1fr 80px 100px 110px;
@@ -802,12 +805,6 @@
 
 .contents-columns > :last-child {
   text-align: right;
-}
-
-.segmented.small button {
-  height: 26px;
-  padding: 0 12px;
-  font-size: 13px;
 }
 
 .contents-row {
@@ -855,6 +852,7 @@
 }
 
 /* The chapter's subtitle, or "Rubrik…" that shows when the row is pointed at */
+
 .contents-heading {
   overflow: hidden;
   padding: 0;
@@ -913,7 +911,9 @@
 }
 
 /* Framsteg, opened from the day's words */
+
 /* Insikter: a card of cards floating over the text, moved by its head like the blocks. */
+
 .insights-panel {
   position: fixed;
   top: 52px;
@@ -938,6 +938,7 @@
 }
 
 /* On a phone the body is a card of its own, under the head as under a bar. */
+
 .insights-body {
   display: contents;
 }
@@ -950,6 +951,7 @@
 }
 
 /* Kolofon: the book's last page, set as a printed page is. */
+
 .colophon {
   display: flex;
   flex-direction: column;
@@ -1202,6 +1204,7 @@
 }
 
 /* Skrivarresan: levels as book spines, the inkwell, and the ink. */
+
 .journey-dialog {
   width: min(1200px, calc(100vw - 48px));
   max-width: none;
@@ -1476,6 +1479,7 @@
 }
 
 /* Publicera: three steps on the left, the book on the right */
+
 .publish {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
@@ -1498,6 +1502,7 @@
 }
 
 /* Publicera's parts as tabs: a row of words, the open one marked, as Inställningar's are. */
+
 .publish-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -1547,6 +1552,7 @@
 }
 
 /* "safe": centred while it fits, from the top when it is taller, so page 1 can be scrolled to. */
+
 .publish-preview {
   display: flex;
   align-items: safe center;
@@ -1560,6 +1566,7 @@
 }
 
 /* Ny anteckning */
+
 .note-dialog {
   width: 400px;
   gap: 16px;
@@ -1570,10 +1577,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.field-label {
-  color: var(--text-label);
 }
 
 .note-name {
@@ -1591,7 +1594,6 @@
   gap: 6px;
 }
 
-.chip,
 .chip-input {
   height: 30px;
   padding: 0 12px;
@@ -1599,11 +1601,6 @@
   border-radius: 15px;
   background: var(--bg);
   color: var(--text-muted);
-}
-
-.chip[aria-checked="true"] {
-  border-color: var(--primary);
-  color: var(--text);
 }
 
 .chip.dashed {
@@ -1625,19 +1622,8 @@
   border-top: 1px solid var(--border-soft);
 }
 
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.button.ghost {
-  border: 0;
-  background: transparent;
-  color: var(--text-label);
-}
-
 /* A narrow window: the sidebar floats over the card when it is asked for. */
+
 .sidebar-backdrop {
   display: none;
 }
@@ -1673,6 +1659,7 @@
 }
 
 /* The previews fill the right side and keep the book in the middle of it. */
+
 .publish-preview > .print-preview,
 .publish-preview > .export-preview {
   justify-content: safe center;
@@ -1682,6 +1669,7 @@
 }
 
 /* A series on the shelf: its name over its row of books. */
+
 .shelf-group {
   display: flex;
   flex-direction: column;
@@ -1698,6 +1686,7 @@
 }
 
 /* The marked passage's length, after the selection bar's buttons. */
+
 .selection-words {
   padding: 0 8px 0 6px;
   border-left: 1px solid var(--border-soft);
@@ -1708,6 +1697,7 @@
 
 /* Läs som bok: the book in spreads. The text is one flow of columns, one column per page, and
    everything is measured in em so the pages scale with the window. */
+
 .read-view {
   position: absolute;
   inset: 0;
@@ -1756,6 +1746,7 @@
 }
 
 /* The spread is sized by the room it stands in, not the window, which may hold the sidebar too. */
+
 .read-stage {
   flex-grow: 1;
   min-height: 0;
@@ -1864,6 +1855,7 @@
 }
 
 /* The title page and its back each fill a page of their own. */
+
 .read-front {
   box-sizing: border-box;
   display: flex;
@@ -2063,6 +2055,7 @@
 }
 
 /* Läs kapitlet, Versioner and När over the text: small buttons that look like buttons. */
+
 .text-eyebrow .read-link,
 .text-when {
   align-items: center;
@@ -2087,6 +2080,7 @@
 
 /* A phone: Inställningar fills the screen, its tabs a row to swipe, each control under its text
    when the row is too narrow for both. */
+
 @media (max-width: 600px) {
   .settings-dialog {
     position: fixed;
@@ -2128,19 +2122,10 @@
   .settings-content {
     padding: 16px 20px 32px;
   }
-
-  .settings-row {
-    flex-wrap: wrap;
-    gap: 10px 16px;
-    padding: 14px 0;
-  }
-
-  .settings-row .setting-text {
-    flex: 1 1 180px;
-  }
 }
 
 /* A chapter's pages in the printed book, under its word count */
+
 .contents-pages {
   display: block;
   color: var(--text-label);
@@ -2161,6 +2146,7 @@
 }
 
 /* Above the book: small tools, then the book's words at the far end. */
+
 .tree-tools {
   display: flex;
   gap: 2px;
@@ -2199,6 +2185,7 @@
 }
 
 /* An idea has no colour yet, only its outline. */
+
 .tree-dot.outlined {
   box-shadow: inset 0 0 0 1px var(--text-label);
 }
@@ -2224,6 +2211,7 @@
 }
 
 /* One connected bar: the blocks' icons and Granska share its frame. */
+
 .blocks-dock {
   position: absolute;
   right: 16px;
@@ -2240,6 +2228,7 @@
 }
 
 /* Granska's count, small at the icon's top right. */
+
 .review-dock {
   position: relative;
 }
@@ -2287,6 +2276,7 @@
 }
 
 /* A block opened from the dock, over the text until it is closed or moved. */
+
 .block-panel {
   position: absolute;
   right: 16px;
@@ -2303,6 +2293,7 @@
 }
 
 /* Every floating panel can be made larger or smaller from its lower right corner. */
+
 .block-panel,
 .review-panel,
 .insights-panel {
@@ -2319,11 +2310,13 @@
 
 /* The head stays at the top while the panel scrolls, so its × is always within reach; the
    panel's top room is the head's own, so nothing shows above it. */
+
 .block-panel > .block-head {
   padding-top: 4px;
 }
 
 /* Over the panel's own rows as they scroll past, and nothing outside it. */
+
 .block-head {
   position: sticky;
   top: 0;
@@ -2359,6 +2352,7 @@
 }
 
 /* As the design: a row's words show where the writer is, or where the pointer rests. */
+
 .sidebar .tree .tree-meta {
   visibility: hidden;
 }
@@ -2369,6 +2363,7 @@
 }
 
 /* A scene that is still an idea reads as planned. */
+
 .tree .tree-row.planned .tree-label {
   color: var(--text-label);
   font-style: italic;
@@ -2380,6 +2375,7 @@
 }
 
 /* Innehåll's page map: one mark per printed page, coloured by its chapter's step. */
+
 .page-grid {
   display: flex;
   flex-direction: column;
@@ -2452,6 +2448,7 @@
 }
 
 /* Du slutade här: the sentence the writer stopped in, over the whole window. */
+
 .resume-screen {
   position: fixed;
   inset: 0;
@@ -2519,6 +2516,7 @@
 }
 
 /* Författarprofil: the row at the top of the sidebar, and the dialog it opens. */
+
 .avatar {
   flex-shrink: 0;
   display: flex;
@@ -2540,6 +2538,7 @@
 }
 
 /* Första resan and the badges: what is reached stands dark, the rest waits dashed. */
+
 .profile-badges {
   display: flex;
   flex-direction: column;
@@ -2614,6 +2613,7 @@
 }
 
 /* A badge still to reach is small and quiet; what it takes shows when the pointer rests on it. */
+
 .badge.locked .badge-medal {
   width: 32px;
   height: 32px;
@@ -2668,6 +2668,7 @@
 }
 
 /* Frames around the writer's picture, unlocked under Stil in the profile. */
+
 .avatar.frame-tunn {
   box-shadow:
     0 0 0 2px var(--bg),
@@ -2838,6 +2839,7 @@
 }
 
 /* Tema för boken: the ready themes, and one's own of three colours. */
+
 .theme-dialog {
   width: min(440px, calc(100vw - 48px));
   gap: 8px;
@@ -2962,6 +2964,7 @@
 }
 
 /* Studio: the cards to choose from, the card itself, and its choices. */
+
 .studio-link {
   display: flex;
   flex-direction: column;
@@ -3115,6 +3118,7 @@
 }
 
 /* Dela uppslag: the picture beside its choices. */
+
 .share-spread {
   width: min(960px, calc(100vw - 48px));
   max-width: none;
@@ -3144,6 +3148,7 @@
 }
 
 /* Dagens mål: the day's words on library green, like the design's dialog. */
+
 .dialog.day-dialog {
   width: 340px;
   gap: 14px;
@@ -3190,6 +3195,7 @@
 }
 
 /* Innehåll: a chapter folds out to its scenes, set in under it. */
+
 .contents-fold {
   width: 20px;
   height: 20px;
@@ -3225,6 +3231,7 @@
 }
 
 /* Innehåll as in the design: part headings that fold, quick filters, the status as a dot. */
+
 .contents-part {
   display: flex;
   flex-direction: column;
@@ -3296,6 +3303,7 @@
 
 /* Sidomenyn som innehållsförteckning: dotted leaders to the page each part, chapter or scene
    starts on. */
+
 .tree-leader {
   flex-grow: 1;
   min-width: 12px;
@@ -3316,6 +3324,7 @@
 }
 
 /* Uppläsning: a dark pill at the foot of the text while the voice reads, a click stops it. */
+
 .read-aloud-pill {
   position: absolute;
   bottom: 14px;
@@ -3349,7 +3358,9 @@
 }
 
 /* Till förlag: a roomy text for the synopsis and letter, and a row per submission. */
+
 /* Till förlag in the room the preview has otherwise: a column to write in, on the page's colour. */
+
 .publish.step-forlag .publish-preview {
   align-items: flex-start;
   background: var(--bg);
@@ -3373,6 +3384,7 @@
 
 /* The synopsis and the letter are written here, so the field is the dialog's width, in the
    book's typeface. */
+
 .submit-text {
   box-sizing: border-box;
   width: 100%;
@@ -3408,6 +3420,7 @@
 }
 
 /* The three newest badges, small beside the writer's name and under the journey. */
+
 .journey-badges {
   display: flex;
   flex-direction: column;
@@ -3420,6 +3433,7 @@
 }
 
 /* Börja från: the book templates as a two-column list of choices. */
+
 .template-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3466,6 +3480,7 @@
 }
 
 /* Mallar och bitar: adding pieces to a book, saving it as a template, importing one. */
+
 .templates-dialog {
   width: min(560px, calc(100vw - 48px));
   gap: 18px;
@@ -3497,6 +3512,7 @@
 }
 
 /* Förslagsläge: a band over the text for as long as what is typed becomes suggestions. */
+
 .suggesting-bar {
   position: absolute;
   top: 12px;
@@ -3517,6 +3533,7 @@
 }
 
 /* Berättarröst: the voice, the tense and whether the reader is inside the person's head. */
+
 .narration-picker {
   display: flex;
   flex-direction: column;
@@ -3537,7 +3554,9 @@
 }
 
 /* A writing sprint: the time left and the words so far, over the text. */
+
 /* Lappar: post-it notes over the text, each in its own colour, written in or drawn on. */
+
 .sticky-note {
   position: absolute;
   z-index: var(--layer-float);
@@ -3692,6 +3711,7 @@
 }
 
 /* Mål: just under the day's words in the top bar, a row for each goal. */
+
 .block-panel.goal-panel:not([style]) {
   top: 48px;
   right: auto;
@@ -3700,6 +3720,7 @@
 }
 
 /* Fixed to the window, as the day's words it opens under belong to the top bar. */
+
 .goal-panel {
   position: fixed;
   z-index: var(--layer-float);
@@ -3810,6 +3831,7 @@
 }
 
 /* The sprint's block: four numbers to step, as a pomodoro timer has them, and Starta. */
+
 .sprint-settings {
   display: grid;
   grid-template-columns: repeat(4, 52px);
@@ -3917,6 +3939,7 @@
 }
 
 /* Innehåll's Tempo: a row per chapter with its length, talk and sentence length as bars. */
+
 .tempo {
   display: flex;
   flex-direction: column;
@@ -3986,11 +4009,13 @@
 }
 
 /* Repliker sits above Nämns i, so it keeps only a little room under it. */
+
 .note-mentions.note-voice {
   margin-bottom: 24px;
 }
 
 /* The chosen narration as one line, with Ändra at its end. */
+
 .review-section.narration-line {
   flex-direction: row;
   align-items: center;
@@ -3999,6 +4024,7 @@
 }
 
 /* The guide's tip: small, at the foot of the screen, over the work but never a dialog. */
+
 .guide-tip {
   position: fixed;
   bottom: 72px;
@@ -4060,6 +4086,7 @@
 }
 
 /* Where the reader learns a secret: a quiet mark among the labels. */
+
 .contents-reveal {
   color: var(--text-muted);
   font-style: italic;

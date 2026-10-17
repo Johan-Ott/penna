@@ -1,7 +1,8 @@
-import { CloseButton } from "../controls.js";
+import { CloseButton } from "@llkit/controls.js";
 import { fold } from "../palette/paletteSearch.js";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { useEscape, useCommandKey } from "../useShortcut.js";
+import { useEscape } from "@llkit/keys.js";
+import { useCommandKey } from "../shortcuts.js";
 import { AboutTab } from "./infoTabs.js";
 import { ShortcutsTab } from "./shortcutsTab.js";
 import { GeneralTab } from "./generalTab.js";

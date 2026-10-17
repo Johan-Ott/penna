@@ -1,7 +1,7 @@
 import { journeySummary, type Summary } from "../../project/inkwell.js";
 import { levels, type Journey } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { InkRules } from "./InkRules.js";
 import { Inkwell } from "./Inkwell.js";
 import { t, formatNumber } from "../../i18n/i18n.js";

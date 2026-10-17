@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { SaveStatus } from "@llkit/storage/autosave.js";
 import type { SaveFailure } from "@llkit/storage/saveError.js";
 import { t, formatNumber } from "../i18n/i18n.js";
-import { useShortcut } from "./useShortcut.js";
+import { useShortcut } from "@llkit/keys.js";
 
 const FAILURE_MESSAGES: Record<SaveFailure, string> = {
   blocked: t("Filen används av ett annat program, ofta molnsynken, eller är skrivskyddad."),

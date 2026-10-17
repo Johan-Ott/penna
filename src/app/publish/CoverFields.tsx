@@ -6,7 +6,7 @@ import {
   type CoverPaper,
   type PrintCover,
 } from "../../export/typstCover.js";
-import { Choice } from "../controls.js";
+import { Choice } from "@llkit/controls.js";
 import { usePageMap } from "../usePageMap.js";
 import type { Project } from "../useProject.js";
 import { numberLocale, t } from "../../i18n/i18n.js";

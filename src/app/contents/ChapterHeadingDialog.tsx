@@ -7,7 +7,7 @@ import {
   type TreeNode,
 } from "../../project/tree.js";
 import { designOf } from "../../export/bookDesign.js";
-import { Dialog, DialogButtons } from "../controls.js";
+import { Dialog, DialogButtons } from "@llkit/controls.js";
 import {
   ChapterOpeningFields,
   chapterOpeningOf,

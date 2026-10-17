@@ -14,7 +14,7 @@ import {
   type ExportChoices,
   type ExportFormat,
 } from "../exporting/useExport.js";
-import { Choice } from "../controls.js";
+import { Choice } from "@llkit/controls.js";
 import { SubmitStep } from "./SubmitStep.js";
 import { PublishTabs, type Step } from "./PublishTiles.js";
 import type { Project } from "../useProject.js";

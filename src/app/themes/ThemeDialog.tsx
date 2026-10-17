@@ -11,7 +11,7 @@ import {
   themeNames,
   type Theme,
 } from "../../project/themes.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 

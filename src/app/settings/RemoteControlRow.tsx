@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Row, Switch } from "../controls.js";
+import { Row, Switch } from "@llkit/controls.js";
 import { platform, type RemoteState } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 

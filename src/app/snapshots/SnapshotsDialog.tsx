@@ -1,11 +1,11 @@
-import { CloseButton } from "../controls.js";
+import { CloseButton } from "@llkit/controls.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useRef, useState } from "react";
 import { countDocumentWords } from "../../manuscript/wordCount.js";
 import { plainText } from "../../manuscript/compare.js";
 import { diffWords } from "../../manuscript/wordDiff.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
-import { useEscape } from "../useShortcut.js";
+import { useEscape } from "@llkit/keys.js";
 import type { useSnapshots } from "./useSnapshots.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 

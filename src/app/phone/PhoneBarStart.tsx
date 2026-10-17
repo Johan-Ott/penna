@@ -1,5 +1,5 @@
 import type { AppState } from "../App.js";
-import { useMenuButton } from "../Menu.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import { sidebarProps } from "../paneProps.js";
 import { ProfileButton } from "../profile/ProfileLayer.js";
 import { MenuIcon, SearchIcon } from "../shell/icons.js";

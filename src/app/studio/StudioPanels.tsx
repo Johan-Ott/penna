@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { Node } from "prosemirror-model";
 import { manuscriptNodes } from "../../project/tree.js";
-import { Choice, Switch } from "../controls.js";
+import { Choice, Switch } from "@llkit/controls.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import type { Project } from "../useProject.js";
 import { chapterBlocks, copyHtml, mailHtml, simpleHtml, type Signature } from "./newsletter.js";

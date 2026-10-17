@@ -9,7 +9,7 @@ import {
 } from "../../project/labels.js";
 import type { TreeNode } from "../../project/tree.js";
 import { newSceneId } from "../../storage/sceneId.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { StatusStepsEditor } from "./StatusStepsEditor.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";

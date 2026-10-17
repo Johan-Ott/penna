@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { saveOwnTemplate, templateFromBook } from "../../project/ownTemplates.js";
 import type { BookTemplate } from "../../project/templates.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { libraryOf } from "../journey/journeyFile.js";
 import { platform } from "../platform.js";

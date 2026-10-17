@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { projectGoals } from "../../project/progress.js";
-import { useEscape } from "../useShortcut.js";
+import { useEscape } from "@llkit/keys.js";
 import { t } from "../../i18n/i18n.js";
 
 interface GoalsDialogProps {

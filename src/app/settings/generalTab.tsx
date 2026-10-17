@@ -2,7 +2,7 @@ import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { FetchedRow } from "./FetchedRow.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { platform } from "../platform.js";
-import { Choice, Dropdown, Row } from "../controls.js";
+import { Choice, Dropdown, Row } from "@llkit/controls.js";
 import { UiLanguageChoice } from "./UiLanguageChoice.js";
 import { RemoteControlRow } from "./RemoteControlRow.js";
 import { REMINDER_HOURS } from "../reminder.js";

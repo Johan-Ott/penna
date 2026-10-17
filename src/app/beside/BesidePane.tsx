@@ -1,4 +1,4 @@
-import { CloseButton } from "../controls.js";
+import { CloseButton } from "@llkit/controls.js";
 import { useEditorState } from "../../editor/editorStore.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useState } from "react";

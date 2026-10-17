@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Row } from "../controls.js";
+import { Row } from "@llkit/controls.js";
 import {
   COMMANDS,
   MODIFIER_NAME,

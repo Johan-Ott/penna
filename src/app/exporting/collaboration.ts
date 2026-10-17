@@ -1,4 +1,4 @@
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import type { Project } from "../useProject.js";
 import { startChoices, type ExportChoices } from "./useExport.js";
 import { t } from "../../i18n/i18n.js";

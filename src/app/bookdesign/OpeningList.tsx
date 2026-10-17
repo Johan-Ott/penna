@@ -5,7 +5,7 @@ import {
   withTemplate,
   type OpeningTemplate,
 } from "../../export/openings.js";
-import { useMenuButton } from "../Menu.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import type { ControlProps } from "./HeadingControls.js";
 import { OpeningEditor } from "./OpeningEditor.js";
 import { t } from "../../i18n/i18n.js";

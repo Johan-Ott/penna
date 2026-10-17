@@ -1,7 +1,8 @@
 import { useBeside } from "./beside/BesidePane.js";
 import { useCallback, useState } from "react";
 import { useSettingsDialog } from "./settings/SettingsDialog.js";
-import { useGoKeys, useCommandKey, useShortcut } from "./useShortcut.js";
+import { useGoKeys, useShortcut } from "@llkit/keys.js";
+import { useCommandKey } from "./shortcuts.js";
 import { useWritingSettings } from "./useWritingSettings.js";
 import { t } from "../i18n/i18n.js";
 

@@ -1,4 +1,4 @@
-import { Row, Switch } from "../controls.js";
+import { Row, Switch } from "@llkit/controls.js";
 import { usePhone } from "../phone/usePhone.js";
 import type { TabProps } from "./settingsTabs.js";
 import { t } from "../../i18n/i18n.js";

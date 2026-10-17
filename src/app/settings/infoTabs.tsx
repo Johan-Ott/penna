@@ -1,7 +1,7 @@
 import { platform } from "../platform.js";
 import { useState } from "react";
 import { errorLog } from "@llkit/errorLog.js";
-import { Row } from "../controls.js";
+import { Row } from "@llkit/controls.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.

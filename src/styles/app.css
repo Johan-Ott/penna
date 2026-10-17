@@ -3,12 +3,14 @@
 }
 
 /* Thin, quiet scrollbars, without Windows' arrow buttons */
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-control) transparent;
 }
 
 /* A reload for a new language fades the page out first, see UiLanguageChoice. */
+
 .leaving #root {
   opacity: 0;
   transition: opacity 150ms ease-in;
@@ -44,6 +46,7 @@ button {
 }
 
 /* A field shows its focus with a soft ring around its border, as the design draws it. */
+
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
@@ -53,6 +56,7 @@ select:focus-visible {
 }
 
 /* Penna's logo, from src/assets/penna-logo.png (made by `npm run icons`) */
+
 .brand-mark {
   width: 22px;
   height: 22px;
@@ -97,6 +101,7 @@ select:focus-visible {
 }
 
 /* Writing area */
+
 .writing {
   position: relative;
   display: flex;
@@ -138,51 +143,6 @@ select:focus-visible {
   flex-grow: 1;
   overflow-y: auto;
   padding: 64px 24px 0;
-}
-
-/* Buttons, toasts, dialogs */
-.button {
-  height: 34px;
-  padding: 0 12px;
-  border-radius: var(--radius-card);
-}
-
-.button.small {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: var(--radius-button);
-}
-
-.button.primary {
-  border: 0;
-  background: var(--primary);
-  color: var(--on-primary);
-}
-
-.button.secondary {
-  border: 1px solid var(--border-control);
-  background: var(--bg);
-}
-
-.link-button {
-  border: 0;
-  background: transparent;
-  text-decoration: underline;
-}
-
-.chip {
-  height: 28px;
-  padding: 0 12px;
-  border: 1px solid var(--border-control);
-  border-radius: 14px;
-  background: var(--bg);
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.chip[aria-pressed="true"] {
-  border-color: var(--primary);
-  color: var(--text);
 }
 
 .toast {
@@ -251,40 +211,11 @@ select:focus-visible {
   white-space: nowrap;
 }
 
-.dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--layer-dialog);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.dialog {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 560px;
-  max-width: 100%;
-  padding: 20px;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-dialog);
-  background: var(--bg);
-  box-shadow: var(--shadow-dialog);
-}
-
 .dialog-heading,
 .version-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.dialog-title {
-  font-size: 15px;
-  font-weight: 500;
 }
 
 .dialog-text,
@@ -322,13 +253,8 @@ select:focus-visible {
   color: var(--text-prose);
 }
 
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 /* Tree */
+
 .tree {
   display: flex;
   flex-direction: column;
@@ -362,6 +288,7 @@ select:focus-visible {
 }
 
 /* Whose eyes a scene or chapter is seen through, as Innehåll's Vems ögon? sets it. */
+
 .tree-pov {
   flex-shrink: 0;
   max-width: 72px;
@@ -409,6 +336,7 @@ select:focus-visible {
 }
 
 /* Top-level rows and the open text in black, deeper rows in a softer grey. */
+
 .tree .tree-row {
   color: var(--text-tree);
 }
@@ -424,6 +352,7 @@ select:focus-visible {
 }
 
 /* The tree takes the focus on every click; its own highlight shows where it is, not a ring. */
+
 .tree-row:focus-visible {
   outline: none;
   background: var(--surface-hover);
@@ -452,67 +381,6 @@ select:focus-visible {
   background: var(--bg);
 }
 
-/* Menus: right-click, the add button and the style picker share one look */
-.menu {
-  position: fixed;
-  z-index: var(--layer-popover);
-  display: flex;
-  flex-direction: column;
-  min-width: 220px;
-  padding: 4px;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-card);
-  background: var(--bg);
-  box-shadow: var(--shadow-dialog);
-  font: 14px/1.4 var(--font-ui);
-  color: var(--text);
-}
-
-.menu button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 30px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: transparent;
-  text-align: left;
-}
-
-.menu button:hover,
-.menu button:focus-visible {
-  background: var(--surface-hover);
-  outline: none;
-}
-
-.menu-label {
-  flex-grow: 1;
-}
-
-.menu-check {
-  width: 14px;
-  color: var(--text);
-}
-
-@media (max-width: 600px) {
-  .menu kbd {
-    display: none;
-  }
-}
-
-.menu kbd {
-  color: var(--text-label);
-  font: inherit;
-  font-size: 12px;
-}
-
-.menu-separator {
-  height: 1px;
-  margin: 4px 6px;
-  background: var(--border-soft);
-}
-
 .focus-header {
   display: grid;
   flex-shrink: 0;
@@ -531,18 +399,14 @@ select:focus-visible {
   gap: 12px;
 }
 
-.link-button.quiet {
-  justify-self: start;
-  color: var(--text-label);
-  text-decoration: none;
-}
-
 .settings-button {
   font: 14px var(--font-prose);
 }
 
 /* Writing settings popover */
+
 /* The selection's bar steps aside while the text's look is being changed. */
+
 html.look-shown .selection-bar {
   display: none;
 }
@@ -563,24 +427,14 @@ html.look-shown .selection-bar {
   box-shadow: var(--shadow-dialog);
 }
 
-.setting-column,
-.setting-text {
+.setting-column {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.setting-text {
-  gap: 2px;
-}
-
-.setting-label,
-.setting-hint {
+.setting-label {
   color: var(--text-muted);
-}
-
-.setting-hint {
-  font-size: 13px;
 }
 
 .setting-row {
@@ -588,38 +442,6 @@ html.look-shown .selection-bar {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-
-.segmented {
-  display: flex;
-  padding: 3px;
-  border-radius: var(--radius-card);
-  background: var(--surface-hover);
-}
-
-.segmented button {
-  flex-grow: 1;
-  height: 28px;
-  border: 0;
-  border-radius: var(--radius-button);
-  background: transparent;
-  color: var(--text-muted);
-}
-
-/* Four choices or more do not fit a narrow column on one row, so they take two. */
-.segmented:has(> :nth-child(4)) {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-}
-
-.segmented button {
-  white-space: nowrap;
-}
-
-.segmented button[aria-checked="true"] {
-  background: var(--bg);
-  color: var(--text);
 }
 
 .stepper {
@@ -647,31 +469,8 @@ html.look-shown .selection-bar {
   background: var(--surface-hover);
 }
 
-.toggle {
-  display: flex;
-  flex-shrink: 0;
-  justify-content: flex-start;
-  width: 36px;
-  height: 20px;
-  padding: 2px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--border-control);
-}
-
-.toggle[aria-checked="true"] {
-  justify-content: flex-end;
-  background: var(--primary);
-}
-
-.toggle span {
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  background: var(--bg);
-}
-
 /* In typewriter mode the chapter heading and the first line can also reach typewriter height. */
+
 .manuscript.typewriter {
   padding-top: 40vh;
 }
@@ -701,6 +500,7 @@ html.look-shown .selection-bar {
 }
 
 /* The style picker, in the selection bar and the phone's tools */
+
 .style-picker {
   display: flex;
   align-items: center;
@@ -727,6 +527,7 @@ html.look-shown .selection-bar {
 }
 
 /* Command palette */
+
 .palette-backdrop {
   position: fixed;
   inset: 0;
@@ -816,20 +617,18 @@ html.look-shown .selection-bar {
 }
 
 /* Start: blank while the last project opens, so nothing flashes by */
+
 .app-starting {
   height: 100vh;
   background: var(--bg);
 }
 
 /* A labelled field in a dialog: its name above it. */
+
 .onboarding-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.field-label {
-  font-weight: 500;
 }
 
 .onboarding-field textarea {
@@ -857,20 +656,6 @@ html.look-shown .selection-bar {
 .onboarding-field input:focus {
   border-color: var(--primary);
   outline: none;
-}
-
-.segmented.fit {
-  width: fit-content;
-}
-
-.segmented.fit button {
-  height: 32px;
-  padding: 0 16px;
-}
-
-.segmented button:disabled {
-  color: var(--text-dim);
-  cursor: not-allowed;
 }
 
 .promise {
@@ -915,27 +700,6 @@ html.look-shown .selection-bar {
   font-size: 14px;
 }
 
-/* As many choices as there are: they wrap onto new lines instead of out of the dialog. */
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  width: 100%;
-}
-
-.chip-row .chip {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 16px;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.chip[aria-checked="true"] {
-  border-color: var(--primary);
-  color: var(--text);
-}
-
 .tip {
   display: flex;
   align-items: center;
@@ -954,13 +718,6 @@ html.look-shown .selection-bar {
   font: 13px var(--font-ui);
 }
 
-.button.large {
-  height: 40px;
-  padding: 0 18px;
-  border-radius: 10px;
-  font-weight: 500;
-}
-
 .backup-problem {
   flex-basis: 100%;
   margin: 0;
@@ -974,7 +731,9 @@ html.look-shown .selection-bar {
 }
 
 /* Bookshelf */
+
 /* The shelf fills the white card under the top bar. */
+
 .shelf-screen {
   display: flex;
   flex-direction: column;
@@ -984,6 +743,7 @@ html.look-shown .selection-bar {
 }
 
 /* The top bar says Bokhylla; the shelf itself is the books, large, as a store shows them. */
+
 .shelf {
   display: flex;
   flex-direction: column;
@@ -1023,6 +783,7 @@ html.look-shown .selection-bar {
 }
 
 /* A finished book is bound: gold along its top and foot. */
+
 .book-cover.stage-klar {
   box-shadow:
     inset 0 3px 0 rgba(201, 164, 0, 0.6),
@@ -1053,6 +814,7 @@ button.book-cover:hover {
 }
 
 /* The covers: a genre's colours and one quiet mark of it, drawn behind the words. */
+
 .book-cover:not(.with-picture, .new-book, .missing, .in-cloud) {
   position: relative;
   overflow: hidden;
@@ -1285,6 +1047,7 @@ button.book-cover:hover {
 }
 
 /* Under the book, three quiet lines: how far it has come, a bar, and where it stands. */
+
 .book-status {
   display: flex;
   align-items: center;
@@ -1353,6 +1116,7 @@ button.book-cover:hover {
 }
 
 /* Snapshots: the list on the left, the comparison on the right. */
+
 .snapshots-dialog {
   width: 820px;
 }
@@ -1457,6 +1221,7 @@ button.book-cover:hover {
 }
 
 /* Från synken: the list on the left, both versions side by side on the right. */
+
 .sync-view {
   position: absolute;
   inset: 0;
@@ -1566,6 +1331,7 @@ button.book-cover:hover {
 }
 
 /* On a phone the list sits above, and the two versions one under the other. */
+
 @media (max-width: 600px) {
   .sync-view {
     padding: 16px;
@@ -1601,6 +1367,7 @@ button.book-cover:hover {
 }
 
 /* Inställningar: tabs on the left, one setting per row. */
+
 .settings-dialog {
   display: flex;
   width: 820px;
@@ -1667,18 +1434,8 @@ button.book-cover:hover {
   font: 600 22px var(--font-prose);
 }
 
-.settings-row {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 60px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border-soft);
-}
-
 /* Searching: each tab's matching rows under its name, and nothing where nothing matches. */
+
 .settings-tabs .settings-search {
   box-sizing: border-box;
   width: 100%;
@@ -1695,15 +1452,6 @@ button.book-cover:hover {
 
 .settings-found-heading:first-child {
   margin-top: 0;
-}
-
-.settings-row .setting-hint {
-  overflow-wrap: anywhere;
-}
-
-.settings-control {
-  flex-shrink: 0;
-  color: var(--text-muted);
 }
 
 .settings-text,
@@ -1738,15 +1486,6 @@ button.book-cover:hover {
   color: var(--text);
 }
 
-.settings-row kbd {
-  padding: 2px 8px;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-button);
-  color: var(--text-muted);
-  font: inherit;
-  font-size: 13px;
-}
-
 .writing.hidden {
   display: none;
 }
@@ -1761,6 +1500,7 @@ button.book-cover:hover {
   border: 1px solid var(--border);
   border-radius: 10px;
 }
+
 .kpi-sub {
   color: var(--text-muted);
 }
@@ -1853,6 +1593,7 @@ button.book-cover:hover {
   overflow-y: auto;
   border-right: 1px solid var(--border-soft);
 }
+
 .export-heading {
   padding: 0 0 10px;
   font-weight: 500;
@@ -1861,6 +1602,7 @@ button.book-cover:hover {
 .export-heading.spaced {
   margin-top: 8px;
 }
+
 .export-field {
   display: flex;
   flex-direction: column;
@@ -2004,6 +1746,7 @@ button.book-cover:hover {
 }
 
 /* Names of known cards in the text, and the card a click on one shows. */
+
 .manuscript .mention {
   border-bottom: 1px solid var(--text-dim);
   cursor: pointer;
@@ -2031,6 +1774,7 @@ button.book-cover:hover {
 }
 
 /* Granskning: a panel beside the text, and dots under repeated words. */
+
 .writing-body {
   display: flex;
   flex-grow: 1;
@@ -2042,6 +1786,7 @@ button.book-cover:hover {
 }
 
 /* A wavy line as in other writing programs; it stays under a repeat's dots. */
+
 .manuscript .misspelled {
   text-decoration: underline wavy var(--danger);
   text-decoration-skip-ink: none;
@@ -2050,6 +1795,7 @@ button.book-cover:hover {
 
 /* Granska floats over the text as a card, moved by its head like the blocks, instead of a
    solid column beside it. */
+
 .review-panel {
   position: absolute;
   top: 16px;
@@ -2131,6 +1877,7 @@ button.book-cover:hover {
 }
 
 /* A task elsewhere in the book reads like the other cards: where first, then what. */
+
 .review-item.book-task {
   align-items: flex-start;
   color: var(--text);
@@ -2155,6 +1902,7 @@ button.book-cover:hover {
 }
 
 /* Comments: grey behind the commented words, and the cards in the panel. */
+
 .manuscript .commented {
   border-radius: 3px;
   background: var(--match);
@@ -2196,6 +1944,7 @@ button.book-cover:hover {
 }
 
 /* Beside selected text: bold, italic, style and comment. */
+
 .selection-bar {
   position: fixed;
   z-index: var(--layer-popover);
@@ -2207,30 +1956,6 @@ button.book-cover:hover {
   border-radius: var(--radius-card);
   background: var(--bg);
   box-shadow: var(--shadow-dialog);
-}
-
-/* Dropdown in controls.tsx: the app's own select, opening the shared menu */
-.dropdown {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 5px 10px;
-  border: 1px solid var(--border-control);
-  border-radius: var(--radius-button);
-  background: var(--bg);
-  color: var(--text);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dropdown::after {
-  content: "▾";
-  margin-left: 8px;
-  color: var(--text-label);
-}
-
-.dropdown:hover {
-  background: var(--surface-hover);
 }
 
 .export-part {
@@ -2277,7 +2002,9 @@ button.book-cover:hover {
 }
 
 /* Sidan, Kapitelrubrik, Brödtext: a quiet heading above each group of rows */
+
 /* Flex only while open: a closed part would still give its hidden content a gap. */
+
 .design-details[open] {
   display: flex;
   flex-direction: column;
@@ -2339,6 +2066,7 @@ button.book-cover:hover {
 }
 
 /* On white, like the printed page, so a dark ornament shows in dark mode too */
+
 .picture-thumb {
   max-width: 64px;
   max-height: 32px;
@@ -2426,6 +2154,7 @@ button.book-cover:hover {
 }
 
 /* The printed page is white in both themes, as paper is. */
+
 .print-sheet {
   fill: #ffffff;
   stroke: var(--border-soft);
@@ -2440,6 +2169,7 @@ button.book-cover:hover {
 }
 
 /* Exportera while it runs: the chapter being read, a bar and Avbryt. */
+
 .export-running {
   position: fixed;
   right: 24px;
@@ -2466,6 +2196,7 @@ button.book-cover:hover {
 }
 
 /* The box where a footnote's text is written, under its number */
+
 .footnote-popover {
   position: fixed;
   left: 50%;
@@ -2518,6 +2249,7 @@ button.book-cover:hover {
 }
 
 /* The chapter opening editor: the page to draw on, and the settings beside it */
+
 .opening-dialog {
   width: 920px;
 }
@@ -2640,6 +2372,7 @@ button.book-cover:hover {
 }
 
 /* Säkerhetskopior: every book's copies, newest first */
+
 .backups-dialog {
   max-height: 80vh;
   overflow-y: auto;
@@ -2680,6 +2413,7 @@ button.book-cover:hover {
 }
 
 /* Skicka feedback: what goes with the message is shown before it is sent */
+
 .feedback-report {
   display: flex;
   flex-direction: column;
@@ -2710,6 +2444,7 @@ button.book-cover:hover {
 }
 
 /* Help is read, not scanned: the text at a reading weight and colour, room between the lines. */
+
 .help-tab p {
   margin: 0;
   max-width: 62ch;
@@ -2726,6 +2461,7 @@ button.book-cover:hover {
 }
 
 /* Bredvid: another text, or a version of this one, read beside the text being written */
+
 .beside-pane {
   display: flex;
   flex-direction: column;
@@ -2770,6 +2506,7 @@ button.book-cover:hover {
 }
 
 /* Tryckomslag: the cover's colour as swatches, and the text on the back */
+
 .cover-colors {
   display: flex;
   gap: 8px;
@@ -2797,6 +2534,7 @@ button.book-cover:hover {
 }
 
 /* Toasts that belong to the whole book, not one screen: seen wherever she is. */
+
 .app-toasts {
   position: fixed;
   bottom: 24px;
@@ -2873,10 +2611,6 @@ button.book-cover:hover {
 
 .label-new {
   margin-top: 12px;
-}
-
-.menu-more {
-  color: var(--text-label);
 }
 
 .palette-filters .chip {
@@ -2990,10 +2724,6 @@ button.book-cover:hover {
   margin-top: -6px;
 }
 
-.chip.quiet {
-  border-color: transparent;
-}
-
 .name-set {
   height: 26px;
   border: 0;
@@ -3103,6 +2833,7 @@ button.book-cover:hover {
 
 /* Celebrations: dark cards up in the right corner, clear of the tools at the foot, gone after
    four seconds. */
+
 .celebrations {
   position: fixed;
   top: 60px;
@@ -3167,11 +2898,13 @@ button.book-cover:hover {
 }
 
 /* Skriv på ett ark: the text, its header and footer on one sheet, with its pages at the foot. */
+
 .page:not(.paper) > .sheet {
   display: contents;
 }
 
 /* The margins shrink with the room, so the text keeps its width beside an open panel. */
+
 .page.paper {
   container-type: inline-size;
   padding: 40px min(48px, 3vw);
@@ -3179,6 +2912,7 @@ button.book-cover:hover {
 }
 
 /* A sheet below peeks out at the edge, as in a pile of paper. */
+
 .page.paper > .sheet {
   --sheet-margin: min(88px, 9cqi);
   position: relative;
@@ -3226,6 +2960,7 @@ button.book-cover:hover {
 }
 
 /* Where the printed book turns a page, the sheet parts and the desk shows between two pages. */
+
 .page.paper > .sheet {
   overflow: clip;
 }
@@ -3248,6 +2983,7 @@ button.book-cover:hover {
 }
 
 /* The page that ends is numbered at its foot, as the sheet's last page is. */
+
 .page.paper .ProseMirror .page-mark::after {
   content: attr(data-ending);
   position: absolute;
@@ -3264,16 +3000,19 @@ button.book-cover:hover {
 }
 
 /* Before the scene's first block the sheet already is that page. */
+
 .page.paper .ProseMirror .page-mark:not([data-ending]) {
   display: none;
 }
 
 /* Kommentarer i marginalen: pencilled notes beside the text, placed by MarginNotes. */
+
 .page:has(> .margin-notes) {
   position: relative;
 }
 
 /* On a phone there is no margin to spare; the comments stay in Granska there. */
+
 @media (min-width: 601px) {
   .page:has(> .margin-notes) {
     padding-right: 248px;
@@ -3326,6 +3065,7 @@ button.book-cover:hover {
 }
 
 /* The part's own page, set apart as a spread of its own before its first chapter. */
+
 .page.book-type .part-page {
   position: relative;
   display: flex;
@@ -3383,12 +3123,14 @@ button.book-cover:hover {
 }
 
 /* Boktypografi: justified with hyphens, and the rest as the book's design in Publicera sets it. */
+
 .page.book-type .ProseMirror {
   text-align: justify;
   hyphens: auto;
 }
 
 /* A chapter opens lower on its page, under its number, as in a printed book. */
+
 .page.book-type .chapter-number {
   display: block;
   margin-top: 64px;
@@ -3467,6 +3209,7 @@ button.book-cover:hover {
 }
 
 /* A misspelled word clicked on the computer: its corrections in a small bar just under it. */
+
 .click-corrections {
   position: fixed;
   z-index: var(--layer-popover);
@@ -3490,32 +3233,12 @@ button.book-cover:hover {
   font-size: 13px;
 }
 
-/* Penna's tooltip, in its own colours, over everything and never in the way of the pointer. */
-.tooltip {
-  position: fixed;
-  z-index: var(--layer-tooltip);
-  max-width: 280px;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg-panel);
-  box-shadow: var(--shadow-low);
-  color: var(--text);
-  font: 12px/1.4 var(--font-ui);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.12s;
-}
-
-.tooltip.shown {
-  opacity: 1;
-}
-
 .review-panel > .review-header {
   padding-top: 12px;
 }
 
 /* The first start, on a computer and a phone alike: a narrow column, the two ways in at its foot. */
+
 .welcome {
   display: flex;
   flex-direction: column;
@@ -3559,6 +3282,7 @@ html.welcome-shown body {
 }
 
 /* A book in the writer's Drive that this device has not fetched: pale, with a dashed edge. */
+
 .book-cover.in-cloud {
   border: 1px dashed var(--border-control);
   background: var(--bg-subtle);
@@ -3571,6 +3295,7 @@ html.welcome-shown body {
 }
 
 /* Above the books: what the shelf holds, and the ways to a new book. */
+
 .shelf-head {
   display: flex;
   flex-wrap: wrap;
@@ -3588,6 +3313,7 @@ html.welcome-shown body {
 }
 
 /* Ny bok: one question at a time, the step and the buttons along its foot. */
+
 .new-book-dialog {
   width: min(560px, calc(100vw - 32px));
   max-height: calc(100dvh - 48px);
@@ -3610,6 +3336,7 @@ html.welcome-shown body {
 }
 
 /* What the choices give the book, as a quiet list under them. */
+
 .book-gets {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -3651,6 +3378,7 @@ html.welcome-shown body {
 }
 
 /* Fortsätt skriva: the last book, large, with the words it was left at. */
+
 .continue-writing {
   display: flex;
   align-items: center;
@@ -3733,6 +3461,7 @@ html.welcome-shown body {
 }
 
 /* Rollista: the people as cards, a few to a row. */
+
 .cast {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -3774,6 +3503,7 @@ html.welcome-shown body {
 }
 
 /* Kolofonen, Insikter's numbers as the book's last page, folded under the rest. */
+
 .insights-colophon summary {
   color: var(--text-muted);
   font-size: 13px;
@@ -3785,6 +3515,7 @@ html.welcome-shown body {
 }
 
 /* A part of a long settings tab: a small heading over its rows. */
+
 .settings-group-title {
   display: block;
   margin: 22px 0 2px;
@@ -3804,6 +3535,7 @@ html.welcome-shown body {
 }
 
 /* The first start's choices, in the welcome's column. */
+
 .first-choices {
   display: flex;
   flex-direction: column;

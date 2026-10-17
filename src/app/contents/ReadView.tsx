@@ -3,7 +3,7 @@ import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { readingScenes, type ReadingScene } from "../../project/reading.js";
 import { usePhone } from "../phone/usePhone.js";
 import type { Project } from "../useProject.js";
-import { useEscape } from "../useShortcut.js";
+import { useEscape } from "@llkit/keys.js";
 import { useBookPages, type PageLayout } from "./bookPages.js";
 import { ReadSelection, type ReadSaving } from "./ReadSelection.js";
 import { ShareSpreadButton } from "./ShareSpreadButton.js";

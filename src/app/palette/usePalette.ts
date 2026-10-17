@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePhone } from "../phone/usePhone.js";
-import { useCommandKey } from "../useShortcut.js";
+import { useCommandKey } from "../shortcuts.js";
 import { paletteEntries, type PaletteContext } from "./paletteEntries.js";
 
 export function usePalette(context: PaletteContext | null) {

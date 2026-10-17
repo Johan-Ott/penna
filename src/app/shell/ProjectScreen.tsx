@@ -10,7 +10,7 @@ import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
-import { useCommandKey } from "../useShortcut.js";
+import { useCommandKey } from "../shortcuts.js";
 import { WritingArea } from "../WritingArea.js";
 import { sidebarProps, writingAreaProps } from "../paneProps.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "./bookViews.js";

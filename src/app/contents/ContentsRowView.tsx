@@ -5,7 +5,7 @@ import { findNode, type TreeNode } from "../../project/tree.js";
 import { chapterShare } from "../../project/progress.js";
 import { secretsOf } from "../../project/secrets.js";
 import { ChapterHeadingDialog } from "./ChapterHeadingDialog.js";
-import { useMenuButton, type MenuItem } from "../Menu.js";
+import { useMenuButton, type MenuItem } from "@llkit/Menu.js";
 import { statusSteps } from "../../project/statusSteps.js";
 import { labelsWithin } from "../../project/labels.js";
 import type { Project } from "../useProject.js";

@@ -1,7 +1,7 @@
 import { FilterIcon } from "../shell/icons.js";
 import { hasLabel, labelsOf, withLabel, type Label } from "../../project/labels.js";
 import type { TreeNode } from "../../project/tree.js";
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import type { Tree, TreeViewProps } from "../tree/useTreeView.js";
 import { LabelsDialog } from "./LabelsDialog.js";
 import { t } from "../../i18n/i18n.js";

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { SeriesDialog } from "./notes/SeriesDialog.js";
-import { useMenuButton } from "./Menu.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import { ChevronDownIcon, ContentsIcon } from "./shell/icons.js";
 import { SyncNotices } from "./SyncLayer.js";
 import { ThemeDialog } from "./themes/ThemeDialog.js";

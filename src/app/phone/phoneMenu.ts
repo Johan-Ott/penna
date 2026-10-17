@@ -1,5 +1,5 @@
 import type { AppState } from "../App.js";
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { HELP_TAB } from "../settings/SettingsDialog.js";
 import { group, helpItems } from "../shell/appMenu.js";

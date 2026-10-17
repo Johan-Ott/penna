@@ -1,7 +1,7 @@
 import type { Command, EditorState } from "prosemirror-state";
 import { useState } from "react";
 import { currentStyle, setStyle, STYLE_LABELS, type StyleChoice } from "../editor/commands.js";
-import { Menu } from "./Menu.js";
+import { Menu } from "@llkit/Menu.js";
 import { t } from "../i18n/i18n.js";
 
 interface StylePickerProps {

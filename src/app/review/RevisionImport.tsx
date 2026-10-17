@@ -9,7 +9,7 @@ import {
   type Comment,
 } from "../../project/comments.js";
 import type { WordComment } from "../../import/docxComments.js";
-import { Dialog } from "../controls.js";
+import { Dialog } from "@llkit/controls.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";

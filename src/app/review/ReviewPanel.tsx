@@ -3,7 +3,7 @@ import { GuideTip } from "../guide/GuideTip.js";
 import { useFloating } from "../blocks/BlockPanel.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
-import { CloseButton } from "../controls.js";
+import { CloseButton } from "@llkit/controls.js";
 import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { ProseNote } from "../../manuscript/prose.js";

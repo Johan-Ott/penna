@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
+import { useShortcut } from "@llkit/keys.js";
 import { browserStorage } from "@llkit/storage/browserStorage.js";
-import { MODIFIER_NAME, shortcutText, type Binding } from "./shortcutKeys.js";
+import { MODIFIER_NAME, shortcutText, type Binding } from "@llkit/shortcutKeys.js";
 import { t } from "../i18n/i18n.js";
 
 export { MODIFIER_NAME, shortcutText, type Binding };
@@ -66,3 +67,9 @@ const subscribe = (listener: () => void) => {
 };
 
 export const useBinding = (id: CommandId) => useSyncExternalStore(subscribe, () => bindingOf(id));
+
+/** A command's shortcut, on the keys the writer chose for it in Kortkommandon. */
+export function useCommandKey(id: CommandId, action: () => void) {
+  const binding = useBinding(id);
+  useShortcut(binding.key, action, binding);
+}

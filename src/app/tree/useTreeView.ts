@@ -11,7 +11,7 @@ import { chapterIds, foldableIds, sidebarSections, visibleRows } from "../../pro
 import type { TreeRow as Row } from "../../project/treeRows.js";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { nodeLabel, nodeMeta } from "../../project/treeLabels.js";
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import type { Project } from "../useProject.js";
 import type { Placement } from "./treeMenus.js";
 import { useTreeActions } from "./useTreeActions.js";

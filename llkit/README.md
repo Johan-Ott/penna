@@ -12,4 +12,14 @@ What any llstudios app is built on. Penna is the first app on it.
 ## In it now
 
 - `store`, `useRootClass`, `tooltips`, `errorLog`, `thisComputer`, `i18n`
+- `controls` (Row, Switch, Choice, Dropdown, Dialog, CloseButton), `Menu`, `keys` (shortcuts,
+  Escape, G and a letter), `shortcutKeys`
 - `storage/`: the file system interface, atomic writes, autosave, save errors, key-value storage
+
+## Styles
+
+`tokens.css` holds the colours, layers, radii and fonts, light and dark. `kit.css` draws the
+controls from them. The app imports those two first and its own styles after, so a rule of the
+app may build on a control; `motion.css`, how things move, comes last. A rule that styles
+only llkit's classes belongs in `kit.css`, whole: splitting one between the two lets the order
+decide what shows.

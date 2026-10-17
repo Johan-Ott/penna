@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Choice, Dialog, DialogButtons } from "../controls.js";
+import { Choice, Dialog, DialogButtons } from "@llkit/controls.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import {

@@ -9,7 +9,7 @@ import { sceneIdsIn, sortsOf } from "../../project/tree.js";
 import type { Project } from "../useProject.js";
 import type { NotePageProps } from "./NotePage.js";
 import { t } from "../../i18n/i18n.js";
-import { Dropdown } from "../controls.js";
+import { Dropdown } from "@llkit/controls.js";
 
 const otherNotes = (project: Project, noteId: string) =>
   sortsOf(project.tree)

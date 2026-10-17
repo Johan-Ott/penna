@@ -4,7 +4,7 @@ import {
   type Leading,
   type MarginSize,
 } from "../../export/bookDesign.js";
-import { Switch } from "../controls.js";
+import { Switch } from "@llkit/controls.js";
 import { ChoiceRow } from "./ChoiceRow.js";
 import type { ControlProps } from "./HeadingControls.js";
 import { t } from "../../i18n/i18n.js";

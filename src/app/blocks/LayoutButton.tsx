@@ -1,5 +1,5 @@
 import type { AppState } from "../App.js";
-import { useMenuButton, type MenuItem } from "../Menu.js";
+import { useMenuButton, type MenuItem } from "@llkit/Menu.js";
 import { LayoutIcon } from "../shell/icons.js";
 import { setPanelOpen, useSprint } from "../sprint/sprint.js";
 import {

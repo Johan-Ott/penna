@@ -16,7 +16,7 @@ import { earnBadge, earnInk } from "../journey/journeyEvents.js";
 import { INK } from "../../project/journey.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
-import { useCommandKey } from "../useShortcut.js";
+import { useCommandKey } from "../shortcuts.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";
 

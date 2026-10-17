@@ -4,7 +4,7 @@ import {
   withoutEmptySorts,
   type TreeRow as Row,
 } from "../../project/treeRows.js";
-import { Menu } from "../Menu.js";
+import { Menu } from "@llkit/Menu.js";
 import { addMenu, foldMenu, rowMenu } from "./treeMenus.js";
 import { TreeRow } from "./TreeRow.js";
 import {

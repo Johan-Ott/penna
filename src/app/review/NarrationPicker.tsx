@@ -5,7 +5,7 @@ import {
   type Narration,
   type Voice,
 } from "../../manuscript/narration.js";
-import { Choice, Dropdown, Switch } from "../controls.js";
+import { Choice, Dropdown, Switch } from "@llkit/controls.js";
 import { t } from "../../i18n/i18n.js";
 
 const VOICE_CHOICES: [Voice | "", string][] = [["", t("Inte vald")], ...VOICES];

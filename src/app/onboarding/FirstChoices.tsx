@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
-import { Choice } from "../controls.js";
+import { Choice } from "@llkit/controls.js";
 import { platform } from "../platform.js";
 import { t, uiLanguage } from "../../i18n/i18n.js";
 

@@ -2,7 +2,8 @@ import { bookLanguage } from "../project/bookLanguage.js";
 import type { AppState } from "./App.js";
 import { canSpeak, paragraphsToRead, speak, stopSpeaking, useSpeaking } from "./speech.js";
 import type { Project } from "./useProject.js";
-import { useEscape, useCommandKey } from "./useShortcut.js";
+import { useEscape } from "@llkit/keys.js";
+import { useCommandKey } from "./shortcuts.js";
 import { t } from "../i18n/i18n.js";
 
 /** Reads the selection, or from the cursor on, in the book's language. */

@@ -9,7 +9,7 @@ import {
   type PictureArea,
   type PictureFit,
 } from "../../export/openings.js";
-import { Choice, Dialog } from "../controls.js";
+import { Choice, Dialog } from "@llkit/controls.js";
 import { OpeningCanvas } from "./OpeningCanvas.js";
 import { PictureRow } from "./PictureRow.js";
 import { t } from "../../i18n/i18n.js";

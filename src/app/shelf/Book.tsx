@@ -2,7 +2,7 @@ import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
 import { amountOf, deadlineLine } from "../../project/shelfLines.js";
 import { coverLookOf } from "../../project/shelfLook.js";
 import { templatePieces } from "../../project/templates.js";
-import { useMenuButton } from "../Menu.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import { platform } from "../platform.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 import { useShelfCover } from "./useShelfCover.js";

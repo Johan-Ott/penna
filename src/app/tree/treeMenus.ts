@@ -1,6 +1,6 @@
 import { TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
 import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
-import type { MenuItem } from "../Menu.js";
+import type { MenuItem } from "@llkit/Menu.js";
 import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 

@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { useBinding, type CommandId } from "./shortcuts.js";
 
 interface ShortcutOptions {
   alt?: boolean;
@@ -23,12 +22,6 @@ export function useShortcut(key: string, action: () => void, options: ShortcutOp
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [key, needsAlt, needsShift]);
-}
-
-/** A command's shortcut, on the keys the writer chose for it in Kortkommandon. */
-export function useCommandKey(id: CommandId, action: () => void) {
-  const binding = useBinding(id);
-  useShortcut(binding.key, action, binding);
 }
 
 // ProseMirror prevents every Escape typed in the text, so that one still counts as unhandled.

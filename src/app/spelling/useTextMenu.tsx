@@ -8,7 +8,7 @@ import {
   type SpellingSwitch,
 } from "../../editor/spellingMarks.js";
 import type { useEditorView } from "../../editor/useEditorView.js";
-import { Menu, type MenuItem } from "../Menu.js";
+import { Menu, type MenuItem } from "@llkit/Menu.js";
 import { platform } from "../platform.js";
 import { shortcutText } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";

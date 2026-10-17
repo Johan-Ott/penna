@@ -5,12 +5,12 @@ import type { AppState } from "../App.js";
 import { SeriesDialog } from "../notes/SeriesDialog.js";
 import { useBackupsDialog } from "../backups/BackupsDialog.js";
 import { useFeedbackDialog } from "../feedback/FeedbackDialog.js";
-import { useMenuButton } from "../Menu.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import { useRevisionImport } from "../review/RevisionImport.js";
 import { HELP_TAB } from "../settings/SettingsDialog.js";
 import type { Project } from "../useProject.js";
 import { openIfOnDisk } from "../useSceneSession.js";
-import { useCommandKey } from "../useShortcut.js";
+import { useCommandKey } from "../shortcuts.js";
 import { appMenu } from "./appMenu.js";
 import { t } from "../../i18n/i18n.js";
 

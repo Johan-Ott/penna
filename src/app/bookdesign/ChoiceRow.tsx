@@ -1,4 +1,4 @@
-import { Dropdown } from "../controls.js";
+import { Dropdown } from "@llkit/controls.js";
 
 export function ChoiceRow(props: {
   label: string;

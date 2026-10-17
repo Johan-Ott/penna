@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Dialog } from "../controls.js";
-import { useMenuButton } from "../Menu.js";
+import { Dialog } from "@llkit/controls.js";
+import { useMenuButton } from "@llkit/Menu.js";
 import type { CloudBook as Book, Fetching } from "./useCloudBooks.js";
 import { t } from "../../i18n/i18n.js";
 
