@@ -1,18 +1,39 @@
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 
 // The version shown under "Om Penna" is the one Tauri builds the app with.
 const tauriConfig = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8")) as {
   version: string;
 };
 
-// Tauri expects the dev server on a fixed port and prints its own output.
-export default defineConfig({
-  plugins: [react()],
-  clearScreen: false,
-  server: { port: 1420, strictPort: true },
-  // Typst runs in a worker that loads its parts as modules.
-  worker: { format: "es" },
-  define: { __APP_VERSION__: JSON.stringify(tauriConfig.version) },
+const LEFT_OUT = "\0typst-compiler-left-out";
+
+// An asset is written out as soon as it is imported, dead code or not, so in the apps the
+// compiler's 28 MB file is swapped for nothing before it is ever read.
+const typstLeftOut = (isBundled: boolean): Plugin => ({
+  name: "typst-compiler-left-out",
+  enforce: "pre",
+  resolveId: (id) =>
+    !isBundled && id.includes("typst_ts_web_compiler_bg.wasm?url") ? LEFT_OUT : null,
+  load: (id) => (id === LEFT_OUT ? "export default '';" : null),
+});
+
+// Tauri expects the dev server on a fixed port and prints its own output. A Tauri build leaves
+// Typst's compiler out of the app, which fetches it once; the browser and the dev server keep it.
+export default defineConfig(({ command }) => {
+  // The dev server keeps it, unless PENNA_TYPST_FETCH=1 tries the apps' way in Penna Test.
+  const isTypstBundled =
+    command === "serve" ? !process.env["PENNA_TYPST_FETCH"] : !process.env["TAURI_ENV_PLATFORM"];
+  return {
+    plugins: [react()],
+    clearScreen: false,
+    server: { port: 1420, strictPort: true },
+    // Typst runs in a worker that loads its parts as modules.
+    worker: { format: "es", plugins: () => [typstLeftOut(isTypstBundled)] },
+    define: {
+      __APP_VERSION__: JSON.stringify(tauriConfig.version),
+      __TYPST_BUNDLED__: JSON.stringify(isTypstBundled),
+    },
+  };
 });

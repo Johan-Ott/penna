@@ -1,6 +1,8 @@
 import type { PageMarks, TypstFiles } from "../export/typstCompile.js";
 import { TypstError } from "../export/typstError.js";
 import type { TypstRequest } from "./typstWorker.js";
+import { platform } from "./platform.js";
+import { t } from "../i18n/i18n.js";
 
 type Answer = { id: number; result?: unknown; error?: string; isTypst?: boolean };
 type Waiting = { resolve: (result: unknown) => void; reject: (error: Error) => void };
@@ -10,9 +12,24 @@ let worker: Worker | null = null;
 let nextId = 0;
 const waiting = new Map<number, Waiting>();
 
+// A compiler that cannot be fetched answers every waiting book with why.
+function handOverCompiler(started: Worker) {
+  if (__TYPST_BUNDLED__ || !platform.typstCompiler) return;
+  void platform.typstCompiler().then(
+    (compiler) => started.postMessage({ compiler }, [compiler]),
+    () => {
+      const why = new Error(t("Sättmotorn kunde inte hämtas. Kontrollera nätet och försök igen."));
+      waiting.forEach((asked) => asked.reject(why));
+      waiting.clear();
+      worker = null;
+    },
+  );
+}
+
 function started() {
   if (worker) return worker;
   worker = new Worker(new URL("./typstWorker.ts", import.meta.url), { type: "module" });
+  handOverCompiler(worker);
   worker.onmessage = (event: MessageEvent<Answer>) => {
     const { id, result, error, isTypst } = event.data;
     const asked = waiting.get(id);

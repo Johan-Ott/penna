@@ -1409,5 +1409,11 @@
   "{count} nya kommentarer finns nu i Granska.": "{count} new comments are now in Review.",
   "Ingen har ändrat något i texten.": "No one has changed anything in the text.",
   "Ändringar och kommentarer": "Changes and comments",
-  "Till en redaktör eller testläsare: välj Skicka till redaktör eller testläsare, så får du ett Word-manus. De ändrar och kommenterar i Word, Google Docs eller Pages, och du läser in filen under Meny, Dela och samarbeta, Läs in kommenterad Word-fil. Ändringarna och kommentarerna hamnar i Granska.": "To an editor or test reader: choose Send to editor or test reader to get a Word manuscript. They change and comment in Word, Google Docs or Pages, and you read the file in under Menu, Share and collaborate, Read in commented Word file. The changes and comments land in Review."
+  "Till en redaktör eller testläsare: välj Skicka till redaktör eller testläsare, så får du ett Word-manus. De ändrar och kommenterar i Word, Google Docs eller Pages, och du läser in filen under Meny, Dela och samarbeta, Läs in kommenterad Word-fil. Ändringarna och kommentarerna hamnar i Granska.": "To an editor or test reader: choose Send to editor or test reader to get a Word manuscript. They change and comment in Word, Google Docs or Pages, and you read the file in under Menu, Share and collaborate, Read in commented Word file. The changes and comments land in Review.",
+  "Språk du skriver på": "Languages you write in",
+  "Gör Penna till din": "Make Penna yours",
+  "Vilka språk skriver du på?": "Which languages do you write in?",
+  "Ord om dagen": "Words a day",
+  "Ordlistorna och sättmotorn för tryck hämtas medan du börjar, cirka 13 MB.": "The dictionaries and the print typesetter are fetched while you begin, about 13 MB.",
+  "Sättmotorn kunde inte hämtas. Kontrollera nätet och försök igen.": "The typesetter could not be fetched. Check the connection and try again."
 }

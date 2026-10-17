@@ -8,6 +8,7 @@ test("the first start goes to the shelf, where a new book opens a scene to write
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Kom igång" })).toBeVisible({ timeout: 50_000 });
   await page.getByRole("button", { name: "Kom igång" }).click();
+  await page.getByRole("button", { name: "Klar" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
   for (let step = 0; step < 2; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
   await page.getByPlaceholder("Arbetstitel duger").fill("Isen");
@@ -24,6 +25,7 @@ test("a new book's genre gives its structure, and what it gets shows before it i
 }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
+  await page.getByRole("button", { name: "Klar" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
   await page.getByRole("button", { name: "Fortsätt" }).click();
 
@@ -48,6 +50,7 @@ test("an empty book opens on its welcome, which goes to the trash on request", a
   await page.setViewportSize({ width: 1280, height: 820 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
+  await page.getByRole("button", { name: "Klar" }).click();
   await page.getByRole("button", { name: "+ Ny bok" }).click();
   await page.getByRole("radio", { name: /Annat/ }).click();
   for (let step = 0; step < 2; step++) await page.getByRole("button", { name: "Fortsätt" }).click();
@@ -59,4 +62,18 @@ test("an empty book opens on its welcome, which goes to the trash on request", a
   await page.getByRole("button", { name: "Ta bort välkomsten" }).click();
 
   await expect(page.locator(".sidebar")).not.toContainText("Välkommen");
+});
+
+test("the first start asks the writer's languages, and a new book takes the first", async ({
+  page,
+}) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
+  await page.getByRole("button", { name: "Svenska", exact: true }).click();
+  await page.getByRole("button", { name: "English", exact: true }).click();
+  await page.getByRole("radio", { name: "500" }).click();
+  await page.getByRole("button", { name: "Klar" }).click();
+
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("penna.app") ?? "{}"));
+  expect(stored).toMatchObject({ bookLanguage: "en-GB", defaultDailyGoal: 500 });
 });

@@ -18,7 +18,7 @@ export async function libraryOf(libraryDir: string | null) {
 }
 
 /** What a new book starts from, before the writer has answered anything. */
-export const startDetails = (dailyGoal: number): ProjectDetails => ({
+export const startDetails = (dailyGoal: number, language = "sv-SE"): ProjectDetails => ({
   title: "",
   type: "roman",
   structure: suggestedStructure("roman", "", []),
@@ -29,6 +29,7 @@ export const startDetails = (dailyGoal: number): ProjectDetails => ({
   dailyGoal,
   deadline: "",
   narration: null,
+  language,
 });
 
 /** The details with the structure Penna suggests for them, and that structure's goal. */

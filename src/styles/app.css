@@ -3802,3 +3802,29 @@ html.welcome-shown body {
 .settings-found .settings-group-title {
   display: none;
 }
+
+/* The first start's choices, in the welcome's column. */
+.first-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(440px, 100%);
+  margin: auto 0;
+}
+
+.first-choices h2 {
+  margin: 0 0 8px;
+  font: 600 28px/1.2 var(--font-prose);
+}
+
+.first-choices .button {
+  margin-top: 12px;
+}
+
+.welcome-language {
+  align-self: flex-end;
+}
+
+.first-choices .segmented {
+  display: flex;
+}

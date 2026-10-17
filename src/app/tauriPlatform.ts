@@ -176,6 +176,7 @@ const backups = {
 const spelling: Spelling = {
   misspelled: (language, words) => invoke("misspelled_words", { language, words }),
   suggestions: (language, word) => invoke("spelling_suggestions", { language, word }),
+  prepare: (language) => invoke("prepare_dictionary", { language }),
 };
 
 const remoteControl = (turnOn?: boolean) => invoke<RemoteState>("remote_control", { turnOn });
@@ -197,6 +198,8 @@ export const tauriPlatform: Platform = {
   ...(isPhone ? {} : { openFile }),
   fileSystem: tauriFileSystem,
   spelling,
+  typstCompiler: () => invoke<ArrayBuffer>("typst_compiler"),
+  prepareTypst: () => invoke("prepare_typst"),
   ...(isPhone ? {} : { readClipboard: readText, windowControls, remoteControl }),
   checkForUpdate: updateCheck(),
   notify,

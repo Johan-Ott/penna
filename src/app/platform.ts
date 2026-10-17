@@ -62,13 +62,19 @@ export interface Platform {
   openFile?: (path: string) => Promise<void>;
   /** Android's share sheet, for a picture or an export; missing elsewhere. */
   shareFile?: (name: string, bytes: Uint8Array, mime: string) => Promise<void>;
+  /** Typst's compiler, fetched once by the apps; missing in the browser, where it comes along. */
+  typstCompiler?: () => Promise<ArrayBuffer>;
+  /** Fetches the compiler now, as the first start does; missing in the browser. */
+  prepareTypst?: () => Promise<void>;
 }
 
 export interface Spelling {
   /** The words the language's dictionary does not know; fails when there is no dictionary. */
   misspelled(language: string, words: string[]): Promise<string[]>;
-  /** A language that is not built in is fetched the first time, then kept. */
+  /** Every language's dictionary is fetched the first time it is needed, then kept. */
   suggestions(language: string, word: string): Promise<string[]>;
+  /** Fetches the language's dictionary now, as the first start does for the chosen ones. */
+  prepare(language: string): Promise<void>;
 }
 
 export interface Backups {

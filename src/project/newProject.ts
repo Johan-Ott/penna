@@ -32,6 +32,8 @@ export interface ProjectDetails {
   deadline: string;
   /** How the book is told, which Granska then watches for; null until chosen. */
   narration: Narration | null;
+  /** Such as "en-GB"; a book without one is Swedish. */
+  language?: string;
 }
 
 // Characters Windows, macOS or a cloud service refuses in a folder name.
@@ -121,6 +123,7 @@ const bookFields = (details: ProjectDetails) => ({
   dailyGoal: details.dailyGoal,
   ...(details.deadline ? { deadline: details.deadline } : {}),
   ...(details.narration ? { narration: details.narration } : {}),
+  ...(details.language && details.language !== "sv-SE" ? { language: details.language } : {}),
 });
 
 // A writer who finds the story while writing starts on one chapter, whatever the structure.

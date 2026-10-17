@@ -1,6 +1,6 @@
 //! Penna's own spelling check, the same on every device: Hunspell dictionaries read by spellbook.
-//! Swedish and British English are built in. Danish, Norwegian and German are fetched the first
-//! time a book needs them, at a fixed version, and kept in Penna's own folder. Finnish has none.
+//! Each is fetched the first time it is chosen or a book needs it, at a fixed version, and kept in
+//! Penna's own folder, so the app itself carries none. Finnish has none.
 
 use spellbook::Dictionary;
 use std::collections::HashMap;
@@ -11,34 +11,28 @@ use tauri_plugin_http::reqwest;
 #[derive(Default)]
 pub struct Dictionaries(Mutex<HashMap<String, Dictionary>>);
 
-fn built_in(language: &str) -> Option<(&'static str, &'static str)> {
-    match language {
-        "sv-SE" => Some((
-            include_str!("../dictionaries/sv-SE.aff"),
-            include_str!("../dictionaries/sv-SE.dic"),
-        )),
-        "en-GB" => Some((
-            include_str!("../dictionaries/en-GB.aff"),
-            include_str!("../dictionaries/en-GB.dic"),
-        )),
-        _ => None,
-    }
-}
-
 // npm packages never change once published, so a version names exactly one dictionary.
-const FETCHED: [(&str, &str); 3] = [
+const FETCHED: [(&str, &str); 5] = [
+    ("sv-SE", "dictionary-sv@4.0.0"),
+    ("en-GB", "dictionary-en-gb@3.0.0"),
     ("da-DK", "dictionary-da@6.0.0"),
     ("nb-NO", "dictionary-nb@3.0.0"),
     ("de-DE", "dictionary-de@3.0.0"),
 ];
 
-async fn fetch(package: &str, file: &str) -> Result<String, String> {
+/// A file of an npm package at a fixed version, from jsDelivr, which serves them for free.
+pub async fn fetch_bytes(package: &str, file: &str) -> Result<Vec<u8>, String> {
     let url = format!("https://cdn.jsdelivr.net/npm/{package}/{file}");
     let response = reqwest::get(url).await.map_err(|error| error.to_string())?;
     let response = response
         .error_for_status()
         .map_err(|error| error.to_string())?;
-    response.text().await.map_err(|error| error.to_string())
+    let bytes = response.bytes().await.map_err(|error| error.to_string())?;
+    Ok(bytes.to_vec())
+}
+
+async fn fetch(package: &str, file: &str) -> Result<String, String> {
+    String::from_utf8(fetch_bytes(package, file).await?).map_err(|error| error.to_string())
 }
 
 // Kept once fetched, so the spelling works without the web from then on.
@@ -103,10 +97,7 @@ async fn ensure(
     {
         return Ok(());
     }
-    let (aff, dic) = match built_in(language) {
-        Some((aff, dic)) => (aff.to_string(), dic.to_string()),
-        None => fetched_files(app, language).await?,
-    };
+    let (aff, dic) = fetched_files(app, language).await?;
     let dictionary = read_leniently(&aff, &dic)?;
     let mut loaded = dictionaries.0.lock().map_err(|error| error.to_string())?;
     loaded.entry(language.to_string()).or_insert(dictionary);
@@ -154,4 +145,14 @@ pub async fn spelling_suggestions(
         suggestions.truncate(6);
         suggestions
     })
+}
+
+/// Fetches the language's dictionary now, as the first start does for the languages chosen.
+#[tauri::command]
+pub async fn prepare_dictionary(
+    app: AppHandle,
+    dictionaries: State<'_, Dictionaries>,
+    language: String,
+) -> Result<(), String> {
+    ensure(&app, &dictionaries, &language).await
 }

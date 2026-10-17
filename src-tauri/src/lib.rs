@@ -7,6 +7,7 @@ mod remote;
 #[cfg(mobile)]
 mod share;
 mod spelling;
+mod typst;
 
 use tauri::WebviewWindowBuilder;
 
@@ -58,6 +59,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             spelling::misspelled_words,
             spelling::spelling_suggestions,
+            spelling::prepare_dictionary,
+            typst::typst_compiler,
+            typst::prepare_typst,
             books::remove_book,
             files::write_temp_text,
             backups::remove_backup,
@@ -73,6 +77,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             spelling::misspelled_words,
             spelling::spelling_suggestions,
+            spelling::prepare_dictionary,
+            typst::typst_compiler,
+            typst::prepare_typst,
             books::remove_book,
             files::write_temp_text,
             backups::remove_backup,

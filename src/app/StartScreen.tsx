@@ -14,10 +14,12 @@ import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
 import { recordFailure } from "./errorLog.js";
+import { platform } from "./platform.js";
 import type { ProjectDetails } from "../project/newProject.js";
 import { exampleBook, importedBook, libraryOf, newBook, startDetails } from "./onboarding/books.js";
 import { NewBookDialog } from "./onboarding/NewBookDialog.js";
 import { Welcome } from "./onboarding/Welcome.js";
+import type { Choices } from "./onboarding/FirstChoices.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
 import { useCloudBooks } from "./shelf/useCloudBooks.js";
 import { shelfHandlers } from "./shelf/shelfHandlers.js";
@@ -154,7 +156,7 @@ function Shelf({ app }: StartScreenProps) {
       />
       {isNewBookOpen && (
         <NewBookDialog
-          start={startDetails(preferences.defaultDailyGoal)}
+          start={startDetails(preferences.defaultDailyGoal, preferences.bookLanguage)}
           libraryDir={preferences.libraryDir ?? ""}
           onCreate={books.create}
           onClose={() => setNewBookOpen(false)}
@@ -164,13 +166,34 @@ function Shelf({ app }: StartScreenProps) {
   );
 }
 
+// The chosen languages' dictionaries and Typst's compiler, fetched while the writer begins; what
+// fails here is fetched again the first time it is needed.
+function fetchWhatPennaNeeds(languages: string[]) {
+  const failed = recordFailure("Hämtningen vid första start");
+  for (const language of languages) void platform.spelling?.prepare(language).catch(failed);
+  void platform.prepareTypst?.().catch(failed);
+}
+
 export function StartScreen({ app }: StartScreenProps) {
   const { preferences, updatePreferences } = app.startup;
   if (preferences.isOnboardingDone) return <Shelf app={app} />;
-  const start = async (withGoogle: boolean) => {
+  const start = async (withGoogle: boolean, choices: Choices) => {
     const libraryDir = await libraryOf(preferences.libraryDir);
     if (withGoogle) await signIn(updatePreferences);
-    updatePreferences((now) => ({ ...now, isOnboardingDone: true, libraryDir }));
+    const [bookLanguage = "sv-SE"] = choices.languages;
+    const { dailyGoal } = choices;
+    updatePreferences((now) => ({
+      ...now,
+      ...{ isOnboardingDone: true, libraryDir, bookLanguage, defaultDailyGoal: dailyGoal },
+    }));
+    fetchWhatPennaNeeds(choices.languages);
   };
-  return <Welcome onStart={start} />;
+  const { settings, onChangeSettings } = app.writingMode;
+  return (
+    <Welcome
+      onStart={start}
+      theme={settings.theme}
+      onTheme={(theme) => onChangeSettings((current) => ({ ...current, theme }))}
+    />
+  );
 }

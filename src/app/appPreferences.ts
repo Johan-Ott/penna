@@ -13,6 +13,8 @@ export interface AppPreferences {
   isAutoSnapshotOn: boolean;
   /** The language of Penna's own interface; each book has its own language too. */
   uiLanguage: UiLanguage;
+  /** The language a new book is written in, such as "sv-SE"; the first start chooses it. */
+  bookLanguage: string;
   /** The hour of the daily reminder when nothing is written yet; null is off. */
   reminderHour: number | null;
   isDriveSyncOn: boolean;
@@ -27,6 +29,7 @@ export const START_PREFERENCES: AppPreferences = {
   defaultDailyGoal: 1000,
   isAutoSnapshotOn: true,
   uiLanguage: "sv",
+  bookLanguage: "sv-SE",
   reminderHour: null,
   isDriveSyncOn: false,
 };
@@ -53,6 +56,7 @@ export function loadPreferences(storage: KeyValueStorage): AppPreferences {
       : START_PREFERENCES.defaultDailyGoal,
     isAutoSnapshotOn: stored["isAutoSnapshotOn"] !== false,
     uiLanguage: stored["uiLanguage"] === "en" ? "en" : "sv",
+    bookLanguage: textOrNull(stored["bookLanguage"]) ?? START_PREFERENCES.bookLanguage,
     reminderHour: isHour(stored["reminderHour"]) ? stored["reminderHour"] : null,
     isDriveSyncOn: stored["isDriveSyncOn"] === true,
   };

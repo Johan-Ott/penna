@@ -1,5 +1,4 @@
 // Typst sets the book here, away from the window, so writing never waits for a long book.
-import compilerWasmUrl from "@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm?url";
 import rendererWasmUrl from "@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm?url";
 import { createTypst, type TypstFiles } from "../export/typstCompile.js";
 import { TypstError } from "../export/typstError.js";
@@ -34,8 +33,18 @@ async function bytesAt(url: string) {
   return new Uint8Array(await response.arrayBuffer());
 }
 
+// In the apps the window hands over the compiler Penna fetched; elsewhere it comes with the page.
+let giveCompiler: (bytes: Uint8Array) => void = () => undefined;
+const handedOver = new Promise<Uint8Array>((resolve) => (giveCompiler = resolve));
+async function compilerBytes() {
+  if (!__TYPST_BUNDLED__) return handedOver;
+  const url =
+    await import("@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm?url");
+  return bytesAt(url.default);
+}
+
 const typst = createTypst({
-  compilerWasm: () => bytesAt(compilerWasmUrl),
+  compilerWasm: compilerBytes,
   rendererWasm: () => bytesAt(rendererWasmUrl),
   fonts: () => Promise.all(FONT_FILES.map((name) => bytesAt(`/fonts/${name}.ttf`))),
 });
@@ -50,7 +59,8 @@ export interface TypstRequest {
 // One book at a time: the compiler holds one source, so requests wait their turn.
 let queue: Promise<unknown> = Promise.resolve();
 
-self.onmessage = (event: MessageEvent<TypstRequest>) => {
+self.onmessage = (event: MessageEvent<TypstRequest | { compiler: ArrayBuffer }>) => {
+  if ("compiler" in event.data) return giveCompiler(new Uint8Array(event.data.compiler));
   const { id, method, source, files } = event.data;
   queue = queue.then(async () => {
     try {

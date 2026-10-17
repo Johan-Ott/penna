@@ -32,6 +32,7 @@ describe("app preferences", () => {
       defaultDailyGoal: 750,
       isAutoSnapshotOn: false,
       uiLanguage: "en" as const,
+      bookLanguage: "en-GB",
       reminderHour: 20,
       isDriveSyncOn: true,
     };
