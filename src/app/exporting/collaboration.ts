@@ -3,9 +3,8 @@ import type { Project } from "../useProject.js";
 import { startChoices, type ExportChoices } from "./useExport.js";
 import { t } from "../../i18n/i18n.js";
 
-// Sharing is by files, so it costs nothing and needs no server: an editor or a test reader gets
-// the Word manuscript and sends it back with changes and comments, which Läs in kommenterad
-// Word-fil takes; a reader who only reads gets the book as an e-book.
+// By files, with no server: an editor or test reader sends the Word manuscript back with changes
+// and comments for Läs in kommenterad Word-fil; one who only reads gets the e-book.
 export function collaborationItems(
   project: Project,
   run: (choices: ExportChoices) => void,
