@@ -147,6 +147,11 @@ const RowEnd = (props: TreeRowProps) => (
   </>
 );
 
+// Drawn from its attribute, so the name is not a second "Elin" among the rows' own text.
+const PovTag = ({ pov }: { pov: string }) => (
+  <span className="tree-pov" data-pov={pov} title={t("Vems ögon: {pov}", { pov })} />
+);
+
 export function TreeRow(props: TreeRowProps) {
   return (
     <div
@@ -171,6 +176,7 @@ export function TreeRow(props: TreeRowProps) {
       ) : (
         <span className="tree-label">{props.label}</span>
       )}
+      {props.row.node.pov && <PovTag pov={props.row.node.pov} />}
       <LabelDots dots={props.dots} />
       <RowEnd {...props} />
     </div>

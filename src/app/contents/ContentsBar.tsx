@@ -49,7 +49,7 @@ function PovChips(props: { rows: ContentsRow[]; query: string; onQuery: (query: 
 }
 
 /** The chapters in reading order, in the story's time order, or as their tempo. */
-export type ContentsShown = "las" | "tid" | "tempo";
+export type ContentsShown = "las" | "tid" | "tempo" | "roller";
 
 function OrderSwitch(props: { shown: ContentsShown; onChange: (shown: ContentsShown) => void }) {
   const option = (label: string, shown: ContentsShown) => (
@@ -62,6 +62,7 @@ function OrderSwitch(props: { shown: ContentsShown; onChange: (shown: ContentsSh
       {option(t("Läsordning"), "las")}
       {option(t("Tidsordning"), "tid")}
       {option(t("Tempo"), "tempo")}
+      {option(t("Rollista"), "roller")}
     </div>
   );
 }

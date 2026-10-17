@@ -55,7 +55,11 @@ function noteCards(homes: Project[]): NoteCard[] {
   );
 }
 
-const firstSentence = (text: string) => (text.trim().match(/^[^.!?\n]*/)?.[0] ?? "").trim();
+// A prompt not yet answered, such as "Vill:" on a new person, says nothing of the note.
+const firstSentence = (text: string) => {
+  const line = text.split("\n").find((each) => each.trim() && !each.trim().endsWith(":")) ?? "";
+  return (line.trim().match(/^[^.!?]*/)?.[0] ?? "").trim();
+};
 
 /** `homes` must keep its identity between renders (useMemo), or the texts are read every time. */
 /** Mentions are counted for an open note, Innehåll's filter and Granska's people in the book. */

@@ -13,6 +13,7 @@ import type { Project } from "../useProject.js";
 import { BookMeta, PageGrid, TasksLink } from "./BookOverview.js";
 import { ContentsBar, type ContentsShown } from "./ContentsBar.js";
 import { TempoView } from "./TempoView.js";
+import { CastView } from "./CastView.js";
 import { ContentsList } from "./ContentsList.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -32,7 +33,10 @@ export interface ContentsProps {
   /** The words of each day, for when the first draft is done at this pace. */
   stats: Stats;
   /** The notes and where they are named, for the filter. */
-  notes: Pick<FilterSources, "cards" | "mentions"> & { manuscript: Record<string, string> };
+  notes: Pick<FilterSources, "cards" | "mentions"> & {
+    manuscript: Record<string, string>;
+    descriptionOf: (id: string) => string;
+  };
 }
 
 // The whole book's pages as a picture: what is written, and outlined pages for what is left.
@@ -81,6 +85,21 @@ function ContentsHeader(props: ContentsProps) {
   );
 }
 
+function ContentsBody(props: ContentsProps & { shown: ContentsShown; query: string }) {
+  const { shown, notes } = props;
+  if (shown === "tempo") return <TempoView project={props.project} texts={notes.manuscript} />;
+  if (shown === "roller")
+    return (
+      <CastView
+        project={props.project}
+        mentions={notes.mentions}
+        descriptionOf={notes.descriptionOf}
+        onOpen={props.onOpenScene}
+      />
+    );
+  return <ContentsList {...props} isTimeOrder={shown === "tid"} query={props.query} />;
+}
+
 /** Innehåll: the book at a glance, its pages, and its chapters by part to plan in. */
 export function ContentsView(props: ContentsProps) {
   const [shown, setShown] = useState<ContentsShown>("las");
@@ -97,11 +116,7 @@ export function ContentsView(props: ContentsProps) {
           shown={shown}
           onShown={setShown}
         />
-        {shown === "tempo" ? (
-          <TempoView project={props.project} texts={props.notes.manuscript} />
-        ) : (
-          <ContentsList {...props} isTimeOrder={shown === "tid"} query={query} />
-        )}
+        <ContentsBody {...props} shown={shown} query={query} />
       </div>
       <GuideTip step="planera" />
     </main>

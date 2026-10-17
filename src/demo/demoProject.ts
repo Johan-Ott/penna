@@ -98,6 +98,7 @@ const PROJECT = {
           title: "Brevet",
           summary: "Elin får ett brev från Henrik, som försvann på isen för trettio år sedan.",
           when: "Januari",
+          pov: "Elin",
           children: [
             { id: SCENE_IDS.koket, kind: "scene" },
             { id: SCENE_IDS.isen, kind: "scene" },
@@ -110,6 +111,7 @@ const PROJECT = {
           subtitle: "Arvid",
           summary: "Arvid går upp i fyren och minns natten då ljusen syntes på isen.",
           when: "Samma natt",
+          pov: "Arvid",
           children: [{ id: SCENE_IDS.fyren, kind: "scene", labels: ["kolla-fakta"] }],
         },
       ],
@@ -124,6 +126,7 @@ const PROJECT = {
           kind: "chapter",
           title: "Smältningen",
           subtitle: "Elin, april",
+          pov: "Elin",
           epigraph: "Det som isen tar, ger våren tillbaka.",
           epigraphBy: "Ordspråk från skärgården",
           when: "April",

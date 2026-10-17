@@ -361,6 +361,25 @@ select:focus-visible {
   white-space: nowrap;
 }
 
+/* Whose eyes a scene or chapter is seen through, as Innehåll's Vems ögon? sets it. */
+.tree-pov {
+  flex-shrink: 0;
+  max-width: 72px;
+  overflow: hidden;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-pov::before {
+  content: attr(data-pov);
+}
+
 .tree-meta {
   color: var(--text-label);
   font-size: 12px;
@@ -3701,4 +3720,45 @@ body:has(.welcome) {
 
 .phone-screen .continue-quote {
   display: none;
+}
+
+/* Rollista: the people as cards, a few to a row. */
+.cast {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.cast-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid var(--border-control);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cast-card:hover {
+  border-color: var(--text-muted);
+}
+
+.cast-name {
+  font: 600 20px/1.2 var(--font-prose);
+}
+
+.cast-about {
+  flex-grow: 1;
+  color: var(--text-muted);
+  font: 15px/1.5 var(--font-prose);
+}
+
+.cast-where,
+.cast-empty {
+  color: var(--text-label);
+  font-size: 13px;
 }

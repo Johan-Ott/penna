@@ -624,6 +624,12 @@
   padding-bottom: 40px;
 }
 
+/* A note is a sheet, not a book page: its paragraphs stand apart instead of indenting. */
+.page:has(.note-mentions, .secret-panel) .manuscript p + p {
+  margin-top: 0.6em;
+  text-indent: 0;
+}
+
 /* The card over a linked name */
 .mention-card {
   gap: 8px;

@@ -32,7 +32,7 @@ export const secretNode = (revealId: string, arvidId: string, knownFromId: strin
 
 export const connections = (ids: { elin: string; arvid: string; maja: string }) => ({
   [ids.elin]: [
-    { id: ids.arvid, role: "brorsdotter" },
+    { id: ids.arvid, role: "farbror" },
     { id: ids.maja, role: "barndomsvän" },
   ],
 });

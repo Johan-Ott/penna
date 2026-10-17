@@ -46,8 +46,8 @@ function AddConnection(props: {
     <form className="connection-form" onSubmit={(event) => (event.preventDefault(), add())}>
       <NoteSelect project={props.project} ids={others} value={otherId} onChange={setOtherId} />
       <input
-        aria-label={t("Vad de är för varandra")}
-        placeholder={t("brorsdotter")}
+        aria-label={t("Vem den andra är för den här")}
+        placeholder={t("till exempel farbror")}
         value={role}
         onChange={(event) => setRole(event.target.value)}
       />
