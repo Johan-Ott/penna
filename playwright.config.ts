@@ -7,7 +7,20 @@ export default defineConfig({
   // One dev server serves every browser; more at once than this makes timing-sensitive steps flaky.
   workers: 8,
   expect: { timeout: 15_000 },
-  use: { baseURL: "http://127.0.0.1:1420", locale: "sv-SE" },
+  use: {
+    baseURL: "http://127.0.0.1:1420",
+    locale: "sv-SE",
+    // The guide's tips would lie over what the flows click; e2e/guide.spec.ts turns it on.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: "http://127.0.0.1:1420",
+          localStorage: [{ name: "penna.guide", value: '{"isOff":true,"seen":[]}' }],
+        },
+      ],
+    },
+  },
   webServer: {
     command: "npm run dev:web -- --host 127.0.0.1",
     url: "http://127.0.0.1:1420",

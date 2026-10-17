@@ -1,4 +1,5 @@
 import { useEffect, type CSSProperties, type ReactNode } from "react";
+import { GuideTip } from "./guide/GuideTip.js";
 import type { ManuscriptScope } from "../editor/manuscriptSearch.js";
 import { refreshPageMarks } from "../editor/pageMarks.js";
 import { refreshRepetitions } from "../editor/repetitionMarks.js";
@@ -208,6 +209,7 @@ export function WritingArea(props: WritingAreaProps) {
         {props.aside}
       </div>
       <Floating {...props} isSettingsOpen={panels.isSettingsOpen} />
+      <GuideTip step="skriv" isHere={!props.isHidden} />
     </main>
   );
 }

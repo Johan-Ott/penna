@@ -1,4 +1,5 @@
 import { CoverFields } from "./CoverFields.js";
+import { GuideTip } from "../guide/GuideTip.js";
 import { useState } from "react";
 import { designOf, type BookDesign } from "../../export/bookDesign.js";
 import type { Typography } from "../../export/book.js";
@@ -187,6 +188,7 @@ export function PublishView(props: PublishProps) {
         <PublishPreview props={props} publishing={publishing} />
       </main>
       <ExportStatus exporter={exporter} onOpenScene={props.onOpenScene} />
+      <GuideTip step="publicera" />
     </div>
   );
 }

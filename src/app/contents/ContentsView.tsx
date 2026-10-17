@@ -1,4 +1,5 @@
 import { pagesAtGoal, projectGoals } from "../../project/progress.js";
+import { GuideTip } from "../guide/GuideTip.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import { useState } from "react";
 import type { SceneStatus } from "../../manuscript/sceneFile.js";
@@ -102,6 +103,7 @@ export function ContentsView(props: ContentsProps) {
           <ContentsList {...props} isTimeOrder={shown === "tid"} query={query} />
         )}
       </div>
+      <GuideTip step="planera" />
     </main>
   );
 }

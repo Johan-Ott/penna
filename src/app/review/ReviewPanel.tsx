@@ -1,4 +1,5 @@
 import type { PointerEvent } from "react";
+import { GuideTip } from "../guide/GuideTip.js";
 import { useFloating } from "../blocks/BlockPanel.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
@@ -175,6 +176,7 @@ export function ReviewPanel(props: ReviewPanelProps) {
       {review && <ToLookAt {...props} review={review} />}
       {review && <InBook notes={props.bookNotes} />}
       {props.commentsSection}
+      <GuideTip step="granska" isHere={isShown} />
     </aside>
   );
 }

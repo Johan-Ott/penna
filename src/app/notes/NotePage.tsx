@@ -1,4 +1,5 @@
 import { chapterRuns } from "../../project/cards.js";
+import { GuideTip } from "../guide/GuideTip.js";
 import {
   CHARACTERS_ID,
   findNode,
@@ -60,6 +61,7 @@ export function NoteHeader(props: NotePageProps & { sortId: string }) {
       <h1>{project.summaries[noteId]?.title ?? ""}</h1>
       {file && <ResearchFile dir={project.dir} name={file} />}
       <Connections {...props} />
+      <GuideTip step="anteckningar" />
     </header>
   );
 }

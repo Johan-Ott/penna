@@ -1372,5 +1372,16 @@
   "Vilken bok?": "Which book?",
   "Titel, röst och mål": "Title, voice and goals",
   "Strukturen": "The structure",
-  "{name}, att stämma av mot när du har skrivit en bit.": "{name}, to check against once you have written a while."
+  "{name}, att stämma av mot när du har skrivit en bit.": "{name}, to check against once you have written a while.",
+  "Skriv här. Penna sparar av sig själv. Kapitel och scener lägger du till i trädet till vänster.": "Write here. Penna saves by itself. Add chapters and scenes in the tree on the left.",
+  "En anteckning håller en person, en plats eller en sak. Namnet blir en länk i texten, så du hittar hit medan du skriver.": "A note holds a person, a place or a thing. Its name becomes a link in the text, so you find your way here while you write.",
+  "Planera": "Plan",
+  "Innehåll visar boken kapitel för kapitel, med vad som händer och när. Här ser du hela berättelsen på en gång.": "Contents shows the book chapter by chapter, with what happens and when. Here you see the whole story at once.",
+  "Granska samlar kommentarer och det texten kan behöva: upprepningar, filterord och stavning i kapitlet du skriver.": "Review gathers comments and what the text may need: repetitions, filter words and spelling in the chapter you are writing.",
+  "Välj utseende under Design, fyll i Bokuppgifter och exportera som manus, e-bok eller tryck-PDF.": "Choose the look under Design, fill in Book details and export as a manuscript, an e-book or a print PDF.",
+  "Guiden": "The guide",
+  "Tips": "Tip",
+  "Hoppa över guiden": "Skip the guide",
+  "Uppfattat": "Got it",
+  "Visa guiden igen": "Show the guide again"
 }

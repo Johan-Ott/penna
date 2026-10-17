@@ -1,4 +1,5 @@
 import { t } from "../../i18n/i18n.js";
+import { restartGuide } from "../guide/guide.js";
 
 // Short, for testers and new writers: where the book is, how it is kept safe, and what is missing.
 const SECTIONS: [string, string[]][] = [
@@ -66,6 +67,9 @@ const SECTIONS: [string, string[]][] = [
 export function HelpTab() {
   return (
     <div className="help-tab">
+      <button className="button secondary small" onClick={restartGuide}>
+        {t("Visa guiden igen")}
+      </button>
       {SECTIONS.map(([title, lines]) => (
         <section key={title}>
           <span className="design-section">{title}</span>
