@@ -15,6 +15,8 @@ export interface SpreadShare {
   firstNumber: number;
   written: number;
   total: number;
+  /** "32 000 av 90 000 ord · 12 dagar i rad", under the whole book's pages. */
+  progress?: string;
 }
 
 interface Choices {
@@ -30,7 +32,7 @@ function draw(canvas: HTMLCanvasElement, share: SpreadShare, choices: Choices) {
   if (choices.subject === "uppslag") drawSpread(card, share.pages, share.firstNumber, share.title);
   else {
     const label = t("{count} sidor hittills", { count: share.written });
-    drawWholeBook(card, { title: share.title, label, written: share.written, total: share.total });
+    drawWholeBook(card, { ...share, label, progress: share.progress ?? "" });
   }
   if (choices.isMarked) penMark(card);
 }

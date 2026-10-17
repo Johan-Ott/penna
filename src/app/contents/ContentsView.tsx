@@ -6,7 +6,7 @@ import type { SceneStatus } from "../../manuscript/sceneFile.js";
 import { contentsRows } from "../../project/contents.js";
 import type { FilterSources } from "../../project/contentsFilter.js";
 import type { PageMap } from "../../project/pageMap.js";
-import type { Stats } from "../../project/stats.js";
+import { dayKey, streak, type Stats } from "../../project/stats.js";
 import type { TreeNode } from "../../project/tree.js";
 import { ShareSpreadDialog } from "../share/ShareSpreadDialog.js";
 import type { Project } from "../useProject.js";
@@ -15,7 +15,7 @@ import { ContentsBar, type ContentsShown } from "./ContentsBar.js";
 import { TempoView } from "./TempoView.js";
 import { CastView } from "./CastView.js";
 import { ContentsList } from "./ContentsList.js";
-import { t } from "../../i18n/i18n.js";
+import { formatNumber, t } from "../../i18n/i18n.js";
 
 export interface ContentsProps {
   project: Project;
@@ -39,8 +39,27 @@ export interface ContentsProps {
   };
 }
 
+// The words toward the goal and the days in a row, as a writer would tell it.
+function progressLine(project: Project, stats: Stats) {
+  const words = formatNumber(manuscriptWords(project.tree, project.summaries));
+  const goal = projectGoals(project.fields).totalGoal;
+  const days = streak(stats, dayKey(Date.now()));
+  return [
+    goal
+      ? t("{words} av {goal} ord", { words, goal: formatNumber(goal) })
+      : t("{count} ord", { count: words }),
+    days > 1 && t("{count} dagar i rad", { count: days }),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 // The whole book's pages as a picture: what is written, and outlined pages for what is left.
-function ShareBook({ project, pageMap }: { project: Project; pageMap: PageMap }) {
+function ShareBook({
+  project,
+  pageMap,
+  stats,
+}: Pick<ContentsProps, "project" | "stats"> & { pageMap: PageMap }) {
   const [isOpen, setOpen] = useState(false);
   const share = {
     title: project.name,
@@ -52,6 +71,7 @@ function ShareBook({ project, pageMap }: { project: Project; pageMap: PageMap })
       projectGoals(project.fields).totalGoal,
       pageMap.pages,
     ),
+    progress: progressLine(project, stats),
   };
   return (
     <>
@@ -76,7 +96,9 @@ function ContentsHeader(props: ContentsProps) {
         <button className="link-button quiet contents-read" onClick={props.onReadBook}>
           {t("Läs hela boken")}
         </button>
-        {props.pageMap && <ShareBook project={props.project} pageMap={props.pageMap} />}
+        {props.pageMap && (
+          <ShareBook project={props.project} pageMap={props.pageMap} stats={props.stats} />
+        )}
       </span>
       {props.pageMap && (
         <PageGrid project={props.project} pageMap={props.pageMap} onOpenScene={props.onOpenScene} />

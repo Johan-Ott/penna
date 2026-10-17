@@ -147,7 +147,7 @@ export function drawSpread(card: Card, pages: PageBlock[][], firstNumber: number
 /** Hela boken: a little page for each written page, and outlined ones for what is left. */
 export function drawWholeBook(
   card: Card,
-  book: { title: string; label: string; written: number; total: number },
+  book: { title: string; label: string; progress: string; written: number; total: number },
 ) {
   const top = card.height / 2 - 150;
   text(
@@ -157,11 +157,12 @@ export function drawWholeBook(
     { size: 30, weight: 600, font: PROSE, align: "center" },
   );
   text(card, book.label, { x: 250, y: top + 22 }, { size: 13, alpha: 0.65, align: "center" });
+  text(card, book.progress, { x: 250, y: top + 40 }, { size: 11, alpha: 0.5, align: "center" });
   const columns = Math.max(1, Math.min(24, book.total));
   const width = 12 * columns + 4 * (columns - 1);
   for (let index = 0; index < book.total; index++) {
     const x = (500 - width) / 2 + (index % columns) * 16;
-    const y = top + 48 + Math.floor(index / columns) * 21;
+    const y = top + 58 + Math.floor(index / columns) * 21;
     card.context.fillStyle = card.ink;
     card.context.strokeStyle = "rgba(128,128,128,0.5)";
     if (index < book.written) card.context.fillRect(x, y, 12, 17);

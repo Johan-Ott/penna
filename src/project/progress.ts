@@ -1,5 +1,6 @@
 import { MONTHS } from "./snapshots.js";
 import { dailyGoalOf, type Stats, DAY } from "./stats.js";
+import { manuscriptNodes, type TreeNode } from "./tree.js";
 
 const AVERAGE_DAYS = 30;
 const HEATMAP_WEEKS = 12;
@@ -118,4 +119,11 @@ export function finishDay(words: number, goal: number | null, perDay: number, to
 export function pagesAtGoal(words: number, goal: number | null, written: number) {
   if (!goal || words === 0) return written;
   return Math.min(480, Math.max(written, Math.round((written * goal) / words)));
+}
+
+/** A chapter's share of the book's goal, to the nearest hundred; null without a goal or chapters. */
+export function chapterShare(tree: TreeNode[], fields: Record<string, unknown>) {
+  const total = projectGoals(fields).totalGoal;
+  const count = manuscriptNodes(tree, "chapter").length;
+  return total && count ? Math.round(total / count / 100) * 100 : null;
 }

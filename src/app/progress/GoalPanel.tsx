@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { averagePerDay, finishDay, projectGoals, shortDay } from "../../project/progress.js";
+import {
+  averagePerDay,
+  chapterShare,
+  finishDay,
+  projectGoals,
+  shortDay,
+} from "../../project/progress.js";
 import { dailyGoalOf, dayKey } from "../../project/stats.js";
 import { findNode, type TreeNode } from "../../project/tree.js";
 import { chapterOf, manuscriptWords, nodeWords } from "../../project/treeLabels.js";
@@ -12,7 +18,14 @@ import { t, formatNumber } from "../../i18n/i18n.js";
 // Mål: where the writer is now against each goal, the day's, the open scene's, its chapter's and
 // the book's. A scene or chapter may have a goal of its own, kept on its node in the tree.
 
-type Row = { label: string; words: number; goal: number | null; nodeId?: string };
+/** `suggested` is the chapter's share of the book's goal, until it has a goal of its own. */
+type Row = {
+  label: string;
+  words: number;
+  goal: number | null;
+  nodeId?: string;
+  suggested?: number;
+};
 
 // A scene's or chapter's goal is typed here; an empty field has none.
 function GoalInput({ row, onGoal }: { row: Row; onGoal: (goal: number | null) => void }) {
@@ -26,7 +39,7 @@ function GoalInput({ row, onGoal }: { row: Row; onGoal: (goal: number | null) =>
       className="goal-input"
       inputMode="numeric"
       value={draft}
-      placeholder={t("mål")}
+      placeholder={row.suggested ? `~${formatNumber(row.suggested)}` : t("mål")}
       aria-label={t("Mål för {label}", { label: row.label })}
       onChange={(event) => setDraft(event.target.value.replace(/\D/g, ""))}
       onBlur={keep}
@@ -36,7 +49,8 @@ function GoalInput({ row, onGoal }: { row: Row; onGoal: (goal: number | null) =>
 }
 
 function GoalRow({ row, onGoal }: { row: Row; onGoal: (goal: number | null) => void }) {
-  const share = row.goal ? Math.min(100, (100 * row.words) / row.goal) : 0;
+  const aim = row.goal ?? row.suggested;
+  const share = aim ? Math.min(100, (100 * row.words) / aim) : 0;
   return (
     <div className="goal-row">
       <span className="goal-label">{row.label}</span>
@@ -67,7 +81,9 @@ function chapterRows(project: Project, sceneId: string): Row[] {
   const chapter = chapterOf(project.tree, sceneId);
   const node = chapter ? findNode(project.tree, chapter.id)?.node : undefined;
   if (!chapter || !node) return [];
-  return [nodeRow(t("Kapitel {number}", { number: chapter.number }), node, project.summaries)];
+  const row = nodeRow(t("Kapitel {number}", { number: chapter.number }), node, project.summaries);
+  const suggested = chapterShare(project.tree, project.fields);
+  return [suggested ? { ...row, suggested } : row];
 }
 
 // The open scene and its chapter, when a scene is open.

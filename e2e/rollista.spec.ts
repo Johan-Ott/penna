@@ -33,3 +33,9 @@ test("what a chapter is for stands under its title while writing it", async ({ p
 
   await expect(task).toHaveValue(/Elin får ett brev från Henrik/);
 });
+
+test("Innehåll shows where the reader learns a secret", async ({ page }) => {
+  await runCommand(page, "Gå till Innehåll");
+
+  await expect(page.locator(".contents-reveal")).toHaveText("Avslöjar: Henrik lever");
+});

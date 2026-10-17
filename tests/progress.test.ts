@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   averagePerDay,
+  chapterShare,
   finishDay,
   daysBetween,
   deadlinePlan,
@@ -143,5 +144,18 @@ describe("finishDay", () => {
   it("is unknown without a goal or with no pace yet", () => {
     expect(finishDay(1000, null, 500, "2026-10-01")).toBeNull();
     expect(finishDay(1000, 3000, 0, "2026-10-01")).toBeNull();
+  });
+});
+
+describe("chapterShare", () => {
+  const chapter = (id: string) => ({ id, kind: "chapter" as const, title: id, children: [] });
+
+  it("splits the book's goal over its chapters, to the nearest hundred", () => {
+    const tree = [chapter("A"), chapter("B"), chapter("C")];
+
+    expect(chapterShare(tree, { totalGoal: 90_000 })).toBe(30_000);
+    expect(chapterShare(tree.slice(0, 2), { totalGoal: 15_050 })).toBe(7_500);
+    expect(chapterShare(tree, {})).toBeNull();
+    expect(chapterShare([], { totalGoal: 90_000 })).toBeNull();
   });
 });

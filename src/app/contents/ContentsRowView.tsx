@@ -2,6 +2,8 @@ import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js"
 import { useState } from "react";
 import { withNodeText, type ContentsRow } from "../../project/contents.js";
 import { findNode, type TreeNode } from "../../project/tree.js";
+import { chapterShare } from "../../project/progress.js";
+import { secretsOf } from "../../project/secrets.js";
 import { ChapterHeadingDialog } from "./ChapterHeadingDialog.js";
 import { useMenuButton, type MenuItem } from "../Menu.js";
 import { statusSteps } from "../../project/statusSteps.js";
@@ -52,15 +54,24 @@ const StatusDot = ({ step }: { step: { color: string } }) => (
 );
 
 // The chapter's own labels and its scenes', so the plan shows what each chapter holds.
+// The row's labels, and the secrets the reader learns in it, so the reveals can be planned.
 function RowLabels({ project, row }: RowProps) {
   const node = findNode(project.tree, row.id)?.node;
   const labels = node ? labelsWithin(project.fields, node) : [];
-  if (labels.length === 0) return null;
+  const reveals = secretsOf(project.tree, project.summaries).filter(
+    (secret) => secret.reveal && row.sceneIds.includes(secret.reveal),
+  );
+  if (labels.length === 0 && reveals.length === 0) return null;
   return (
     <span className="contents-labels">
       {labels.map((label) => (
         <span key={label.id} className="contents-label">
           <StatusDot step={label} /> {label.name}
+        </span>
+      ))}
+      {reveals.map((secret) => (
+        <span key={secret.id} className="contents-label contents-reveal">
+          {t("Avslöjar: {name}", { name: secret.name })}
         </span>
       ))}
     </span>
@@ -157,12 +168,18 @@ function pageText(pages: RowProps["pages"]) {
 }
 
 /** One chapter in Innehåll: its title, what happens, when, its length and its status. */
-const WordsCell = ({ row, pages }: RowProps) => (
-  <span className="contents-words">
-    {row.words > 0 ? formatNumber(row.words) : ""}
-    {pages && <span className="contents-pages">{pageText(pages)}</span>}
-  </span>
-);
+// A chapter's words against its goal, its own or its share of the book's.
+function WordsCell({ row, pages, project, isScene }: RowProps) {
+  const own = findNode(project.tree, row.id)?.node.goal;
+  const goal = isScene ? null : (own ?? chapterShare(project.tree, project.fields));
+  return (
+    <span className="contents-words">
+      {row.words > 0 || goal ? formatNumber(row.words) : ""}
+      {goal && <span className="contents-goal"> / {formatNumber(goal)}</span>}
+      {pages && <span className="contents-pages">{pageText(pages)}</span>}
+    </span>
+  );
+}
 
 // Whose eyes and when, each in its own narrow column.
 const SHORT_FIELDS: ["pov" | "when", string][] = [

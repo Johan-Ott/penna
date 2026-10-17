@@ -792,7 +792,7 @@
 /* What the short columns hold, once, over the chapters. */
 .contents-columns {
   display: grid;
-  grid-template-columns: 16px 1fr 80px 100px 70px;
+  grid-template-columns: 16px 1fr 80px 100px 110px;
   gap: 12px;
   padding: 8px 0 4px;
   border-bottom: 1px solid var(--border-soft);
@@ -812,7 +812,7 @@
 
 .contents-row {
   display: grid;
-  grid-template-columns: 16px 1fr 80px 100px 70px;
+  grid-template-columns: 16px 1fr 80px 100px 110px;
   align-items: baseline;
   gap: 12px;
   padding: 10px 0;
@@ -4053,4 +4053,14 @@
 
 .phone-app .guide-tip {
   bottom: calc(80px + var(--safe-bottom));
+}
+
+.contents-goal {
+  color: var(--text-dim);
+}
+
+/* Where the reader learns a secret: a quiet mark among the labels. */
+.contents-reveal {
+  color: var(--text-muted);
+  font-style: italic;
 }
