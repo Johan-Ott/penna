@@ -1,6 +1,7 @@
 import { shelfGroups, type ShelfBook } from "../../project/shelf.js";
 import { Book } from "./Book.js";
 import { CloudBook } from "./CloudBook.js";
+import { ContinueWriting } from "./ContinueWriting.js";
 import type { CloudBook as InCloud, Fetching } from "./useCloudBooks.js";
 import { useShelf } from "./useShelf.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
@@ -51,12 +52,12 @@ function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
   );
 }
 
-// Ny bok and the books in Drive lead the first row, so a new writer's shelf is one row.
-function Starts(props: BookshelfProps) {
+// The books in Drive lead the first row; an empty shelf has Ny bok there, as large as a book.
+function Starts(props: BookshelfProps & { isEmpty: boolean }) {
   const { cloud } = props;
   return (
     <>
-      <NewBook {...props} />
+      {props.isEmpty && <NewBook {...props} />}
       {cloud.books.map((book) => (
         <CloudBook
           key={book.id}
@@ -72,17 +73,18 @@ function Starts(props: BookshelfProps) {
 
 function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
   const groups = shelfGroups(props.books);
+  const isEmpty = !props.books.some((book) => !book.isMissing);
   if (groups.length === 0)
     return (
       <div className="books">
-        <Starts {...props} />
+        <Starts {...props} isEmpty />
       </div>
     );
   return groups.map((group, index) => (
     <section key={group.series ?? ""} className="shelf-group">
       {group.series && <h2 className="shelf-series">{group.series}</h2>}
       <div className="books">
-        {index === 0 && <Starts {...props} />}
+        {index === 0 && <Starts {...props} isEmpty={isEmpty} />}
         {group.books.map((book) => (
           <Book key={book.dir} book={book} {...props} />
         ))}
@@ -91,21 +93,35 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
   ));
 }
 
+// What the shelf holds, and the ways to a new book, in one quiet row above the books.
+function ShelfHead(props: BookshelfProps & { books: ShelfBook[] | null }) {
+  return (
+    <div className="shelf-head">
+      <h2>{t("Dina böcker")}</h2>
+      <span className="shelf-summary">{props.books && summary(props.books)}</span>
+      <button className="link-button quiet" onClick={props.onOpenExample}>
+        {t("Prova exempelboken")}
+      </button>
+      <button className="link-button quiet" onClick={props.onImport}>
+        {t("Importera manus…")}
+      </button>
+      {props.books?.some((book) => !book.isMissing) && (
+        <button className="button primary small" onClick={props.onNewProject}>
+          {t("+ Ny bok")}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function Bookshelf(props: BookshelfProps) {
   const books = useShelf(props.libraryDir, props.knownProjects);
   return (
     <div className="shelf-screen">
       <main className="shelf">
-        {books && <span className="shelf-summary">{summary(books)}</span>}
+        {books && <ContinueWriting books={books} author={props.author} onOpen={props.onOpen} />}
+        <ShelfHead {...props} books={books} />
         {books && <ShelfRows books={books} {...props} />}
-        <div className="shelf-starts">
-          <button className="link-button quiet" onClick={props.onImport}>
-            {t("Importera manus…")}
-          </button>
-          <button className="link-button quiet" onClick={props.onOpenExample}>
-            {t("Prova exempelboken")}
-          </button>
-        </div>
       </main>
     </div>
   );

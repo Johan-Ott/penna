@@ -90,7 +90,7 @@ test("the phone shows what the sync brought too", async ({ page }) => {
   await leaveSyncLog(page);
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Bokhylla" }).click();
-  await page.getByText("Vintervägen").first().click();
+  await page.getByRole("button", { name: "Fortsätt där du slutade" }).click();
 
   await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
   await page.getByRole("button", { name: "Behåll Drives" }).click();

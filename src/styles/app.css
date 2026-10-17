@@ -972,11 +972,6 @@ body:has(.settings-panel) .selection-bar {
   padding: 40px 64px;
 }
 
-.book-deadline {
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
 .shelf-summary {
   color: var(--text-muted);
   font-size: 13px;
@@ -1004,31 +999,21 @@ body:has(.settings-panel) .selection-bar {
   border: 0;
   border-radius: 4px 10px 10px 4px;
   box-shadow:
-    inset 6px 0 0 rgba(0, 0, 0, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.1);
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 12px 24px -8px rgba(0, 0, 0, 0.45),
+    0 32px 40px -28px rgba(0, 0, 0, 0.55);
   text-align: left;
   transition: transform 0.15s;
 }
 
-/* The cover grows with the book: a soft spine as an idea, bound with a pressed title when done. */
-.book-cover.stage-ide {
-  box-shadow:
-    inset 4px 0 0 rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.book-cover.stage-redigering {
-  box-shadow:
-    inset 10px 0 0 rgba(0, 0, 0, 0.18),
-    0 8px 18px rgba(0, 0, 0, 0.14);
-}
-
+/* A finished book is bound: gold along its top and foot. */
 .book-cover.stage-klar {
   box-shadow:
-    inset 10px 0 0 rgba(0, 0, 0, 0.22),
     inset 0 3px 0 rgba(201, 164, 0, 0.6),
     inset 0 -3px 0 rgba(201, 164, 0, 0.6),
-    0 10px 22px rgba(0, 0, 0, 0.18);
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 12px 24px -8px rgba(0, 0, 0, 0.45),
+    0 32px 40px -28px rgba(0, 0, 0, 0.55);
 }
 
 .book-cover.stage-klar .book-title {
@@ -1038,6 +1023,7 @@ body:has(.settings-panel) .selection-bar {
 }
 
 .book-cover.with-picture {
+  position: relative;
   padding: 0;
   overflow: hidden;
 }
@@ -1051,8 +1037,27 @@ body:has(.settings-panel) .selection-bar {
 button.book-cover:hover {
   transform: translateY(-6px);
   box-shadow:
-    inset 6px 0 0 rgba(0, 0, 0, 0.14),
-    0 18px 32px rgba(0, 0, 0, 0.28);
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 22px 36px -10px rgba(0, 0, 0, 0.5),
+    0 44px 50px -30px rgba(0, 0, 0, 0.6);
+}
+
+/* The spine's fold and a little light over the board, so the cover reads as a book. */
+.book-cover:not(.new-book, .missing)::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.28),
+      rgba(255, 255, 255, 0.14) 5px,
+      rgba(255, 255, 255, 0.04) 9px,
+      transparent 16px
+    ),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.12), transparent 38%);
+  content: "";
+  pointer-events: none;
 }
 
 /* The covers: a genre's colours and one quiet mark of it, drawn behind the words. */
@@ -1234,7 +1239,8 @@ button.book-cover:hover {
 
 .book-title {
   font: 600 30px/1.12 var(--font-prose);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .book-words {
@@ -1286,29 +1292,24 @@ button.book-cover:hover {
   opacity: 0.6;
 }
 
+/* Under the book, three quiet lines: how far it has come, a bar, and where it stands. */
 .book-status {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-weight: 500;
-}
-
-.book-percent,
-.book-updated {
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-.book-updated {
-  font-size: 13px;
-}
-
-.book-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   min-height: 24px;
+}
+
+.book-percent {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.book-updated {
+  color: var(--text-muted);
+  font-size: 13px;
 }
 
 .book-menu {
@@ -3567,12 +3568,21 @@ body:has(.welcome) {
   cursor: progress;
 }
 
-/* Under the books: a manuscript or the example to begin from. */
-.shelf-starts {
+/* Above the books: what the shelf holds, and the ways to a new book. */
+.shelf-head {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  margin: 32px 24px 0;
+  align-items: center;
+  gap: 8px 20px;
+}
+
+.shelf-head h2 {
+  margin: 0;
+  font: 600 20px var(--font-prose);
+}
+
+.shelf-head .shelf-summary {
+  flex-grow: 1;
 }
 
 /* Ny bok: one question at a time, the step and the buttons along its foot. */
@@ -3636,4 +3646,86 @@ body:has(.welcome) {
 .welcome-remove {
   align-self: flex-start;
   margin: 8px 0 80px;
+}
+
+/* Fortsätt skriva: the last book, large, with the words it was left at. */
+.continue-writing {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 22px 28px;
+  border-radius: 16px;
+  background: linear-gradient(120deg, var(--surface-hover), transparent 70%);
+}
+
+.continue-writing .book-cover {
+  flex-shrink: 0;
+  width: 136px;
+  height: 204px;
+  padding: 16px 14px;
+}
+
+.continue-writing .book-title {
+  font-size: 18px;
+}
+
+.continue-writing .book-kind,
+.continue-writing .book-words {
+  font-size: 10px;
+}
+
+.continue-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.continue-eyebrow {
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.continue-text h2 {
+  margin: 0;
+  font: 600 34px/1.1 var(--font-prose);
+}
+
+.continue-quote {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--text-muted);
+  font: italic 17px/1.5 var(--font-prose);
+}
+
+.continue-text .button {
+  margin-top: 8px;
+}
+
+.phone-screen .continue-writing {
+  gap: 16px;
+  padding: 16px;
+}
+
+.phone-screen .continue-writing .book-cover {
+  width: 88px;
+  height: 132px;
+  padding: 10px;
+}
+
+.phone-screen .continue-writing .book-title,
+.phone-screen .continue-writing .book-kind,
+.phone-screen .continue-writing .book-words {
+  display: none;
+}
+
+.phone-screen .continue-text h2 {
+  font-size: 22px;
+}
+
+.phone-screen .continue-quote {
+  display: none;
 }

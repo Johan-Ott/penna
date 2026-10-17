@@ -28,3 +28,14 @@ export function deadlineLine(book: ShelfBook, today: string) {
     ? `${left} · ${t("{count} ord/dag", { count: formatNumber(plan.wordsPerDay) })}`
     : left;
 }
+
+/** While drafting, the words toward the goal; in revision, how much is finished; else the words. */
+export function amountOf(book: ShelfBook) {
+  if (isDrafting(book))
+    return t("{words} av {goal} ord", {
+      words: formatNumber(book.words),
+      goal: formatNumber(book.goal ?? 0),
+    });
+  if (isDraftStage(book.stage)) return t("{count} ord", { count: formatNumber(book.words) });
+  return t("{progress}% klart", { progress: book.progress });
+}

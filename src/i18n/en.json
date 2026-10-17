@@ -1388,5 +1388,7 @@
   "Deadline passerad": "Deadline passed",
   "{days} dagar kvar": "{days} days left",
   "{weeks} veckor kvar": "{weeks} weeks left",
-  "{count} ord/dag": "{count} words/day"
+  "{count} ord/dag": "{count} words/day",
+  "Dina böcker": "Your books",
+  "Fortsätt där du slutade": "Continue where you left off"
 }

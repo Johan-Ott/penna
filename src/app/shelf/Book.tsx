@@ -1,5 +1,5 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
-import { deadlineLine, isDrafting } from "../../project/shelfLines.js";
+import { amountOf, deadlineLine } from "../../project/shelfLines.js";
 import { coverLookOf } from "../../project/shelfLook.js";
 import { templatePieces } from "../../project/templates.js";
 import { useMenuButton } from "../Menu.js";
@@ -124,33 +124,21 @@ function BookName({ book }: { book: ShelfBook }) {
   );
 }
 
-// While drafting, the words toward the goal; afterwards, how much of the text is finished.
-const amountOf = (book: ShelfBook) =>
-  isDrafting(book)
-    ? t("{words} av {goal} ord", {
-        words: formatNumber(book.words),
-        goal: formatNumber(book.goal ?? 0),
-      })
-    : t("{progress}% klart", { progress: book.progress });
-
 function BookMeta(props: BookMenuProps & { hasPicture: boolean }) {
   const { book } = props;
   const deadline = deadlineLine(book, new Date().toISOString().slice(0, 10));
+  const updated = book.updatedAt ? whenUpdated(book.updatedAt, Date.now()) : "";
   return (
     <div className="book-meta">
       {props.hasPicture && <BookName book={book} />}
       <div className="book-status">
-        <span>{book.status}</span>
         <span className="book-percent">{amountOf(book)}</span>
-      </div>
-      <ProgressBar book={book} />
-      {deadline && <span className="book-deadline">{deadline}</span>}
-      <div className="book-foot">
-        <span className="book-updated">
-          {book.updatedAt ? whenUpdated(book.updatedAt, Date.now()) : ""}
-        </span>
         <BookMenu {...props} />
       </div>
+      <ProgressBar book={book} />
+      <span className="book-updated">
+        {[book.status, deadline ?? updated].filter(Boolean).join(" · ")}
+      </span>
     </div>
   );
 }
@@ -202,4 +190,10 @@ function PresentBook(props: BookProps) {
 export function Book(props: BookProps) {
   if (props.book.isMissing) return <MissingBook {...props} />;
   return <PresentBook {...props} />;
+}
+
+/** The book's cover alone, its picture when it has one, as Fortsätt skriva shows it. */
+export function BookCover(props: Pick<BookProps, "book" | "author" | "onOpen">) {
+  const cover = useShelfCover(props.book.dir);
+  return <Cover {...props} pictureUrl={cover.url} />;
 }
