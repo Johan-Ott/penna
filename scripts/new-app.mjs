@@ -36,6 +36,9 @@ const words = {
   __APP_SLUG__: slug,
   __APP_CRATE__: slug.replaceAll("-", "_"),
   __APP_ID__: `se.llstudios.${slug.replaceAll("-", "")}`,
+  // One signing key for all the apps: its public half is read from Penna.
+  __APP_PUBKEY__: JSON.parse(readFileSync(join(penna, "src-tauri/tauri.conf.json"), "utf8")).plugins
+    .updater.pubkey,
 };
 const fillIn = (text) => text.replace(/__APP_[A-Z]+__/g, (word) => words[word] ?? word);
 

@@ -36,7 +36,17 @@
     ],
     "publisher": "llstudios",
     "windows": {
-      "nsis": { "installMode": "currentUser" }
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "__APP_PUBKEY__",
+      "endpoints": [
+        "https://github.com/Johan-Ott/__APP_SLUG__/releases/latest/download/latest.json"
+      ]
     }
   }
 }
