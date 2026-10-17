@@ -1,5 +1,7 @@
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
+import { deadlineLine, isDrafting } from "../../project/shelfLines.js";
 import { coverLookOf } from "../../project/shelfLook.js";
+import { templatePieces } from "../../project/templates.js";
 import { useMenuButton } from "../Menu.js";
 import { platform } from "../platform.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
@@ -21,6 +23,9 @@ function seriesLine(book: ShelfBook) {
   return book.series && book.seriesNumber ? t("Bok {number}", { number: book.seriesNumber }) : null;
 }
 
+const genreName = (book: ShelfBook) =>
+  templatePieces().find((piece) => piece.id === book.genre)?.name ?? null;
+
 // CSS class names stay in plain letters.
 const stageClass = (book: ShelfBook) =>
   book.stage ? `stage-${book.stage === "idé" ? "ide" : book.stage}` : "";
@@ -39,10 +44,10 @@ function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
   }
   return (
     <button
-      className={`book-cover ${coverLookOf(book.dir)} ${stageClass(book)}`}
+      className={`book-cover ${coverLookOf(book.dir, book.genre ?? null)} ${stageClass(book)}`}
       onClick={() => onOpen(book.dir)}
     >
-      <span className="book-kind">{seriesLine(book) ?? book.kind}</span>
+      <span className="book-kind">{seriesLine(book) ?? genreName(book) ?? book.kind}</span>
       <span className="book-title">{book.title}</span>
       <span className="book-words">
         {author || t("{count} ord", { count: formatNumber(book.words) })}
@@ -119,19 +124,27 @@ function BookName({ book }: { book: ShelfBook }) {
   );
 }
 
+// While drafting, the words toward the goal; afterwards, how much of the text is finished.
+const amountOf = (book: ShelfBook) =>
+  isDrafting(book)
+    ? t("{words} av {goal} ord", {
+        words: formatNumber(book.words),
+        goal: formatNumber(book.goal ?? 0),
+      })
+    : t("{progress}% klart", { progress: book.progress });
+
 function BookMeta(props: BookMenuProps & { hasPicture: boolean }) {
   const { book } = props;
+  const deadline = deadlineLine(book, new Date().toISOString().slice(0, 10));
   return (
     <div className="book-meta">
       {props.hasPicture && <BookName book={book} />}
       <div className="book-status">
         <span>{book.status}</span>
-        <span className="book-percent">{book.progress}%</span>
-        <span className="book-meta-words">
-          {t("{count} ord", { count: formatNumber(book.words) })}
-        </span>
+        <span className="book-percent">{amountOf(book)}</span>
       </div>
       <ProgressBar book={book} />
+      {deadline && <span className="book-deadline">{deadline}</span>}
       <div className="book-foot">
         <span className="book-updated">
           {book.updatedAt ? whenUpdated(book.updatedAt, Date.now()) : ""}
@@ -153,7 +166,6 @@ function MissingBook({
         <span className="book-title">{book.title}</span>
         <span className="book-words">{t("Hittas inte")}</span>
       </div>
-      <div className="shelf-board" />
       <div className="book-meta">
         <span className="book-updated">
           {t("Mappen har flyttats eller döpts om. Texten finns kvar där du lade den.")}
@@ -176,7 +188,6 @@ function PresentBook(props: BookProps) {
   return (
     <div className="book">
       <Cover {...props} pictureUrl={cover.url} />
-      <div className="shelf-board" />
       <BookMeta
         book={props.book}
         hasPicture={cover.url !== null}

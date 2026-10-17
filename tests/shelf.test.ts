@@ -6,6 +6,7 @@ import {
   shelfGroups,
   whenUpdated,
 } from "../src/project/shelf";
+import { deadlineLine } from "../src/project/shelfLines";
 import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -98,5 +99,39 @@ describe("shelfGroups", () => {
       ["Tvåan", 2],
       ["Utan", null],
     ]);
+  });
+});
+
+describe("a book being written", () => {
+  it("counts its words toward the goal, and says what the deadline asks per day", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/Isen.penna/project.json":
+        '{"title":"Isen","totalGoal":1000,"deadline":"2027-01-31","genre":"deckare","tree":[]}',
+      "/Penna/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: utkast\n---\nTvå ord.",
+    });
+
+    const [book] = await readShelf(files, "/Penna", []);
+
+    expect(book).toMatchObject({ goal: 1000, progress: 0, genre: "deckare" });
+    expect(book && deadlineLine(book, "2027-01-01")).toBe("4 veckor kvar · 34 ord/dag");
+    expect(book && deadlineLine(book, "2027-01-25")).toBe("6 dagar kvar · 167 ord/dag");
+    expect(book && deadlineLine(book, "2027-02-01")).toBe("Deadline passerad");
+  });
+
+  it("stands first on the shelf when it was written in last", async () => {
+    const files = createMemoryFileSystem({
+      "/Penna/A.penna/project.json": '{"title":"Gammal","tree":[]}',
+      "/Penna/B.penna/project.json": '{"title":"Ny","tree":[]}',
+    });
+    const books = await readShelf(files, "/Penna", []);
+    const [old, recent] = books;
+    if (!old || !recent) throw new Error("two books expected");
+
+    const [group] = shelfGroups([
+      { ...old, updatedAt: 1 },
+      { ...recent, updatedAt: 2 },
+    ]);
+
+    expect(group?.books.map((book) => book.title)).toEqual(["Ny", "Gammal"]);
   });
 });

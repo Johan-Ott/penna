@@ -1,4 +1,5 @@
 import { DAY } from "./stats.js";
+import { projectGoals } from "./progress.js";
 import { ownStepName } from "./statusSteps.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
 import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
@@ -14,8 +15,14 @@ export interface ShelfBook {
   kind: string;
   words: number;
   status: string;
-  /** Percent of the words that sit in finished scenes. */
+  /** Toward the goal while drafting; afterwards the share of the words in finished scenes. */
   progress: number;
+  /** The length the book is aimed at, in words, or null. */
+  goal: number | null;
+  /** YYYY-MM-DD, or null. */
+  deadline: string | null;
+  /** The genre it was made in, such as "deckare", which gives its cover; null when none. */
+  genre?: string | null;
   updatedAt: number | null;
   /** The folder is gone: moved, renamed or on a disk that is not connected. */
   isMissing: boolean;
@@ -64,6 +71,9 @@ export function bookProgress(scenes: Pick<SceneSummary, "words" | "status">[]): 
   return total === 0 ? 0 : Math.round((100 * finished) / total);
 }
 
+export const isDraftStage = (stage: SceneStatus | null) => stage === "idé" || stage === "utkast";
+
+/** While the book is being written, its words count toward its goal; afterwards, it is revised. */
 const startOfDay = (time: number) => new Date(time).setHours(0, 0, 0, 0);
 
 export function whenUpdated(time: number, now: number): string {
@@ -81,6 +91,17 @@ export function whenUpdated(time: number, now: number): string {
 
 export const folderTitle = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
 
+const NO_FIELDS = {
+  title: undefined,
+  type: undefined,
+  tree: [] as TreeNode[],
+  series: null,
+  seriesNumber: null,
+  totalGoal: null,
+  deadline: null,
+  genre: null,
+};
+
 // A broken project.json is repaired when the project opens, not here.
 async function readProjectFields(fileSystem: FileSystem, dir: string) {
   try {
@@ -92,9 +113,20 @@ async function readProjectFields(fileSystem: FileSystem, dir: string) {
     const series = typeof parsed["series"] === "string" ? seriesTitle(parsed["series"]) : null;
     const number = parsed["seriesNumber"];
     const seriesNumber = typeof number === "number" ? number : null;
-    return { title: parsed["title"], type: parsed["type"], tree, series, seriesNumber };
+    const { totalGoal, deadline } = projectGoals(parsed);
+    const genre = typeof parsed["genre"] === "string" ? parsed["genre"] : null;
+    return {
+      genre,
+      title: parsed["title"],
+      type: parsed["type"],
+      tree,
+      series,
+      seriesNumber,
+      totalGoal,
+      deadline,
+    };
   } catch {
-    return { title: undefined, type: undefined, tree: [], series: null, seriesNumber: null };
+    return NO_FIELDS;
   }
 }
 
@@ -119,6 +151,8 @@ const missingBook = (dir: string): ShelfBook => ({
   words: 0,
   status: "",
   progress: 0,
+  goal: null,
+  deadline: null,
   updatedAt: null,
   isMissing: true,
   series: null,
@@ -131,18 +165,25 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
   const fields = await readProjectFields(fileSystem, dir);
   const sceneIds = await bookSceneIds(fileSystem, dir, fields.tree);
   const scenes = Object.values(await readSceneSummaries(fileSystem, dir, sceneIds));
+  const words = scenes.reduce((sum, scene) => sum + scene.words, 0);
+  const stage = bookStage(scenes);
+  const goal = fields.totalGoal;
+  const isAimed = goal !== null && isDraftStage(stage);
   return {
     dir,
     title: typeof fields.title === "string" ? fields.title : folderTitle(dir),
     kind: (typeof fields.type === "string" && KIND_LABELS[fields.type]) || t("Projekt"),
-    words: scenes.reduce((sum, scene) => sum + scene.words, 0),
+    words,
     status: bookStatus(scenes, fields),
-    progress: bookProgress(scenes),
+    progress: isAimed ? Math.min(100, Math.round((100 * words) / goal)) : bookProgress(scenes),
+    goal,
+    deadline: fields.deadline,
+    genre: fields.genre,
     updatedAt: await lastChange(fileSystem, dir, sceneIds),
     isMissing: false,
     series: fields.series,
     seriesNumber: fields.seriesNumber,
-    stage: bookStage(scenes),
+    stage,
   };
 }
 
@@ -170,13 +211,17 @@ const inSeriesOrder = (books: ShelfBook[]) =>
       (other.seriesNumber ?? Number.MAX_SAFE_INTEGER),
   );
 
+// The book written in last first, since that is the one to go on with; missing ones last.
+const latestFirst = (books: ShelfBook[]) =>
+  [...books].sort((one, other) => (other.updatedAt ?? -1) - (one.updatedAt ?? -1));
+
 export function shelfGroups(books: ShelfBook[]) {
   const names = [...new Set(books.map((book) => book.series))];
   const ordered = [null, ...names.filter((name) => name !== null)];
   return ordered
     .map((series) => ({
       series,
-      books: inSeriesOrder(books.filter((book) => book.series === series)),
+      books: (series ? inSeriesOrder : latestFirst)(books.filter((book) => book.series === series)),
     }))
     .filter((group) => group.books.length > 0);
 }

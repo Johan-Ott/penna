@@ -47,7 +47,6 @@ function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
       <button className="book-cover new-book" onClick={onNewProject}>
         {t("+ Ny bok")}
       </button>
-      <div className="shelf-board" />
     </div>
   );
 }
@@ -97,10 +96,7 @@ export function Bookshelf(props: BookshelfProps) {
   return (
     <div className="shelf-screen">
       <main className="shelf">
-        <div className="shelf-heading">
-          <h1>{t("Bokhylla")}</h1>
-          {books && <span className="shelf-summary">{summary(books)}</span>}
-        </div>
+        {books && <span className="shelf-summary">{summary(books)}</span>}
         {books && <ShelfRows books={books} {...props} />}
         <div className="shelf-starts">
           <button className="link-button quiet" onClick={props.onImport}>

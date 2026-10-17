@@ -74,7 +74,6 @@ export function CloudBook(props: {
           {isThis && props.fetching ? fetchText(props.fetching) : t("Tryck för att hämta")}
         </span>
       </button>
-      <div className="shelf-board" />
       <div className="book-meta">
         <div className="book-foot">
           <span className="book-updated">{t("Inte hämtad hit")}</span>

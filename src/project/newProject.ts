@@ -117,6 +117,7 @@ function templateParts(template: BookTemplate) {
 const bookFields = (details: ProjectDetails) => ({
   title: details.title.trim() || t("Namnlöst projekt"),
   type: details.type,
+  ...(details.genre ? { genre: details.genre } : {}),
   dailyGoal: details.dailyGoal,
   ...(details.deadline ? { deadline: details.deadline } : {}),
   ...(details.narration ? { narration: details.narration } : {}),

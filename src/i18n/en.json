@@ -1383,5 +1383,10 @@
   "Tips": "Tip",
   "Hoppa över guiden": "Skip the guide",
   "Uppfattat": "Got it",
-  "Visa guiden igen": "Show the guide again"
+  "Visa guiden igen": "Show the guide again",
+  "{progress}% klart": "{progress}% done",
+  "Deadline passerad": "Deadline passed",
+  "{days} dagar kvar": "{days} days left",
+  "{weeks} veckor kvar": "{weeks} weeks left",
+  "{count} ord/dag": "{count} words/day"
 }

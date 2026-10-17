@@ -1,12 +1,35 @@
 import { folderTitle } from "./shelf.js";
 
-/** The plain covers a book without a picture gets on the shelf, grey like the rest of Penna. */
-export const COVER_LOOKS = ["cover-black", "cover-light", "cover-dark", "cover-white"];
+// A book without a picture gets a cover in its genre's colours, as a shop would show it. A book
+// without a genre gets one of the plain looks, from its folder's name, so it keeps it when moved.
 
-// From the folder's name, so a book keeps its look when others are added or the library moves.
-export function coverLookOf(dir: string): string {
+const GENRE_LOOKS = [
+  "deckare",
+  "thriller",
+  "skrack",
+  "romans",
+  "magi",
+  "urban",
+  "scifi",
+  "historisk",
+  "feelgood",
+  "ungdom",
+  "litterar",
+  "barnbok",
+];
+
+export const COVER_LOOKS = [
+  "cover-skog",
+  "cover-ockra",
+  "cover-oxblod",
+  "cover-skiffer",
+  "cover-plommon",
+];
+
+export function coverLookOf(dir: string, genre: string | null = null): string {
+  if (genre && GENRE_LOOKS.includes(genre)) return `cover-${genre}`;
   const name = folderTitle(dir);
   let hash = 0;
   for (const character of name) hash = (hash * 31 + (character.codePointAt(0) ?? 0)) >>> 0;
-  return COVER_LOOKS[hash % COVER_LOOKS.length] ?? "cover-black";
+  return COVER_LOOKS[hash % COVER_LOOKS.length] ?? "cover-skog";
 }
