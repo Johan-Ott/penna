@@ -27,3 +27,9 @@ test("Rollista shows the people as cards, and a card opens the person", async ({
 test("whose eyes a chapter is seen through shows in the tree", async ({ page }) => {
   await expect(sidebar(page).locator(".tree-pov").first()).toHaveAttribute("data-pov", "Elin");
 });
+
+test("what a chapter is for stands under its title while writing it", async ({ page }) => {
+  const task = page.getByRole("textbox", { name: "Vad händer i kapitlet?" });
+
+  await expect(task).toHaveValue(/Elin får ett brev från Henrik/);
+});

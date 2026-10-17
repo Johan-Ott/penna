@@ -42,6 +42,31 @@ function headingOf(project: Project, sceneId: string) {
   return { chapter, place, whenId, when: findNode(project.tree, whenId)?.node.when ?? "" };
 }
 
+// What the chapter is for, as Innehåll and the book's structure say it, at hand while writing it.
+// Not part of the book: it is never read or printed.
+function ChapterTask(
+  props: Pick<TextHeaderProps, "project" | "onChangeTree"> & { chapterId: string },
+) {
+  const { project, chapterId } = props;
+  const summary = findNode(project.tree, chapterId)?.node.summary ?? "";
+  const save = (text: string) =>
+    text !== summary && props.onChangeTree(withNodeText(project.tree, chapterId, "summary", text));
+  return (
+    <textarea
+      key={summary}
+      className="chapter-task"
+      aria-label={t("Vad händer i kapitlet?")}
+      placeholder={t("Vad händer i kapitlet?")}
+      defaultValue={summary}
+      rows={1}
+      onBlur={(event) => save(event.target.value.trim())}
+      onKeyDown={(event) =>
+        event.key === "Enter" && (event.preventDefault(), event.currentTarget.blur())
+      }
+    />
+  );
+}
+
 // The number shows only with book type, as the printed book numbers it above the title.
 function ChapterOpening(
   props: Pick<TextHeaderProps, "project" | "onChangeTree"> & { chapter: SceneChapter },
@@ -58,6 +83,7 @@ function ChapterOpening(
         </span>
       )}
       <h1 className="chapter-title">{chapter.title}</h1>
+      <ChapterTask project={project} chapterId={chapter.id} onChangeTree={props.onChangeTree} />
     </>
   );
 }

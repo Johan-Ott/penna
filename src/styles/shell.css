@@ -499,6 +499,30 @@
   font-style: var(--heading-style, normal);
 }
 
+/* What the chapter is for: quiet, under its title, and only on the screen. */
+.chapter-task {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: italic 15px/1.5 var(--font-prose);
+  resize: none;
+  field-sizing: content;
+}
+
+.chapter-task:focus {
+  outline: none;
+  color: var(--text);
+}
+
+.chapter-task::placeholder {
+  color: var(--text-dim);
+}
+
 /* A research note's file: the picture itself, or the file's name to open it by */
 .research-file {
   margin-top: 16px;
