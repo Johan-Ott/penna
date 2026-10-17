@@ -122,6 +122,17 @@ function PartRows(props: ListParts & { group: ContentsGroup }) {
 }
 
 /** The chapters, by part in reading order, or as one list in the order of time. */
+// The short columns' names, once over the chapters, in the rows' own grid.
+const ColumnNames = () => (
+  <div className="contents-columns" aria-hidden="true">
+    <span />
+    <span />
+    <span>{t("Vems ögon")}</span>
+    <span>{t("När")}</span>
+    <span>{t("Ord")}</span>
+  </div>
+);
+
 export function ContentsList(props: ContentsProps & { isTimeOrder: boolean; query: string }) {
   const { project, isTimeOrder, query } = props;
   const sources = { tree: project.tree, fields: project.fields, ...props.notes };
@@ -138,6 +149,7 @@ export function ContentsList(props: ContentsProps & { isTimeOrder: boolean; quer
   if (rows.length === 0) return <p className="contents-empty">{t("Inga kapitel än.")}</p>;
   return (
     <div className="contents-list">
+      <ColumnNames />
       {isTimeOrder
         ? timeOrdered.map((row) => (
             <ChapterRows key={row.id} {...parts} row={row} dragProps={drag.propsFor(row.id)} />

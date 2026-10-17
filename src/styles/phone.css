@@ -1182,3 +1182,7 @@ body .phone-app .text-when input {
   background: var(--surface-hover);
   color: var(--text-muted);
 }
+
+.phone-view .contents-columns {
+  display: none;
+}

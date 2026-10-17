@@ -784,6 +784,26 @@
   font: 600 18px var(--font-prose);
 }
 
+/* Innehåll has the room for its four orders on one row. */
+.contents-bar .segmented {
+  display: flex;
+}
+
+/* What the short columns hold, once, over the chapters. */
+.contents-columns {
+  display: grid;
+  grid-template-columns: 16px 1fr 80px 100px 70px;
+  gap: 12px;
+  padding: 8px 0 4px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-label);
+  font-size: 12px;
+}
+
+.contents-columns > :last-child {
+  text-align: right;
+}
+
 .segmented.small button {
   height: 26px;
   padding: 0 12px;
