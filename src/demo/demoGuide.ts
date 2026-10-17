@@ -10,9 +10,9 @@ export const GUIDE = `Vintervägen är en liten bok att prova Penna med. Allt i 
 
 **Skriva.** Öppna Köket under Brevet och skriv vidare. Penna sparar av sig själv. Ord med prickar under står flera gånger nära varandra: tryck på ett. I Isen är ett namn felstavat. Hittar du det?
 
-**Anteckningar.** Elin, Arvid och Maja är personer, och deras namn blir länkar i texten. Elin är kopplad till de andra: öppna henne och se. Under Hemligheter står vad läsaren får veta, och när.
+**Anteckningar.** Elin, Arvid och Maja är personer, och deras namn blir länkar i texten. Elin är kopplad till de andra: öppna henne och se. En ny person börjar som ett kort blad med Vill, Rädd för och Döljer. Under Hemligheter står vad läsaren får veta, och när.
 
-**Planera.** Innehåll visar kapitlen med vad som händer och när. Etiketterna Skriv om, Lucka och Kolla fakta sitter på scenerna i trädet. Kommentaren i Fyren finns också i Granska, och Lappar ligger bland modulerna.
+**Planera.** Innehåll visar kapitlen med vems ögon, vad som händer och när, och var en hemlighet avslöjas. Rollista visar alla personer på en gång. Vad ett kapitel ska göra står också under dess rubrik när du skriver. Etiketterna Skriv om, Lucka och Kolla fakta sitter på scenerna i trädet. Kommentaren i Fyren finns också i Granska, och Lappar ligger bland modulerna.
 
 **Se boken.** Läs som bok visar sidorna som i tryck. Publicera gör manus, e-bok och tryck-PDF, och Till förlag hjälper dig med synopsis och följebrev.
 

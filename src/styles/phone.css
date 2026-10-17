@@ -1186,3 +1186,7 @@ body .phone-app .text-when input {
 .phone-view .contents-columns {
   display: none;
 }
+
+.phone-view .cast-card {
+  min-height: 0;
+}
