@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { isSeen, markSeen, mount, skipGuide, STEPS, useGuide, type StepId } from "./guide.js";
+import { useResume } from "../resume/lastPlace.js";
 import { t } from "../../i18n/i18n.js";
 
 const stepClass = (id: StepId, here: StepId) => {
@@ -44,4 +45,10 @@ export function GuideTip({ step, isHere = true }: { step: StepId; isHere?: boole
       </div>
     </aside>
   );
+}
+
+// The first tip waits until the writer is in the text, not over the welcome back.
+export function WritingTip({ isHidden }: { isHidden: boolean }) {
+  const isWelcomingBack = useResume() !== null;
+  return <GuideTip step="skriv" isHere={!isHidden && !isWelcomingBack} />;
 }
