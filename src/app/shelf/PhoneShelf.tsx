@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactNode } from "react";
 import { MenuIcon } from "../shell/icons.js";
-import { WindowBar } from "../shell/WindowControls.js";
+import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
 
 /** The shelf on a phone: the menu and the profile over the books. */

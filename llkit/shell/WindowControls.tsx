@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef } from "react";
-import { platform } from "../platform.js";
-import { useRootClass } from "@llkit/useRootClass.js";
-import { isMac } from "@llkit/thisComputer.js";
-import { t } from "../../i18n/i18n.js";
+import { device } from "../platform/device.js";
+import { useRootClass } from "../useRootClass.js";
+import { isMac } from "../thisComputer.js";
+import { t } from "../i18n.js";
 
 // Thin strokes, as the window's own buttons draw them.
 const Glyph = ({ path }: { path: string }) => (
@@ -14,7 +14,7 @@ const Glyph = ({ path }: { path: string }) => (
 /** Minimise, maximise and close, at the far end of the top bar; nothing in a browser or phone,
  * and nothing on a Mac, which keeps its own buttons. */
 export function WindowControls() {
-  const controls = platform.windowControls;
+  const controls = device().windowControls;
   if (!controls || isMac) return null;
   return (
     <span className="window-controls">
@@ -49,7 +49,7 @@ export function WindowBar() {
     document.documentElement.classList.add("phone-window");
     return () => document.documentElement.classList.remove("phone-window");
   }, []);
-  if (!platform.windowControls || isMac) return null;
+  if (!device().windowControls || isMac) return null;
   return (
     <div ref={bar} className="window-bar" data-tauri-drag-region>
       <WindowControls />

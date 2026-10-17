@@ -1,9 +1,7 @@
-import { useSyncExternalStore } from "react";
-import { browserStorage } from "@llkit/storage/browserStorage.js";
+import { createGuide } from "@llkit/guide/guide.js";
 import { t } from "../../i18n/i18n.js";
 
-// The guide for a new writer: one small tip in each part of Penna, the first time they come
-// there. Seen tips stay seen per computer, and the whole guide can be skipped or started over.
+// Penna's guide for a new writer: a tip in each part of Penna, in the order a book is made.
 
 export const STEPS = [
   {
@@ -45,63 +43,6 @@ export const STEPS = [
 
 export type StepId = (typeof STEPS)[number]["id"];
 
-interface GuideState {
-  isOff: boolean;
-  seen: StepId[];
-}
+export const guide = createGuide(STEPS, "penna.guide");
 
-const KEY = "penna.guide";
-const listeners = new Set<() => void>();
-// The tips on screen now; only the first of them in the guide's order shows.
-const mounted = new Set<StepId>();
-
-function stored(): GuideState {
-  try {
-    return { isOff: false, seen: [], ...JSON.parse(browserStorage().getItem(KEY) ?? "{}") };
-  } catch {
-    return { isOff: false, seen: [] };
-  }
-}
-
-let state = stored();
-let version = 0;
-
-const changed = () => {
-  version += 1;
-  listeners.forEach((listener) => listener());
-};
-
-const save = (next: GuideState) => {
-  state = next;
-  browserStorage().setItem(KEY, JSON.stringify(next));
-  changed();
-};
-
-export const markSeen = (id: StepId) => save({ ...state, seen: [...state.seen, id] });
-export const skipGuide = () => save({ ...state, isOff: true });
-export const restartGuide = () => save({ isOff: false, seen: [] });
-export const isSeen = (id: StepId) => state.seen.includes(id);
-
-/** Registers a tip as on screen, and gives back the call that takes it off again. */
-export function mount(id: StepId) {
-  mounted.add(id);
-  changed();
-  return () => {
-    mounted.delete(id);
-    changed();
-  };
-}
-
-/** The one tip to show now, if the guide is on and any tip on screen is still unseen. */
-const showing = () =>
-  state.isOff ? undefined : STEPS.find(({ id }) => mounted.has(id) && !isSeen(id))?.id;
-
-const subscribe = (listener: () => void) => {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-};
-
-export function useGuide() {
-  useSyncExternalStore(subscribe, () => version);
-  return { showing: showing() };
-}
+export const restartGuide = guide.restart;

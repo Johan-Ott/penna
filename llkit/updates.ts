@@ -1,5 +1,6 @@
-import { createStore } from "@llkit/store.js";
-import { platform, type AppUpdate } from "./platform.js";
+import { createStore } from "./store.js";
+import { device } from "./platform/device.js";
+import type { AppUpdate } from "./platform/types.js";
 
 // The update Penna has found, shared by the notice and the menus' Sök efter uppdateringar.
 
@@ -13,7 +14,9 @@ const updates = createStore<Updates>({ update: null, isLatest: false });
 
 /** Quiet offline or failing; asked by hand, "nothing newer" is said too. */
 export async function checkForUpdates(isAsked = false) {
-  const update = await platform.checkForUpdate().catch(() => null);
+  const update = await device()
+    .checkForUpdate()
+    .catch(() => null);
   updates.set({ update, isLatest: isAsked && !update });
 }
 

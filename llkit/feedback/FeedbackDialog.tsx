@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Choice, Dialog, DialogButtons } from "@llkit/controls.js";
-import { recordFailure } from "@llkit/errorLog.js";
-import { platform } from "../platform.js";
+import { Choice, Dialog, DialogButtons } from "../controls.js";
+import { recordFailure } from "../errorLog.js";
+import { device } from "../platform/device.js";
 import {
   canSendFeedback,
   feedbackReport,
@@ -10,7 +10,7 @@ import {
   type Feedback,
   type FeedbackKind,
 } from "./sendFeedback.js";
-import { t } from "../../i18n/i18n.js";
+import { t } from "../i18n.js";
 
 const KINDS: [FeedbackKind, string][] = [
   ["fel", t("Något är fel")],
@@ -37,7 +37,7 @@ function useSending(feedback: Feedback) {
     if (!canSendFeedback) return copy();
     setOutcome("skickar");
     try {
-      await sendFeedback(feedback, platform.webFetch);
+      await sendFeedback(feedback, device().webFetch);
       setOutcome("skickad");
     } catch {
       await copy();

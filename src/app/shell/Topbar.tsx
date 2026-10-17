@@ -1,6 +1,6 @@
 import { LookButton } from "../settingsPanel.js";
 import { RemoteBadge } from "../settings/RemoteControlRow.js";
-import { WindowControls } from "./WindowControls.js";
+import { WindowControls } from "@llkit/shell/WindowControls.js";
 import { DayProgress } from "./DayProgress.js";
 import type { MouseEvent, ReactNode } from "react";
 import type { Today } from "../useWritingStats.js";

@@ -1,5 +1,5 @@
 import type { MenuItem } from "@llkit/Menu.js";
-import { checkForUpdates } from "../updates.js";
+import { checkForUpdates } from "@llkit/updates.js";
 import { restartGuide } from "../guide/guide.js";
 import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";

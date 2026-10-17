@@ -1,6 +1,7 @@
 import { platform } from "../platform.js";
 import { useState } from "react";
 import { errorLog } from "@llkit/errorLog.js";
+import { feedbackReport } from "@llkit/feedback/sendFeedback.js";
 import { Row } from "@llkit/controls.js";
 import { numberLocale, t } from "../../i18n/i18n.js";
 
@@ -8,11 +9,7 @@ import { numberLocale, t } from "../../i18n/i18n.js";
 function ErrorReportButton() {
   const [isCopied, setCopied] = useState(false);
   const copy = async () => {
-    const report = errorLog.report({
-      app: "Penna",
-      version: __APP_VERSION__,
-      device: navigator.userAgent,
-    });
+    const report = feedbackReport();
     await navigator.clipboard.writeText(report);
     setCopied(true);
   };

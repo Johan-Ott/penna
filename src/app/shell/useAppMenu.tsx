@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { AppState } from "../App.js";
 import { SeriesDialog } from "../notes/SeriesDialog.js";
 import { useBackupsDialog } from "../backups/BackupsDialog.js";
-import { useFeedbackDialog } from "../feedback/FeedbackDialog.js";
+import { useFeedbackDialog } from "@llkit/feedback/FeedbackDialog.js";
 import { useMenuButton } from "@llkit/Menu.js";
 import { useRevisionImport } from "../review/RevisionImport.js";
 import { HELP_TAB } from "../settings/SettingsDialog.js";

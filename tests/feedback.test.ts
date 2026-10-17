@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { feedbackText, sendFeedback } from "../src/app/feedback/sendFeedback";
+import { provideAppName } from "@llkit/appInfo.js";
+import { feedbackText, sendFeedback } from "@llkit/feedback/sendFeedback.js";
+
+// As the app does when it starts.
+provideAppName("Penna");
 
 const feedback = {
   kind: "fel" as const,

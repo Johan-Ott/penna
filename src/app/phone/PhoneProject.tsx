@@ -1,4 +1,4 @@
-import { WindowBar } from "../shell/WindowControls.js";
+import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../../project/tree.js";
 import type { AppState } from "../App.js";

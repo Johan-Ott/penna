@@ -1,4 +1,4 @@
-import { WindowControls } from "./shell/WindowControls.js";
+import { WindowControls } from "@llkit/shell/WindowControls.js";
 import type { Today } from "./useWritingStats.js";
 import { t, formatNumber } from "../i18n/i18n.js";
 

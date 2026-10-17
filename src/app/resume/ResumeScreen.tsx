@@ -1,4 +1,4 @@
-import { WindowBar } from "../shell/WindowControls.js";
+import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { useEditorState } from "../../editor/editorStore.js";
 import { useEffect } from "react";
 import { cursorAt } from "../../editor/commands.js";

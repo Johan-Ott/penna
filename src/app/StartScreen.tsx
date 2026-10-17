@@ -1,6 +1,6 @@
 import type { AppState } from "./App.js";
 import { signIn } from "./googleAccount.js";
-import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
+import { useFeedbackDialog } from "@llkit/feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
 import { useMenuButton } from "@llkit/Menu.js";

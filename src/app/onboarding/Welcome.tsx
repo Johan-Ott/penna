@@ -5,7 +5,7 @@ import { useRootClass } from "@llkit/useRootClass.js";
 import type { Theme } from "../../editor/writingSettings.js";
 import { UiLanguageChoice } from "../settings/UiLanguageChoice.js";
 import { FirstChoices, type Choices } from "./FirstChoices.js";
-import { WindowBar } from "../shell/WindowControls.js";
+import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
 
 // The first start, the same on a computer and a phone: Penna's language at the top, signed in

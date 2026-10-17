@@ -22,6 +22,14 @@ What any llstudios app is built on. Penna is the first app on it.
   with `device()`. A test build (identifier ending in `.test`) answers dialogs from
   `window.appTest`.
 
+- `shell/WindowControls`: the window's buttons and drag bar, and the start picture while the app
+  starts (`StartPicture`, which also takes away the start page's tip after the first start)
+- `updates`: the update the app has found, shared by its notice and its menus
+- `feedback/`: the feedback dialog and what it sends, with the session's error report
+- `guide/`: `createGuide(steps, storageKey)` and `GuideTip`, a tip per part of the app, one at a
+  time, that can be skipped or started over
+- `appInfo`: the app's name, handed in with `provideAppName`, for the report and feedback
+
 ## Still Penna's name
 
 - Atomic writes leave `.penna-tmp` files, which the crash recovery and a Rust command look for.

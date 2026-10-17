@@ -1,5 +1,5 @@
 import { useRemote } from "./remote.js";
-import { StartPicture } from "./shell/WindowControls.js";
+import { StartPicture } from "@llkit/shell/WindowControls.js";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { checkDisk, closeScene, type SceneSession } from "./sceneSession.js";
 import type { PaletteContext } from "./palette/paletteEntries.js";

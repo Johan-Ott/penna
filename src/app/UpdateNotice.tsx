@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { AppUpdate } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
-import { checkForUpdates, dismissUpdates, useUpdates } from "./updates.js";
+import { checkForUpdates, dismissUpdates, useUpdates } from "@llkit/updates.js";
 import { t } from "../i18n/i18n.js";
 
 // At the start and then every six hours, as long as Penna is open.
