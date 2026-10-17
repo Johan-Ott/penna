@@ -1,0 +1,33 @@
+[package]
+name = "__APP_CRATE__"
+version = "0.1.0"
+edition = "2021"
+
+# Android and iOS start the app from the library; the desktop starts it from main.rs.
+[lib]
+name = "__APP_CRATE___lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-fs = { version = "2", features = ["watch"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-process = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-http = "2"
+
+# Updates come from GitHub Releases on the desktop; a phone fetches a newer APK.
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
+tauri-plugin-clipboard-manager = "2"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

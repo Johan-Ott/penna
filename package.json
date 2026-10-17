@@ -21,7 +21,9 @@
     "build:android": "node scripts/build-android.mjs",
     "build:check": "npm run check && tauri build --no-bundle",
     "test:ui": "playwright test",
-    "app:test": "node scripts/app-test.mjs"
+    "app:test": "node scripts/app-test.mjs",
+    "ny-app": "node scripts/new-app.mjs",
+    "llkit:uppdatera": "node scripts/llkit-update.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

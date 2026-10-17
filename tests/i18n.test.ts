@@ -5,8 +5,10 @@ import KIT_ENGLISH from "../llkit/en.json";
 import ENGLISH from "../src/i18n/en.json";
 import { setUiLanguage, t } from "../src/i18n/i18n";
 
+// llkit/template is a new app's code, with its own English.
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
+    if (name === "template") return [];
     const path = join(dir, name);
     if (statSync(path).isDirectory()) return sourceFiles(path);
     return /\.tsx?$/.test(name) ? [path] : [];

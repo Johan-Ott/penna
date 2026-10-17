@@ -463,3 +463,55 @@
   align-items: center;
   justify-content: space-between;
 }
+
+/* Where no top bar is, the window's buttons float at its top right, over the start picture too. */
+
+.window-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: var(--layer-window);
+  display: flex;
+  justify-content: flex-end;
+  height: 32px;
+}
+
+.window-bar .window-controls {
+  margin: 0;
+}
+
+/* The window has no frame: its own buttons end the top bar, flush with the window's edge. */
+
+.window-controls {
+  display: flex;
+  align-self: stretch;
+  margin: 0 -12px 0 8px;
+}
+
+.window-control {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text-label);
+}
+
+.window-control:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.window-control.close:hover {
+  background: #c42b1c;
+  color: #ffffff;
+}
+
+/* The start picture's page: blank while the app starts or opens a file, so nothing flashes by */
+
+.app-starting {
+  height: 100vh;
+  background: var(--bg);
+}

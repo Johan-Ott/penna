@@ -9,6 +9,7 @@ export default tseslint.config(
       "src-tauri/target",
       "src-tauri/gen",
       "test-results",
+      "llkit/template",
       "playwright-report",
     ],
   },

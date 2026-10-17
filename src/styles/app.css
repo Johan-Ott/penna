@@ -616,13 +616,6 @@ html.look-shown .selection-bar {
   padding: 16px;
 }
 
-/* Start: blank while the last project opens, so nothing flashes by */
-
-.app-starting {
-  height: 100vh;
-  background: var(--bg);
-}
-
 /* A labelled field in a dialog: its name above it. */
 
 .onboarding-field {

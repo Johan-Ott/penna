@@ -30,6 +30,13 @@ What any llstudios app is built on. Penna is the first app on it.
   time, that can be skipped or started over
 - `appInfo`: the app's name, handed in with `provideAppName`, for the report and feedback
 
+## A new app
+
+`npm run ny-app <namn>` makes the app in its own folder beside Penna, from `template/`, with a
+copy of llkit and a fresh git repository. The copy is never edited there: change llkit here and
+hand it over with `npm run llkit:uppdatera ../<mapp>`. `template/` is the new app's code, so
+Penna's typecheck, lint and text test leave it out.
+
 ## Still Penna's name
 
 - Atomic writes leave `.penna-tmp` files, which the crash recovery and a Rust command look for.

@@ -1,0 +1,37 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the app may do: its own files, dialogs, notices, restart, open links, send feedback the user chooses to send, and look for a newer version of itself.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-destroy",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-internal-toggle-maximize",
+    "core:window:allow-start-dragging",
+    "core:window:allow-close",
+    "dialog:allow-open",
+    "dialog:allow-ask",
+    "dialog:allow-save",
+    "process:allow-restart",
+    "opener:default",
+    "notification:default",
+    "fs:allow-read-file",
+    "fs:allow-read-text-file",
+    "fs:allow-write-file",
+    "fs:allow-write-text-file",
+    "fs:allow-mkdir",
+    "fs:allow-rename",
+    "fs:allow-read-dir",
+    "fs:allow-stat",
+    "fs:allow-exists",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://formspree.io/f/*" },
+        { "url": "https://api.github.com/repos/Johan-Ott/__APP_SLUG__/releases/latest" }
+      ]
+    }
+  ]
+}
