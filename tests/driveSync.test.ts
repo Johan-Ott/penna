@@ -15,6 +15,34 @@ describe("syncProject", () => {
     expect(await phone.readText(`${BOOK}/scenes/S1.md`)).toBe("Brevet låg där.");
   });
 
+  it("knows its Drive folder before the first file goes up, so the shelf never shows it twice", async () => {
+    const { cloud, computer, phone } = twoDevices();
+    const known: (string | null)[] = [];
+
+    await syncProject(computer, cloud.drive, BOOK, {
+      now: NOW,
+      onProgress: (done) =>
+        void (
+          done === 1 &&
+          computer
+            .modifiedAt(`${BOOK}/.penna-sync.json`)
+            .then((time) => known.push(time === null ? null : "ja"))
+        ),
+    });
+    await syncProject(phone, cloud.drive, BOOK, {
+      now: NOW,
+      onProgress: (done) =>
+        void (
+          done === 1 &&
+          phone
+            .modifiedAt(`${BOOK}/.penna-sync.json`)
+            .then((time) => known.push(time === null ? null : "ja"))
+        ),
+    });
+
+    expect(known).toEqual(["ja", null]);
+  });
+
   it("tells how far it has come, file by file, so a fetch can show its progress", async () => {
     const { cloud, computer, phone } = twoDevices();
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });

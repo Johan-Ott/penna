@@ -195,6 +195,10 @@ export async function syncProject(
   const local = await filesIn(fileSystem, dir);
   const localScenes = [...local.keys()].filter((path) => path.startsWith("scenes/"));
   const rootId = await bookFolder(drive, dir, state, localScenes);
+  // A book going up for the first time says so at once, so the shelf never takes its new folder
+  // in Drive for a book to fetch. A fetch starts empty and gets its state when done.
+  if (!state.folderId && local.size > 0)
+    await writeState(fileSystem, dir, { dir, folderId: rootId, files: state.files });
   const remote: RemoteTree = { files: new Map(), folders: new Map() };
   await remoteFiles(drive, rootId, "", remote);
   checkFewGone(state, local, remote.files);
