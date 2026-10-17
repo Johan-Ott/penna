@@ -93,10 +93,10 @@ test("a shortcut can be moved, and keys already in use are refused", async ({ pa
   await expect(page.getByRole("dialog", { name: "Kommandopalett" })).toBeVisible();
 });
 
-test("Ctrl+N starts a new book from inside a book", async ({ page }) => {
+test("Ctrl+Shift+N starts a new book from inside a book", async ({ page }) => {
   await editor(page).click();
 
-  await page.keyboard.press("ControlOrMeta+n");
+  await page.keyboard.press("ControlOrMeta+Shift+n");
 
   await expect(page.getByRole("dialog", { name: "Vad skriver du?" })).toBeVisible();
 });
