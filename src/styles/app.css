@@ -3772,3 +3772,14 @@ body:has(.welcome) {
   color: var(--text-label);
   font-size: 13px;
 }
+
+/* Kolofonen, Insikter's numbers as the book's last page, folded under the rest. */
+.insights-colophon summary {
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.insights-colophon[open] summary {
+  margin-bottom: 12px;
+}

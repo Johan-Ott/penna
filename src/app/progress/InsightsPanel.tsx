@@ -1,4 +1,5 @@
 import type { PointerEvent } from "react";
+import { Colophon } from "./Colophon.js";
 import { useFloating } from "../blocks/BlockPanel.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
@@ -129,6 +130,23 @@ function InsightDialogs(props: PanelProps & { open: Open; onOpen: (open: Open) =
 }
 
 /** Insikter: beside the text, how the day, the week and the book are going. */
+// Under the numbers: the goals to change, and the numbers as the book's last page, folded.
+function InsightsFoot(props: PanelProps & { hasStats: boolean; onGoals: () => void }) {
+  return (
+    <>
+      <button className="link-button quiet" onClick={props.onGoals}>
+        {t("Ändra mål och deadline")}
+      </button>
+      {props.hasStats && (
+        <details className="insights-colophon">
+          <summary>{t("Om den här boken")}</summary>
+          <Colophon project={props.project} stats={props.stats} />
+        </details>
+      )}
+    </>
+  );
+}
+
 export function InsightsPanel(props: PanelProps) {
   const [open, setOpen] = useState<Open>(null);
   useEscape(() => !open && props.onClose());
@@ -151,9 +169,7 @@ export function InsightsPanel(props: PanelProps) {
           onGoals={() => setOpen("day")}
           onJourney={() => setOpen("journey")}
         />
-        <button className="link-button quiet" onClick={() => setOpen("goals")}>
-          {t("Ändra mål och deadline")}
-        </button>
+        <InsightsFoot {...props} hasStats={hasStats} onGoals={() => setOpen("goals")} />
       </div>
       <InsightDialogs {...props} open={open} onOpen={setOpen} onClose={() => setOpen(null)} />
     </aside>
