@@ -137,14 +137,14 @@ function ShownReview(props: ShownProps) {
     <ReviewPanel
       review={isReviewOn ? review : null}
       commentsSection={<CommentsAndTasks {...props} />}
-      narrationSection={<NarrationSection app={app} fields={props.project.fields} />}
-      bookNotes={bookNotesOf(app, props.project)}
-      revisionSection={
+      narrationSection={
         <>
+          <NarrationSection app={app} fields={props.project.fields} />
           <SuggestStart app={app} />
-          <RevisionSection revision={app.revision} />
         </>
       }
+      bookNotes={bookNotesOf(app, props.project)}
+      revisionSection={<RevisionSection revision={app.revision} />}
       revisionCount={app.revision.changes.length}
       repeatWindow={repeatWindow}
       onOpenCard={app.cards.open}

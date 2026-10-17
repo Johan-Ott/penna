@@ -2118,15 +2118,25 @@ button.book-cover:hover {
 .review-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 4px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background: var(--bg);
 }
 
 .review-title {
+  font-size: 13px;
   font-weight: 500;
+}
+
+/* A task elsewhere in the book reads like the other cards: where first, then what. */
+.review-item.book-task {
+  align-items: flex-start;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .review-text,

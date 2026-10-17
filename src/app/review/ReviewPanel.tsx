@@ -171,11 +171,11 @@ export function ReviewPanel(props: ReviewPanelProps) {
         onGrab={floating.onPointerDown}
       />
       {props.revisionSection}
-      {review && props.narrationSection}
-      {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
       {review && <ToLookAt {...props} review={review} />}
-      {review && <InBook notes={props.bookNotes} />}
       {props.commentsSection}
+      {review && <InBook notes={props.bookNotes} />}
+      {review && <InChapter cards={review.inChapter} onOpenCard={props.onOpenCard} />}
+      {review && props.narrationSection}
       <GuideTip step="granska" isHere={isShown} />
     </aside>
   );
