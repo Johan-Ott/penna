@@ -267,8 +267,6 @@
   "Platser": "Places",
   "Projekt": "Project",
   "Projektet är sparat av en nyare version av Penna och går bara att läsa.": "The project was saved by a newer version of Penna and can only be read.",
-  "Projektmapp": "Project folder",
-  "Projektmappen hittas inte. Är disken eller molnmappen ansluten?": "The project folder is not found. Is the disk or cloud folder connected?",
   "Publicera": "Publish",
   "Publicera {title}": "Publish {title}",
   "Påminnelse": "Reminder",
@@ -361,8 +359,6 @@
   "Titelsida · ca {pages} sidor": "Title page · about {pages} pages",
   "Tryck-PDF": "Print PDF",
   "Två versioner av ”{title}”": "Two versions of “{title}”",
-  "Typewriter": "Typewriter",
-  "Typewriter-läge": "Typewriter mode",
   "Typografi": "Typography",
   "Typsnitt": "Typeface",
   "Typst, under Apache License 2.0.": "Typst, under the Apache License 2.0.",
@@ -1405,5 +1401,10 @@
   "Vad händer i kapitlet?": "What happens in the chapter?",
   "Vems ögon": "Whose eyes",
   "När": "When",
-  "Ord": "Words"
+  "Ord": "Words",
+  "Skrivraden mitt på skärmen": "Writing line in the middle",
+  "Bokens mapp hittas inte. Är disken eller molnmappen ansluten?": "The book's folder cannot be found. Is the disk or cloud folder connected?",
+  "Bokhyllans mapp": "Bookshelf folder",
+  "Medan du skriver": "While you write",
+  "Sidomenyn": "Sidebar"
 }

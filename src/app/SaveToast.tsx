@@ -8,7 +8,7 @@ const FAILURE_MESSAGES: Record<SaveFailure, string> = {
   blocked: t("Filen används av ett annat program, ofta molnsynken, eller är skrivskyddad."),
   diskFull: t("Disken är full."),
   readOnly: t("Enheten är skrivskyddad."),
-  folderMissing: t("Projektmappen hittas inte. Är disken eller molnmappen ansluten?"),
+  folderMissing: t("Bokens mapp hittas inte. Är disken eller molnmappen ansluten?"),
   unknown: t("Scenen kunde inte sparas."),
 };
 

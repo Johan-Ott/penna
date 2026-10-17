@@ -94,7 +94,7 @@ function LibraryRows(props: TabProps) {
   return (
     <>
       {!platform.isPhone && (
-        <Row label={t("Projektmapp")} hint={props.preferences.libraryDir ?? hint}>
+        <Row label={t("Bokhyllans mapp")} hint={props.preferences.libraryDir ?? hint}>
           <LibraryButton {...props} />
         </Row>
       )}

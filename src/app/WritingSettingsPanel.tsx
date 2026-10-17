@@ -159,7 +159,7 @@ function FocusSettings({ settings, onChange }: PanelProps) {
         onSelect={(focus) => set({ focus })}
       />
       <Toggle
-        label={t("Typewriter")}
+        label={t("Skrivraden mitt på skärmen")}
         hint={t("Raden du skriver stannar mitt på skärmen")}
         isOn={settings.typewriter}
         onFlip={() => onChange(toggle("typewriter"))}

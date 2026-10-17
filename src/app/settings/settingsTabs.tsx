@@ -8,8 +8,8 @@ import type { AppPreferences } from "../appPreferences.js";
 import type { PreferenceChange } from "../useStartup.js";
 import type { SettingsChange } from "../useWritingSettings.js";
 import { Choice, Row, Switch } from "../controls.js";
+import { GroupTitle, SwitchRows } from "./editorSwitches.js";
 import type { DriveSync } from "../useDriveSync.js";
-import { usePhone } from "../phone/usePhone.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface TabProps {
@@ -48,66 +48,6 @@ function SizeStepper({ settings, onChangeSettings }: TabProps) {
   );
 }
 
-type EditorSwitch =
-  | "paper"
-  | "bookType"
-  | "tableOfContents"
-  | "followOpenText"
-  | "commentsInMargin"
-  | "typewriter"
-  | "spellcheck"
-  | "typography"
-  | "autocorrect"
-  | "completion"
-  | "review";
-const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
-  ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
-  [
-    "bookType",
-    t("Boktypografi"),
-    t("Marginaljusterat, anfang där kapitlet börjar och ett ornament mellan scener."),
-  ],
-  [
-    "tableOfContents",
-    t("Sidomenyn som innehållsförteckning"),
-    t("Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok."),
-  ],
-  ["followOpenText", t("Sidomenyn följer texten"), t("Den fälls ut till texten du öppnar.")],
-  [
-    "commentsInMargin",
-    t("Kommentarer i marginalen"),
-    t("Kommentarerna står bredvid texten, som blyerts i en bok. Korten i Granska finns kvar."),
-  ],
-  [
-    "typewriter",
-    t("Typewriter-läge"),
-    t("Raden du skriver på stannar mitt på skärmen i fokusläget."),
-  ],
-  [
-    "spellcheck",
-    t("Stavningskontroll"),
-    t("Penna stryker under felstavade ord i bokens språk. Finska har ingen ordlista än."),
-  ],
-  [
-    "typography",
-    t("Svensk typografi medan du skriver"),
-    t('Två bindestreck blir talstreck och "citat" blir ”citat”.'),
-  ],
-  [
-    "autocorrect",
-    t("Autokorrigering"),
-    t(
-      "Stor bokstav där en mening börjar, HEj blir Hej och uppenbara stavfel rättas. Backspace ångrar.",
-    ),
-  ],
-  [
-    "completion",
-    t("Ordförslag"),
-    t("Namn, bokens ord och ordet du brukar skriva härnäst visas i grått. Tab fyller i."),
-  ],
-  ["review", t("Granskning"), t("Namnstavning och upprepningar, i texten och i en panel bredvid.")],
-];
-
 const WINDOWS = REPEAT_WINDOWS.map((sentences): [string, string] => [
   String(sentences),
   String(sentences),
@@ -131,43 +71,41 @@ function RepeatWindowRow({ settings, onChangeSettings }: TabProps) {
   );
 }
 
-// A phone shows the text without the sheet and keeps comments in Granska, so those switch nothing.
-const COMPUTER_ONLY: EditorSwitch[] = ["paper", "commentsInMargin", "autocorrect", "completion"];
-
-function SwitchRows({ settings, onChangeSettings }: TabProps) {
-  const isPhone = usePhone();
-  const switches = EDITOR_SWITCHES.filter(([key]) => !isPhone || !COMPUTER_ONLY.includes(key));
-  return switches.map(([key, label, hint]) => (
-    <Row key={key} label={label} hint={hint}>
-      <Switch
-        label={label}
-        isOn={settings[key]}
-        onFlip={() => onChangeSettings((current) => ({ ...current, [key]: !current[key] }))}
+function FontRow({ settings, onChangeSettings }: TabProps) {
+  return (
+    <Row label={t("Typsnitt")} hint={t("Bara för skrivandet. Boken formges i Bokdesign.")}>
+      <Choice
+        label={t("Typsnitt")}
+        value={settings.font}
+        options={FONTS}
+        onSelect={(font) => onChangeSettings((current) => ({ ...current, font }))}
       />
     </Row>
-  ));
+  );
 }
 
 export function EditorTab(props: TabProps) {
-  const { settings, onChangeSettings } = props;
   return (
     <>
-      <Row label={t("Typsnitt")} hint={t("Bara för skrivandet. Boken formges i Bokdesign.")}>
-        <Choice
-          label={t("Typsnitt")}
-          value={settings.font}
-          options={FONTS}
-          onSelect={(font) => onChangeSettings((current) => ({ ...current, font }))}
-        />
-      </Row>
+      <GroupTitle title={t("Sidan")} />
+      <FontRow {...props} />
       <Row
         label={t("Textstorlek")}
         hint={t("Ctrl och plus eller minus ändrar den medan du skriver.")}
       >
         <SizeStepper {...props} />
       </Row>
-      <SwitchRows {...props} />
+      <SwitchRows {...props} keys={["paper", "bookType"]} />
+      <GroupTitle title={t("Medan du skriver")} />
+      <SwitchRows
+        {...props}
+        keys={["typewriter", "spellcheck", "typography", "autocorrect", "completion"]}
+      />
+      <GroupTitle title={t("Granskning")} />
+      <SwitchRows {...props} keys={["review", "commentsInMargin"]} />
       <RepeatWindowRow {...props} />
+      <GroupTitle title={t("Sidomenyn")} />
+      <SwitchRows {...props} keys={["tableOfContents", "followOpenText"]} />
     </>
   );
 }

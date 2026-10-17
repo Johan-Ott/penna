@@ -193,7 +193,7 @@ function switchEntries({
       command(`Utseende: ${THEME_LABELS[theme]}`, () => change(changeTo({ theme }))),
     ),
     flip(t("Indrag första rad"), "indent"),
-    flip(t("Typewriter"), "typewriter"),
+    flip(t("Skrivraden mitt på skärmen"), "typewriter"),
     ...FOCUS_MODES.map(([focus, label]) =>
       command(`Fokus: ${label}`, () => change(changeTo({ focus }))),
     ),

@@ -41,7 +41,7 @@ function Found(props: TabProps & { query: string }) {
     setEmpty(sections.every((section) => section.hidden));
   });
   return (
-    <div ref={list}>
+    <div ref={list} className="settings-found">
       {SEARCHED.map(([label, Tab]) => (
         <section key={label}>
           <h2 className="settings-found-heading">{label}</h2>

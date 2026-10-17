@@ -3783,3 +3783,22 @@ body:has(.welcome) {
 .insights-colophon[open] summary {
   margin-bottom: 12px;
 }
+
+/* A part of a long settings tab: a small heading over its rows. */
+.settings-group-title {
+  display: block;
+  margin: 22px 0 2px;
+  color: var(--text-label);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.settings-group-title:first-child {
+  margin-top: 0;
+}
+
+.settings-found .settings-group-title {
+  display: none;
+}
