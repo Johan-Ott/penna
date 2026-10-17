@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { shortcutText } from "../src/app/shortcutKeys";
+import { shortcutText } from "@llkit/shortcutKeys.js";
 
 describe("shortcutText", () => {
   it("names the keys Windows writes on", () => {
