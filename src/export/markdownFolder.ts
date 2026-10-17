@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import { readSceneBodies, type SceneSummary } from "../project/sceneSummaries.js";
 import { isInTrash, numberNodes, TRASH_ID, type TreeNode } from "../project/tree.js";
 import { nodeLabel } from "../project/treeLabels.js";
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 // The book as readable folders and files named after their titles, to read and share. The

@@ -18,9 +18,6 @@ export function joinPath(dir: string, name: string): string {
   return `${dir}/${name}`;
 }
 
-/** A scene's or note's file in a book. */
-export const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);
-
 /** Null only when the file is missing; a file that is there but cannot be read throws. */
 export async function readIfThere(fileSystem: FileSystem, path: string) {
   try {

@@ -9,7 +9,7 @@ import {
 } from "../src/export/book";
 import { standardManuscript } from "../src/export/standardManuscript";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const tree: TreeNode[] = withSpecialFolders([
   {

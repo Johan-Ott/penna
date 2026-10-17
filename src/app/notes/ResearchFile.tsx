@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { isPictureFile, researchPath } from "../../project/researchFiles.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 

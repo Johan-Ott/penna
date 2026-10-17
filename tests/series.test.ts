@@ -9,7 +9,7 @@ import {
   seriesTitle,
 } from "../src/project/series";
 import { CHARACTERS_ID, findNode, sortsOf, withSpecialFolders } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("series", () => {
   it("makes a series folder beside the books that holds only the note sorts", async () => {

@@ -6,7 +6,7 @@ import { sceneTypst } from "../src/export/typstText";
 import { sceneXhtml } from "../src/export/xhtml";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 import { withSpecialFolders } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const BODY = "Fyren byggdes 1872[^1] på udden.\n\n[^1]: Enligt sjökortet.\n";
 

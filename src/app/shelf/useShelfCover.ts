@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { findCover, saveCover, type CoverPicture } from "../../project/cover.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { usePictureUrl } from "../exporting/useCover.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";

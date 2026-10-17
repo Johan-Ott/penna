@@ -1,7 +1,7 @@
 import { documentText } from "../editor/documentText.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { setAside } from "../storage/setAside.js";
 
 /** An editor's version of a scene waits here, as plain text, until the writer has gone through it. */

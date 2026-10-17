@@ -1,7 +1,7 @@
 import { newSceneText, withField } from "../manuscript/sceneFile.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, scenePath, type FileSystem } from "../storage/fileSystem.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 
 // A research file, such as a PDF or a photo, is a note that points to its copy in the book's
 // filer/ folder: it syncs and is backed up with the book, and the note holds the writer's words.

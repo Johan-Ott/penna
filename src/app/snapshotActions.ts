@@ -1,7 +1,7 @@
 import { joinSceneFile, splitSceneFile } from "../manuscript/sceneFile.js";
 import { takeSnapshot, type SceneRef, type Snapshot } from "../project/snapshots.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { scenePath } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { scenePath } from "../storage/sceneId.js";
 import { openScene, type SceneSession } from "./sceneSession.js";
 import { t } from "../i18n/i18n.js";
 

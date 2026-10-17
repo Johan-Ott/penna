@@ -10,7 +10,7 @@ import {
   writeDeviceStats,
   type Stats,
 } from "../project/stats.js";
-import { recordFailure } from "./errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import { snapshotOnSave } from "../project/snapshots.js";
 import { rememberPlace } from "./resume/lastPlace.js";

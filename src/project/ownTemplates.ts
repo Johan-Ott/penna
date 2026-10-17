@@ -1,5 +1,5 @@
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { labelsOf } from "./labels.js";
 import { projectGoals } from "./progress.js";
 import type { BookTemplate } from "./templates.js";

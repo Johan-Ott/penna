@@ -3,7 +3,7 @@ import { bookOutline } from "../src/export/book";
 import { DEFAULT_DESIGN } from "../src/export/bookDesign";
 import { OPENING_PRESETS, type OpeningTemplate } from "../src/export/openings";
 import { picturesUsed, readPictures, savePicture } from "../src/project/pictures";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const PNG_HEADER = [
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52,

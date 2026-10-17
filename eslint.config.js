@@ -43,4 +43,14 @@ export default tseslint.config(
     files: ["tests/**/*.ts", "e2e/**/*.ts"],
     rules: { "max-lines-per-function": "off" },
   },
+  // llkit is what any app is built on, so it never reaches into one app's own code.
+  {
+    files: ["llkit/**/*.ts", "llkit/**/*.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { patterns: [{ group: ["**/src/**", "../src/*"], message: "llkit vet inget om appen." }] },
+      ],
+    },
+  },
 );

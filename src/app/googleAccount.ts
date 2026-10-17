@@ -1,4 +1,4 @@
-import { recordFailure } from "./errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";
 

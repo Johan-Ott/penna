@@ -1,9 +1,9 @@
 import { useEffect, useState, type KeyboardEvent, type RefObject } from "react";
 import { fixedSceneText } from "../../editor/textFix.js";
 import { newComment, readComments, writeComments, type Anchor } from "../../project/comments.js";
-import { writeAtomic } from "../../storage/atomicWrite.js";
-import { scenePath } from "../../storage/fileSystem.js";
-import { recordFailure } from "../errorLog.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { scenePath } from "../../storage/sceneId.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { pickedIn, type Picked } from "./pickedText.js";
 import { t } from "../../i18n/i18n.js";

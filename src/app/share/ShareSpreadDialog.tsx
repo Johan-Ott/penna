@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { Choice, Dialog, Switch } from "../controls.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { penMark, startCard, type CardFormat, type Look } from "../studio/studioCanvas.js";
 import { ImageActions } from "./ImageActions.js";
 import { copyPng, savePng } from "../studio/studioDraw.js";

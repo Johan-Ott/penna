@@ -3,7 +3,7 @@ import { bookFileCalls } from "../src/project/bookFiles";
 import { copyExampleProject } from "../src/project/newProject";
 import { readProjectFile } from "../src/project/projectFile";
 import { findNode, PLACES_ID } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 async function exampleBook() {
   const fileSystem = createMemoryFileSystem({});

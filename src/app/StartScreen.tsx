@@ -13,7 +13,7 @@ import { usePhone } from "./phone/usePhone.js";
 import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
-import { recordFailure } from "./errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import type { ProjectDetails } from "../project/newProject.js";
 import { exampleBook, importedBook, libraryOf, newBook, startDetails } from "./onboarding/books.js";

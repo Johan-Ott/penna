@@ -1,7 +1,7 @@
 import { mergedJourney, NO_JOURNEY, type Holiday, type Journey } from "../../project/journey.js";
 import type { Stats } from "../../project/stats.js";
-import { writeAtomic } from "../../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { platform } from "../platform.js";
 
 // One file per device in the Penna folder, so two computers never write over each other.

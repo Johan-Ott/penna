@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { browserStorage } from "./browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { MODIFIER_NAME, shortcutText, type Binding } from "./shortcutKeys.js";
 import { t } from "../i18n/i18n.js";
 

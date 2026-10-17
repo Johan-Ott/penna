@@ -1,6 +1,6 @@
 import type { DriveStatus } from "../useDriveSync.js";
 import { signIn, signOut } from "../googleAccount.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { Row } from "../controls.js";
 import type { TabProps } from "./settingsTabs.js";

@@ -7,7 +7,7 @@ import {
   type Draft,
 } from "../../project/drafts.js";
 import { manuscriptSceneIds, sceneIdsIn } from "../../project/tree.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { openScene, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";

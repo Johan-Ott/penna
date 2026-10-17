@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { readComments, type Comment } from "../../project/comments.js";
 import { placeOf } from "../../project/treeLabels.js";
-import { joinPath } from "../../storage/fileSystem.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { platform } from "../platform.js";
 import type { Project } from "../useProject.js";
 import { t } from "../../i18n/i18n.js";

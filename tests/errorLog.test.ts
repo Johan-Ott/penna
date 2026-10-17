@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createErrorLog } from "../src/app/errorLog";
+import { createErrorLog } from "@llkit/errorLog.js";
 
 describe("errorLog", () => {
   it("writes a report with the version, the device and the errors, newest last", () => {
@@ -7,7 +7,7 @@ describe("errorLog", () => {
     log.record("Kunde inte spara Köket");
     log.record("Drive svarade 500");
 
-    const report = log.report({ version: "0.1.0", device: "Windows" });
+    const report = log.report({ app: "Penna", version: "0.1.0", device: "Windows" });
 
     expect(report).toContain("Penna 0.1.0");
     expect(report).toContain("Windows");
@@ -30,7 +30,7 @@ describe("errorLog", () => {
     const log = createErrorLog(() => 0);
 
     for (let number = 1; number <= 25; number++) log.record(`fel ${number}`);
-    const report = log.report({ version: "0.1.0", device: "Android" });
+    const report = log.report({ app: "Penna", version: "0.1.0", device: "Android" });
 
     expect(report).not.toContain("fel 5\n");
     expect(report).toContain("fel 6");
@@ -40,6 +40,6 @@ describe("errorLog", () => {
   it("says so when nothing has gone wrong", () => {
     const log = createErrorLog(() => 0);
 
-    expect(log.report({ version: "0.1.0", device: "Android" })).toContain("Inga fel");
+    expect(log.report({ app: "Penna", version: "0.1.0", device: "Android" })).toContain("Inga fel");
   });
 });

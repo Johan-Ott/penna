@@ -1,6 +1,6 @@
 import { t } from "../i18n/i18n.js";
 import { splitManuscript, type ImportedNode } from "../import/markdownImport.js";
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import { createProject } from "./newProject.js";
 import { structures, templatePieces } from "./templates.js";
 

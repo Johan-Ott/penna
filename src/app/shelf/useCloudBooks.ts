@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { joinPath } from "../../storage/fileSystem.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { googleDrive } from "../../sync/googleDrive.js";
 import { syncProject } from "../../sync/driveSync.js";
 import { readState, STATE_FILE } from "../../sync/syncState.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 
 // The books in the writer's Drive this device lacks, fetched when tapped. One that stopped

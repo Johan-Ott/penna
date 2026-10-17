@@ -1,7 +1,7 @@
 import { takeSnapshot } from "../../project/snapshots.js";
 import { moveToTrash, type TreeNode } from "../../project/tree.js";
-import { writeAtomic } from "../../storage/atomicWrite.js";
-import { joinPath, readIfThere } from "../../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, readIfThere } from "@llkit/storage/fileSystem.js";
 import type { FileChange, NodeChange } from "../../sync/syncLog.js";
 import { platform } from "../platform.js";
 import { checkDisk, type SceneSession } from "../sceneSession.js";

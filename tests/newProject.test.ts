@@ -4,7 +4,7 @@ import { createProject, copyExampleProject, projectFolderName } from "../src/pro
 import { splitManuscript } from "../src/import/markdownImport";
 import { readProjectFile } from "../src/project/projectFile";
 import { manuscriptSceneIds } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 import { openProjectFolder } from "../src/storage/projectFolder";
 
 describe("projectFolderName", () => {

@@ -8,7 +8,7 @@ import {
   THINGS_ID,
   TRASH_ID,
 } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const PROJECT_PATH = "/bok/project.json";
 

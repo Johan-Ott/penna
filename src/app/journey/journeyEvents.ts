@@ -1,4 +1,4 @@
-import { createStore } from "../store.js";
+import { createStore } from "@llkit/store.js";
 import type { Celebration } from "../../project/inkwell.js";
 
 // Celebrations wait here for the corner to show them, and ink earned anywhere in the app is

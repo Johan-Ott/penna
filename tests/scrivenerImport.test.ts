@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { rtfToMarkdown } from "../src/import/rtf";
 import { readScrivener } from "../src/import/scrivenerImport";
 import type { ImportedNode } from "../src/import/markdownImport";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("rtfToMarkdown", () => {
   it("reads paragraphs, italic and bold, and skips the font and color tables", () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readSceneSummaries } from "../src/project/sceneSummaries";
 import { createFileNote, saveResearchFile } from "../src/project/researchFiles";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("research files", () => {
   it("are copied into filer/ under a free name, so a file there is never replaced", async () => {

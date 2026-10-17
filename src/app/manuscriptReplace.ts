@@ -1,9 +1,10 @@
 import type { SearchQuery } from "prosemirror-search";
 import { replaceAllInText } from "../editor/manuscriptSearch.js";
 import { takeSnapshot } from "../project/snapshots.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { t } from "../i18n/i18n.js";
-import { type FileSystem, scenePath } from "../storage/fileSystem.js";
+import { type FileSystem } from "@llkit/storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 
 export interface SceneChange {
   id: string;

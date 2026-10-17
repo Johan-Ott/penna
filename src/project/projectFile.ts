@@ -1,5 +1,5 @@
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { HEADING_FIELDS, rebuildTree, type NodeKind, type TreeNode } from "./tree.js";
 
 export interface ProjectFile {

@@ -6,7 +6,7 @@ import {
   snapshotWhen,
   takeSnapshot,
 } from "../src/project/snapshots";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const SCENE_ID = "01J9Z4K2QX";
 const scene = (body: string) => `---\nid: ${SCENE_ID}\ntitle: Köket\nstatus: utkast\n---\n${body}`;

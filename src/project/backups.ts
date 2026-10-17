@@ -1,8 +1,8 @@
 import { DAY } from "./stats.js";
 import JSZip from "jszip";
 import { projectZip } from "../export/projectZip.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { parentOf } from "./libraryFolders.js";
 import { freeProjectDir } from "./newProject.js";
 

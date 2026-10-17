@@ -1,4 +1,4 @@
-import { createStore } from "./store.js";
+import { createStore } from "@llkit/store.js";
 import { platform, type AppUpdate } from "./platform.js";
 
 // The update Penna has found, shared by the notice and the menus' Sök efter uppdateringar.

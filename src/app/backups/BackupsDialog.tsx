@@ -6,7 +6,7 @@ import {
   type BookBackups,
 } from "../../project/backups.js";
 import { Dialog } from "../controls.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { autoBackup, backupNow } from "../useAutoBackup.js";
 import { numberLocale, t } from "../../i18n/i18n.js";

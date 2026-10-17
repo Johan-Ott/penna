@@ -3,7 +3,7 @@ import type { useEditorView } from "../editor/useEditorView.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { sceneStatus, splitSceneFile } from "../manuscript/sceneFile.js";
 import { insertAfter, moveToTrash, nextSceneSibling, type TreeNode } from "../project/tree.js";
-import { scenePath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import { platform } from "./platform.js";
 import { createScene, setSceneStatus, type SceneSession } from "./sceneSession.js";
 import type { Project } from "./useProject.js";

@@ -4,7 +4,7 @@ import { restoreSnapshot } from "../src/app/snapshotActions";
 import { createSceneSession, openScene, sceneEdited } from "../src/app/sceneSession";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 import { listSnapshots, takeSnapshot } from "../src/project/snapshots";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const SCENE_ID = "01J9Z4K2QX";
 const PATH = `/bok/scenes/${SCENE_ID}.md`;

@@ -1,4 +1,4 @@
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import type { Drive, RemoteFile } from "./drive.js";
 import { filesIn } from "../storage/folderFiles.js";
 import {

@@ -1,4 +1,5 @@
-import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { projectFolderName } from "./newProject.js";
 import { writeProjectFile } from "./projectFile.js";

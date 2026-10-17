@@ -1,6 +1,6 @@
 import type { TreeNode } from "../project/tree.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { flatten, same, type TreeConflict } from "./mergeTree.js";
 
 // What the syncs brought here from Drive, kept in the book until the writer has looked:

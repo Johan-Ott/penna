@@ -1,6 +1,6 @@
 import { t, UI_LANGUAGES, type UiLanguage } from "../../i18n/i18n.js";
 import { loadPreferences, savePreferences } from "../appPreferences.js";
-import { browserStorage } from "../browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { Choice } from "../controls.js";
 
 // Texts are translated as the app starts, so a change reloads the window. It fades out first

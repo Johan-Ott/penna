@@ -1,5 +1,9 @@
 import type { UiLanguage } from "../i18n/i18n.js";
-import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
+import {
+  readStoredObject,
+  writeStored,
+  type KeyValueStorage,
+} from "@llkit/storage/keyValueStore.js";
 
 export interface AppPreferences {
   isOnboardingDone: boolean;

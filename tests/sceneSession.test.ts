@@ -13,7 +13,7 @@ import {
 } from "../src/app/sceneSession";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 import { listSnapshots } from "../src/project/snapshots";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const SCENE_PATH = "/bok/scenes/01J9Z4K2QX.md";
 const SCENE = "---\nid: 01J9Z4K2QX\ntitle: Köket\n---\nBrevet låg där.\n";

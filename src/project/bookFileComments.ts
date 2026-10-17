@@ -1,7 +1,7 @@
 import { documentText } from "../editor/documentText.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
-import { scenePath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import type { BookFolder } from "./bookFolder.js";
 import { anchorAt, newComment, readComments, writeComments } from "./comments.js";
 

@@ -5,7 +5,7 @@ import {
   writeStickyNotes,
   type StickyNote,
 } from "../../project/stickyNotes.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 
 const SAVE_DELAY = 600;

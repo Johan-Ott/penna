@@ -9,7 +9,8 @@ import {
   type ChapterHeading,
   type TreeNode,
 } from "../project/tree.js";
-import { type FileSystem, scenePath } from "../storage/fileSystem.js";
+import { type FileSystem } from "@llkit/storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import type { ChapterOpening } from "./openings.js";
 import { t } from "../i18n/i18n.js";
 

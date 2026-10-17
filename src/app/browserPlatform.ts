@@ -1,6 +1,6 @@
 import { DEMO_PROJECT_FILES } from "../demo/demoProject.js";
 import { parentOf } from "../project/libraryFolders.js";
-import { createMemoryFileSystem } from "../storage/memoryFileSystem.js";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 import type { Platform } from "./platform.js";
 
 // The browser version pretends to be a computer with a home folder and the example project.

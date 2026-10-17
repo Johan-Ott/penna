@@ -7,7 +7,7 @@ import {
   whenUpdated,
 } from "../src/project/shelf";
 import { deadlineLine } from "../src/project/shelfLines";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const DAY = 24 * 60 * 60 * 1000;
 

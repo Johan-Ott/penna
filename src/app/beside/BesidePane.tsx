@@ -6,7 +6,7 @@ import { plainText } from "../../manuscript/compare.js";
 import { parseMarkdown } from "../../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../../manuscript/sceneFile.js";
 import { snapshotWhen, type Snapshot } from "../../project/snapshots.js";
-import { scenePath } from "../../storage/fileSystem.js";
+import { scenePath } from "../../storage/sceneId.js";
 import type { AppState } from "../App.js";
 import { SceneText } from "../contents/sceneDocs.js";
 import { platform } from "../platform.js";

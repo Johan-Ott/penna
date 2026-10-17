@@ -9,8 +9,8 @@ import {
 } from "../manuscript/sceneFile.js";
 import { changedWords } from "../manuscript/wordDiff.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 export interface SceneRef {

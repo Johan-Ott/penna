@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { importManuscript } from "../src/import/importManuscript";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const bytesOf = (text: string) => new TextEncoder().encode(text);
 

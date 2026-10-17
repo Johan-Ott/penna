@@ -9,7 +9,7 @@ import {
   setAsideCrashText,
 } from "../src/app/syncRepairs";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const SCENE_ID = "01J9Z4K2QX";
 const SCENE_PATH = `/bok/scenes/${SCENE_ID}.md`;

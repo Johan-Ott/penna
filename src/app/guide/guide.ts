@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { browserStorage } from "../browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { t } from "../../i18n/i18n.js";
 
 // The guide for a new writer: one small tip in each part of Penna, the first time they come

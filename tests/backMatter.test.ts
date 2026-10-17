@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { backPages, backTexts } from "../src/export/bookParts";
 import { readExcerpt } from "../src/export/excerpt";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const scene = (id: string, body: string) => `---\nid: ${id}\ntitle: ${id}\n---\n${body}`;
 

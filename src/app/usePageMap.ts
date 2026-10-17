@@ -3,7 +3,7 @@ import { bookLanguage, quoteStyleFor } from "../project/bookLanguage.js";
 import { contentsRows } from "../project/contents.js";
 import { pageMap, type PageMap } from "../project/pageMap.js";
 import { typstFiles, typstSource } from "../export/typstBook.js";
-import { recordFailure } from "./errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { bookMaterial, chosenExtras, printInput } from "./exporting/bookMaterial.js";
 import type { ExportChoices } from "./exporting/useExport.js";
 import { appTypst } from "./typstAssets.js";

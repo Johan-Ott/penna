@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { imageSize } from "../src/export/imageSize";
 import { findCover, saveCover } from "../src/project/cover";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 // The smallest headers that say what a picture is and how big: PNG's IHDR and a JPEG SOF0.
 function png(width: number, height: number) {

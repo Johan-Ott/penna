@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { useEditorView } from "../../editor/useEditorView.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { openScene, type OpenScene, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";
 import { useComments } from "./useComments.js";

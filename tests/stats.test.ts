@@ -9,7 +9,7 @@ import {
   wordsAdded,
   writeDeviceStats,
 } from "../src/project/stats";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const scene = (body: string) => `---\nid: 01J9Z4K2QX\ntitle: Köket\n---\n${body}`;
 

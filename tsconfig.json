@@ -15,7 +15,8 @@
     "skipLibCheck": true,
     "allowJs": true,
     "jsx": "react-jsx",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": { "@llkit/*": ["./llkit/*"] }
   },
-  "include": ["src", "tests", "e2e", "vite.config.ts", "playwright.config.ts"]
+  "include": ["llkit", "src", "tests", "e2e", "vite.config.ts", "playwright.config.ts"]
 }

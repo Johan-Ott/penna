@@ -1,5 +1,5 @@
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, readIfThere, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId } from "../storage/sceneId.js";
 
 // Lappar: post-it notes over the text, written in or drawn on, in the book's own folder so they

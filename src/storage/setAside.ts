@@ -1,4 +1,4 @@
-import { joinPath, type FileSystem } from "./fileSystem.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 
 /** Goes to the project's trash/ folder under a free name, so an older file there is never replaced. */
 export async function setAside(fileSystem: FileSystem, dir: string, path: string, name: string) {

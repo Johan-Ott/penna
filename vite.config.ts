@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
 // The version shown under "Om Penna" is the one Tauri builds the app with.
@@ -27,6 +28,8 @@ export default defineConfig(({ command }) => {
     command === "serve" ? !process.env["PENNA_TYPST_FETCH"] : !process.env["TAURI_ENV_PLATFORM"];
   return {
     plugins: [react()],
+    // llkit: what any llstudios app is built on, kept apart from what is Penna's own.
+    resolve: { alias: { "@llkit": fileURLToPath(new URL("./llkit", import.meta.url)) } },
     clearScreen: false,
     server: { port: 1420, strictPort: true },
     // Typst runs in a worker that loads its parts as modules.

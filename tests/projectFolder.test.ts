@@ -1,8 +1,8 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { tempPathFor } from "../src/storage/atomicWrite";
-import { joinPath } from "../src/storage/fileSystem";
+import { tempPathFor } from "@llkit/storage/atomicWrite.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { nodeFileSystem } from "../src/storage/nodeFileSystem";
 import { openProjectFolder } from "../src/storage/projectFolder";
 

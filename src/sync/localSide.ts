@@ -1,5 +1,5 @@
 import { takeSnapshot } from "../project/snapshots.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 /** Wraps each write over a file here; the app saves the open scene first and reads it after. */

@@ -1,6 +1,6 @@
 import { imageSize, type ImageSize } from "../export/imageSize.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { setAside } from "../storage/setAside.js";
 import { t } from "../i18n/i18n.js";
 

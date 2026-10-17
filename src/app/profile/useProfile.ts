@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { writeAtomic } from "../../storage/atomicWrite.js";
-import { joinPath } from "../../storage/fileSystem.js";
-import { recordFailure } from "../errorLog.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { libraryOf } from "../journey/journeyFile.js";
 import { platform } from "../platform.js";
 

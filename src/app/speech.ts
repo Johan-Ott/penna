@@ -1,5 +1,5 @@
 import type { EditorState } from "prosemirror-state";
-import { createStore } from "./store.js";
+import { createStore } from "@llkit/store.js";
 
 // Uppläsning: the computer's own voice reads the text back, a paragraph at a time, to proofread by
 // ear. The phone's WebView has no voice, so there it is not offered.

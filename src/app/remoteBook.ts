@@ -12,7 +12,7 @@ import {
 } from "../project/tree.js";
 import { nodeLabel } from "../project/treeLabels.js";
 import { SCENE_STATUSES, type SceneStatus } from "../manuscript/sceneFile.js";
-import { scenePath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import { bookFileCalls } from "../project/bookFiles.js";
 import { writeOverScene } from "./sceneSession.js";
 import { platform } from "./platform.js";

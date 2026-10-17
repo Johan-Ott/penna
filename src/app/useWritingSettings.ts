@@ -7,7 +7,7 @@ import {
   type Theme,
   type WritingSettings,
 } from "../editor/writingSettings.js";
-import { browserStorage } from "./browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { useShortcut } from "./useShortcut.js";
 
 export type SettingsChange = (current: WritingSettings) => WritingSettings;

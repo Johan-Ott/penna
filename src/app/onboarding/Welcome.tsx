@@ -1,7 +1,7 @@
 import { useState } from "react";
 import logo from "../../assets/penna-logo.png";
 import { platform } from "../platform.js";
-import { useRootClass } from "../useRootClass.js";
+import { useRootClass } from "@llkit/useRootClass.js";
 import type { Theme } from "../../editor/writingSettings.js";
 import { UiLanguageChoice } from "../settings/UiLanguageChoice.js";
 import { FirstChoices, type Choices } from "./FirstChoices.js";

@@ -1,5 +1,5 @@
-import { browserStorage } from "../browserStorage.js";
-import { createStore } from "../store.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
+import { createStore } from "@llkit/store.js";
 
 // A writing sprint as a pomodoro: passes to write in with short breaks between them, a long
 // break after the last, and the words written meanwhile.

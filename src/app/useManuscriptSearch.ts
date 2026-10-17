@@ -12,7 +12,7 @@ import {
   type ManuscriptScope,
 } from "../editor/manuscriptSearch.js";
 import { manuscriptSceneIds, sceneIdsIn, sortsOf } from "../project/tree.js";
-import { scenePath } from "../storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import { replaceInScenes, undoReplace, type SceneChange } from "./manuscriptReplace.js";
 import { platform } from "./platform.js";
 import { sceneHits } from "./searchHits.js";

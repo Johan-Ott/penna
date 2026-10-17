@@ -1,5 +1,5 @@
-import { findRecoverableTemps, type RecoverableTemp } from "./atomicWrite.js";
-import { joinPath, type FileSystem } from "./fileSystem.js";
+import { findRecoverableTemps, type RecoverableTemp } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { classifySceneFiles, type SceneFolderListing } from "./syncFiles.js";
 
 export interface OpenedProject extends SceneFolderListing {

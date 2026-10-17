@@ -1,6 +1,6 @@
 import type { ShelfBook } from "../../project/shelf.js";
 import { forgetProject, type AppPreferences } from "../appPreferences.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import type { PreferenceChange } from "../useStartup.js";
 import { driveFolderOf, trashOnDrive } from "./useCloudBooks.js";

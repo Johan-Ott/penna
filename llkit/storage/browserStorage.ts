@@ -1,4 +1,4 @@
-import type { KeyValueStorage } from "../storage/keyValueStore.js";
+import type { KeyValueStorage } from "./keyValueStore.js";
 
 const forgetfulStorage: KeyValueStorage = { getItem: () => null, setItem: () => undefined };
 

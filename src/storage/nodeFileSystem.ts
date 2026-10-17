@@ -1,5 +1,5 @@
 import { mkdir, readdir, readFile, rename, stat, writeFile } from "node:fs/promises";
-import type { FileSystem } from "./fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 
 const isMissing = (error: unknown) => (error as NodeJS.ErrnoException).code === "ENOENT";
 

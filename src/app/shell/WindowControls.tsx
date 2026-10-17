@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { platform } from "../platform.js";
-import { useRootClass } from "../useRootClass.js";
+import { useRootClass } from "@llkit/useRootClass.js";
 import { isMac } from "../../thisComputer.js";
 import { t } from "../../i18n/i18n.js";
 

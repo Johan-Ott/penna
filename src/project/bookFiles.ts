@@ -6,8 +6,7 @@ import {
   withSceneTitle,
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
-import { scenePath } from "../storage/fileSystem.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { changeScene, changeTree, newScene, readBook, type BookFolder } from "./bookFolder.js";
 import { runBatch } from "./batch.js";
 import { commentCalls } from "./bookFileComments.js";

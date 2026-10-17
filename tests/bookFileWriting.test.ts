@@ -3,7 +3,7 @@ import { bookFileCalls } from "../src/project/bookFiles";
 import { copyExampleProject } from "../src/project/newProject";
 import { readProjectFile } from "../src/project/projectFile";
 import { listSnapshots } from "../src/project/snapshots";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const SCENE = "01J9Z4K2QX0000000000000001";
 

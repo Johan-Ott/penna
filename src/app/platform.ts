@@ -1,5 +1,5 @@
 import { isTauri } from "@tauri-apps/api/core";
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import { browserPlatform } from "./browserPlatform.js";
 import { tauriPlatform } from "./tauriPlatform.js";
 

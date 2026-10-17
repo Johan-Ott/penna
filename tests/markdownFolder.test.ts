@@ -2,7 +2,7 @@ import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import { markdownFolderZip } from "../src/export/markdownFolder";
 import type { TreeNode } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const scene = (id: string): TreeNode => ({ id, kind: "scene" });
 

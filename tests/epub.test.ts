@@ -4,7 +4,7 @@ import { bookOutline, readBookScenes } from "../src/export/book";
 import { DEFAULT_DESIGN, type BookDesign } from "../src/export/bookDesign";
 import { buildEpub, type BookExtras, type EpubInput } from "../src/export/epub";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const tree: TreeNode[] = withSpecialFolders([
   { id: "01INLEDNING", kind: "scene" },

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseMarkdown } from "../src/manuscript/parseMarkdown";
 import { countDocumentWords } from "../src/manuscript/wordCount";
 import { readSceneSummaries } from "../src/project/sceneSummaries";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("countDocumentWords", () => {
   it("counts words in paragraphs, styles and raw blocks but not scene breaks", () => {

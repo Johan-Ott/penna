@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { joinPath } from "../storage/fileSystem.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { syncProject } from "../sync/driveSync.js";
 import { STATE_FILE } from "../sync/syncState.js";
 import { backupNow } from "./useAutoBackup.js";
 import type { WriteGuard } from "../sync/localSide.js";
 import { DriveError, googleDrive } from "../sync/googleDrive.js";
 import type { AppPreferences } from "./appPreferences.js";
-import { errorLog } from "./errorLog.js";
+import { errorLog } from "@llkit/errorLog.js";
 import { signIn, signOut } from "./googleAccount.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";

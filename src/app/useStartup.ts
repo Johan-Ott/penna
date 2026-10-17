@@ -5,7 +5,7 @@ import {
   savePreferences,
   type AppPreferences,
 } from "./appPreferences.js";
-import { browserStorage } from "./browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { platform } from "./platform.js";
 
 export type PreferenceChange = (current: AppPreferences) => AppPreferences;

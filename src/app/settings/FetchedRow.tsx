@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { Row } from "../controls.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 

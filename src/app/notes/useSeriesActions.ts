@@ -2,7 +2,7 @@ import { parentOf } from "../../project/libraryFolders.js";
 import { writeProjectFile } from "../../project/projectFile.js";
 import { createSeries, moveNotesToSeries } from "../../project/series.js";
 import { withSpecialFolders, type TreeNode } from "../../project/tree.js";
-import { joinPath } from "../../storage/fileSystem.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { platform } from "../platform.js";
 import { closeScene, openScene, type SceneSession } from "../sceneSession.js";
 import type { Project } from "../useProject.js";

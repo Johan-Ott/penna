@@ -4,7 +4,7 @@ import { TypstError } from "../../export/typstError.js";
 import { typstFiles, typstSource } from "../../export/typstBook.js";
 import { seriesDirOf } from "../../project/series.js";
 import { bookLanguage, quoteStyleFor } from "../../project/bookLanguage.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { ebookFile, isPlain, plainFile } from "./exportFiles.js";
 import type { PlainFormat } from "../../export/plainFormats.js";
 import { platform, type FileKind } from "../platform.js";

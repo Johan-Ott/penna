@@ -1,5 +1,5 @@
 import type { AppState } from "../App.js";
-import { createStore } from "../store.js";
+import { createStore } from "@llkit/store.js";
 import type { Project } from "../useProject.js";
 import { GoalPanel } from "./GoalPanel.js";
 import { GoalsDialog } from "./GoalsDialog.js";

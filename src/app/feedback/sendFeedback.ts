@@ -1,4 +1,4 @@
-import { errorLog } from "../errorLog.js";
+import { errorLog } from "@llkit/errorLog.js";
 
 export type FeedbackKind = "fel" | "ide" | "annat";
 
@@ -20,7 +20,7 @@ export const canSendFeedback = ENDPOINT !== "";
 
 /** Version, device and the session's latest errors: never any of the book's text. */
 export const feedbackReport = () =>
-  errorLog.report({ version: __APP_VERSION__, device: navigator.userAgent });
+  errorLog.report({ app: "Penna", version: __APP_VERSION__, device: navigator.userAgent });
 
 export function feedbackText(feedback: Feedback) {
   const report = withReport(feedback) ? `\n\n---\n${feedbackReport()}` : "";

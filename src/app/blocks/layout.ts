@@ -1,5 +1,5 @@
-import { browserStorage } from "../browserStorage.js";
-import { createStore } from "../store.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
+import { createStore } from "@llkit/store.js";
 
 // Where each panel lies and which are open, and up to three layouts of both to go back to:
 // one to write in, one to revise in, as the writer likes.

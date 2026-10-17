@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import { filesIn } from "../storage/folderFiles.js";
 
 /** A book and, when it has one, its series, each under its own name. */

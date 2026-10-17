@@ -7,7 +7,7 @@ const MAX_COMMENT_LINES = 2;
 const MAX_COMMENT_LENGTH = 100;
 const CODE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".mjs"]);
 const TEXT_EXTENSIONS = new Set([...CODE_EXTENSIONS, ".md", ".json", ".yml"]);
-const ROOTS = ["src", "tests", "scripts", ".claude", "CLAUDE.md"];
+const ROOTS = ["llkit", "src", "tests", "scripts", ".claude", "CLAUDE.md"];
 
 const SLOP_WORDS = [
   "robust",

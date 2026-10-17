@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import { projectZip } from "../src/export/projectZip";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("projectZip", () => {
   it("packs every file in the project folder, subfolders included, inside a folder of its name", async () => {

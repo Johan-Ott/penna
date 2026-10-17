@@ -1,6 +1,6 @@
 import { sceneTitle, splitSceneFile } from "../manuscript/sceneFile.js";
-import type { RecoverableTemp } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import type { RecoverableTemp } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { setAside } from "../storage/setAside.js";
 import type { SceneFileRef } from "../storage/syncFiles.js";
 import {

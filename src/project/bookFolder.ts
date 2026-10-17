@@ -1,8 +1,8 @@
 import { joinSceneFile, newSceneText, splitSceneFile } from "../manuscript/sceneFile.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, scenePath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 import type { BookParts } from "./bookSettings.js";
 import { readProjectFile, writeProjectFile } from "./projectFile.js";
 import { readSceneSummaries } from "./sceneSummaries.js";

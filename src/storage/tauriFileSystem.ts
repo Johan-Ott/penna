@@ -10,7 +10,7 @@ import {
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
 import { invoke } from "@tauri-apps/api/core";
-import type { FileSystem } from "./fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 
 export const tauriFileSystem: FileSystem = {
   readText: (path) => readTextFile(path),

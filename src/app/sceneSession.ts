@@ -11,10 +11,10 @@ import {
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
 import { serializeMarkdown } from "../manuscript/serializeMarkdown.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { createAutosave, type SaveStatus } from "../storage/autosave.js";
-import { joinPath, type FileSystem, scenePath } from "../storage/fileSystem.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { takeSnapshot } from "../project/snapshots.js";
 import { writeSuggestion } from "../project/revisions.js";
 import { decideExternalChange } from "../storage/syncFiles.js";

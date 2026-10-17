@@ -1,5 +1,5 @@
-import type { FileSystem } from "../storage/fileSystem.js";
-import { joinPath } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import type { TreeNode } from "../project/tree.js";
 import { bookOutline, readBookScenes } from "./book.js";
 

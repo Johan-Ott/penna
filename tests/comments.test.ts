@@ -7,7 +7,7 @@ import {
   writeComments,
   type Comment,
 } from "../src/project/comments";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const TEXT = "Brevet låg på köksbordet. Kuvertet var gult av ålder, och handstilen kände hon igen.";
 

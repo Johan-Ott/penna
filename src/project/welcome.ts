@@ -1,7 +1,7 @@
 import { newSceneText, withField } from "../manuscript/sceneFile.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { scenePath, type FileSystem } from "../storage/fileSystem.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { type FileSystem } from "@llkit/storage/fileSystem.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { t } from "../i18n/i18n.js";
 import type { BookTemplate } from "./templates.js";
 

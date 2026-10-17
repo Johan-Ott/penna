@@ -6,7 +6,7 @@ import {
   backupsToRemove,
   takeBackup,
 } from "../project/backups.js";
-import { recordFailure } from "./errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 
 const EVERY = 30 * 60 * 1000;

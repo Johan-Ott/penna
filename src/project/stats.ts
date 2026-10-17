@@ -1,8 +1,8 @@
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 
 /** Words written per day, as { "2026-10-02": 812 }. */
 export type Stats = Record<string, number>;

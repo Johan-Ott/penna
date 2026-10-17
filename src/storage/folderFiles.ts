@@ -1,4 +1,4 @@
-import { joinPath, type FileSystem } from "./fileSystem.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 
 /** Every file under `dir`, by its path inside it, such as "scenes/S1.md". */
 export async function filesIn(fileSystem: FileSystem, dir: string, prefix = "") {

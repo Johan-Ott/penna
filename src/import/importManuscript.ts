@@ -1,5 +1,5 @@
 import { parentOf } from "../project/libraryFolders.js";
-import type { FileSystem } from "../storage/fileSystem.js";
+import type { FileSystem } from "@llkit/storage/fileSystem.js";
 import { ImportError, splitManuscript, type ImportedNode } from "./markdownImport.js";
 import { readScrivener } from "./scrivenerImport.js";
 import { t } from "../i18n/i18n.js";

@@ -1,4 +1,4 @@
-import { browserStorage } from "../app/browserStorage.js";
+import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { loadPreferences } from "../app/appPreferences.js";
 import { setUiLanguage } from "./i18n.js";
 

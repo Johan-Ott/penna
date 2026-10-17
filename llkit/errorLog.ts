@@ -10,12 +10,12 @@ export function createErrorLog(now: () => number) {
     },
     /** Newest first. */
     latest: () => [...entries].reverse(),
-    report({ version, device }: { version: string; device: string }) {
+    report({ app, version, device }: { app: string; version: string; device: string }) {
       const lines = entries.map(
         ({ time, message }) => `${new Date(time).toISOString()}  ${message}`,
       );
       const errors = lines.length > 0 ? lines.join("\n") : "Inga fel sedan starten.";
-      return `Penna ${version}\n${device}\n\n${errors}\n`;
+      return `${app} ${version}\n${device}\n\n${errors}\n`;
     },
   };
 }

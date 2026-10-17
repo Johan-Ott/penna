@@ -1,4 +1,4 @@
-import { createStore } from "../store.js";
+import { createStore } from "@llkit/store.js";
 import { welcomeBack } from "../../project/inkwell.js";
 import { dayKey } from "../../project/stats.js";
 import { chapterOf } from "../../project/treeLabels.js";

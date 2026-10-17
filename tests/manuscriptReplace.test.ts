@@ -1,7 +1,7 @@
 import { SearchQuery } from "prosemirror-search";
 import { describe, expect, it } from "vitest";
 import { replaceInScenes, undoReplace } from "../src/app/manuscriptReplace";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const scene = (id: string, body: string) => `---\nid: ${id}\ntitle: ${id}\n---\n${body}`;
 const KOKET = scene("01KOKET", "Sjöbergh kom.\n");

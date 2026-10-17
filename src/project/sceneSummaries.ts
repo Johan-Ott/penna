@@ -8,7 +8,8 @@ import {
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
-import { type FileSystem, scenePath } from "../storage/fileSystem.js";
+import { type FileSystem } from "@llkit/storage/fileSystem.js";
+import { scenePath } from "../storage/sceneId.js";
 import { t } from "../i18n/i18n.js";
 
 export interface SceneSummary {

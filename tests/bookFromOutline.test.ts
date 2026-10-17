@@ -3,7 +3,7 @@ import { createBookFromOutline } from "../src/project/bookFromOutline";
 import { labelsOf } from "../src/project/labels";
 import { readProjectFile } from "../src/project/projectFile";
 import { manuscriptSceneIds, sortsOf } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("createBookFromOutline", () => {
   it("makes a book in the library with the outline's parts, chapters and scenes", async () => {

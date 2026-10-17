@@ -1,9 +1,9 @@
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
 import { countDocumentWords } from "../manuscript/wordCount.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, readIfThere, type FileSystem, scenePath } from "../storage/fileSystem.js";
-import { newSceneId } from "../storage/sceneId.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
+import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { takeSnapshot } from "./snapshots.js";
 import { t } from "../i18n/i18n.js";
 

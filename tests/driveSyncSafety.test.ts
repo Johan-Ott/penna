@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { syncProject } from "../src/sync/driveSync";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 import { BOOK, twoDevices } from "./fakeDrive";
 
 const NOW = Date.parse("2026-10-04T12:00:00Z");

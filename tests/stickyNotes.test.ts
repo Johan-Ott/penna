@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readStickyNotes, type Stroke } from "../src/project/stickyNotes";
 import { placeInRoom, rubOut } from "../src/project/stickyNoteGeometry";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("readStickyNotes", () => {
   it("gives a book with only the old Kladdlapp its text as the first note", async () => {

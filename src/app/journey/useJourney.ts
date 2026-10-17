@@ -17,7 +17,7 @@ import {
   type Journey,
 } from "../../project/journey.js";
 import { dayKey } from "../../project/stats.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import { thisDevice } from "../useWritingStats.js";
 import { celebrate, takeBadge, takeInk } from "./journeyEvents.js";

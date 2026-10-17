@@ -7,7 +7,7 @@ import {
 } from "../src/project/ownTemplates";
 import { composeTemplate, structures, suggestedStructure } from "../src/project/templates";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const mystery = () => structures().find((structure) => structure.id === "deckare");
 

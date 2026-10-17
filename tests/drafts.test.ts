@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { listDrafts, restoreDraft, saveDraft } from "../src/project/drafts";
 import { listSnapshots } from "../src/project/snapshots";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const BOOK = "/bok.penna";
 const scene = (body: string) => `---\nid: S1\ntitle: Köket\nstatus: utkast\n---\n${body}\n`;

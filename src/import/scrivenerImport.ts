@@ -1,5 +1,5 @@
 import { CHARACTERS_ID, PLACES_ID } from "../project/sorts.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { ImportError, type ImportedFile, type ImportedNode } from "./markdownImport.js";
 import { rtfToMarkdown } from "./rtf.js";
 import { t } from "../i18n/i18n.js";

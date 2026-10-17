@@ -6,7 +6,7 @@ import type { OpeningTemplate } from "../src/export/openings";
 import { createTypst } from "../src/export/typstCompile";
 import { typstFiles, typstSource, type PrintInput } from "../src/export/typstBook";
 import { withSpecialFolders, type TreeNode } from "../src/project/tree";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const bytesOf = (path: string) => Promise.resolve(new Uint8Array(readFileSync(path)));
 const typst = createTypst({

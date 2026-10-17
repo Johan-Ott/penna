@@ -1,3 +1,5 @@
+import { joinPath } from "@llkit/storage/fileSystem.js";
+
 const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
 // ULID: 10 characters of time, so ids sort by creation, then 16 random characters.
@@ -11,3 +13,6 @@ export function newSceneId(now = Date.now()): string {
   const random = crypto.getRandomValues(new Uint8Array(16));
   return time + Array.from(random, (byte) => CROCKFORD.charAt(byte % 32)).join("");
 }
+
+/** A scene's or note's file in a book. */
+export const scenePath = (dir: string, id: string) => joinPath(dir, `scenes/${id}.md`);

@@ -10,7 +10,7 @@ import {
   type RevisionChange,
 } from "../../manuscript/revision.js";
 import { finishRevision, readRevision, writeRevision } from "../../project/revisions.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 import type { OpenScene } from "../sceneSession.js";
 import type { Project } from "../useProject.js";

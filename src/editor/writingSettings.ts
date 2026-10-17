@@ -1,4 +1,8 @@
-import { readStoredObject, writeStored, type KeyValueStorage } from "../storage/keyValueStore.js";
+import {
+  readStoredObject,
+  writeStored,
+  type KeyValueStorage,
+} from "@llkit/storage/keyValueStore.js";
 import { t } from "../i18n/i18n.js";
 
 export type ProseFont = "serif" | "sans" | "mono";

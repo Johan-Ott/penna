@@ -3,8 +3,8 @@ import type { OutlineItem } from "../export/book.js";
 import { picturesInDocs } from "../manuscript/pictures.js";
 import type { BookDesign } from "../export/bookDesign.js";
 import { imageSize } from "../export/imageSize.js";
-import { writeAtomic } from "../storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "../storage/fileSystem.js";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 
 /** The book's pictures live in this folder, so they sync and are backed up with the text. */

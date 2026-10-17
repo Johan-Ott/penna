@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Signature } from "./newsletter.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import type { Project } from "../useProject.js";
 import {
   bookField,

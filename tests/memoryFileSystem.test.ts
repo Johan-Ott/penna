@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { writeAtomic } from "../src/storage/atomicWrite";
-import { createMemoryFileSystem } from "../src/storage/memoryFileSystem";
+import { writeAtomic } from "@llkit/storage/atomicWrite.js";
+import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("createMemoryFileSystem", () => {
   it("lists the files and folders directly inside a folder", async () => {

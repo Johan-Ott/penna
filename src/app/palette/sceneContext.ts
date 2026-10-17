@@ -2,7 +2,7 @@ import type { Command } from "prosemirror-state";
 import { insertPicture } from "../../editor/pictureView.js";
 import { chapterOf } from "../../project/treeLabels.js";
 import type { TreeNode } from "../../project/tree.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { choosePicture } from "../pictureFiles.js";
 import type { PaletteContext } from "./paletteEntries.js";
 import type { AppState } from "../App.js";

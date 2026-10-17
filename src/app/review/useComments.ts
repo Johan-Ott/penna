@@ -11,7 +11,7 @@ import {
   type Anchor,
   type Comment,
 } from "../../project/comments.js";
-import { recordFailure } from "../errorLog.js";
+import { recordFailure } from "@llkit/errorLog.js";
 import { earnBadge, earnInk } from "../journey/journeyEvents.js";
 import { INK } from "../../project/journey.js";
 import { platform } from "../platform.js";

@@ -1,4 +1,4 @@
-import { useRootClass } from "./useRootClass.js";
+import { useRootClass } from "@llkit/useRootClass.js";
 import {
   changeSize,
   nextLineHeight,
