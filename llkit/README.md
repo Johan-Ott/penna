@@ -14,7 +14,18 @@ What any llstudios app is built on. Penna is the first app on it.
 - `store`, `useRootClass`, `tooltips`, `errorLog`, `thisComputer`, `i18n`
 - `controls` (Row, Switch, Choice, Dropdown, Dialog, CloseButton), `Menu`, `keys` (shortcuts,
   Escape, G and a letter), `shortcutKeys`
-- `storage/`: the file system interface, atomic writes, autosave, save errors, key-value storage
+- `storage/`: the file system interface and its Tauri, Node and memory versions, atomic writes,
+  autosave, save errors, key-value storage
+- `platform/`: `BasePlatform`, the device as an app sees it, built for Tauri with
+  `createTauriPlatform({ releases })` or for the browser with `createBrowserPlatform(home, files)`.
+  The app adds its own parts, hands the result in with `provideDevice`, and llkit's parts read it
+  with `device()`. A test build (identifier ending in `.test`) answers dialogs from
+  `window.appTest`.
+
+## Still Penna's name
+
+- Atomic writes leave `.penna-tmp` files, which the crash recovery and a Rust command look for.
+  They get a general name when a second app comes, with the old one still read.
 
 ## Styles
 

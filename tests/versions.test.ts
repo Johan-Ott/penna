@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isNewer } from "../src/app/versions";
+import { isNewer } from "@llkit/platform/versions.js";
 
 describe("isNewer", () => {
   it("compares each number, so 0.10 is newer than 0.9", () => {

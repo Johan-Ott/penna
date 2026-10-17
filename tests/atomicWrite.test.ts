@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { findRecoverableTemps, tempPathFor, writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath } from "@llkit/storage/fileSystem.js";
-import { nodeFileSystem } from "../src/storage/nodeFileSystem";
+import { nodeFileSystem } from "@llkit/storage/nodeFileSystem.js";
 
 let dir = "";
 

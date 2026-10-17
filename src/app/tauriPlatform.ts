@@ -1,48 +1,24 @@
-import { readText } from "@tauri-apps/plugin-clipboard-manager";
-import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { invoke } from "@tauri-apps/api/core";
-import { openPath, openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { appDataDir } from "@tauri-apps/api/path";
 import {
-  cancel,
-  isPermissionGranted,
-  requestPermission,
-  Schedule,
-  sendNotification,
-} from "@tauri-apps/plugin-notification";
-import { relaunch } from "@tauri-apps/plugin-process";
-import { check } from "@tauri-apps/plugin-updater";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { ask, open, save } from "@tauri-apps/plugin-dialog";
-import { exists, readFile, rename, watch, writeFile, type WatchEvent } from "@tauri-apps/plugin-fs";
-import { appDataDir, documentDir, homeDir } from "@tauri-apps/api/path";
-import { tauriFileSystem } from "../storage/tauriFileSystem.js";
+  confirm,
+  createTauriPlatform,
+  isPhone,
+  withForwardSlashes,
+} from "@llkit/platform/tauri.js";
+import { tauriFileSystem } from "@llkit/storage/tauriFileSystem.js";
 import { STATE_FILE } from "../sync/syncState.js";
-import type { FileKind, PickKind, Platform, RemoteState, Spelling } from "./platform.js";
-import { checkForAndroidUpdate, shareAsSave, shareFile } from "./androidPlatform.js";
+import type { Platform, RemoteState, Spelling } from "./platform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
-import { isTestBuild, testAsk, testPath } from "./testMode.js";
 import { t } from "../i18n/i18n.js";
 
-// On a phone the books live in the app's own folder and updates come from the app store.
-const isPhone = /Android|iPhone|iPad/i.test(navigator.userAgent);
-const isAndroid = /Android/i.test(navigator.userAgent);
+// Penna through Tauri: llkit's device, and the books' own parts: removing a book, its backups,
+// the spelling check, Typst, Google and the remote control, each a command in Penna's Rust.
 
 function googleSignInHere() {
   if (/Android/i.test(navigator.userAgent)) return { googleSignIn: androidSignIn };
   return isPhone ? {} : { googleSignIn: computerSignIn };
 }
-
-// The system's question, unless a test has answered it already.
-const confirm = async (...question: Parameters<typeof ask>) =>
-  (await testAsk()) ?? ask(...question);
-
-// The debounced watch hands a list of events, each with its paths; none means read it all.
-function changedPaths(event: WatchEvent | WatchEvent[]) {
-  const paths = [event].flat().flatMap((one) => one.paths.map(withForwardSlashes));
-  return paths.length > 0 ? paths : undefined;
-}
-
-const withForwardSlashes = (path: string) => path.replaceAll("\\", "/").replace(/\/$/, "");
 
 // A computer puts the book in its trash; a phone has none, so the question says so, and says
 // whether Drive has the book at all.
@@ -71,103 +47,6 @@ async function removeBook(dir: string, title: string, isEverywhere = false) {
   return isSure;
 }
 
-const askToCloseAnyway = () =>
-  confirm(
-    t("Scenen kunde inte sparas. Stänger du nu försvinner det du skrivit sedan senaste sparning."),
-    {
-      title: t("Osparad text"),
-      kind: "warning",
-      okLabel: t("Stäng ändå"),
-      cancelLabel: t("Fortsätt skriva"),
-    },
-  );
-
-// Written beside the target and renamed, so a crash never leaves half a file. The dialog only
-// grants the chosen path, so outside the home folder the file is written directly, still whole.
-async function saveFile(suggestedName: string, bytes: Uint8Array, kind: FileKind) {
-  const answer = await testPath();
-  const path =
-    answer !== undefined
-      ? answer
-      : await save({
-          defaultPath: suggestedName,
-          filters: [{ name: kind.name, extensions: [kind.extension] }],
-        });
-  if (!path) return null;
-  const temp = `${path}.penna-tmp`;
-  try {
-    await writeFile(temp, bytes);
-    await rename(temp, path);
-  } catch {
-    await writeFile(path, bytes);
-  }
-  return withForwardSlashes(path);
-}
-
-const canNotify = async () =>
-  (await isPermissionGranted()) || (await requestPermission()) === "granted";
-
-async function notify(title: string, body: string) {
-  if (await canNotify()) sendNotification({ title, body });
-}
-
-const REMINDER_ID = 1;
-
-async function scheduleReminder(when: Date | null, title: string, body: string) {
-  await cancel([REMINDER_ID]);
-  if (when && (await canNotify()))
-    sendNotification({ id: REMINDER_ID, title, body, schedule: Schedule.at(when, false, true) });
-}
-
-// The computer updates itself; an Android phone fetches the APK; an iPhone has its App Store.
-function updateCheck() {
-  if (!isPhone) return checkForUpdate;
-  if (isAndroid) return checkForAndroidUpdate;
-  return async () => null;
-}
-
-async function checkForUpdate() {
-  const update = await check();
-  if (!update) return null;
-  return {
-    version: update.version,
-    install: async () => {
-      await update.downloadAndInstall();
-      await relaunch();
-    },
-  };
-}
-
-// A program is never started from a book: such a file is shown in its folder instead.
-const RUNS = /\.(exe|msi|bat|cmd|com|ps1|vbs|js|jse|wsf|scr|lnk|reg|hta|cpl|jar|app|sh)$/i;
-const openFile = (path: string) => (RUNS.test(path) ? revealItemInDir(path) : openPath(path));
-
-// The dialog grants Penna the picked file, wherever it lies.
-async function pickFile(kind: PickKind) {
-  const answer = await testPath();
-  const filters = kind.extensions.length > 0 ? [kind] : [];
-  const picked = answer !== undefined ? answer : await open({ filters });
-  if (typeof picked !== "string") return null;
-  return { path: withForwardSlashes(picked), bytes: await readFile(picked) };
-}
-
-// The test build's books live in its own app data, away from the real Documents folder.
-const computerFolders = async () => {
-  if (await isTestBuild) {
-    const own = withForwardSlashes(await appDataDir());
-    return { home: own, documents: `${own}/Dokument` };
-  }
-  return {
-    home: withForwardSlashes(await homeDir()),
-    documents: withForwardSlashes(await documentDir()),
-  };
-};
-
-const phoneFolders = async () => {
-  const own = withForwardSlashes(await appDataDir());
-  return { home: own, documents: own };
-};
-
 const backups = {
   dir: async () => `${withForwardSlashes(await appDataDir())}/backups`,
   remove: (path: string) => invoke("remove_backup", { path }).then(() => undefined),
@@ -181,56 +60,14 @@ const spelling: Spelling = {
 
 const remoteControl = (turnOn?: boolean) => invoke<RemoteState>("remote_control", { turnOn });
 
-const windowControls = {
-  minimize: () => void getCurrentWindow().minimize(),
-  toggleMaximize: () => void getCurrentWindow().toggleMaximize(),
-  close: () => void getCurrentWindow().close(),
-};
-
 export const tauriPlatform: Platform = {
-  isPhone,
-  webFetch: appFetch as typeof fetch,
+  ...createTauriPlatform({ releases: "Johan-Ott/penna" }),
   removeBook,
   backups,
-  saveFile: isAndroid ? shareAsSave : saveFile,
-  ...(isAndroid ? { shareFile } : {}),
-  pickFile,
-  ...(isPhone ? {} : { openFile }),
-  fileSystem: tauriFileSystem,
   spelling,
   typstCompiler: () => invoke<ArrayBuffer>("typst_compiler"),
   prepareTypst: () => invoke("prepare_typst"),
   fetchedParts: () => invoke("fetched_parts"),
-  ...(isPhone ? {} : { readClipboard: readText, windowControls, remoteControl }),
-  checkForUpdate: updateCheck(),
-  notify,
-  ...(isPhone ? { scheduleReminder } : {}),
-  ...(isPhone ? {} : { showInFolder: (path: string) => revealItemInDir(path) }),
-  knownFolders: isPhone ? phoneFolders : computerFolders,
+  ...(isPhone ? {} : { remoteControl }),
   ...googleSignInHere(),
-  folderExists: (path) => exists(path),
-  openLink: (url) => openUrl(url),
-
-  async pickFolder() {
-    if (isPhone) return null;
-    const answer = await testPath();
-    const picked = answer !== undefined ? answer : await open({ directory: true });
-    return typeof picked === "string" ? withForwardSlashes(picked) : null;
-  },
-
-  // Some phones cannot watch folders; Penna then reads them again on its own saves.
-  watchFolder: (dir, onChange) =>
-    watch(dir, (event) => onChange(changedPaths(event)), { recursive: true, delayMs: 300 }).catch(
-      () => () => undefined,
-    ),
-
-  guardClose(isSafeToClose) {
-    const appWindow = getCurrentWindow();
-    const stopListening = appWindow.onCloseRequested(async (event) => {
-      if (await isSafeToClose()) return;
-      event.preventDefault();
-      if (await askToCloseAnyway()) await appWindow.destroy();
-    });
-    return () => void stopListening.then((stop) => stop());
-  },
 };

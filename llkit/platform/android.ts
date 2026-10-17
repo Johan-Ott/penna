@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { getVersion } from "@tauri-apps/api/app";
 import { fetch as appFetch } from "@tauri-apps/plugin-http";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import type { AppUpdate, FileKind } from "./platform.js";
+import type { AppUpdate, FileKind } from "./types.js";
 import { isNewer } from "./versions.js";
 
 // What only an Android phone does: share files through its share sheet, and fetch a newer APK.
@@ -27,16 +27,15 @@ export async function shareAsSave(name: string, bytes: Uint8Array, kind: FileKin
   return name;
 }
 
-const LATEST_RELEASE = "https://api.github.com/repos/Johan-Ott/penna/releases/latest";
-
 interface Release {
   tag_name: string;
   assets: { name: string; browser_download_url: string }[];
 }
 
-// Installed from the APK, an Android phone gets a newer one from the latest GitHub release.
-export async function checkForAndroidUpdate(): Promise<AppUpdate | null> {
-  const response = await appFetch(LATEST_RELEASE);
+/** Installed from the APK, an Android phone gets a newer one from the app's latest GitHub release,
+ * `repository` such as "Johan-Ott/penna". */
+export async function checkForAndroidUpdate(repository: string): Promise<AppUpdate | null> {
+  const response = await appFetch(`https://api.github.com/repos/${repository}/releases/latest`);
   if (!response.ok) return null;
   const release = (await response.json()) as Release;
   const apk = release.assets.find((asset) => asset.name.endsWith(".apk"));

@@ -2,5 +2,9 @@
   "Stäng": "Close",
   "Avbryt": "Cancel",
   "Skapa": "Create",
-  "Spara": "Save"
+  "Spara": "Save",
+  "Texten kunde inte sparas. Stänger du nu försvinner det du skrivit sedan senaste sparning.": "The text could not be saved. If you close now, what you wrote since the last save is lost.",
+  "Osparad text": "Unsaved text",
+  "Stäng ändå": "Close anyway",
+  "Fortsätt skriva": "Keep writing"
 }
