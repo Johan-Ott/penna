@@ -66,6 +66,8 @@ export interface Platform {
   typstCompiler?: () => Promise<ArrayBuffer>;
   /** Fetches the compiler now, as the first start does; missing in the browser. */
   prepareTypst?: () => Promise<void>;
+  /** What has been fetched: the dictionaries' languages and the compiler; missing in the browser. */
+  fetchedParts?: () => Promise<{ dictionaries: string[]; hasTypst: boolean }>;
 }
 
 export interface Spelling {

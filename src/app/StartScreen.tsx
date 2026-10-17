@@ -181,10 +181,11 @@ export function StartScreen({ app }: StartScreenProps) {
     const libraryDir = await libraryOf(preferences.libraryDir);
     if (withGoogle) await signIn(updatePreferences);
     const [bookLanguage = "sv-SE"] = choices.languages;
-    const { dailyGoal } = choices;
+    const { dailyGoal, authorName } = choices;
     updatePreferences((now) => ({
       ...now,
       ...{ isOnboardingDone: true, libraryDir, bookLanguage, defaultDailyGoal: dailyGoal },
+      ...(authorName ? { authorName } : {}),
     }));
     fetchWhatPennaNeeds(choices.languages);
   };

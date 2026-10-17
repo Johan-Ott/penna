@@ -200,6 +200,7 @@ export const tauriPlatform: Platform = {
   spelling,
   typstCompiler: () => invoke<ArrayBuffer>("typst_compiler"),
   prepareTypst: () => invoke("prepare_typst"),
+  fetchedParts: () => invoke("fetched_parts"),
   ...(isPhone ? {} : { readClipboard: readText, windowControls, remoteControl }),
   checkForUpdate: updateCheck(),
   notify,

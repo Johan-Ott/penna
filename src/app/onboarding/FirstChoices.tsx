@@ -9,6 +9,8 @@ import { t, uiLanguage } from "../../i18n/i18n.js";
 // fetched now, how Penna looks, and a day's goal. Each can be changed later in Inställningar.
 
 export interface Choices {
+  /** On covers and title pages; empty until written. */
+  authorName: string;
   /** The first is a new book's language. */
   languages: string[];
   dailyGoal: number;
@@ -25,20 +27,34 @@ function LanguageChips(props: { chosen: string[]; onChange: (chosen: string[]) =
         : [...props.chosen, tag],
     );
   return (
-    <div className="chip-row" aria-label={t("Språk du skriver på")}>
-      {BOOK_LANGUAGES.map(([tag, name]) => (
-        <button
-          key={tag}
-          className="chip"
-          aria-pressed={props.chosen.includes(tag)}
-          onClick={() => flip(tag)}
-        >
-          {name}
-        </button>
-      ))}
-    </div>
+    <>
+      <span className="field-label">{t("Vilka språk skriver du på?")}</span>
+      <div className="chip-row" aria-label={t("Språk du skriver på")}>
+        {BOOK_LANGUAGES.map(([tag, name]) => (
+          <button
+            key={tag}
+            className="chip"
+            aria-pressed={props.chosen.includes(tag)}
+            onClick={() => flip(tag)}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+    </>
   );
 }
+
+const AuthorField = (props: { value: string; onChange: (name: string) => void }) => (
+  <label className="onboarding-field">
+    <span className="field-label">{t("Ditt namn som författare")}</span>
+    <input
+      value={props.value}
+      placeholder={t("Står på omslag och titelsida")}
+      onChange={(event) => props.onChange(event.target.value)}
+    />
+  </label>
+);
 
 // Only the apps fetch; the browser has what it needs.
 const FetchNote = () =>
@@ -55,10 +71,11 @@ export function FirstChoices(props: {
 }) {
   const [languages, setLanguages] = useState([uiLanguage() === "en" ? "en-GB" : "sv-SE"]);
   const [dailyGoal, setDailyGoal] = useState("1000");
+  const [authorName, setAuthorName] = useState("");
   return (
     <div className="first-choices">
       <h2>{t("Gör Penna till din")}</h2>
-      <span className="field-label">{t("Vilka språk skriver du på?")}</span>
+      <AuthorField value={authorName} onChange={setAuthorName} />
       <LanguageChips chosen={languages} onChange={setLanguages} />
       <span className="field-label">{t("Utseende")}</span>
       <Choice label={t("Utseende")} value={props.theme} options={THEMES} onSelect={props.onTheme} />
@@ -68,7 +85,9 @@ export function FirstChoices(props: {
       <button
         className="button primary large"
         disabled={languages.length === 0}
-        onClick={() => props.onDone({ languages, dailyGoal: Number(dailyGoal) })}
+        onClick={() =>
+          props.onDone({ authorName: authorName.trim(), languages, dailyGoal: Number(dailyGoal) })
+        }
       >
         {t("Klar")}
       </button>

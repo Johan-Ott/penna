@@ -1415,5 +1415,13 @@
   "Vilka språk skriver du på?": "Which languages do you write in?",
   "Ord om dagen": "Words a day",
   "Ordlistorna och sättmotorn för tryck hämtas medan du börjar, cirka 13 MB.": "The dictionaries and the print typesetter are fetched while you begin, about 13 MB.",
-  "Sättmotorn kunde inte hämtas. Kontrollera nätet och försök igen.": "The typesetter could not be fetched. Check the connection and try again."
+  "Sättmotorn kunde inte hämtas. Kontrollera nätet och försök igen.": "The typesetter could not be fetched. Check the connection and try again.",
+  "Ditt namn som författare": "Your name as an author",
+  "Står på omslag och titelsida": "On the cover and title page",
+  "inga än": "none yet",
+  "hämtad": "fetched",
+  "inte hämtad": "not fetched",
+  "Ordlistor: {dictionaries} · Sättmotorn för tryck: {typst}": "Dictionaries: {dictionaries} · Print typesetter: {typst}",
+  "Hämtat för skrivandet": "Fetched for writing",
+  "Hämta det som saknas": "Fetch what is missing"
 }

@@ -37,3 +37,35 @@ pub async fn typst_compiler(app: AppHandle) -> Result<Response, String> {
 pub async fn prepare_typst(app: AppHandle) -> Result<(), String> {
     compiler(&app).await.map(|_| ())
 }
+
+/// What Penna has fetched so far: the dictionaries' languages, and whether the compiler is here.
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Fetched {
+    dictionaries: Vec<String>,
+    has_typst: bool,
+}
+
+#[tauri::command]
+pub fn fetched_parts(app: AppHandle) -> Result<Fetched, String> {
+    let data = app
+        .path()
+        .app_data_dir()
+        .map_err(|error| error.to_string())?;
+    let dictionaries = std::fs::read_dir(data.join("ordlistor"))
+        .map(|entries| {
+            entries
+                .filter_map(|entry| entry.ok()?.file_name().into_string().ok())
+                .filter_map(|name| name.strip_suffix(".dic").map(str::to_string))
+                .collect()
+        })
+        .unwrap_or_default();
+    let has_typst = data
+        .join("typst")
+        .join("typst_ts_web_compiler_bg-0.7.0.wasm")
+        .exists();
+    Ok(Fetched {
+        dictionaries,
+        has_typst,
+    })
+}

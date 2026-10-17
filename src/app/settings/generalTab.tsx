@@ -1,4 +1,5 @@
 import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
+import { FetchedRow } from "./FetchedRow.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { platform } from "../platform.js";
 import { Choice, Dropdown, Row } from "../controls.js";
@@ -119,6 +120,9 @@ export function GeneralTab(props: TabProps) {
         <UiLanguageChoice />
       </Row>
       <BookLanguage book={props.book} />
+      <FetchedRow
+        languages={[props.preferences.bookLanguage, props.book?.language ?? ""].filter(Boolean)}
+      />
       <Row label={t("Utseende")} hint={t("Följer systemet om inget annat väljs.")}>
         <Choice
           label={t("Utseende")}
