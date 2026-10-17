@@ -61,6 +61,9 @@ export function WindowBar() {
  * window's buttons on top of it. */
 export function StartPicture() {
   useRootClass("starting");
+  // The app always starts on this picture, so the tip goes when it first does; opening a book
+  // later shows the picture without it.
+  useLayoutEffect(() => () => document.getElementById("boot-tip")?.remove(), []);
   return (
     <div className="app-starting">
       <WindowBar />

@@ -96,6 +96,10 @@
         visibility: hidden;
         opacity: 0;
       }
+      /* The tip leaves with the start picture at once, so it never lies over the app. */
+      html:not(.starting) #root:not(:empty) + #boot p {
+        visibility: hidden;
+      }
       @media (prefers-reduced-motion: reduce) {
         #root {
           animation: none;
