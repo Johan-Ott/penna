@@ -111,7 +111,7 @@ test("the shelf on the phone has a menu with Inställningar, and no folder to pi
   await page.getByRole("menuitem", { name: "Bokhylla" }).click();
 
   await page.getByRole("button", { name: "Meny", exact: true }).click();
-  await expect(page.getByRole("menuitem", { name: "Öppna mapp…" })).toBeHidden();
+  await expect(page.getByRole("menuitem", { name: "Öppna bok…" })).toBeHidden();
   await page.getByRole("menuitem", { name: "Inställningar" }).click();
 
   await expect(page.getByRole("dialog")).toBeVisible();

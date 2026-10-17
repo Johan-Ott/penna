@@ -5,6 +5,7 @@ test.beforeEach(async ({ page }) => openExample(page));
 
 async function openThemes(page: Page) {
   await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Boken" }).click();
   await page.getByRole("menuitem", { name: "Tema…" }).click();
 }
 

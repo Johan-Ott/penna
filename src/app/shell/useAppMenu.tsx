@@ -1,4 +1,4 @@
-import { useThemeDialog } from "../Sidebar.js";
+import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { useState } from "react";
 import type { AppState } from "../App.js";
@@ -40,34 +40,54 @@ export function useMenuDialogs({ app, project }: { app: AppState; project: Proje
   );
   const series = useSeriesChoice(app, project);
   const { libraryDir } = app.startup.preferences;
-  const theme = useThemeDialog({
+  const bookProps = {
     project,
     libraryDir,
-    onUpdateProject: (change) => void app.updateProject(change),
-  });
+    onUpdateProject: (change: Parameters<typeof app.updateProject>[0]) =>
+      void app.updateProject(change),
+  };
+  const theme = useThemeDialog(bookProps);
+  const templates = useTemplatesDialog(bookProps);
   const layers = (
     <>
       {theme.dialog}
+      {templates.dialog}
       {backups.layer}
       {feedback.layer}
       {revision.layer}
       {series.layer}
     </>
   );
-  return { backups, feedback, revision, series, theme, layers };
+  return { backups, feedback, revision, series, theme, templates, layers };
 }
+
+// Bokhylla and Ny bok, by the menu and by their keys; a new book is made from the shelf.
+function useShelfKeys(app: AppState) {
+  const showShelf = () => void app.showShelf();
+  const newProject = () => {
+    app.newProjectAsked.current = true;
+    showShelf();
+  };
+  useCommandKey("shelf", showShelf);
+  useCommandKey("newBook", newProject);
+  return { showShelf, newProject };
+}
+
+// The book's own, as the phone's menu has them under Boken.
+const bookItems = (dialogs: ReturnType<typeof useMenuDialogs>) => [
+  { label: t("Tema…"), onSelect: dialogs.theme.open },
+  { label: t("Serie…"), onSelect: dialogs.series.open },
+  { label: t("Mallar och bitar…"), onSelect: dialogs.templates.open },
+];
 
 /** The open book's menu, with the dialogs it opens. */
 export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
-  const { backups, feedback, revision, theme, layers: dialogs } = useMenuDialogs({ app, project });
-  const showShelf = () => void app.showShelf();
-  useCommandKey("shelf", showShelf);
+  const dialogs = useMenuDialogs({ app, project });
+  const { backups, feedback, revision } = dialogs;
+  const { showShelf, newProject } = useShelfKeys(app);
   const items = appMenu({
     showShelf,
-    newProject: () => {
-      app.newProjectAsked.current = true;
-      showShelf();
-    },
+    newProject,
     openFolder: () => void app.choose(),
     showVersions: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
     exportZip: app.zip.backup,
@@ -75,7 +95,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     sharing: collaborationItems(project, app.zip.run),
     showBackups: backups.open,
     sendFeedback: feedback.open,
-    openTheme: theme.open,
+    book: bookItems(dialogs),
     openSettings: () => app.writingMode.settingsDialog.open(),
     openShortcuts: () => app.writingMode.settingsDialog.open(HELP_TAB),
   });
@@ -83,7 +103,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
   const layers = (
     <>
       {menu.menu}
-      {dialogs}
+      {dialogs.layers}
     </>
   );
   return { open: menu.open, menu: layers };

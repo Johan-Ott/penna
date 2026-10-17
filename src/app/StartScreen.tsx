@@ -4,6 +4,7 @@ import { useFeedbackDialog } from "./feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
 import { useMenuButton } from "./Menu.js";
+import { useCommandKey } from "./useShortcut.js";
 import { appMenu, phoneShelfMenu } from "./shell/appMenu.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
 import { PhoneShelf } from "./shelf/PhoneShelf.js";
@@ -66,12 +67,13 @@ function useShelfMenu(app: App, onNewProject: () => void, isPhone: boolean) {
     showShelf: () => undefined,
     newProject: onNewProject,
     openFolder: () => void app.choose(),
-    ...{ showVersions: null, exportZip: null, importRevision: null, openTheme: null, sharing: [] },
+    ...{ showVersions: null, exportZip: null, importRevision: null, book: [], sharing: [] },
     showBackups: backups.open,
     sendFeedback: feedback.open,
     openSettings: () => settings.open(),
     openShortcuts: () => settings.open(HELP_TAB),
   };
+  useCommandKey("newBook", onNewProject);
   const menu = useMenuButton(t("Meny"), isPhone ? phoneShelfMenu(actions) : appMenu(actions));
   const layers = (
     <>

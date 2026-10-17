@@ -18,6 +18,7 @@ export const COMMANDS = {
   readAloud: { label: t("Läs upp från markören"), key: "u", shift: true },
   read: { label: t("Läs hela boken"), key: "r" },
   shelf: { label: t("Bokhylla"), key: "o", shift: true },
+  newBook: { label: t("Ny bok"), key: "n" },
   settings: { label: t("Inställningar"), key: "," },
   sidebar: { label: t("Visa sidomenyn i ett smalt fönster"), key: "." },
 } satisfies Record<string, Binding & { label: string }>;

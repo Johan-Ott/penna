@@ -1,6 +1,7 @@
 import type { MenuItem } from "../Menu.js";
 import { checkForUpdates } from "../updates.js";
-import { shortcutOf, shortcutText } from "../shortcuts.js";
+import { restartGuide } from "../guide/guide.js";
+import { shortcutOf } from "../shortcuts.js";
 import { t } from "../../i18n/i18n.js";
 
 export interface AppMenuActions {
@@ -18,8 +19,8 @@ export interface AppMenuActions {
   sharing: MenuItem[];
   /** Null where Penna keeps no copies, as in the browser. */
   showBackups: (() => void) | null;
-  /** The book's look while writing; null on the bookshelf. */
-  openTheme: (() => void) | null;
+  /** The book's own: Tema, Serie and Mallar och bitar; empty on the bookshelf. */
+  book: MenuItem[];
   openSettings: () => void;
   openShortcuts: () => void;
   sendFeedback: () => void;
@@ -41,6 +42,7 @@ export const group = (label: string, items: MenuItem[], separatorBefore = false)
 /** Hjälp, feedback and updates: the same under Hjälp on the computer and the phone. */
 export const helpItems = (help: MenuItem, sendFeedback: () => void): MenuItem[] => [
   help,
+  { label: t("Visa guiden igen"), onSelect: restartGuide },
   { label: t("Skicka feedback…"), onSelect: sendFeedback },
   { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
 ];
@@ -73,8 +75,9 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
   };
   return [
     { label: t("Bokhylla"), shortcut: shortcutOf("shelf"), onSelect: actions.showShelf },
-    { label: t("Ny bok"), shortcut: shortcutText({ key: "n" }), onSelect: actions.newProject },
-    { label: t("Öppna mapp…"), onSelect: actions.openFolder },
+    { label: t("Ny bok"), shortcut: shortcutOf("newBook"), onSelect: actions.newProject },
+    { label: t("Öppna bok…"), onSelect: actions.openFolder },
+    ...group(t("Boken"), actions.book, true),
     ...bookGroups(actions),
     {
       label: t("Inställningar"),
@@ -82,7 +85,6 @@ export function appMenu(actions: AppMenuActions): MenuItem[] {
       separatorBefore: true,
       onSelect: actions.openSettings,
     },
-    ...(actions.openTheme ? [{ label: t("Tema…"), onSelect: actions.openTheme }] : []),
     ...group(t("Hjälp"), helpItems(help, actions.sendFeedback)),
   ];
 }

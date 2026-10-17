@@ -528,7 +528,6 @@
   "Öppna": "Open",
   "Öppna anteckningen": "Open the note",
   "Öppna igen": "Reopen",
-  "Öppna mapp…": "Open folder…",
   "Öppna projektmapp…": "Open project folder…",
   "Övrigt": "Other",
   "“Engelska citattecken”. Talstrecken behålls.": "“English quotes”. The dashes stay.",
@@ -1390,5 +1389,6 @@
   "{weeks} veckor kvar": "{weeks} weeks left",
   "{count} ord/dag": "{count} words/day",
   "Dina böcker": "Your books",
-  "Fortsätt där du slutade": "Continue where you left off"
+  "Fortsätt där du slutade": "Continue where you left off",
+  "Öppna bok…": "Open book…"
 }
