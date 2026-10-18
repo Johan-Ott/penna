@@ -39,12 +39,17 @@ const BOOK_ITEMS: [BookAction, string][] = [
 export const group = (label: string, items: MenuItem[], separatorBefore = false): MenuItem[] =>
   items.length > 0 ? [{ label, submenu: items, separatorBefore }] : [];
 
+// The Store updates its own build, so that build has nothing to look for.
+const updateItem: MenuItem[] = __STORE__
+  ? []
+  : [{ label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) }];
+
 /** Hjälp, feedback and updates: the same under Hjälp on the computer and the phone. */
 export const helpItems = (help: MenuItem, sendFeedback: () => void): MenuItem[] => [
   help,
   { label: t("Visa guiden igen"), onSelect: restartGuide },
   { label: t("Skicka feedback…"), onSelect: sendFeedback },
-  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
+  ...updateItem,
 ];
 
 const bookItem = (actions: AppMenuActions, key: BookAction): MenuItem[] => {
@@ -95,5 +100,5 @@ export const phoneShelfMenu = (actions: AppMenuActions): MenuItem[] => [
   { label: t("Inställningar"), onSelect: actions.openSettings },
   { label: t("Hjälp"), onSelect: actions.openShortcuts },
   { label: t("Skicka feedback…"), onSelect: actions.sendFeedback },
-  { label: t("Sök efter uppdateringar…"), onSelect: () => void checkForUpdates(true) },
+  ...updateItem,
 ];

@@ -62,6 +62,7 @@ const remoteControl = (turnOn?: boolean) => invoke<RemoteState>("remote_control"
 
 export const tauriPlatform: Platform = {
   ...createTauriPlatform({ releases: "Johan-Ott/penna" }),
+  ...(__STORE__ ? { checkForUpdate: async () => null } : {}),
   removeBook,
   backups,
   spelling,

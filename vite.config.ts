@@ -37,6 +37,7 @@ export default defineConfig(({ command }) => {
     define: {
       __APP_VERSION__: JSON.stringify(tauriConfig.version),
       __TYPST_BUNDLED__: JSON.stringify(isTypstBundled),
+      __STORE__: JSON.stringify(process.env["PENNA_STORE"] === "1"),
     },
   };
 });

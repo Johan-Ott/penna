@@ -19,6 +19,7 @@
     "version": "node scripts/set-version.mjs",
     "build:windows": "node scripts/build-windows.mjs",
     "build:android": "node scripts/build-android.mjs",
+    "build:store": "node scripts/build-store.mjs",
     "build:check": "npm run check && tauri build --no-bundle",
     "test:ui": "playwright test",
     "app:test": "node scripts/app-test.mjs",

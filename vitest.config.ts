@@ -3,6 +3,6 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: { alias: { "@llkit": fileURLToPath(new URL("./llkit", import.meta.url)) } },
-  define: { __APP_VERSION__: JSON.stringify("test") },
+  define: { __APP_VERSION__: JSON.stringify("test"), __STORE__: "false" },
   test: { include: ["tests/**/*.test.ts"] },
 });
