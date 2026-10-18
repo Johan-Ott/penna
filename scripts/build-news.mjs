@@ -27,9 +27,10 @@ const issues = async (query) =>
 const newestFirst = (first, second) =>
   second.title.localeCompare(first.title, undefined, { numeric: true, sensitivity: "base" });
 
-// The newest milestone that has something done in it.
-async function latestNews() {
-  const milestones = (await github("milestones?state=all&per_page=100")).sort(newestFirst);
+// The newest milestone that has something done in it, or the one titled `wanted`.
+async function latestNews(wanted) {
+  const all = (await github("milestones?state=all&per_page=100")).sort(newestFirst);
+  const milestones = wanted ? all.filter((milestone) => milestone.title === wanted) : all;
   for (const milestone of milestones) {
     const done = await issues(`milestone=${milestone.number}&state=closed`);
     if (done.length > 0) return { title: milestone.title, items: done };
@@ -172,11 +173,13 @@ ${board(columns, news, text)}
 </html>
 `;
 
-// `--notes`: the release text instead, the lines the app shows before and after an update.
-if (process.argv.includes("--notes")) {
-  const news = await latestNews();
-  const lines = news.items.map((title) => `* ${title}`);
-  process.stdout.write(`Penna ${version}, öppen beta.\n\n${lines.join("\n")}\n`);
+// `--notes [0.4.2]`: the release text instead, the lines the app shows before and after an update.
+const notesAt = process.argv.indexOf("--notes");
+if (notesAt !== -1) {
+  const news = await latestNews(process.argv[notesAt + 1]);
+  const list = (lang) => news.items.map((title) => `- ${inLanguage(title, lang)}`).join("\n");
+  const download = "**Windows:** Penna-setup.exe · **Android:** Penna.apk";
+  process.stdout.write(`### Nytt\n${list("sv")}\n\n### New\n${list("en")}\n\n${download}\n`);
 } else {
   const [news, columns] = await Promise.all([latestNews(), roadmap()]);
   for (const text of [SWEDISH, ENGLISH])

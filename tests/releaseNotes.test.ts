@@ -17,6 +17,16 @@ vi.stubGlobal("window", {
 const notes = "Penna 0.5, öppen beta.\n\n* Tidslinje | Timeline\n- Bara svenska\nLadda ner här.";
 
 describe("release notes", () => {
+  it("reads the Swedish list, or the one under ### New, from a release", () => {
+    const release = "### Nytt\n- Tidslinje\n\n### New\n- Timeline\n\n**Windows:** Penna-setup.exe";
+
+    setUiLanguage("sv");
+    expect(changesIn(release)).toEqual(["Tidslinje"]);
+
+    setUiLanguage("en");
+    expect(changesIn(release)).toEqual(["Timeline"]);
+  });
+
   it("shows each change in the app's language, and only the changes", () => {
     setUiLanguage("sv");
     expect(changesIn(notes)).toEqual(["Tidslinje", "Bara svenska"]);

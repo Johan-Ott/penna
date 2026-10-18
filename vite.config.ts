@@ -1,12 +1,10 @@
 import react from "@vitejs/plugin-react";
-import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
-// The version shown under "Om Penna" is the one Tauri builds the app with.
-const tauriConfig = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8")) as {
-  version: string;
-};
+// The version shown under "Om Penna" is the one Tauri builds the app with. Imported, so the dev
+// server starts over by itself when npm run version changes it.
+import tauriConfig from "./src-tauri/tauri.conf.json" with { type: "json" };
 
 const LEFT_OUT = "\0typst-compiler-left-out";
 

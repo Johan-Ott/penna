@@ -31,6 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "name=Penna ${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
           {
             echo "body<<END_OF_NOTES"
             node scripts/build-news.mjs --notes
@@ -44,7 +45,7 @@ jobs:
           VITE_GOOGLE_COMPUTER_SECRET: ${{ secrets.VITE_GOOGLE_COMPUTER_SECRET }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: Penna ${{ github.ref_name }}
+          releaseName: ${{ steps.notes.outputs.name }}
           releaseBody: ${{ steps.notes.outputs.body }}
           releaseDraft: true
           includeUpdaterJson: true
