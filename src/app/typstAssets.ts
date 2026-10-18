@@ -18,7 +18,9 @@ function handOverCompiler(started: Worker) {
   void platform.typstCompiler().then(
     (compiler) => started.postMessage({ compiler }, [compiler]),
     () => {
-      const why = new Error(t("Sättmotorn kunde inte hämtas. Kontrollera nätet och försök igen."));
+      const why = new Error(
+        t("Det som gör boken tryckfärdig kunde inte hämtas. Kontrollera nätet och försök igen."),
+      );
       waiting.forEach((asked) => asked.reject(why));
       waiting.clear();
       worker = null;

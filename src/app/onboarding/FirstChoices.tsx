@@ -60,7 +60,7 @@ const AuthorField = (props: { value: string; onChange: (name: string) => void })
 const FetchNote = () =>
   platform.spelling ? (
     <p className="setting-hint">
-      {t("Ordlistorna och sättmotorn för tryck hämtas medan du börjar, cirka 13 MB.")}
+      {t("Ordlistorna och det som gör boken tryckfärdig hämtas medan du börjar, cirka 13 MB.")}
     </p>
   ) : null;
 

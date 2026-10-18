@@ -1,5 +1,10 @@
-import { t } from "../../i18n/i18n.js";
+import { t, uiLanguage } from "../../i18n/i18n.js";
 import { restartGuide } from "../guide/guide.js";
+import { platform } from "../platform.js";
+
+/** Nytt i Penna on the website, in the language Penna is shown in. */
+export const newsPage = () =>
+  `https://johan-ott.github.io/penna/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
 
 // Short, for testers and new writers: where the book is, how it is kept safe, and what is missing.
 const SECTIONS: [string, string[]][] = [
@@ -67,9 +72,17 @@ const SECTIONS: [string, string[]][] = [
 export function HelpTab() {
   return (
     <div className="help-tab">
-      <button className="button secondary small" onClick={restartGuide}>
-        {t("Visa guiden igen")}
-      </button>
+      <div className="help-actions">
+        <button className="button secondary small" onClick={restartGuide}>
+          {t("Visa guiden igen")}
+        </button>
+        <button
+          className="button secondary small"
+          onClick={() => void platform.openLink(newsPage())}
+        >
+          {t("Nytt i Penna och vad som kommer")}
+        </button>
+      </div>
       {SECTIONS.map(([title, lines]) => (
         <section key={title}>
           <span className="design-section">{title}</span>

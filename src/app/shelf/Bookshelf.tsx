@@ -71,6 +71,24 @@ function Starts(props: BookshelfProps & { isEmpty: boolean }) {
   );
 }
 
+// The very first shelf: a welcome beside Ny bok, and the example book as the easy way in.
+function Welcome(props: Pick<BookshelfProps, "author" | "onOpenExample">) {
+  const name = props.author.trim().split(" ")[0];
+  return (
+    <div className="shelf-welcome">
+      <h3>{name ? t("Välkommen, {name}!", { name }) : t("Välkommen!")}</h3>
+      <p>
+        {t(
+          "Här bor dina böcker. Börja en ny, eller öppna exempelboken och se hur kapitel, scener och anteckningar hänger ihop.",
+        )}
+      </p>
+      <button className="button secondary" onClick={props.onOpenExample}>
+        {t("Öppna exempelboken")}
+      </button>
+    </div>
+  );
+}
+
 function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
   const groups = shelfGroups(props.books);
   const isEmpty = !props.books.some((book) => !book.isMissing);
@@ -78,6 +96,7 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
     return (
       <div className="books">
         <Starts {...props} isEmpty />
+        {props.cloud.books.length === 0 && <Welcome {...props} />}
       </div>
     );
   return groups.map((group, index) => (

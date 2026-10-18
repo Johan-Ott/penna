@@ -4,7 +4,8 @@ import { Dialog } from "@llkit/controls.js";
 import { changesIn, keptNotes } from "@llkit/releaseNotes.js";
 import { useFeedbackDialog } from "@llkit/feedback/FeedbackDialog.js";
 import { platform } from "./platform.js";
-import { t, uiLanguage } from "../i18n/i18n.js";
+import { t } from "../i18n/i18n.js";
+import { newsPage } from "./settings/helpTab.js";
 
 /** The changes in a version, or a plain line when the release says none. */
 export function Changes({ notes }: { notes: string }) {
@@ -25,9 +26,6 @@ const SEEN = "penna.seenVersion";
 const updatedFrom = browserStorage().getItem(SEEN);
 browserStorage().setItem(SEEN, __APP_VERSION__);
 const isJustUpdated = updatedFrom !== null && updatedFrom !== __APP_VERSION__;
-
-const newsPage = () =>
-  `https://johan-ott.github.io/penna/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
 
 /** The first time a new version opens: what is new in it, and a way to say what you think. */
 // An update from a version that kept no notes: the release says what is new instead.

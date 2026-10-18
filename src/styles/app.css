@@ -3571,3 +3571,31 @@ html.welcome-shown body {
   margin-bottom: 12px;
   accent-color: var(--primary);
 }
+
+/* The first shelf's welcome, beside Ny bok. */
+.shelf-welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 340px;
+  padding: 8px 8px 8px 24px;
+}
+
+.shelf-welcome h3 {
+  margin: 0;
+  font: 600 26px/1.2 var(--font-prose);
+}
+
+.shelf-welcome p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.help-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

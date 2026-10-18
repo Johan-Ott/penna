@@ -16,6 +16,11 @@ const FRESH = 10 * 60 * 1000;
 /** Why the last automatic copy failed, for the dialog to say; null when it worked. */
 export const autoBackup = { failure: null as string | null };
 
+// One copy at a time: two at once could write the same minute's file, and the one waiting sees
+// the copy just made, so the book is not copied twice on opening.
+let queue = Promise.resolve();
+const inTurn = (job: () => Promise<void>) => (queue = queue.then(job, job));
+
 const automatically = (copy: Promise<void>) =>
   copy
     .then(() => void (autoBackup.failure = null))
@@ -56,13 +61,14 @@ export function useAutoBackup(dirs: string[], project: unknown) {
   const key = dirs.join("\n");
   useEffect(() => {
     if (!key) return;
-    void automatically(openingBackup(current.current));
+    const dirsAtOpening = current.current;
+    void automatically(inTurn(() => openingBackup(dirsAtOpening)));
     hasChanged.current = false;
     const dirsNow = current.current;
     const copyIfChanged = () => {
       if (!hasChanged.current) return;
       hasChanged.current = false;
-      void automatically(backupNow(dirsNow));
+      void automatically(inTurn(() => backupNow(dirsNow)));
     };
     const timer = setInterval(copyIfChanged, EVERY);
     return () => (clearInterval(timer), copyIfChanged());

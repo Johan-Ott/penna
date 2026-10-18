@@ -17,7 +17,7 @@ function summary(parts: Parts) {
     ? parts.dictionaries.map(nameOf).join(", ")
     : t("inga än");
   const typst = parts.hasTypst ? t("hämtad") : t("inte hämtad");
-  return t("Ordlistor: {dictionaries} · Sättmotorn för tryck: {typst}", { dictionaries, typst });
+  return t("Ordlistor: {dictionaries} · Tryckfärdig PDF: {typst}", { dictionaries, typst });
 }
 
 /** `languages` are the ones the writer's books need now. */
