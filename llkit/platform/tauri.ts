@@ -91,8 +91,15 @@ async function checkForUpdate() {
   if (!update) return null;
   return {
     version: update.version,
-    install: async () => {
-      await update.downloadAndInstall();
+    ...(update.body ? { notes: update.body } : {}),
+    install: async (onProgress?: (share: number) => void) => {
+      let size = 0;
+      let done = 0;
+      await update.downloadAndInstall((event) => {
+        if (event.event === "Started") size = event.data.contentLength ?? 0;
+        if (event.event === "Progress") done += event.data.chunkLength;
+        if (size > 0) onProgress?.(Math.min(done / size, 1));
+      });
       await relaunch();
     },
   };

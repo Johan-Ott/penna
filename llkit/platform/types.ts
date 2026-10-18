@@ -51,9 +51,12 @@ export interface BasePlatform {
 
 export interface AppUpdate {
   version: string;
-  install(): Promise<void>;
+  /** `onProgress` gets how much is downloaded, from 0 to 1, where the size is known. */
+  install(onProgress?: (share: number) => void): Promise<void>;
   /** A phone's update is a file Android installs, not a restart. */
   isDownload?: boolean;
+  /** The release notes, one "* Svenska | English" line per change. */
+  notes?: string;
 }
 
 export interface PickKind {

@@ -172,9 +172,16 @@ ${board(columns, news, text)}
 </html>
 `;
 
-const [news, columns] = await Promise.all([latestNews(), roadmap()]);
-for (const text of [SWEDISH, ENGLISH])
-  writeFileSync(`site/${text.file}`, page(text, news, columns));
-process.stdout.write(
-  `Nytt i Penna: ${columns.flat().length} på tavlan, ${news.items.length} klara\n`,
-);
+// `--notes`: the release text instead, the lines the app shows before and after an update.
+if (process.argv.includes("--notes")) {
+  const news = await latestNews();
+  const lines = news.items.map((title) => `* ${title}`);
+  process.stdout.write(`Penna ${version}, öppen beta.\n\n${lines.join("\n")}\n`);
+} else {
+  const [news, columns] = await Promise.all([latestNews(), roadmap()]);
+  for (const text of [SWEDISH, ENGLISH])
+    writeFileSync(`site/${text.file}`, page(text, news, columns));
+  process.stdout.write(
+    `Nytt i Penna: ${columns.flat().length} på tavlan, ${news.items.length} klara\n`,
+  );
+}

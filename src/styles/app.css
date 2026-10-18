@@ -3553,3 +3553,21 @@ html.welcome-shown body {
 .first-choices .segmented {
   display: flex;
 }
+
+/* An update's changes, before it is installed and the first time it opens. */
+.release-changes {
+  margin: 4px 0 16px;
+  padding-left: 20px;
+  line-height: 1.55;
+}
+
+.release-changes li + li {
+  margin-top: 6px;
+}
+
+.update-progress {
+  width: 100%;
+  height: 6px;
+  margin-bottom: 12px;
+  accent-color: var(--primary);
+}

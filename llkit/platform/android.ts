@@ -29,6 +29,7 @@ export async function shareAsSave(name: string, bytes: Uint8Array, kind: FileKin
 
 interface Release {
   tag_name: string;
+  body: string | null;
   assets: { name: string; browser_download_url: string }[];
 }
 
@@ -41,5 +42,10 @@ export async function checkForAndroidUpdate(repository: string): Promise<AppUpda
   const apk = release.assets.find((asset) => asset.name.endsWith(".apk"));
   if (!apk || !isNewer(release.tag_name, await getVersion())) return null;
   const version = release.tag_name.replace(/^v/, "");
-  return { version, isDownload: true, install: () => openUrl(apk.browser_download_url) };
+  return {
+    version,
+    isDownload: true,
+    ...(release.body ? { notes: release.body } : {}),
+    install: () => openUrl(apk.browser_download_url),
+  };
 }

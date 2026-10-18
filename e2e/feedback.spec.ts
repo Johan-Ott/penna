@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import { openExample } from "./helpers";
+
+const { version: VERSION } = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8")) as {
+  version: string;
+};
 
 // The mail link is caught before any mail program opens, so no real message is ever written.
 async function openFeedback(page: Page) {
@@ -52,18 +57,27 @@ test("the text is copied too, in case no mail program opens", async ({ page, con
   expect(copied).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
 });
 
-test("after an update, Penna says so once and asks what the writer thinks", async ({ page }) => {
-  await page.addInitScript(() => {
-    if (!sessionStorage.getItem("started")) localStorage.setItem("penna.seenVersion", "0.0.1");
+test("after an update, Penna shows what is new once, and asks what the writer thinks", async ({
+  page,
+}) => {
+  await page.addInitScript((version) => {
+    if (sessionStorage.getItem("started")) return;
+    localStorage.setItem("penna.app", JSON.stringify({ isOnboardingDone: true }));
+    localStorage.setItem("penna.seenVersion", "0.0.1");
+    localStorage.setItem(
+      "penna.updateNotes",
+      JSON.stringify({ version, notes: "* Tidslinje | Timeline" }),
+    );
     sessionStorage.setItem("started", "yes");
-  });
-  await openExample(page);
-  const notice = page.getByRole("status").filter({ hasText: "Penna är uppdaterad" });
+  }, VERSION);
+  await page.goto("/");
+  const news = page.getByRole("dialog", { name: `Nytt i Penna ${VERSION}` });
 
-  await expect(notice).toBeVisible();
-  await notice.getByRole("button", { name: "Tyck till" }).click();
+  await expect(news).toContainText("Tidslinje");
+  await news.getByRole("button", { name: "Tyck till" }).click();
   await expect(page.getByRole("dialog", { name: "Skicka feedback" })).toBeVisible();
 
   await page.reload();
-  await expect(page.getByText("Penna är uppdaterad")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Prova exempelboken" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: /Nytt i Penna/ })).toBeHidden();
 });

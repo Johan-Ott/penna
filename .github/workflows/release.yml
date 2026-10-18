@@ -9,6 +9,7 @@ jobs:
   release:
     permissions:
       contents: write
+      issues: read
     strategy:
       fail-fast: false
       matrix:
@@ -23,6 +24,18 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: npm ci
       - run: npm run check
+      # The release text from the newest milestone's closed issues, which the app shows the
+      # writer before the update and the first time the new version opens.
+      - id: notes
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "body<<END_OF_NOTES"
+            node scripts/build-news.mjs --notes
+            echo "END_OF_NOTES"
+          } >> "$GITHUB_OUTPUT"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,6 +45,7 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Penna ${{ github.ref_name }}
+          releaseBody: ${{ steps.notes.outputs.body }}
           releaseDraft: true
           includeUpdaterJson: true
           args: ${{ matrix.args }} --config src-tauri/tauri.release.conf.json

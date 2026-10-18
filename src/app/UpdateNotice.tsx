@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import type { AppUpdate } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
 import { checkForUpdates, dismissUpdates, useUpdates } from "@llkit/updates.js";
+import { Dialog } from "@llkit/controls.js";
+import { keepNotes } from "@llkit/releaseNotes.js";
 import { t } from "../i18n/i18n.js";
-import { WhatsNew } from "./WhatsNew.js";
+import { Changes, WhatsNew } from "./WhatsNew.js";
 
 // At the start and then every six hours, as long as Penna is open.
 const EVERY = 6 * 60 * 60 * 1000;
@@ -17,26 +19,60 @@ function useRegularChecks() {
   }, []);
 }
 
-function NewVersion({ update, session }: { update: AppUpdate; session: SceneSession }) {
-  const [isInstalling, setInstalling] = useState(false);
+// Saved first: a scene that cannot be saved stays open, since the restart would lose it.
+function useInstall(update: AppUpdate, session: SceneSession) {
+  const [progress, setProgress] = useState<number | null>(null);
   const install = async () => {
-    setInstalling(true);
-    // A scene that cannot be saved stays open; the restart would lose it.
-    if (!(await session.autosave.flush())) return setInstalling(false);
-    await update.install().catch(() => undefined);
-    setInstalling(false);
+    setProgress(0);
+    if (!(await session.autosave.flush())) return setProgress(null);
+    await update.install(setProgress).catch(() => undefined);
+    setProgress(null);
   };
+  return { progress, install };
+}
+
+function UpdateDialog(props: { update: AppUpdate; session: SceneSession; onClose: () => void }) {
+  const { update, session, onClose } = props;
+  const { progress, install } = useInstall(update, session);
   const action = update.isDownload ? t("Hämta") : t("Starta om och uppdatera");
   return (
-    <div className="toast update-notice" role="status">
-      <span>{t("Penna {version} finns.", { version: update.version })}</span>
-      <button className="link-button" disabled={isInstalling} onClick={() => void install()}>
-        {isInstalling ? t("Uppdaterar…") : action}
-      </button>
-      <button className="link-button quiet" onClick={dismissUpdates}>
-        {t("Senare")}
-      </button>
-    </div>
+    <Dialog label={t("Penna {version} finns", { version: update.version })} onClose={onClose}>
+      <Changes notes={update.notes ?? ""} />
+      {progress !== null && !update.isDownload && (
+        <progress className="update-progress" value={progress} max={1} aria-label={t("Hämtar")} />
+      )}
+      <div className="dialog-actions">
+        <button className="button ghost" onClick={onClose}>
+          {t("Senare")}
+        </button>
+        <button
+          className="button primary"
+          disabled={progress !== null}
+          onClick={() => void install()}
+        >
+          {progress === null ? action : t("Uppdaterar…")}
+        </button>
+      </div>
+    </Dialog>
+  );
+}
+
+function NewVersion({ update, session }: { update: AppUpdate; session: SceneSession }) {
+  const [isOpen, setOpen] = useState(false);
+  useEffect(() => keepNotes(update.version, update.notes ?? ""), [update]);
+  return (
+    <>
+      <div className="toast update-notice" role="status">
+        <span>{t("Penna {version} finns.", { version: update.version })}</span>
+        <button className="link-button" onClick={() => setOpen(true)}>
+          {t("Se vad som är nytt")}
+        </button>
+        <button className="link-button quiet" onClick={dismissUpdates}>
+          {t("Senare")}
+        </button>
+      </div>
+      {isOpen && <UpdateDialog update={update} session={session} onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
