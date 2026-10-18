@@ -34,7 +34,7 @@
     --on-primary: #191816;
     --accent: #6fd39b;
     --shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-    --marker: #c99a12;
+    --marker: rgba(214, 165, 30, 0.5);
     --peach: #2c2422;
     --mint: #1f2a24;
     --sky: #20252e;
@@ -560,23 +560,27 @@ body::before {
 
 h1 mark {
   position: relative;
+  display: inline-block;
   color: inherit;
   background: linear-gradient(
-    transparent 58%,
-    var(--marker) 58%,
-    var(--marker) 90%,
-    transparent 90%
+    transparent 60%,
+    var(--marker) 60%,
+    var(--marker) 88%,
+    transparent 88%
   );
-  border-radius: 4px;
-  padding: 0 0.08em;
+  border-radius: 3px;
+  padding: 0 0.12em;
+  margin: 0 -0.06em;
 }
 
+/* The spark sits outside the highlight, at its top right corner. */
 h1 mark::after {
-  display: inline-block;
-  vertical-align: 0.9em;
-  margin-left: 0.04em;
+  position: absolute;
+  top: -0.1em;
+  right: -0.42em;
   color: var(--primary);
   font-size: 0.45em;
+  line-height: 1;
   content: "✦";
   animation: twinkle 2.4s ease-in-out infinite;
 }
@@ -687,4 +691,74 @@ h1 mark::after {
 
 body {
   position: relative;
+}
+
+/* Built together: three warm steps from a writer's word to the next version. */
+.together {
+  padding: 96px 0 24px;
+  text-align: center;
+}
+
+.together h2 {
+  max-width: 16em;
+  margin: 0 auto 16px;
+}
+
+.together .lead {
+  margin-bottom: 40px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin: 0 0 36px;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.steps li {
+  padding: 28px;
+  border-radius: 20px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.steps li:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+}
+
+.steps li:nth-child(1) {
+  background: var(--peach);
+}
+
+.steps li:nth-child(2) {
+  background: var(--mint);
+}
+
+.steps li:nth-child(3) {
+  background: var(--lilac);
+}
+
+.steps span {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font: 700 16px var(--font-ui);
+}
+
+.steps h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.steps p {
+  margin: 0;
+  color: var(--muted);
+  font: 15px/1.55 var(--font-ui);
 }
