@@ -1,5 +1,7 @@
 name: check
-on: [push, pull_request]
+# Run by hand under Actions, or by asking; the release build runs the same checks itself.
+on:
+  workflow_dispatch:
 jobs:
   check:
     runs-on: ubuntu-latest

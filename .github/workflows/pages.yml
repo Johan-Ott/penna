@@ -1,15 +1,10 @@
-# The website in site/ on GitHub Pages. Nytt i Penna is made from the issues, so the site is
-# published again whenever an issue or milestone on the board changes.
+# The website in site/ on GitHub Pages, with Nytt i Penna made from the issues. Published by hand
+# under Actions, and once more each time a release is published, so the board and version match.
 name: pages
 
 on:
-  push:
-    branches: [main]
-    paths: [site/**, scripts/build-news.mjs]
-  issues:
-    types: [opened, edited, closed, reopened, labeled, unlabeled, milestoned, demilestoned, deleted]
-  milestone:
-    types: [created, edited, closed, opened, deleted]
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
