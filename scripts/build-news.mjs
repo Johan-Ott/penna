@@ -37,14 +37,8 @@ async function latestNews() {
   return { title: version, items: [] };
 }
 
-async function roadmap() {
-  const columns = [];
-  for (const [place, label] of LABELS.entries()) {
-    const open = await issues(`state=open&labels=${label}`);
-    if (open.length > 0) columns.push({ place, items: open });
-  }
-  return columns;
-}
+// One column per label, empty or not, so the board always has the same shape.
+const roadmap = () => Promise.all(LABELS.map((label) => issues(`state=open&labels=${label}`)));
 
 const SWEDISH = {
   lang: "sv",
@@ -57,10 +51,12 @@ const SWEDISH = {
   nowTitle: "Där vi är nu",
   now: (current) =>
     `Penna är i öppen beta, gratis för alla. Den senaste versionen är <strong>${current}</strong>, för Windows och Android. Vi bygger vidare hela tiden, med det ni skriver till oss som karta.`,
-  newTitle: (current) => `Nytt i ${current}`,
-  nextTitle: "Det som kommer",
-  nextLead: "Tryck på det du vill ha, så räknar vi rösterna. Det som flest vill ha kommer först.",
-  columns: ["Nu", "Snart", "Senare"],
+  boardTitle: "Tavlan",
+  boardLead:
+    "Vad vi bygger nu, vad som kommer och vad som är klart. Tryck på det du vill ha, så räknar vi rösterna.",
+  columns: ["Pågår", "Snart", "Senare"],
+  done: (current) => `Klart i ${current}`,
+  empty: "Inget här just nu.",
   vote: "Röst",
   missing: "Saknas något?",
   idea: ["Föreslå en idé", "Idé till Penna"],
@@ -77,10 +73,12 @@ const ENGLISH = {
   nowTitle: "Where we are",
   now: (current) =>
     `Penna is in open beta, free for everyone. The latest version is <strong>${current}</strong>, for Windows and Android. We keep building all the time, with what you write to us as the map.`,
-  newTitle: (current) => `New in ${current}`,
-  nextTitle: "What is coming",
-  nextLead: "Tap what you want, and we count the votes. What most of you want comes first.",
-  columns: ["Now", "Soon", "Later"],
+  boardTitle: "The board",
+  boardLead:
+    "What we are building now, what is coming and what is done. Tap what you want, and we count the votes.",
+  columns: ["In progress", "Soon", "Later"],
+  done: (current) => `Done in ${current}`,
+  empty: "Nothing here right now.",
   vote: "Vote",
   missing: "Missing something?",
   idea: ["Suggest an idea", "Idea for Penna"],
@@ -97,25 +95,35 @@ const inLanguage = (title, lang) => {
 
 const mail = (subject) => `mailto:${MAIL}?subject=${encodeURIComponent(subject)}`;
 
-function roadColumn(column, text) {
-  const items = column.items.map((title) => {
-    const name = inLanguage(title, text.lang);
-    return `            <li><a href="${mail(`${text.vote}: ${name}`)}">${name}<span aria-hidden="true">+</span></a></li>`;
-  });
-  return `        <div>\n          <h4>${text.columns[column.place]}</h4>\n          <ul>\n${items.join("\n")}\n          </ul>\n        </div>`;
+const vote = (title, text) => {
+  const name = inLanguage(title, text.lang);
+  return `<li><a href="${mail(`${text.vote}: ${name}`)}">${name}<span aria-hidden="true">+</span></a></li>`;
+};
+
+const done = (title, text) => `<li class="done">${inLanguage(title, text.lang)}</li>`;
+
+function column(name, kind, cards, text) {
+  const list =
+    cards.length > 0 ? cards.join("\n            ") : `<li class="empty">${text.empty}</li>`;
+  return `        <div class="column ${kind}">
+          <h3>${name}<span>${cards.length}</span></h3>
+          <ul>
+            ${list}
+          </ul>
+        </div>`;
 }
 
-function newsSection(news, text) {
-  if (news.items.length === 0) return "";
-  const items = news.items.map((title) => `          <li>${inLanguage(title, text.lang)}</li>`);
-  return `
-      <section>
-        <h2>${text.newTitle(news.title)}</h2>
-        <ul class="news-list">
-${items.join("\n")}
-        </ul>
-      </section>
-`;
+function board(columns, news, text) {
+  const open = columns.map((titles, place) =>
+    column(
+      text.columns[place],
+      LABELS[place],
+      titles.map((title) => vote(title, text)),
+      text,
+    ),
+  );
+  const finished = news.items.map((title) => done(title, text));
+  return [...open, column(text.done(news.title), "klart", finished, text)].join("\n");
 }
 
 const top = (text) => `<!doctype html>
@@ -137,7 +145,7 @@ const top = (text) => `<!doctype html>
     </header>`;
 
 const page = (text, news, columns) => `${top(text)}
-    <main class="narrow news">
+    <main class="news">
       <h1>${text.title}</h1>
       <p class="lead">${text.lead}</p>
 
@@ -146,12 +154,12 @@ const page = (text, news, columns) => `${top(text)}
         <h2>${text.nowTitle}</h2>
         <p>${text.now(version)}</p>
       </section>
-${newsSection(news, text)}
+
       <section>
-        <h2>${text.nextTitle}</h2>
-        <p>${text.nextLead}</p>
-        <div class="road">
-${columns.map((column) => roadColumn(column, text)).join("\n")}
+        <h2>${text.boardTitle}</h2>
+        <p>${text.boardLead}</p>
+        <div class="board">
+${board(columns, news, text)}
         </div>
       </section>
 
@@ -167,4 +175,6 @@ ${columns.map((column) => roadColumn(column, text)).join("\n")}
 const [news, columns] = await Promise.all([latestNews(), roadmap()]);
 for (const text of [SWEDISH, ENGLISH])
   writeFileSync(`site/${text.file}`, page(text, news, columns));
-process.stdout.write(`Nytt i Penna: ${news.items.length} nyheter, ${columns.length} kolumner\n`);
+process.stdout.write(
+  `Nytt i Penna: ${columns.flat().length} på tavlan, ${news.items.length} klara\n`,
+);
