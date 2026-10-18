@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { browserStorage } from "@llkit/storage/browserStorage.js";
 import { Dialog } from "@llkit/controls.js";
 import { changesIn, keptNotes } from "@llkit/releaseNotes.js";
@@ -30,14 +30,30 @@ const newsPage = () =>
   `https://johan-ott.github.io/penna/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
 
 /** The first time a new version opens: what is new in it, and a way to say what you think. */
+// An update from a version that kept no notes: the release says what is new instead.
+function useNotes(isShown: boolean) {
+  const [notes, setNotes] = useState(() => keptNotes(__APP_VERSION__));
+  useEffect(() => {
+    if (!isShown || notes) return;
+    const release = `https://api.github.com/repos/Johan-Ott/penna/releases/tags/v${__APP_VERSION__}`;
+    void platform
+      .webFetch(release)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((found: { body?: string } | null) => found?.body && setNotes(found.body))
+      .catch(() => undefined);
+  }, [isShown, notes]);
+  return notes;
+}
+
 export function WhatsNew() {
   const [isShown, setShown] = useState(isJustUpdated);
+  const notes = useNotes(isShown);
   const feedback = useFeedbackDialog();
   const close = () => setShown(false);
   if (!isShown) return feedback.layer;
   return (
     <Dialog label={t("Nytt i Penna {version}", { version: __APP_VERSION__ })} onClose={close}>
-      <Changes notes={keptNotes(__APP_VERSION__)} />
+      <Changes notes={notes} />
       <button className="link-button" onClick={() => void platform.openLink(newsPage())}>
         {t("Se allt som är nytt och vad som kommer")}
       </button>
