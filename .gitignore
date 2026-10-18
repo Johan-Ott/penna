@@ -8,3 +8,6 @@ out
 .env.local
 test-results
 playwright-report
+# Made from the GitHub issues by npm run news, and when the site is published
+site/nytt.html
+site/news.html

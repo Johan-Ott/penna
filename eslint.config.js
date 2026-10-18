@@ -38,7 +38,7 @@ export default tseslint.config(
   },
   {
     files: ["**/*.mjs", "**/*.js"],
-    languageOptions: { globals: { process: "readonly" } },
+    languageOptions: { globals: { process: "readonly", fetch: "readonly" } },
   },
   {
     files: ["tests/**/*.ts", "e2e/**/*.ts"],
