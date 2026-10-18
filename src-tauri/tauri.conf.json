@@ -38,7 +38,7 @@
     "category": "Productivity",
     "shortDescription": "En lokal skrivapp för romanförfattare",
     "longDescription": "Penna är en skrivapp för romanförfattare. Texten sparas som vanliga filer i en mapp du väljer, utan konton och utan servrar.",
-    "copyright": "© 2026 Penna",
+    "copyright": "© 2026 Lone Lodge",
     "windows": {
       "webviewInstallMode": {
         "type": "downloadBootstrapper",
@@ -54,7 +54,7 @@
         "compression": "lzma"
       }
     },
-    "publisher": "Penna"
+    "publisher": "Lone Lodge"
   },
   "plugins": {
     "fs": {
