@@ -4,9 +4,9 @@ import { recordFailure } from "../errorLog.js";
 import { device } from "../platform/device.js";
 import {
   canSendFeedback,
+  feedbackMail,
   feedbackReport,
   feedbackText,
-  sendFeedback,
   type Feedback,
   type FeedbackKind,
 } from "./sendFeedback.js";
@@ -24,24 +24,16 @@ const HINTS: Record<FeedbackKind, string> = {
   annat: t("Skriv det du vill säga."),
 };
 
-type Outcome = "skriver" | "skickar" | "skickad" | "kopierad";
+type Outcome = "skriver" | "öppnad" | "kopierad";
 
-// Without an address to send to, or when sending fails, the text goes to the clipboard instead.
+// The text always goes to the clipboard too, in case no mail program opens.
 function useSending(feedback: Feedback) {
   const [outcome, setOutcome] = useState<Outcome>("skriver");
-  const copy = async () => {
-    await navigator.clipboard.writeText(feedbackText(feedback)).catch(recordFailure("Feedback"));
-    setOutcome("kopierad");
-  };
   const send = async () => {
-    if (!canSendFeedback) return copy();
-    setOutcome("skickar");
-    try {
-      await sendFeedback(feedback, device().webFetch);
-      setOutcome("skickad");
-    } catch {
-      await copy();
-    }
+    await navigator.clipboard.writeText(feedbackText(feedback)).catch(recordFailure("Feedback"));
+    if (!canSendFeedback()) return setOutcome("kopierad");
+    await device().openLink(feedbackMail(feedback)).catch(recordFailure("Feedback"));
+    setOutcome("öppnad");
   };
   return { outcome, send };
 }
@@ -74,14 +66,6 @@ function MessageFields(props: { feedback: Feedback; onChange: (feedback: Feedbac
         />
         <span className="setting-hint">{HINTS[feedback.kind]}</span>
       </label>
-      <label className="onboarding-field">
-        <span className="field-label">{t("Din e-post, om du vill ha svar")}</span>
-        <input
-          type="email"
-          value={feedback.email}
-          onChange={(event) => onChange({ ...feedback, email: event.target.value })}
-        />
-      </label>
     </>
   );
 }
@@ -108,10 +92,10 @@ function FeedbackFields(props: { feedback: Feedback; onChange: (feedback: Feedba
 }
 
 const DONE: Partial<Record<Outcome, string>> = {
-  skickad: t("Tack! Vi har fått det och läser allt."),
-  kopierad: t(
-    "Det gick inte att skicka härifrån. Texten är kopierad: klistra in den i ett mejl till oss.",
+  öppnad: t(
+    "Ditt mejlprogram öppnas med meddelandet ifyllt: skicka det därifrån. Öppnades inget är texten kopierad, så du kan klistra in den i ett mejl.",
   ),
+  kopierad: t("Texten är kopierad: klistra in den i ett mejl till oss."),
 };
 
 /** Feedback straight from the app: what happened, and only what the writer chooses to include. */
@@ -119,7 +103,6 @@ export function FeedbackDialog({ onClose }: { onClose: () => void }) {
   const [feedback, setFeedback] = useState<Feedback>({
     kind: "fel",
     message: "",
-    email: "",
     hasReport: true,
   });
   const { outcome, send } = useSending(feedback);
@@ -135,7 +118,7 @@ export function FeedbackDialog({ onClose }: { onClose: () => void }) {
         </div>
       ) : (
         <DialogButtons
-          label={canSendFeedback ? t("Skicka") : t("Kopiera")}
+          label={canSendFeedback() ? t("Skriv mejlet") : t("Kopiera")}
           onCancel={onClose}
           onConfirm={() => void (feedback.message.trim() && outcome === "skriver" && send())}
         />

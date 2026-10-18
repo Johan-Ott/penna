@@ -1,41 +1,46 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { provideAppName } from "@llkit/appInfo.js";
-import { feedbackText, sendFeedback } from "@llkit/feedback/sendFeedback.js";
+import {
+  feedbackMail,
+  feedbackText,
+  provideFeedbackAddress,
+} from "@llkit/feedback/sendFeedback.js";
 
 // As the app does when it starts.
 provideAppName("Penna");
+provideFeedbackAddress("feedback@example.com");
 
-const feedback = {
-  kind: "fel" as const,
-  message: " Sidkartan visar fel sida. ",
-  email: "",
-  hasReport: false,
+const feedback = { kind: "fel" as const, message: " Sidkartan visar fel sida. ", hasReport: false };
+
+const mail = (link: string) => {
+  const url = new URL(link);
+  return {
+    to: url.pathname,
+    subject: url.searchParams.get("subject"),
+    body: url.searchParams.get("body") ?? "",
+  };
 };
 
 describe("feedback", () => {
-  it("sends only what the writer chose, as JSON", async () => {
-    const send = vi.fn(async () => new Response("{}", { status: 200 }));
+  it("opens a mail to the app's address with only what the writer wrote", () => {
+    const { to, subject, body } = mail(feedbackMail(feedback));
 
-    await sendFeedback(feedback, send);
-
-    const body = JSON.parse(
-      String((send.mock.calls[0] as unknown as [string, RequestInit])[1].body),
-    );
-    expect(body).toMatchObject({ kind: "fel", message: "Sidkartan visar fel sida." });
-    expect(body).not.toHaveProperty("report");
-    expect(body).not.toHaveProperty("email");
-  });
-
-  it("fails loudly when it was not received, so the text can be copied instead", async () => {
-    const send = vi.fn(async () => new Response("", { status: 500 }));
-
-    await expect(sendFeedback(feedback, send)).rejects.toThrow("500");
+    expect(to).toBe("feedback@example.com");
+    expect(subject).toBe("Penna test: Fel");
+    expect(body).toBe("Sidkartan visar fel sida.");
   });
 
   it("puts the report under the message when it goes along", () => {
     const text = feedbackText({ ...feedback, hasReport: true });
 
     expect(text).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
+  });
+
+  it("leaves a report too long for a mail link to be pasted from the clipboard", () => {
+    const long = { ...feedback, message: "x".repeat(1700), hasReport: true };
+
+    expect(feedbackMail(long).length).toBeLessThan(2000);
+    expect(mail(feedbackMail(long)).body).toMatch(/Felrapporten är kopierad/);
   });
 });
 

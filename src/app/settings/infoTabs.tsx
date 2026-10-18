@@ -79,7 +79,7 @@ function SiteLinks() {
       <Row
         label={t("Integritet")}
         hint={t(
-          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr; feedback går via Formspree. De ser att en enhet frågar, aldrig vad du skriver.",
+          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr. De ser att en enhet frågar, aldrig vad du skriver. Feedback skickar du själv, som ett vanligt mejl.",
         )}
       >
         <Link url={sitePage("integritet.html", "privacy.html")} label={t("Integritetspolicy")} />

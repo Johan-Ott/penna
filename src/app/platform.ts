@@ -1,5 +1,6 @@
 import { isTauri } from "@tauri-apps/api/core";
 import { provideAppName } from "@llkit/appInfo.js";
+import { provideFeedbackAddress } from "@llkit/feedback/sendFeedback.js";
 import { provideDevice } from "@llkit/platform/device.js";
 import type { BasePlatform } from "@llkit/platform/types.js";
 import { browserPlatform } from "./browserPlatform.js";
@@ -68,3 +69,4 @@ export interface RemoteState {
 export const platform: Platform = isTauri() ? tauriPlatform : browserPlatform;
 provideDevice(platform);
 provideAppName("Penna");
+provideFeedbackAddress("johan.lonelodge@gmail.com");

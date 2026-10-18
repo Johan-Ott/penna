@@ -33,9 +33,6 @@
           "url": "https://oauth2.googleapis.com/*"
         },
         {
-          "url": "https://formspree.io/f/*"
-        },
-        {
           "url": "https://api.github.com/repos/Johan-Ott/penna/releases/latest"
         }
       ]

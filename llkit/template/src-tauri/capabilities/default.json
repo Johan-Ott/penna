@@ -28,10 +28,7 @@
     "fs:allow-exists",
     {
       "identifier": "http:default",
-      "allow": [
-        { "url": "https://formspree.io/f/*" },
-        { "url": "https://api.github.com/repos/Johan-Ott/__APP_SLUG__/releases/latest" }
-      ]
+      "allow": [{ "url": "https://api.github.com/repos/Johan-Ott/__APP_SLUG__/releases/latest" }]
     }
   ]
 }

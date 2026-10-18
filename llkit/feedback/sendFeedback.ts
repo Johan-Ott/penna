@@ -1,23 +1,27 @@
 import { appInfo } from "../appInfo.js";
 import { errorLog } from "../errorLog.js";
+import { t } from "../i18n.js";
 
 export type FeedbackKind = "fel" | "ide" | "annat";
 
 export interface Feedback {
   kind: FeedbackKind;
   message: string;
-  /** For an answer; may be left empty. */
-  email: string;
   hasReport: boolean;
 }
 
 /** The error report goes along only with something that is wrong, and only if the writer lets it. */
 const withReport = (feedback: Feedback) => feedback.kind === "fel" && feedback.hasReport;
 
-/** A Formspree form, or another endpoint taking the same JSON. Kept in .env.local. */
-const ENDPOINT = import.meta.env.VITE_FEEDBACK_URL ?? "";
+// Feedback is an email the writer sends from their own mail program, so no one else handles it.
+let address = "";
 
-export const canSendFeedback = ENDPOINT !== "";
+/** Where the app's feedback mail goes; until it is handed in, feedback can only be copied. */
+export function provideFeedbackAddress(to: string) {
+  address = to;
+}
+
+export const canSendFeedback = () => address !== "";
 
 /** Version, device and the session's latest errors: never any of the book's text. */
 export function feedbackReport() {
@@ -30,18 +34,19 @@ export function feedbackText(feedback: Feedback) {
   return `${feedback.message.trim()}${report}`;
 }
 
-/** Throws when it could not be sent, so the writer can copy it instead. */
-export async function sendFeedback(feedback: Feedback, send: typeof fetch) {
-  const response = await send(ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      kind: feedback.kind,
-      message: feedback.message.trim(),
-      ...(feedback.email.trim() ? { email: feedback.email.trim() } : {}),
-      version: __APP_VERSION__,
-      ...(withReport(feedback) ? { report: feedbackReport() } : {}),
-    }),
-  });
-  if (!response.ok) throw new Error(`Feedback: ${response.status}`);
+const SUBJECTS: Record<FeedbackKind, string> = { fel: "Fel", ide: "Idé", annat: "Feedback" };
+
+// Some mail programs cut a longer mailto link; the report is then pasted from the clipboard.
+const LONGEST_LINK = 1800;
+
+/** The mail to open, with the message and, when it fits, the report. */
+export function feedbackMail(feedback: Feedback) {
+  const { name, version } = appInfo();
+  const link = (body: string) =>
+    `mailto:${address}?subject=${encodeURIComponent(`${name} ${version}: ${SUBJECTS[feedback.kind]}`)}&body=${encodeURIComponent(body)}`;
+  const full = link(feedbackText(feedback));
+  if (full.length <= LONGEST_LINK) return full;
+  return link(
+    `${feedback.message.trim()}\n\n---\n${t("Felrapporten är kopierad: klistra in den här.")}`,
+  );
 }
