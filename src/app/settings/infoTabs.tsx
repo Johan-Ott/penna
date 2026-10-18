@@ -3,6 +3,7 @@ import { useState } from "react";
 import { errorLog } from "@llkit/errorLog.js";
 import { feedbackReport } from "@llkit/feedback/sendFeedback.js";
 import { Row } from "@llkit/controls.js";
+import { checkForUpdates } from "@llkit/updates.js";
 import { numberLocale, t, uiLanguage } from "../../i18n/i18n.js";
 
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
@@ -102,7 +103,11 @@ function SiteLinks() {
 export function AboutTab() {
   return (
     <>
-      <Row label={t("Version")}>{__APP_VERSION__}</Row>
+      <Row label={t("Version")} hint={__APP_VERSION__}>
+        <button className="button secondary small" onClick={() => void checkForUpdates(true)}>
+          {t("Sök efter uppdateringar")}
+        </button>
+      </Row>
       <Row
         label={t("Felrapport")}
         hint={t("Version, enhet och de senaste felen, att klistra in när du ber om hjälp.")}

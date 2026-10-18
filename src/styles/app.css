@@ -3599,3 +3599,50 @@ html.welcome-shown body {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* Touch: a tree row swiped aside shows what letting go will do. */
+.tree-swipe {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.tree-swipe .tree-row {
+  position: relative;
+  background: var(--bg-panel);
+  transition: transform 160ms ease-out;
+}
+
+.tree-swipe-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tree-swipe-hint.left {
+  justify-content: flex-end;
+  background: var(--danger, #c0392b);
+}
+
+.tree-swipe-hint.right {
+  background: var(--accent, #3f6b4e);
+}
+
+.tree-undo {
+  position: fixed;
+  z-index: 60;
+}
+
+/* Held down for its menu, a row or a cover does not start selecting its text. */
+.tree-row,
+.book-cover,
+.contents-row {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

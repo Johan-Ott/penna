@@ -64,10 +64,10 @@ function NewVersion({ update, session }: { update: AppUpdate; session: SceneSess
     <>
       <div className="toast update-notice" role="status">
         <span>{t("Penna {version} finns.", { version: update.version })}</span>
-        <button className="link-button" onClick={() => setOpen(true)}>
+        <button className="button primary small" onClick={() => setOpen(true)}>
           {t("Se vad som är nytt")}
         </button>
-        <button className="link-button quiet" onClick={dismissUpdates}>
+        <button className="button ghost small" onClick={dismissUpdates}>
           {t("Senare")}
         </button>
       </div>

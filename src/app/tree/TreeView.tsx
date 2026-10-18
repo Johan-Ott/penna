@@ -1,4 +1,5 @@
 import type { DragEvent, ReactNode } from "react";
+import { useSwipes } from "./useSwipes.js";
 import {
   withoutEmptyFixedSorts,
   withoutEmptySorts,
@@ -34,18 +35,23 @@ function menuOf(row: Row, tree: Tree, menuFor: ReturnType<typeof menuActions>) {
 function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
   const { view, actions, drag, openMenu } = tree;
   const menuFor = menuActions(actions, props, view);
-  return rows.map((row) => (
-    <TreeRow
-      key={row.node.id}
-      {...rowView(row, props, view.collapsed)}
-      isRenaming={view.renamingId === row.node.id}
-      dropHint={drag.dropHintFor(row.node.id)}
-      dragProps={drag.rowDragProps(row, actions.canEdit(row.node) && !tree.isFiltered)}
-      {...rowHandlers(row, actions, view)}
-      {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
-      onContextMenu={(event) => openMenu(event, menuOf(row, tree, menuFor))}
-    />
-  ));
+  const swipes = useSwipes(props, tree);
+  return [
+    ...rows.map((row) => (
+      <TreeRow
+        key={row.node.id}
+        {...rowView(row, props, view.collapsed)}
+        isRenaming={view.renamingId === row.node.id}
+        dropHint={drag.dropHintFor(row.node.id)}
+        dragProps={drag.rowDragProps(row, actions.canEdit(row.node) && !tree.isFiltered)}
+        {...rowHandlers(row, actions, view)}
+        {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
+        onContextMenu={(event) => openMenu(event, menuOf(row, tree, menuFor))}
+        {...swipes.swipesOf(row)}
+      />
+    )),
+    <span key="undo">{swipes.undo}</span>,
+  ];
 }
 
 function SectionHeading(props: {

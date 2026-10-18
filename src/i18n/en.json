@@ -1407,5 +1407,14 @@
   "Öppna exempelboken": "Open the example book",
   "Ordlistor: {dictionaries} · Tryckfärdig PDF: {typst}": "Dictionaries: {dictionaries} · Print-ready PDF: {typst}",
   "Det som gör boken tryckfärdig kunde inte hämtas. Kontrollera nätet och försök igen.": "What makes your book ready to print could not be downloaded. Check your connection and try again.",
-  "Nytt i Penna och vad som kommer": "What is new in Penna, and what is coming"
+  "Nytt i Penna och vad som kommer": "What is new in Penna, and what is coming",
+  "Nästa status": "Next status",
+  "{title} ligger i papperskorgen.": "{title} is in the trash.",
+  "Byt namn…": "Rename…",
+  "Byt namn på boken": "Rename the book",
+  "Byt namn på boken…": "Rename the book…",
+  "Logga ut från Google": "Sign out of Google",
+  "Logga in med Google…": "Sign in with Google…",
+  "Din profil…": "Your profile…",
+  "Sök efter uppdateringar": "Check for updates"
 }

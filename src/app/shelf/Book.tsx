@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { whenUpdated, type ShelfBook } from "../../project/shelf.js";
 import { amountOf, deadlineLine } from "../../project/shelfLines.js";
 import { coverLookOf } from "../../project/shelfLook.js";
@@ -6,6 +7,9 @@ import { useMenuButton } from "@llkit/Menu.js";
 import { platform } from "../platform.js";
 import { t, formatNumber } from "../../i18n/i18n.js";
 import { useShelfCover } from "./useShelfCover.js";
+import { useRenameBook } from "./useRenameBook.js";
+import { retitleBook } from "../../project/projectFile.js";
+import { recordFailure } from "@llkit/errorLog.js";
 
 interface BookProps {
   book: ShelfBook;
@@ -70,9 +74,15 @@ function removeItems({ book, onRemove, onRemoveEverywhere }: BookMenuProps) {
   ];
 }
 
+// The shelf sees the new title when the folder watch notices project.json change.
+const renameOnDisk = (dir: string) => (title: string) =>
+  void retitleBook(platform.fileSystem, dir, title).catch(recordFailure("Byt namn på boken"));
+
 function BookMenu(props: BookMenuProps) {
   const { book, onChooseCover } = props;
+  const rename = useRenameBook(book.title, renameOnDisk(book.dir));
   const items = [
+    { label: t("Byt namn…"), onSelect: rename.open },
     { label: t("Välj omslag…"), onSelect: onChooseCover },
     ...(platform.showInFolder
       ? [{ label: t("Visa i mappen"), onSelect: () => void platform.showInFolder?.(book.dir) }]
@@ -87,6 +97,7 @@ function BookMenu(props: BookMenuProps) {
         ⋯
       </button>
       {menu.menu}
+      {rename.layer}
     </>
   );
 }
@@ -173,8 +184,13 @@ function MissingBook({
 
 function PresentBook(props: BookProps) {
   const cover = useShelfCover(props.book.dir);
+  // A right-click, or a finger held on the book, opens the same menu as its ⋯ button.
+  const openMenu = (event: MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.currentTarget.querySelector<HTMLButtonElement>(".book-menu")?.click();
+  };
   return (
-    <div className="book">
+    <div className="book" onContextMenu={openMenu}>
       <Cover {...props} pictureUrl={cover.url} />
       <BookMeta
         book={props.book}

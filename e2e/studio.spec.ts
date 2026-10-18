@@ -43,6 +43,7 @@ test("the newsletter is signed with Om författaren from the profile", async ({ 
   await page.getByRole("button", { name: "← Publicera" }).click();
   await page.getByRole("button", { name: /Tillbaka till texten/ }).click();
   await page.getByRole("button", { name: "Din profil" }).click();
+  await page.getByRole("menuitem", { name: "Din profil…" }).click();
   await page.getByRole("textbox", { name: "Om författaren" }).fill("Skriver om is och fyrar.");
   await page.getByRole("button", { name: "Klar" }).click();
   await runCommand(page, "Publicera");

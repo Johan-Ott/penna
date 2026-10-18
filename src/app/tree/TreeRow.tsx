@@ -1,3 +1,4 @@
+import { useSwipe } from "@llkit/touch.js";
 import { useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import type { DropPosition, TreeRow as Row } from "../../project/treeRows.js";
 import type { Label } from "../../project/labels.js";
@@ -36,6 +37,9 @@ export interface TreeRowProps {
   onContextMenu: (event: MouseEvent<HTMLElement>) => void;
   onStartRename: () => void;
   onRename: (title: string | null) => void;
+  /** On a phone: swiped left, and swiped right; missing where the row has nothing to swipe to. */
+  onSwipeLeft?: (() => void) | undefined;
+  onSwipeRight?: (() => void) | undefined;
 }
 
 function RenameInput({
@@ -152,12 +156,38 @@ const PovTag = ({ pov }: { pov: string }) => (
   <span className="tree-pov" data-pov={pov} title={t("Vems ögon: {pov}", { pov })} />
 );
 
+// What a swipe will do, shown under the row as it moves aside.
+function SwipeHint({ side }: { side: "left" | "right" | null }) {
+  if (!side) return null;
+  return (
+    <span className={`tree-swipe-hint ${side}`} aria-hidden="true">
+      {side === "left" ? t("Papperskorg") : t("Nästa status")}
+    </span>
+  );
+}
+
 export function TreeRow(props: TreeRowProps) {
+  const swipe = useSwipe(props.onSwipeLeft, props.onSwipeRight);
+  if (!props.onSwipeLeft && !props.onSwipeRight) return <RowItself {...props} />;
+  return (
+    <div className="tree-swipe" role="none" {...swipe.handlers}>
+      <SwipeHint side={swipe.side} />
+      <RowItself {...props} offset={swipe.offset} />
+    </div>
+  );
+}
+
+const rowStyle = (props: TreeRowProps & { offset?: number }) => ({
+  paddingLeft: 10 + props.row.depth * 14,
+  ...(props.offset ? { transform: `translateX(${props.offset}px)` } : {}),
+});
+
+function RowItself(props: TreeRowProps & { offset?: number }) {
   return (
     <div
       {...treeItemAttributes(props)}
       className={rowClass(props)}
-      style={{ paddingLeft: 10 + props.row.depth * 14 }}
+      style={rowStyle(props)}
       onClick={props.onActivate}
       onDoubleClick={props.onStartRename}
       onKeyDown={props.onKeyDown}

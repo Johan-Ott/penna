@@ -1,3 +1,4 @@
+import { useRenameBook } from "../shelf/useRenameBook.js";
 import { useTemplatesDialog, useThemeDialog } from "../Sidebar.js";
 import { collaborationItems } from "../exporting/collaboration.js";
 import { useState } from "react";
@@ -76,15 +77,24 @@ function useShelfKeys(app: AppState) {
 }
 
 // The book's own, as the phone's menu has them under Boken.
-const bookItems = (dialogs: ReturnType<typeof useMenuDialogs>) => [
+const bookItems = (dialogs: ReturnType<typeof useMenuDialogs>, rename: () => void) => [
+  { label: t("Byt namn på boken…"), onSelect: rename },
   { label: t("Tema…"), onSelect: dialogs.theme.open },
   { label: t("Serie…"), onSelect: dialogs.series.open },
   { label: t("Mallar och bitar…"), onSelect: dialogs.templates.open },
 ];
 
+// The name is read with the book, so it is read again once the new title is saved.
+const useBookRename = (app: AppState, project: Project) =>
+  useRenameBook(
+    project.name,
+    (title) => void app.updateFields({ title }).then(() => app.refresh()),
+  );
+
 /** The open book's menu, with the dialogs it opens. */
 export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
   const dialogs = useMenuDialogs({ app, project });
+  const rename = useBookRename(app, project);
   const { backups, feedback, revision } = dialogs;
   const { showShelf, newProject } = useShelfKeys(app);
   const items = appMenu({
@@ -97,7 +107,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     sharing: collaborationItems(project, app.zip.run),
     showBackups: backups.open,
     sendFeedback: feedback.open,
-    book: bookItems(dialogs),
+    book: bookItems(dialogs, rename.open),
     openSettings: () => app.writingMode.settingsDialog.open(),
     openShortcuts: () => app.writingMode.settingsDialog.open(HELP_TAB),
   });
@@ -106,6 +116,7 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     <>
       {menu.menu}
       {dialogs.layers}
+      {rename.layer}
     </>
   );
   return { open: menu.open, menu: layers };

@@ -139,3 +139,15 @@ export async function readProjectFile(
   if (!mayRepair) throw new UnreadableProject(projectPath(dir));
   return repair(fileSystem, dir, text, read);
 }
+
+/** A book's new title, written into project.json with everything else in it left as it was. */
+export async function retitleBook(fileSystem: FileSystem, dir: string, title: string) {
+  const text = await readIfThere(fileSystem, projectPath(dir));
+  if (text === null) throw new Error(`${projectPath(dir)} finns inte`);
+  const project = JSON.parse(text) as Record<string, unknown>;
+  await writeAtomic(
+    fileSystem,
+    projectPath(dir),
+    `${JSON.stringify({ ...project, title }, null, 2)}\n`,
+  );
+}
