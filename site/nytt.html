@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nytt i Penna</title>
+    <link rel="icon" href="penna-logo.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <nav class="wrap">
+        <a class="brand" href="index.html"><img src="penna-logo.png" alt="" />Penna</a>
+        <a class="language" href="news.html" lang="en">English</a>
+        <a class="button" href="index.html#ladda-ner">Ladda ner</a>
+      </nav>
+    </header>
+    <main class="narrow">
+      <h1>Nytt i Penna</h1>
+      <p class="lead">
+        Vad som har ändrats i varje version. Saknar du något?
+        <a href="mailto:johan.lonelodge@gmail.com?subject=Id%C3%A9%20till%20Penna">Skriv till oss</a
+        >.
+      </p>
+      <div
+        id="releases"
+        data-empty="Inga versioner ännu."
+        data-failed="Listan gick inte att hämta just nu."
+      ></div>
+    </main>
+    <script src="releases.js"></script>
+  </body>
+</html>

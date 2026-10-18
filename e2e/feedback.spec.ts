@@ -51,3 +51,19 @@ test("the text is copied too, in case no mail program opens", async ({ page, con
   );
   expect(copied).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
 });
+
+test("after an update, Penna says so once and asks what the writer thinks", async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem("started")) localStorage.setItem("penna.seenVersion", "0.0.1");
+    sessionStorage.setItem("started", "yes");
+  });
+  await openExample(page);
+  const notice = page.getByRole("status").filter({ hasText: "Penna är uppdaterad" });
+
+  await expect(notice).toBeVisible();
+  await notice.getByRole("button", { name: "Tyck till" }).click();
+  await expect(page.getByRole("dialog", { name: "Skicka feedback" })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByText("Penna är uppdaterad")).toBeHidden();
+});

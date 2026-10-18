@@ -3,6 +3,7 @@ import type { AppUpdate } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
 import { checkForUpdates, dismissUpdates, useUpdates } from "@llkit/updates.js";
 import { t } from "../i18n/i18n.js";
+import { WhatsNew } from "./WhatsNew.js";
 
 // At the start and then every six hours, as long as Penna is open.
 const EVERY = 6 * 60 * 60 * 1000;
@@ -51,10 +52,11 @@ function IsLatest() {
   );
 }
 
-/** A newer Penna, offered quietly; or, when asked for by hand, that this is the newest. */
+/** A newer Penna, offered quietly; when asked for by hand, that this is the newest; and after an
+ *  update, what is new. */
 export function UpdateNotice({ session }: { session: SceneSession }) {
   useRegularChecks();
   const { update, isLatest } = useUpdates();
   if (update) return <NewVersion update={update} session={session} />;
-  return isLatest ? <IsLatest /> : null;
+  return isLatest ? <IsLatest /> : <WhatsNew />;
 }

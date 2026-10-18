@@ -1395,5 +1395,8 @@
   "Villkor och licenser": "Terms and licences",
   "Penna är gratis under betan och levereras i befintligt skick. Dina texter är dina; ta egna säkerhetskopior av det som är viktigt.": "Penna is free during the beta and provided as is. Your writing is yours; keep your own backups of what matters.",
   "Läs villkoren": "Read the terms",
-  "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr. De ser att en enhet frågar, aldrig vad du skriver. Feedback skickar du själv, som ett vanligt mejl.": "Penna has no accounts and collects nothing. Your texts leave the device only for your own Google Drive, if you connect it. Penna asks GitHub whether there is a new version and fetches dictionaries from jsDelivr. They see that a device asks, never what you write. Feedback is something you send yourself, as an ordinary email."
+  "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr. De ser att en enhet frågar, aldrig vad du skriver. Feedback skickar du själv, som ett vanligt mejl.": "Penna has no accounts and collects nothing. Your texts leave the device only for your own Google Drive, if you connect it. Penna asks GitHub whether there is a new version and fetches dictionaries from jsDelivr. They see that a device asks, never what you write. Feedback is something you send yourself, as an ordinary email.",
+  "Penna är uppdaterad till {version}.": "Penna is updated to {version}.",
+  "Se vad som är nytt": "See what is new",
+  "Tyck till": "Tell us what you think"
 }
