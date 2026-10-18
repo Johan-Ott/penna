@@ -3,7 +3,7 @@ import { useState } from "react";
 import { errorLog } from "@llkit/errorLog.js";
 import { feedbackReport } from "@llkit/feedback/sendFeedback.js";
 import { Row } from "@llkit/controls.js";
-import { numberLocale, t } from "../../i18n/i18n.js";
+import { numberLocale, t, uiLanguage } from "../../i18n/i18n.js";
 
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
 function ErrorReportButton() {
@@ -60,8 +60,44 @@ function Credits() {
   );
 }
 
-const PRIVACY_URL = "https://johan-ott.github.io/penna/integritet.html";
+// The website's pages, in the language Penna is shown in.
+const SITE = "https://johan-ott.github.io/penna/";
+const sitePage = (swedish: string, english: string) =>
+  SITE + (uiLanguage() === "en" ? english : swedish);
 const SUPPORT_URL = "https://github.com/Johan-Ott/penna/issues";
+
+const Link = ({ url, label }: { url: string; label: string }) => (
+  <button className="link-button" onClick={() => void platform.openLink(url)}>
+    {label}
+  </button>
+);
+
+// Privacy, terms and support, which live on the website.
+function SiteLinks() {
+  return (
+    <>
+      <Row
+        label={t("Integritet")}
+        hint={t(
+          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr; feedback går via Formspree. De ser att en enhet frågar, aldrig vad du skriver.",
+        )}
+      >
+        <Link url={sitePage("integritet.html", "privacy.html")} label={t("Integritetspolicy")} />
+      </Row>
+      <Row
+        label={t("Villkor och licenser")}
+        hint={t(
+          "Penna är gratis under betan och levereras i befintligt skick. Dina texter är dina; ta egna säkerhetskopior av det som är viktigt.",
+        )}
+      >
+        <Link url={sitePage("villkor.html", "terms.html")} label={t("Läs villkoren")} />
+      </Row>
+      <Row label={t("Hjälp och support")} hint={t("Frågor, fel och önskemål.")}>
+        <Link url={SUPPORT_URL} label={t("Skriv till oss")} />
+      </Row>
+    </>
+  );
+}
 
 export function AboutTab() {
   return (
@@ -74,21 +110,7 @@ export function AboutTab() {
         <ErrorReportButton />
       </Row>
       <RecentErrors />
-      <Row
-        label={t("Integritet")}
-        hint={t(
-          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr; feedback går via Formspree. De ser att en enhet frågar, aldrig vad du skriver.",
-        )}
-      >
-        <button className="link-button" onClick={() => void platform.openLink(PRIVACY_URL)}>
-          {t("Integritetspolicy")}
-        </button>
-      </Row>
-      <Row label={t("Hjälp och support")} hint={t("Frågor, fel och önskemål.")}>
-        <button className="link-button" onClick={() => void platform.openLink(SUPPORT_URL)}>
-          {t("Skriv till oss")}
-        </button>
-      </Row>
+      <SiteLinks />
       <Credits />
     </>
   );

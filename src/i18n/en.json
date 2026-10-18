@@ -1392,5 +1392,8 @@
   "inte hämtad": "not fetched",
   "Ordlistor: {dictionaries} · Sättmotorn för tryck: {typst}": "Dictionaries: {dictionaries} · Print typesetter: {typst}",
   "Hämtat för skrivandet": "Fetched for writing",
-  "Hämta det som saknas": "Fetch what is missing"
+  "Hämta det som saknas": "Fetch what is missing",
+  "Villkor och licenser": "Terms and licences",
+  "Penna är gratis under betan och levereras i befintligt skick. Dina texter är dina; ta egna säkerhetskopior av det som är viktigt.": "Penna is free during the beta and provided as is. Your writing is yours; keep your own backups of what matters.",
+  "Läs villkoren": "Read the terms"
 }
