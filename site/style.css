@@ -1,16 +1,22 @@
-/* The app's own colours and typefaces, from src/styles/tokens.css: warm grays, black as the
-   primary colour, Literata for what is read and Geist for what is used. */
+/* The app's typefaces, Literata for what is read and Geist for what is used, with brighter
+   colours than the app: the site should feel glad. */
 :root {
-  --bg: #ffffff;
-  --bg-subtle: #f6f5f2;
+  --bg: #fffcf6;
+  --bg-subtle: #fff4e4;
   --card: #ffffff;
-  --text: #111111;
-  --muted: #5c5c5c;
-  --line: #e7e5e1;
-  --primary: #111111;
+  --text: #1d1a16;
+  --muted: #645d55;
+  --line: #efe6d8;
+  --primary: #ff5a36;
   --on-primary: #ffffff;
-  --accent: #3f6b4e;
-  --shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
+  --accent: #2f9e5f;
+  --shadow: 0 24px 64px rgba(120, 60, 20, 0.14);
+  --marker: #ffd54a;
+  --peach: #ffe4d6;
+  --mint: #d8f3e3;
+  --sky: #dcecff;
+  --lilac: #e4d8ff;
+  --butter: #fff1bf;
   --font-ui: "Geist Sans", system-ui, sans-serif;
   --font-prose: "Literata", Georgia, serif;
   color-scheme: light dark;
@@ -18,16 +24,22 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #191816;
-    --bg-subtle: #21201e;
-    --card: #21201e;
-    --text: #f2f0eb;
-    --muted: #a29e98;
-    --line: #3a3835;
-    --primary: #f2f0eb;
-    --on-primary: #191816;
-    --accent: #7fae8d;
+    --bg: #1b1714;
+    --bg-subtle: #251f1a;
+    --card: #251f1a;
+    --text: #f6efe6;
+    --muted: #b3a89c;
+    --line: #3b322a;
+    --primary: #ff7a52;
+    --on-primary: #1b1714;
+    --accent: #6fd39b;
     --shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    --marker: #c99a12;
+    --peach: #3a2620;
+    --mint: #1f3328;
+    --sky: #1f2a3a;
+    --lilac: #2a2438;
+    --butter: #3a3219;
   }
 }
 
@@ -529,4 +541,150 @@ footer .brand img {
   border: 6px solid var(--text);
   border-bottom: 0;
   border-radius: 28px 28px 0 0;
+}
+
+/* Glad: colour, a highlighter in the heading, and a little bounce. */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 900px;
+  z-index: -1;
+  background:
+    radial-gradient(420px 320px at 12% 18%, var(--peach), transparent 70%),
+    radial-gradient(380px 300px at 88% 12%, var(--sky), transparent 70%),
+    radial-gradient(460px 340px at 70% 60%, var(--lilac), transparent 70%),
+    radial-gradient(380px 300px at 22% 72%, var(--mint), transparent 70%);
+  opacity: 0.9;
+}
+
+h1 mark {
+  position: relative;
+  color: inherit;
+  background: linear-gradient(
+    transparent 58%,
+    var(--marker) 58%,
+    var(--marker) 90%,
+    transparent 90%
+  );
+  border-radius: 4px;
+  padding: 0 0.08em;
+}
+
+h1 mark::after {
+  display: inline-block;
+  vertical-align: 0.9em;
+  margin-left: 0.04em;
+  color: var(--primary);
+  font-size: 0.45em;
+  content: "✦";
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.7) rotate(20deg);
+    opacity: 0.6;
+  }
+}
+
+.pill {
+  background: var(--butter);
+  border-color: transparent;
+}
+
+.button {
+  border-radius: 999px;
+  padding: 13px 24px;
+  font-weight: 600;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--primary) 30%, transparent);
+  transition:
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s;
+}
+
+.button:hover {
+  opacity: 1;
+  transform: translateY(-2px) rotate(-1deg);
+}
+
+.button.quiet {
+  background: var(--card);
+  box-shadow: none;
+}
+
+.promises svg {
+  box-sizing: content-box;
+  padding: 10px;
+  border-radius: 14px;
+  color: var(--text);
+}
+
+.promises div:nth-child(1) svg {
+  background: var(--peach);
+}
+
+.promises div:nth-child(2) svg {
+  background: var(--mint);
+}
+
+.promises div:nth-child(3) svg {
+  background: var(--lilac);
+}
+
+.feature:nth-of-type(5n + 1) .frame {
+  background: var(--peach);
+}
+
+.feature:nth-of-type(5n + 2) .frame {
+  background: var(--sky);
+}
+
+.feature:nth-of-type(5n + 3) .frame {
+  background: var(--mint);
+}
+
+.feature:nth-of-type(5n + 4) .frame {
+  background: var(--lilac);
+}
+
+.feature:nth-of-type(5n) .frame {
+  background: var(--butter);
+}
+
+.eyebrow {
+  color: var(--primary);
+}
+
+.closing {
+  background: linear-gradient(135deg, #ff5a36, #ff8a3d 55%, #ffc24a);
+  color: #fff;
+}
+
+.closing .button {
+  border-color: #fff;
+  background: #fff;
+  color: #d43f1d;
+  box-shadow: 0 10px 30px rgba(120, 40, 0, 0.25);
+}
+
+.closing .button.quiet {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  h1 mark::after {
+    animation: none;
+  }
+}
+
+body {
+  position: relative;
 }
