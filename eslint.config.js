@@ -40,11 +40,6 @@ export default tseslint.config(
     files: ["**/*.mjs", "**/*.js"],
     languageOptions: { globals: { process: "readonly" } },
   },
-  // The website's own script runs in the reader's browser.
-  {
-    files: ["site/**/*.js"],
-    languageOptions: { globals: { document: "readonly", fetch: "readonly" } },
-  },
   {
     files: ["tests/**/*.ts", "e2e/**/*.ts"],
     rules: { "max-lines-per-function": "off" },
