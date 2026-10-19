@@ -25,3 +25,20 @@ test("back closes Aa and stays in the text", async ({ page }) => {
   await expect(panel).toBeHidden();
   await expect(editor(page)).toBeVisible();
 });
+
+test("back from Insikter, opened on Boken after Studio, returns to Boken", async ({ page }) => {
+  const tabs = page.getByRole("navigation", { name: "Läge" });
+  await tabs.getByRole("button", { name: "Publicera" }).click();
+  await page.locator(".publish-tile").filter({ hasText: "Studio" }).click();
+  await tabs.getByRole("button", { name: "Boken" }).click();
+  await page
+    .getByText(/ord idag/)
+    .first()
+    .click();
+  await expect(page.getByRole("button", { name: "Stäng insikter" })).toBeVisible();
+
+  await pressBack(page);
+
+  await expect(page.getByRole("button", { name: "Stäng insikter" })).toBeHidden();
+  await expect(page.getByRole("button", { name: /Fortsätt skriva/ })).toBeVisible();
+});

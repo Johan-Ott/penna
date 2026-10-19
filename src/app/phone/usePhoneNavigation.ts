@@ -20,9 +20,11 @@ const LAYERS = "[role=menu], [role=dialog]";
 const openLayers = () => document.querySelectorAll(LAYERS).length;
 
 // A panel, or a screen within a screen such as Studio, marks its way out for back to take; the
-// last one is the one on top.
+// last one in sight is the one on top.
 const innerBack = () =>
-  Array.from(document.querySelectorAll<HTMLElement>("[data-phone-back]")).pop();
+  Array.from(document.querySelectorAll<HTMLElement>("[data-phone-back]"))
+    .filter((element) => element.checkVisibility())
+    .pop();
 
 /** Android's back: closes what lies on top, else the screen before; false when there is none. */
 function pennaBack(depth: number) {
@@ -39,8 +41,14 @@ function pennaBack(depth: number) {
   }
   const target = document.activeElement ?? document.body;
   target.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-  // A layer that does not close with Escape still lets back leave the screen.
-  setTimeout(() => openLayers() >= layers && depth > 1 && window.history.back(), 80);
+  // A layer that does not close with Escape is closed by its own way out, or else back leaves the
+  // screen.
+  setTimeout(() => {
+    if (openLayers() < layers) return;
+    const way = innerBack();
+    if (way) way.click();
+    else if (depth > 1) window.history.back();
+  }, 80);
   return true;
 }
 
