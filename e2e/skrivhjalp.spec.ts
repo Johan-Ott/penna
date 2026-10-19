@@ -19,6 +19,17 @@ test("autocorrect gives a sentence its capital and HEj its case, and Backspace t
   await expect(editor(page)).toContainText("Hejsan då. d");
 });
 
+test("in a line of dialogue, who said it after a question keeps its small letter", async ({
+  page,
+}) => {
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.press("Enter");
+
+  await page.keyboard.type("– Varför? sa hon. sedan gick hon.", { delay: 5 });
+
+  await expect(editor(page)).toContainText("– Varför? sa hon. Sedan gick hon.");
+});
+
 test("Sök efter uppdateringar says so when this is the newest Penna", async ({ page }) => {
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Hjälp" }).click();

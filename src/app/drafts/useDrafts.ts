@@ -43,11 +43,15 @@ export function useDrafts(
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const reload = async () =>
     project && setDrafts(await listDrafts(platform.fileSystem, project.dir));
-  const then = (action: (actions: ReturnType<typeof draftActions>) => Promise<unknown>) => {
-    if (project)
-      void action(draftActions({ project, session, refresh }))
-        .then(reload)
-        .catch(recordFailure("Utkast"));
+  // True once it is done, so a row can say so.
+  const then = async (action: (actions: ReturnType<typeof draftActions>) => Promise<unknown>) => {
+    if (!project) return false;
+    return action(draftActions({ project, session, refresh }))
+      .then(reload)
+      .then(
+        () => true,
+        (error: unknown) => (recordFailure("Utkast")(error), false),
+      );
   };
   return {
     opened,

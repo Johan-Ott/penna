@@ -14,6 +14,10 @@ const capitalise = (match: RegExpMatchArray) => {
   return (match[1] ?? "") + letter.toLocaleUpperCase();
 };
 
+// In a line of dialogue a question or a cry is often followed by who said it: "– Varför? sa hon."
+const isSpeechTag = (match: RegExpMatchArray) =>
+  /[?!]/.test(match[1] ?? "") && /^[–”]/.test(match.input ?? "");
+
 /** The rules, asking `isOn` each time so they switch without a new editor state. */
 export function autocorrectRules(isOn: () => boolean): InputRule[] {
   const sentenceStart = new InputRule(
@@ -21,7 +25,7 @@ export function autocorrectRules(isOn: () => boolean): InputRule[] {
     (state, match, start, end) => {
       // The text up to and with the full stop, to see whether it ends an abbreviation.
       const head = (match.input ?? "").slice(0, (match.index ?? 0) + 1);
-      if (!isOn() || GOES_ON.test(head)) return null;
+      if (!isOn() || GOES_ON.test(head) || isSpeechTag(match)) return null;
       return state.tr.insertText(capitalise(match), start, end);
     },
   );

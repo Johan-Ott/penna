@@ -76,17 +76,22 @@ function LabelRow(props: RowProps) {
   );
 }
 
+// A name the book already has ticks that label, rather than making a second one.
+function withNewLabel(props: LabelsDialogProps & { labels: Label[] }, name: string) {
+  const same = props.labels.find((each) => each.name.toLowerCase() === name.toLowerCase());
+  const color = LABEL_COLORS[props.labels.length % LABEL_COLORS.length] ?? "#7d7d7d";
+  const label = same ?? { id: newSceneId(), name, color };
+  return {
+    fields: { labels: same ? props.labels : [...props.labels, label] },
+    tree: withLabel(props.project.tree, props.nodeId, label.id, true),
+  };
+}
+
 function NewLabel(props: LabelsDialogProps & { labels: Label[] }) {
   const [name, setName] = useState("");
   const add = () => {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    const color = LABEL_COLORS[props.labels.length % LABEL_COLORS.length] ?? "#7d7d7d";
-    const label = { id: newSceneId(), name: trimmed, color };
-    props.onUpdate({
-      fields: { labels: [...props.labels, label] },
-      tree: withLabel(props.project.tree, props.nodeId, label.id, true),
-    });
+    if (!name.trim()) return;
+    props.onUpdate(withNewLabel(props, name.trim()));
     setName("");
   };
   return (

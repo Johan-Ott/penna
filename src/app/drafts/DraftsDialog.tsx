@@ -63,6 +63,8 @@ const metaOf = (project: Project, draft: Draft) =>
 function DraftRow(props: RowProps) {
   const { draft, project, drafts } = props;
   const meta = metaOf(project, draft);
+  const [isRestored, setRestored] = useState(false);
+  const restore = () => void drafts.restore(draft).then(setRestored);
   return (
     <li className="draft-row">
       <span className="draft-text">
@@ -72,8 +74,8 @@ function DraftRow(props: RowProps) {
       <button className="link-button" onClick={() => props.onBeside(draft)}>
         {t("Läs bredvid")}
       </button>
-      <button className="link-button" onClick={() => drafts.restore(draft)}>
-        {t("Återställ")}
+      <button className="link-button" onClick={restore}>
+        {isRestored ? t("Återställt") : t("Återställ")}
       </button>
       <button
         className="icon-button"

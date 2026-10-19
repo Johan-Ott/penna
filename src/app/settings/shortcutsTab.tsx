@@ -15,6 +15,11 @@ import { t } from "../../i18n/i18n.js";
 
 // What the editor and the system own: shown, never moved, and never given to another command.
 const FIXED: [string, string][] = [
+  [t("Ångra"), shortcutText({ key: "z" })],
+  [
+    t("Gör om"),
+    `${shortcutText({ key: "z", shift: true })} ${t("eller")} ${shortcutText({ key: "y" })}`,
+  ],
   [t("Lämna fokusläget"), "Esc"],
   [t("Scenbrytning"), shortcutText({ key: "enter" })],
   [t("Infoga fotnot"), shortcutText({ key: "f", alt: true })],

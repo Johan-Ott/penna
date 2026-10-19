@@ -135,3 +135,18 @@ test("Innehåll shows each chapter's labels, its scenes' too", async ({ page }) 
 
   await expect(page.locator(".contents-row").first().locator(".contents-label")).toHaveText("Elin");
 });
+
+test("a label named as one the book has ticks that one, and makes no second", async ({ page }) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Status och etiketter" });
+  const name = dialog.getByRole("textbox", { name: "Ny etikett" });
+  await name.fill("Tempo");
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+
+  await name.fill("tempo");
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+
+  await expect(dialog.getByRole("button", { name: "Ta bort Tempo" })).toHaveCount(1);
+});
