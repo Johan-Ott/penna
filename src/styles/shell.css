@@ -1499,7 +1499,10 @@
   gap: 8px;
 }
 
+/* Stays in sight at the foot however long the choices above it grow, as Tryckomslag's do. */
 .publish-button {
+  position: sticky;
+  bottom: 12px;
   flex-shrink: 0;
   width: 100%;
   height: 40px;
@@ -3363,6 +3366,16 @@
   grid-template-columns: 1fr 140px 130px 28px;
   gap: 6px;
   align-items: center;
+}
+
+.submit-row > input,
+.submit-row > select {
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: var(--bg);
 }
 
 .submit-row.ja select {

@@ -521,10 +521,14 @@ body .selection-bar.phone .icon-button {
   display: none;
 }
 
+/* The row fades out at its right edge, so it shows there is more to swipe to; the padding lets the
+   last tab come out of the fade. */
 .phone-view .publish-tabs {
   flex-wrap: nowrap;
   overflow-x: auto;
+  padding-right: 32px;
   scrollbar-width: none;
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 }
 
 .phone-view .publish-tile {

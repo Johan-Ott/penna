@@ -855,7 +855,6 @@
   "Skriven i Penna": "Written in Penna",
   "Kopiera bild": "Copy picture",
   "Hej! Här är {chapter}, precis som det ser ut i mitt utkast just nu. Säg gärna vad du tycker.": "Hi! Here is {chapter}, just as it reads in my draft right now. Tell me what you think.",
-  "Utdrag, cirka 600 ord": "Excerpt, about 600 words",
   "Hela kapitlet": "The whole chapter",
   "Vad som skickas": "What is sent",
   "Kopiera färdigformaterat för": "Copy formatted for",
@@ -1426,5 +1425,14 @@
   "Skriv här. Penna sparar av sig själv. Kapitel och scener lägger du till under Boken.": "Write here. Penna saves by itself. Add chapters and scenes under Book.",
   "Exportera som PDF, e-bok eller Word": "Export as PDF, e-book or Word",
   "Exporten stoppades": "The export stopped",
-  "Skriv ett helt antal ord, större än noll.": "Write a whole number of words, more than zero."
+  "Skriv ett helt antal ord, större än noll.": "Write a whole number of words, more than zero.",
+  "Förhandsvisning · Framsidan": "Preview · Front cover",
+  "Förhandsvisning · Ren text": "Preview · Plain text",
+  "Texten utan sidor · {words} ord": "The text without pages · {words} words",
+  "Textomslag": "Text cover",
+  "Utdrag": "Excerpt",
+  "Utdraget är kapitlets första cirka 600 ord.": "The excerpt is the chapter's first 600 words or so.",
+  "Undertitel (valfritt)": "Subtitle (optional)",
+  "ISBN (valfritt)": "ISBN (optional)",
+  "Ett ISBN har 10 eller 13 siffror, som 978-91-…": "An ISBN has 10 or 13 digits, such as 978-91-…"
 }

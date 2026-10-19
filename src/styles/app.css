@@ -1957,8 +1957,10 @@ button.book-cover:hover {
   gap: 6px;
 }
 
+/* As tall as its rows, not the one-line height of the fields it shares a look with */
 .part-text {
   width: 100%;
+  height: auto;
   padding: 8px 10px;
   resize: vertical;
 }

@@ -37,6 +37,7 @@ function weekFooter(card: Card, figures: Week, streak: number) {
   text(card, writing, { x: 44, y }, { size: 13 });
   const inRow = streak === 1 ? t("1 dag i rad") : t("{count} dagar i rad", { count: streak });
   text(card, inRow, { x: 250, y }, { size: 13, align: "center" });
+  if (figures.best.words === 0) return;
   const best = t("bäst: {day}, {count}", {
     day: dayName(figures.best.day, "long"),
     count: formatNumber(figures.best.words),
@@ -82,10 +83,11 @@ export function drawYear(card: Card, figures: ReturnType<typeof yearFigures>) {
   text(card, level, { x: 44, y: card.height - 44 }, { size: 20, font: PROSE });
 }
 
-export function drawCountdown(card: Card, days: number, book: string, release: string) {
+/** `days` is null before there is a release day, which shows as a question rather than as 0. */
+export function drawCountdown(card: Card, days: number | null, book: string, release: string) {
   const middle = card.height / 2;
   const big = { size: 160, weight: 500, spacing: -0.06, align: "center" as const };
-  text(card, String(days), { x: 250, y: middle - 10 }, big);
+  text(card, days === null ? "?" : String(days), { x: 250, y: middle - 10 }, big);
   const left = { ...KICKER, size: 13, alpha: 0.65, align: "center" as const };
   text(card, t("dagar kvar"), { x: 250, y: middle + 26 }, left);
   const title = { size: 26, weight: 600, font: PROSE, align: "center" as const };

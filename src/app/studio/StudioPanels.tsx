@@ -134,7 +134,7 @@ type Letter = ReturnType<typeof useNewsletter>;
 
 function ChapterChoice({ letter }: { letter: Letter }) {
   const scopes: ["utdrag" | "hela", string][] = [
-    ["utdrag", t("Utdrag, cirka 600 ord")],
+    ["utdrag", t("Utdrag")],
     ["hela", t("Hela kapitlet")],
   ];
   return (
@@ -158,6 +158,7 @@ function ChapterChoice({ letter }: { letter: Letter }) {
         options={scopes}
         onSelect={(scope) => letter.setExcerpt(scope === "utdrag")}
       />
+      <span className="setting-hint">{t("Utdraget är kapitlets första cirka 600 ord.")}</span>
     </>
   );
 }

@@ -3,26 +3,59 @@ import { epubCover } from "../../export/epubCover.js";
 import { manuscriptWords } from "../../project/treeLabels.js";
 import type { Project } from "../useProject.js";
 import { PrintPreview } from "../bookdesign/PrintPreview.js";
-import type { ExportState } from "./useExport.js";
-import { t } from "../../i18n/i18n.js";
+import type { ExportFormat, ExportState } from "./useExport.js";
+import { formatNumber, t } from "../../i18n/i18n.js";
 import { platform } from "../platform.js";
 
-function EbookPreview({ book, coverUrl }: { book: BookDetails; coverUrl: string | null }) {
+function CoverPreview(props: { book: BookDetails; coverUrl: string | null; label: string }) {
   const cover =
-    coverUrl ?? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(epubCover(book))}`;
+    props.coverUrl ??
+    `data:image/svg+xml;charset=utf-8,${encodeURIComponent(epubCover(props.book))}`;
   return (
     <div className="export-preview">
-      <span className="setting-hint">{t("Förhandsvisning · E-bok")}</span>
+      <span className="setting-hint">{props.label}</span>
       <img className="export-cover" src={cover} alt={t("Omslaget som e-boken får")} />
     </div>
   );
 }
 
+// The title page of what the format makes; a text format has no pages of its own.
+function TitlePage({ book, note }: { book: BookDetails; note: string }) {
+  return (
+    <div className="export-page">
+      <span className="export-page-title">{book.title}</span>
+      {book.subtitle && <span className="export-page-subtitle">{book.subtitle}</span>}
+      <span className="export-page-author">{book.author || t("[FÖRFATTARNAMN]")}</span>
+      <span className="export-page-note">{note}</span>
+    </div>
+  );
+}
+
+function PagePreview(props: { book: BookDetails; isPlain: boolean; words: number; pages: number }) {
+  const { isPlain, words, pages } = props;
+  return (
+    <div className="export-preview">
+      <span className="setting-hint">
+        {isPlain ? t("Förhandsvisning · Ren text") : t("Förhandsvisning · Standardmanus")}
+      </span>
+      <TitlePage
+        book={props.book}
+        note={
+          isPlain
+            ? t("Texten utan sidor · {words} ord", { words: formatNumber(words) })
+            : t("Titelsida · ca {pages} sidor", { pages })
+        }
+      />
+    </div>
+  );
+}
+
+const PLAIN: ExportFormat[] = ["markdown", "mappar", "text", "html"];
+
 export function Preview(props: {
   project: Project;
   generalAuthor: string;
-  isEbook: boolean;
-  isPrint: boolean;
+  format: ExportFormat;
   coverUrl: string | null;
 }) {
   const { project, generalAuthor } = props;
@@ -30,19 +63,14 @@ export function Preview(props: {
   const details = bookDetails(project.fields, generalAuthor, words);
   const book = { ...details, title: details.title || project.name };
   const pages = estimatedPages(words, bookOutline(project.tree));
-  if (props.isEbook) return <EbookPreview book={book} coverUrl={props.coverUrl} />;
-  if (props.isPrint) return <PrintPreview project={project} generalAuthor={generalAuthor} />;
-  return (
-    <div className="export-preview">
-      <span className="setting-hint">{t("Förhandsvisning · Standardmanus")}</span>
-      <div className="export-page">
-        <span className="export-page-title">{book.title}</span>
-        {book.subtitle && <span className="export-page-subtitle">{book.subtitle}</span>}
-        <span className="export-page-author">{book.author || t("[FÖRFATTARNAMN]")}</span>
-        <span className="export-page-note">{t("Titelsida · ca {pages} sidor", { pages })}</span>
-      </div>
-    </div>
-  );
+  const { format, coverUrl } = props;
+  if (format === "tryck") return <PrintPreview project={project} generalAuthor={generalAuthor} />;
+  if (format === "ebok" || format === "omslag") {
+    const label =
+      format === "ebok" ? t("Förhandsvisning · E-bok") : t("Förhandsvisning · Framsidan");
+    return <CoverPreview book={book} coverUrl={coverUrl} label={label} />;
+  }
+  return <PagePreview book={book} isPlain={PLAIN.includes(format)} words={words} pages={pages} />;
 }
 
 type Failure = Extract<ExportState, { kind: "failed" }>;

@@ -55,7 +55,7 @@ export function pageSetup(design: BookDesign, bleed: number) {
   header: context {
     [#metadata(counter(page).get().first()) <sheet>]
     if not is-plain-page() { running-head(${sides}) }
-    ${design.folio === "overst" ? "if not is-plain-page() { place(top + outer(), folio()) }" : ""}
+    ${design.folio === "overst" ? "if not is-plain-page() { place(bottom + outer(), folio()) }" : ""}
   },
   footer: context {
     ${footerTypst(design)}

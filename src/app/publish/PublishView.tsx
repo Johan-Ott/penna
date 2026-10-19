@@ -155,14 +155,7 @@ function PublishPreview({ props, publishing }: { props: PublishProps; publishing
   if (publishing.step === "design") {
     return <PrintPreview project={props.project} generalAuthor={props.generalAuthor} />;
   }
-  return (
-    <Preview
-      {...props}
-      isEbook={choices.format === "ebok"}
-      isPrint={choices.format === "tryck"}
-      coverUrl={publishing.cover.url}
-    />
-  );
+  return <Preview {...props} format={choices.format} coverUrl={publishing.cover.url} />;
 }
 
 export function PublishView(props: PublishProps) {

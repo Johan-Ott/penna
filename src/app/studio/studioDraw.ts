@@ -44,7 +44,7 @@ export const bookField = (project: Project, key: string) => {
 function countdown(card: Card, { project }: StudioData, today: string) {
   const release = bookField(project, "releaseDate");
   const when = release ? shortDay(release) : t("Sätt utgivningsdag");
-  drawCountdown(card, daysToRelease(release, today) ?? 0, project.name, when);
+  drawCountdown(card, daysToRelease(release, today), project.name, when);
 }
 
 function milestone(card: Card, { project, stats }: StudioData, today: string) {
