@@ -73,3 +73,15 @@ test("Escape within Granska closes it", async ({ page }) => {
 
   await expect(panel).toBeHidden();
 });
+
+test("on a phone Granska opens with nothing to look at too", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: /Fortsätt skriva/ }).click();
+  await editor(page).click();
+  await page.keyboard.press("ControlOrMeta+a");
+  await page.keyboard.type("Det snöade.");
+
+  await page.getByRole("button", { name: "Granska", exact: true }).click();
+
+  await expect(page.getByRole("complementary", { name: "Granskning" })).toBeVisible();
+});
