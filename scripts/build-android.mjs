@@ -102,7 +102,8 @@ if (process.argv.includes("--play")) {
   const aab = join(bundle, readdirSync(bundle).find((name) => name.endsWith(".aab")) ?? "");
   mkdirSync("out", { recursive: true });
   copyFileSync(aab, join("out", "Penna.aab"));
-  const jarsigner = join(process.env.JAVA_HOME ?? "", "bin", "jarsigner");
+  // Quoted, as Java usually lies under Program Files.
+  const jarsigner = `"${join(process.env.JAVA_HOME ?? "", "bin", "jarsigner")}"`;
   step("Filen signeras", jarsigner, [
     `-keystore ${releaseKey} -storepass:file ${releasePass} ${join("out", "Penna.aab")} penna`,
   ]);
