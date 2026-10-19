@@ -38,11 +38,10 @@ function addOnce(file, anchor, line) {
 }
 
 function addOwnSources() {
+  const sources = join(android, "src/main/java/se/skrivro/app");
+  mkdirSync(sources, { recursive: true });
   for (const file of readdirSync("src-tauri/android")) {
-    copyFileSync(
-      join("src-tauri/android", file),
-      join(android, "src/main/java/se/skrivro/app", file),
-    );
+    copyFileSync(join("src-tauri/android", file), join(sources, file));
   }
   cpSync("src-tauri/icons/android", join(android, "src/main/res"), { recursive: true });
   addOnce(join(android, "build.gradle.kts"), "dependencies {", `    ${signInLibrary}`);
