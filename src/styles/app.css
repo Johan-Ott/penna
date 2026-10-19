@@ -40,6 +40,11 @@ button {
   cursor: pointer;
 }
 
+/* Hidden means hidden, also for an element whose own rule sets display, such as a settings row. */
+[hidden] {
+  display: none !important;
+}
+
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;

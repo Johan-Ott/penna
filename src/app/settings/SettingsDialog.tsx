@@ -24,8 +24,9 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
 // A phone has no keyboard to take shortcuts from.
 const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));
 
-// The tabs that hold settings, searched together; Hjälp and Om Penna are reading, not settings.
-const SEARCHED = TABS.slice(0, 4);
+// The tabs that hold settings, and the shortcuts, searched together; Hjälp and Om Penna are reading.
+const READING = [t("Hjälp"), t("Om Penna")];
+const SEARCHED = TABS.filter(([label]) => !READING.includes(label) && isShown(label));
 
 // Every settings tab is drawn, and the rows whose words do not hold the search are hidden.
 function Found(props: TabProps & { query: string }) {

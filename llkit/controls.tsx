@@ -166,3 +166,12 @@ export function DialogButtons(props: {
     </div>
   );
 }
+
+/** The way out of a dialog that saves as it goes, for a screen with no Escape key. */
+export const DoneButton = ({ onClose }: { onClose: () => void }) => (
+  <div className="dialog-actions">
+    <button className="button primary" onClick={onClose}>
+      {t("Klar")}
+    </button>
+  </div>
+);
