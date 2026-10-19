@@ -36,7 +36,15 @@
 }
 
 .phone-bar-title.prose {
+  display: block;
   font: 600 17px var(--font-prose);
+}
+
+/* A long title ends in … rather than running out of the bar on both sides. */
+.phone-bar-title > span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .phone-bar-sub {

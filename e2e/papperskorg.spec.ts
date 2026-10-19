@@ -26,3 +26,13 @@ test("a scene dragged onto Personer stays in the book", async ({ page }) => {
 
   await expect.poll(() => rowNames(page)).toEqual(before);
 });
+
+test("a scene merged with the next is not counted as words written today", async ({ page }) => {
+  await treeRow(page, "Köket").click();
+  await treeRow(page, "Köket").click({ button: "right" });
+
+  await page.getByRole("menuitem", { name: "Slå ihop med nästa scen" }).click();
+
+  await expect(page.locator(".tree-row.active .tree-meta")).not.toHaveText("94");
+  await expect(page.getByText(/^0 \/ /)).toBeVisible();
+});

@@ -80,3 +80,18 @@ test("today's card opens Dagens mål, and Ändra mål goes on to the goals", asy
   await day.getByRole("button", { name: "Ändra mål" }).click();
   await expect(page.getByRole("dialog", { name: "Mål för projektet" })).toBeVisible();
 });
+
+test("a daily goal below zero is not saved, and the field says why", async ({ page }) => {
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
+  await page.locator(".insight-day").click();
+  await page
+    .getByRole("dialog", { name: "Dagens mål" })
+    .getByRole("button", { name: "Ändra mål" })
+    .click();
+  const goals = page.getByRole("dialog", { name: "Mål för projektet" });
+
+  await goals.getByLabel("Dagligt ordmål").fill("-5");
+
+  await expect(goals).toContainText("Skriv ett helt antal ord, större än noll.");
+  await expect(goals.getByRole("button", { name: "Spara" })).toBeDisabled();
+});

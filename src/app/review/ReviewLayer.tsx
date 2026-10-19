@@ -1,3 +1,4 @@
+import { TextSelection, type Command } from "prosemirror-state";
 import type { Comment } from "../../project/comments.js";
 import { useEffect, useRef, useState } from "react";
 import { useSettledDoc } from "../../editor/editorStore.js";
@@ -24,6 +25,13 @@ import { RevisionSection } from "./RevisionSection.js";
 import { usePhone } from "../phone/usePhone.js";
 import { SuggestStart } from "./Suggesting.js";
 import type { useComments } from "./useComments.js";
+
+const selectRange =
+  ({ from, to }: { from: number; to: number }): Command =>
+  (state, dispatch) => {
+    dispatch?.(state.tr.setSelection(TextSelection.create(state.doc, from, to)).scrollIntoView());
+    return true;
+  };
 
 // Only what still waits: a reply belongs to its comment, and a resolved one is done.
 const openComments = (comments: Comment[]) =>
@@ -135,6 +143,13 @@ function NarrationSection({ app, fields }: { app: AppState; fields: Record<strin
   );
 }
 
+const Narration = ({ app, project }: Pick<ShownProps, "app" | "project">) => (
+  <>
+    <NarrationSection app={app} fields={project.fields} />
+    <SuggestStart app={app} />
+  </>
+);
+
 function ShownReview(props: ShownProps) {
   const { app } = props;
   const { review: isReviewOn, repeatWindow } = app.writingMode.settings;
@@ -144,12 +159,7 @@ function ShownReview(props: ShownProps) {
     <ReviewPanel
       review={isReviewOn ? review : null}
       commentsSection={<CommentsAndTasks {...props} />}
-      narrationSection={
-        <>
-          <NarrationSection app={app} fields={props.project.fields} />
-          <SuggestStart app={app} />
-        </>
-      }
+      narrationSection={<Narration app={app} project={props.project} />}
       bookNotes={bookNotesOf(app, props.project)}
       revisionSection={<RevisionSection revision={app.revision} />}
       revisionCount={app.revision.changes.length}
@@ -157,6 +167,7 @@ function ShownReview(props: ShownProps) {
       onOpenCard={app.cards.open}
       onReplaceAll={(suspect) => app.search.scope.replaceAll(replaceAllQuery(suspect))}
       onIgnore={(word) => void app.updateFields({ ignoredNames: [...review.ignored, word] })}
+      onShowRange={(range) => app.editor.run(selectRange(range))}
       isPinnedOpen={props.comments.draft !== null}
       commentCount={openComments(props.comments.comments)}
       isOpen={app.writingMode.isReviewOpen}

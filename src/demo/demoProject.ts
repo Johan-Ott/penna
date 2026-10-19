@@ -26,7 +26,7 @@ Din Henrik
 
 const ISEN = `Isen bar. Den hade burit sedan jul, men Elin gick ändå nära stranden, där vassen stack upp genom snön.
 
-Hon tänkte på det Arvidd hade sagt, eller snarare på det han inte hade sagt. Fyrtio år av tystnad hade gjort honom bra på det.
+Hon tänkte på det Arvid hade sagt, eller snarare på det han inte hade sagt. Fyrtio år av tystnad hade gjort honom bra på det.
 
 * * *
 

@@ -23,6 +23,10 @@ const wholeNumber = (text: string) => {
   return value > 0 ? value : undefined;
 };
 
+// A goal of -5 or 2,5 is a slip, not a wish to remove the goal; an empty field is that wish.
+const isWrong = (key: GoalKey, text: string) =>
+  key !== "deadline" && text.trim() !== "" && wholeNumber(text) === undefined;
+
 // An empty field removes that goal; undefined values are left out of project.json.
 const fieldsOf = (form: GoalForm) => ({
   dailyGoal: wholeNumber(form.dailyGoal),
@@ -46,12 +50,24 @@ function GoalFields({ form, onChange }: { form: GoalForm; onChange: (form: GoalF
       <input
         type={key === "deadline" ? "date" : "number"}
         min={key === "deadline" ? undefined : 1}
+        aria-invalid={isWrong(key, form[key])}
         value={form[key]}
         onChange={(event) => onChange({ ...form, [key]: event.target.value })}
       />
-      <span className="setting-hint">{hint}</span>
+      <span className="setting-hint">
+        {isWrong(key, form[key]) ? t("Skriv ett helt antal ord, större än noll.") : hint}
+      </span>
     </label>
   ));
+}
+
+function SaveButton({ form, onSave }: { form: GoalForm; onSave: () => void }) {
+  const isReady = !FIELDS.some(([key]) => isWrong(key, form[key]));
+  return (
+    <button className="button primary" disabled={!isReady} onClick={onSave}>
+      {t("Spara")}
+    </button>
+  );
 }
 
 export function GoalsDialog({ fields, onSave, onClose }: GoalsDialogProps) {
@@ -76,9 +92,7 @@ export function GoalsDialog({ fields, onSave, onClose }: GoalsDialogProps) {
           <button className="button secondary" onClick={onClose}>
             {t("Avbryt")}
           </button>
-          <button className="button primary" onClick={save}>
-            {t("Spara")}
-          </button>
+          <SaveButton form={form} onSave={save} />
         </div>
       </div>
     </div>

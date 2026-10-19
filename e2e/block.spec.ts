@@ -60,3 +60,17 @@ test("a layout keeps which panels are open, and brings them back", async ({ page
 
   await expect(page.getByRole("region", { name: "I scenen" })).toBeVisible();
 });
+
+test("a layout with Insikter brings it back after the sprint was opened", async ({ page }) => {
+  await page.getByRole("button", { name: "Insikter", exact: true }).click();
+  await expect(page.locator(".insights-head")).toBeVisible();
+  await page.getByRole("button", { name: "Layouter" }).click();
+  await page.getByRole("menuitem", { name: "Spara som layout 1" }).click();
+  await page.getByRole("button", { name: "Skrivsprint" }).first().click();
+
+  await page.getByRole("button", { name: /^Layouter/ }).click();
+  await page.getByRole("menuitemradio", { name: "Layout 1" }).click();
+
+  await expect(page.locator(".insights-head")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Skrivsprint" })).toBeHidden();
+});

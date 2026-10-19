@@ -24,6 +24,8 @@ interface ReviewPanelProps {
   onOpenCard: (id: string) => void;
   onReplaceAll: (suspect: NameSuspect) => void;
   onIgnore: (word: string) => void;
+  /** Selects the words in the text, such as a repeated word's first place. */
+  onShowRange: (range: { from: number; to: number }) => void;
   /** Kept open while a comment is being written. */
   isPinnedOpen: boolean;
   isOpen: boolean;
@@ -88,6 +90,27 @@ const ProseItems = ({ notes }: { notes: ProseNote[] }) =>
     </div>
   ));
 
+type Repeat = ReturnType<typeof useReview>["repeats"][number];
+
+function RepeatItem(props: ReviewPanelProps & { repeat: Repeat }) {
+  const { repeat } = props;
+  return (
+    <button
+      className="review-item review-jump"
+      onClick={() => repeat.first && props.onShowRange(repeat.first)}
+    >
+      <span className="review-title">{t("Upprepning")}</span>
+      <span className="review-text">
+        {t("”{word}” {times} inom {window} meningar.", {
+          word: repeat.word,
+          times: times(repeat.count),
+          window: inWords(props.repeatWindow),
+        })}
+      </span>
+    </button>
+  );
+}
+
 function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useReview> }) {
   const { suspects, repeats, prose } = props.review;
   if (suspects.length + repeats.length + prose.length === 0) {
@@ -100,16 +123,7 @@ function ToLookAt(props: ReviewPanelProps & { review: ReturnType<typeof useRevie
         <SpellingItem key={suspect.word} suspect={suspect} {...props} />
       ))}
       {repeats.map((repeat) => (
-        <div key={repeat.word} className="review-item">
-          <span className="review-title">{t("Upprepning")}</span>
-          <span className="review-text">
-            {t("”{word}” {times} inom {window} meningar.", {
-              word: repeat.word,
-              times: times(repeat.count),
-              window: inWords(props.repeatWindow),
-            })}
-          </span>
-        </div>
+        <RepeatItem key={repeat.word} repeat={repeat} {...props} />
       ))}
       <ProseItems notes={prose} />
     </section>
@@ -164,6 +178,8 @@ export function ReviewPanel(props: ReviewPanelProps) {
       className={isShown ? "review-panel open" : "review-panel"}
       aria-label={t("Granskning")}
       style={floating.style}
+      // From within the panel; in the text, Escape already means other things.
+      onKeyDown={(event) => event.key === "Escape" && props.onOpenChange(false)}
     >
       <ReviewHeader
         isShown={isShown}

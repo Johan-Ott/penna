@@ -96,7 +96,7 @@ function openRows(app: AppState, project: Project): Row[] {
 
 function rowsOf(app: AppState, project: Project): Row[] {
   const { fields, tree, summaries } = project;
-  const day: Row = { label: t("I dag"), words: app.today.words, goal: dailyGoalOf(fields) };
+  const day: Row = { label: t("Idag"), words: app.today.words, goal: dailyGoalOf(fields) };
   const words = manuscriptWords(tree, summaries);
   const book: Row = { label: t("Boken"), words, goal: projectGoals(fields).totalGoal };
   return [day, ...openRows(app, project), book];

@@ -1,5 +1,5 @@
 import type { SearchQuery } from "prosemirror-search";
-import { replaceAll, search, setSearchState } from "prosemirror-search";
+import { replaceAll, replaceNext, search, setSearchState } from "prosemirror-search";
 import { EditorState, type Command } from "prosemirror-state";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { joinSceneFile, splitSceneFile } from "../manuscript/sceneFile.js";
@@ -81,3 +81,11 @@ export function nextSceneWith(
   }
   return null;
 }
+
+// Ersätt replaces at once; prosemirror-search's own first only selects when no match is selected.
+export const replaceOneAndMove: Command = (state, dispatch, view) => {
+  if (!view) return replaceNext(state, dispatch);
+  const before = view.state.doc;
+  replaceNext(view.state, view.dispatch);
+  return view.state.doc !== before || replaceNext(view.state, view.dispatch);
+};

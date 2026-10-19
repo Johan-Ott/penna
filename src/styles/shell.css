@@ -3992,3 +3992,11 @@
   color: var(--text-muted);
   font-style: italic;
 }
+
+/* A card that takes you to its words in the text */
+.review-jump {
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}

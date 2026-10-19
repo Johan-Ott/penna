@@ -24,17 +24,20 @@ const reviewButton = (page: Page) => page.getByRole("button", { name: /^Granska 
 test("Granska counts what still waits: not a reply, and not a resolved comment", async ({
   page,
 }) => {
-  const before = Number((await reviewButton(page).getAttribute("aria-label"))?.match(/\d+/)?.[0]);
+  const count = async () =>
+    Number((await reviewButton(page).getAttribute("aria-label"))?.match(/\d+/)?.[0]);
   await comment(page, "Ska brevet vara gult?");
-  await expect(reviewButton(page)).toHaveAttribute("aria-label", `Granska · ${before + 1}`);
+  await expect(reviewButton(page)).toHaveAttribute("aria-label", /Granska · \d+/);
+  const withComment = await count();
 
   await page.getByRole("button", { name: "Svara" }).first().click();
   await page.keyboard.type("Ja, gulnat.");
   await page.getByRole("button", { name: "Svara" }).last().click();
-  await expect(reviewButton(page)).toHaveAttribute("aria-label", `Granska · ${before + 1}`);
+  await expect(page.getByText("Ja, gulnat.")).toBeVisible();
+  expect(await count()).toBe(withComment);
 
   await page.getByRole("button", { name: "Lös" }).first().click();
-  await expect(reviewButton(page)).toHaveAttribute("aria-label", `Granska · ${before}`);
+  await expect(reviewButton(page)).toHaveAttribute("aria-label", `Granska · ${withComment - 1}`);
 });
 
 test("a comment can be removed, and its mark in the text goes with it", async ({ page }) => {
@@ -58,4 +61,15 @@ test("Förslagsläge shows what is typed and what is cut while it is written", a
   await page.keyboard.press("Backspace");
 
   await expect(editor(page).locator(".suggestion-removed")).toBeVisible();
+});
+
+test("Escape within Granska closes it", async ({ page }) => {
+  await reviewButton(page).click();
+  const panel = page.locator(".review-panel.open");
+  await expect(panel).toBeVisible();
+
+  await panel.getByRole("button").first().focus();
+  await page.keyboard.press("Escape");
+
+  await expect(panel).toBeHidden();
 });

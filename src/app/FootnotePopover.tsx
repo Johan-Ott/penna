@@ -36,7 +36,8 @@ function FootnoteText(props: { editor: Editor; position: number; text: string })
       onKeyDown={(event) => {
         if (event.key === "Escape" || (event.key === "Enter" && !event.shiftKey)) {
           event.preventDefault();
-          leave(editor, position, false);
+          // A footnote left without a word in it was not wanted.
+          leave(editor, position, props.text.trim() === "");
         }
       }}
     />

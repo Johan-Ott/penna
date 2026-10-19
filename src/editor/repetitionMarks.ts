@@ -17,6 +17,7 @@ export const sceneRepetitions = (doc: Node, window: number) =>
   found(doc, window).map((repetition) => ({
     word: repetition.word,
     count: repetition.most,
+    first: repetition.ranges[0],
   }));
 
 export function repetitionDecorations(doc: Node, window: number): DecorationSet {

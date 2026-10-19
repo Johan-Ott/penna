@@ -60,7 +60,7 @@ function goalLine(numbers: Numbers, share: number) {
 function deadlineLine({ plan, goals, average }: Numbers) {
   if (!plan || !goals.deadline) return null;
   if (plan.wordsPerDay === 0) return t("Slutmålet är nått.");
-  return t("{needed} ord per dag räcker till {day}. Du skriver i snitt {average}.", {
+  return t("{needed} ord per dag räcker till {day}. Du skriver i snitt {average} ord per dag.", {
     needed: formatNumber(plan.wordsPerDay),
     day: shortDay(goals.deadline),
     average: formatNumber(average),

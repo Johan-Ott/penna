@@ -68,3 +68,15 @@ test("Med anteckningar searches the notes' text too", async ({ page }) => {
   await expect(hits).toHaveCount(1);
   await expect(hits).toContainText("Elin");
 });
+
+test("Ersätt replaces the next match at the first click", async ({ page }) => {
+  await editor(page).click();
+  await page.keyboard.press("ControlOrMeta+Home");
+  await page.keyboard.press("ControlOrMeta+f");
+  await page.getByRole("textbox", { name: "Sök" }).fill("Elin");
+  await page.getByRole("textbox", { name: "Ersätt med" }).fill("Elina");
+
+  await page.getByRole("button", { name: "Ersätt", exact: true }).click();
+
+  await expect(editor(page)).toContainText("Elina");
+});

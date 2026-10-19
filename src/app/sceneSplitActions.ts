@@ -47,8 +47,11 @@ async function merge(input: SplitInput) {
   const path = scenePath(open.project.dir, nextId);
   const text = await platform.fileSystem.readText(path).catch(() => null);
   if (text === null) return;
+  // What was typed before counts as written; the scene taken in does not.
+  if (!(await input.session.autosave.flush())) return;
+  input.session.isRearranging = true;
   input.editor.run(appendDoc(parseMarkdown(splitSceneFile(text).body)));
-  await input.session.autosave.flush();
+  await input.session.autosave.flush().finally(() => (input.session.isRearranging = false));
   await input.updateTree(moveToTrash(open.project.tree, nextId));
   await input.refresh();
 }

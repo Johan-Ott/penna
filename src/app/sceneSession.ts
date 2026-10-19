@@ -50,15 +50,18 @@ export interface SceneSession {
   scene: OpenScene | null;
   /** Förslagsläge: what is typed is saved beside the scene as changes to accept, not in it. */
   isSuggesting: boolean;
+  /** While text moves between scenes, as a merge does: saved, but not counted as written. */
+  isRearranging: boolean;
 }
 
 const textOf = (session: SceneSession, doc: Node) =>
   joinSceneFile({ frontMatter: session.scene?.frontMatter ?? "", body: serializeMarkdown(doc) });
 
 export function createSceneSession(fileSystem: FileSystem, hooks: SceneSessionHooks) {
-  const current: { scene: OpenScene | null; isSuggesting: boolean } = {
+  const current: { scene: OpenScene | null; isSuggesting: boolean; isRearranging: boolean } = {
     scene: null,
     isSuggesting: false,
+    isRearranging: false,
   };
   const autosave = createAutosave({
     write: async (text) => {
@@ -68,7 +71,7 @@ export function createSceneSession(fileSystem: FileSystem, hooks: SceneSessionHo
         return writeSuggestion(fileSystem, scene.dir, scene.id, splitSceneFile(text).body);
       const before = autosave.lastSavedText();
       await writeAtomic(fileSystem, scenePath(scene.dir, scene.id), text);
-      hooks.onSaved?.(scene, before, text);
+      hooks.onSaved?.(scene, current.isRearranging ? text : before, text);
     },
     onStatus: hooks.onSaveStatus,
   });

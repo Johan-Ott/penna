@@ -5,12 +5,11 @@ import {
   getSearchState,
   replaceAll,
   replaceCurrent,
-  replaceNext,
   SearchQuery,
 } from "prosemirror-search";
 import type { Command, EditorState } from "prosemirror-state";
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
-import { applyQuery, type ManuscriptScope } from "./manuscriptSearch.js";
+import { applyQuery, replaceOneAndMove, type ManuscriptScope } from "./manuscriptSearch.js";
 import { countText, SearchFilters, SearchResults } from "./SearchResults.js";
 import { t } from "../i18n/i18n.js";
 
@@ -59,7 +58,7 @@ function searchActions(props: SearchPanelProps, query: SearchQuery) {
     return {
       position: () => matchPosition(editorState),
       step: (isBackwards: boolean) => run(isBackwards ? findPrev : findNext, false),
-      replaceOne: () => run(replaceNext, false),
+      replaceOne: () => run(replaceOneAndMove, false),
       replaceEvery: () => {
         const { total } = matchPosition(editorState);
         run(replaceAll, false);

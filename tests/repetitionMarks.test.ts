@@ -18,6 +18,6 @@ describe("repetition marks", () => {
   it("lists each repeated word once, with how often, for the review panel", () => {
     const found = sceneRepetitions(doc, 3);
 
-    expect(found).toEqual([{ word: "hade", count: 2 }]);
+    expect(found).toMatchObject([{ word: "hade", count: 2 }]);
   });
 });

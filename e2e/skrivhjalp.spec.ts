@@ -83,3 +83,16 @@ test("a click on a repeated word says so and leads to Granska", async ({ page })
   await help.getByRole("button", { name: "Granska" }).click();
   await expect(page.locator(".review-panel.open")).toBeVisible();
 });
+
+test("an Upprepning card in Granska selects the word in the text", async ({ page }) => {
+  await page.locator(".ProseMirror .repeat").first().click();
+  await page.locator(".click-corrections").getByRole("button", { name: "Granska" }).click();
+
+  await page
+    .getByRole("button", { name: /^Upprepning/ })
+    .first()
+    .click();
+
+  const selected = await page.evaluate(() => window.getSelection()?.toString() ?? "");
+  expect(selected.length).toBeGreaterThan(1);
+});

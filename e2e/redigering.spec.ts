@@ -146,3 +146,13 @@ test("redo with nothing left to redo leaves the text as it is", async ({ page })
   await expect(editor(page)).toContainText("Ångra mig.");
   await expect(editor(page)).toContainText("En rad till.");
 });
+
+test("a footnote left empty with Escape is not kept", async ({ page }) => {
+  await openExample(page);
+  await cursorAfterFirstParagraph(page);
+
+  await page.keyboard.press("ControlOrMeta+Alt+f");
+  await page.keyboard.press("Escape");
+
+  await expect(editor(page).locator("sup.footnote")).toHaveCount(0);
+});
