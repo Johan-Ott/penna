@@ -141,7 +141,12 @@ function ExportSaved(props: {
   const { showInFolder } = platform;
   return (
     <div className="toast inverted" role="status">
-      <span>{t("{file} är sparad", { file: props.state.fileName })}</span>
+      <span>
+        {/* A phone hands the file to its share sheet, which does not say where it went. */}
+        {platform.shareFile
+          ? t("{file} är klar", { file: props.state.fileName })
+          : t("{file} är sparad", { file: props.state.fileName })}
+      </span>
       {showInFolder && (
         <button
           className="button secondary small"

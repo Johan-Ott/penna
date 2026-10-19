@@ -1439,5 +1439,6 @@
   "Person, plats eller etikett": "Person, place or label",
   "Inga skrivdagar än": "No writing days yet",
   "Återställt": "Restored",
-  "eller": "or"
+  "eller": "or",
+  "{file} är klar": "{file} is ready"
 }
