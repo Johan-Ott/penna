@@ -42,4 +42,39 @@ describe("errorLog", () => {
 
     expect(log.report({ app: "Penna", version: "0.1.0", device: "Android" })).toContain("Inga fel");
   });
+
+  const shelf = () => {
+    const items = new Map<string, string>();
+    return {
+      getItem: (key: string) => items.get(key) ?? null,
+      setItem: (key: string, value: string) => void items.set(key, value),
+    };
+  };
+
+  it("brings the errors of a run that crashed into the next run's report", () => {
+    const device = shelf();
+    const first = createErrorLog(() => 0, device);
+    first.start();
+    first.record("Kunde inte spara Köket");
+
+    const next = createErrorLog(() => 0, device);
+
+    expect(next.start()).toBe(true);
+    expect(next.report({ app: "Penna", version: "0.4.4", device: "Android" })).toContain(
+      "Kunde inte spara Köket",
+    );
+  });
+
+  it("starts empty after a run that was put away or closed as it should", () => {
+    const device = shelf();
+    const first = createErrorLog(() => 0, device);
+    first.start();
+    first.record("Drive svarade 500");
+    first.setRunning(false);
+
+    const next = createErrorLog(() => 0, device);
+
+    expect(next.start()).toBe(false);
+    expect(next.latest()).toEqual([]);
+  });
 });

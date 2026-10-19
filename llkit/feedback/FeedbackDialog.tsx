@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Choice, Dialog, DialogButtons } from "../controls.js";
-import { recordFailure } from "../errorLog.js";
+import { crashedLastTime, recordFailure } from "../errorLog.js";
 import { device } from "../platform/device.js";
 import {
   canSendFeedback,
@@ -10,6 +10,7 @@ import {
   type Feedback,
   type FeedbackKind,
 } from "./sendFeedback.js";
+import { appInfo } from "../appInfo.js";
 import { t } from "../i18n.js";
 
 const KINDS: [FeedbackKind, string][] = [
@@ -139,4 +140,33 @@ export function useFeedbackDialog() {
     open: () => setOpen(true),
     layer: isOpen && <FeedbackDialog onClose={() => setOpen(false)} />,
   };
+}
+
+/** Once, after a crash with errors: an offer to send them. Nothing goes unless the writer sends it. */
+export function CrashOffer() {
+  const [isShown, setShown] = useState(crashedLastTime);
+  const feedback = useFeedbackDialog();
+  return (
+    <>
+      {isShown && (
+        <div className="toast crash-offer" role="status">
+          <span>
+            {t("{app} stängdes oväntat förra gången. Vill du skicka felrapporten till oss?", {
+              app: appInfo().name,
+            })}
+          </span>
+          <button
+            className="button primary small"
+            onClick={() => (setShown(false), feedback.open())}
+          >
+            {t("Skicka")}
+          </button>
+          <button className="link-button" onClick={() => setShown(false)}>
+            {t("Nej tack")}
+          </button>
+        </div>
+      )}
+      {feedback.layer}
+    </>
+  );
 }

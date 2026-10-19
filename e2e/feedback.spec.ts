@@ -81,3 +81,23 @@ test("after an update, Penna shows what is new once, and asks what the writer th
   await expect(page.getByRole("button", { name: "Prova exempelboken" })).toBeVisible();
   await expect(page.getByRole("dialog", { name: /Nytt i Penna/ })).toBeHidden();
 });
+
+test("after a crash with errors, the next start offers to send them, and sends nothing itself", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("crashed")) return;
+    sessionStorage.setItem("crashed", "1");
+    const entries = [{ time: 0, message: "Kunde inte spara Köket" }];
+    localStorage.setItem("llkit.errors", JSON.stringify({ entries, isRunning: true }));
+  });
+  await openExample(page);
+  const offer = page.getByRole("status").filter({ hasText: "stängdes oväntat" });
+  await expect(offer).toBeVisible();
+
+  await offer.getByRole("button", { name: "Skicka" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Skicka feedback" });
+  await dialog.getByText("Visa vad som skickas").click();
+  await expect(dialog).toContainText("Kunde inte spara Köket");
+});

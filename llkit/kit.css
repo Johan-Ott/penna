@@ -558,3 +558,9 @@ button:not(:disabled):active {
     overflow-y: auto;
   }
 }
+
+/* After a crash, low on the screen and above what is open, until the writer answers. */
+.crash-offer {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+}

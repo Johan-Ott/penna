@@ -31,5 +31,8 @@
   "Skriv mejlet": "Write the email",
   "Felrapporten är kopierad: klistra in den här.": "The error report is copied: paste it here.",
   "Texten kunde inte kopieras. Skriv den i ett mejl till oss i stället.": "The text could not be copied. Write it in a mail to us instead.",
-  "Klar": "Done"
+  "Klar": "Done",
+  "Skicka": "Send",
+  "Nej tack": "No thanks",
+  "{app} stängdes oväntat förra gången. Vill du skicka felrapporten till oss?": "{app} closed unexpectedly last time. Would you like to send us the error report?"
 }

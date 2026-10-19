@@ -1,3 +1,4 @@
+import { CrashOffer } from "@llkit/feedback/FeedbackDialog.js";
 import { useEffect, useState } from "react";
 import type { AppUpdate } from "./platform.js";
 import type { SceneSession } from "./sceneSession.js";
@@ -90,9 +91,17 @@ function IsLatest() {
 
 /** A newer Penna, offered quietly; when asked for by hand, that this is the newest; and after an
  *  update, what is new. */
-export function UpdateNotice({ session }: { session: SceneSession }) {
+function VersionNotice({ session }: { session: SceneSession }) {
   useRegularChecks();
   const { update, isLatest } = useUpdates();
   if (update) return <NewVersion update={update} session={session} />;
   return isLatest ? <IsLatest /> : <WhatsNew />;
 }
+
+/** What Penna says at start: a new version, what is new, or an offer to report a crash. */
+export const UpdateNotice = ({ session }: { session: SceneSession }) => (
+  <>
+    <VersionNotice session={session} />
+    <CrashOffer />
+  </>
+);
