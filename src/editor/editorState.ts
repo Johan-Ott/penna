@@ -87,11 +87,16 @@ export const newParagraph: Command = (state, dispatch, view) =>
     view,
   ) ?? false;
 
+// Handled even with nothing to take back, or the browser's own undo of the page runs instead.
+const always =
+  (command: Command): Command =>
+  (state, dispatch) => (command(state, dispatch), true);
+
 const writingKeys = keymap({
   Enter: newParagraph,
-  "Mod-z": undo,
-  "Mod-y": redo,
-  "Shift-Mod-z": redo,
+  "Mod-z": always(undo),
+  "Mod-y": always(redo),
+  "Shift-Mod-z": always(redo),
   "Mod-b": toggleBold,
   "Mod-i": toggleItalic,
   "Mod-Enter": insertSceneBreak,

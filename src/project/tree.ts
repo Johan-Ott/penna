@@ -29,6 +29,9 @@ export interface TreeNode {
   knownBy?: Record<string, string>;
   /** A chapter's or scene's own goal in words. */
   goal?: number;
+  /** In Papperskorg: where it was, so it goes back there; no parent is the book itself. */
+  trashedFrom?: string;
+  trashedAt?: number;
   children?: TreeNode[];
 }
 
@@ -131,8 +134,36 @@ function canMoveInto(tree: TreeNode[], node: TreeNode, parentId: string | null):
   return !isOwnDescendant;
 }
 
-export const moveToTrash = (tree: TreeNode[], id: string) =>
-  moveNode(tree, id, TRASH_ID, Number.MAX_SAFE_INTEGER);
+export function moveToTrash(tree: TreeNode[], id: string) {
+  const found = findNode(tree, id);
+  if (!found || !canMoveInto(tree, found.node, TRASH_ID)) return tree;
+  const from = found.parent ? { trashedFrom: found.parent.id } : {};
+  const node = { ...found.node, ...from, trashedAt: found.index };
+  return insertNode(removeNode(tree, id), node, TRASH_ID, Number.MAX_SAFE_INTEGER);
+}
+
+const LAST = Number.MAX_SAFE_INTEGER;
+
+function placeBefore(tree: TreeNode[], { trashedFrom, trashedAt }: TreeNode) {
+  const isGone =
+    trashedFrom !== undefined &&
+    (findNode(tree, trashedFrom) === null || isInTrash(tree, trashedFrom));
+  return isGone
+    ? { parentId: null, index: LAST }
+    : { parentId: trashedFrom ?? null, index: trashedAt ?? LAST };
+}
+
+/** Back where it was taken from, or last in the book when that place is gone or thrown away. */
+export function putBack(tree: TreeNode[], id: string) {
+  const node = findNode(tree, id)?.node;
+  if (!node) return tree;
+  const back = { ...node };
+  delete back.trashedFrom;
+  delete back.trashedAt;
+  const { parentId, index } = placeBefore(tree, node);
+  if (!canMoveInto(tree, back, parentId)) return tree;
+  return insertNode(removeNode(tree, id), back, parentId, index);
+}
 
 export function renameNode(tree: TreeNode[], id: string, title: string): TreeNode[] {
   return tree.map((node) => {

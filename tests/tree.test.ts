@@ -7,6 +7,7 @@ import {
   moveToTrash,
   nextSceneSibling,
   numberNodes,
+  putBack,
   rebuildTree,
   reconcileScenes,
   renameNode,
@@ -144,6 +145,22 @@ describe("tree edits", () => {
 
     expect(childIds(trashed, "kap2")).toEqual([]);
     expect(childIds(trashed, TRASH_ID)).toEqual(["s3"]);
+  });
+
+  it("puts a scene back in its chapter, at its place", () => {
+    const back = putBack(moveToTrash(sampleTree(), "s1"), "s1");
+
+    expect(childIds(back, "kap1")).toEqual(["s1", "s2"]);
+    expect(findNode(back, "s1")?.node).toEqual(scene("s1"));
+  });
+
+  it("puts a scene back last in the book when its chapter is thrown away too", () => {
+    const tree = moveToTrash(moveToTrash(sampleTree(), "s3"), "kap2");
+
+    const back = putBack(tree, "s3");
+
+    expect(findNode(back, "s3")?.parent).toBeNull();
+    expect(childIds(back, TRASH_ID)).toEqual(["kap2"]);
   });
 
   it("renames a chapter", () => {

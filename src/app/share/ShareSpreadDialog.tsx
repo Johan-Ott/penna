@@ -107,7 +107,7 @@ function ShareActions({
     canvas.current && void action(canvas.current).catch(recordFailure("Bilden kunde inte göras"));
   return (
     <ImageActions
-      onCopy={() => run(copyPng)}
+      onCopy={async () => canvas.current && copyPng(canvas.current)}
       onSave={() => run((element) => savePng(element, `${title} – uppslag`))}
     />
   );

@@ -5,6 +5,7 @@ import {
   TRASH_ID,
   moveNode,
   moveToTrash,
+  putBack,
   renameNode,
   sceneIdsIn,
   type TreeNode,
@@ -43,8 +44,7 @@ export function useTreeActions(handlers: TreeActionHandlers) {
     trash: (node: TreeNode) => {
       if (canEdit(node) && !isInTrash(tree, node.id)) onChangeTree(moveToTrash(tree, node.id));
     },
-    restore: (node: TreeNode) =>
-      onChangeTree(moveNode(tree, node.id, null, Number.MAX_SAFE_INTEGER)),
+    restore: (node: TreeNode) => onChangeTree(putBack(tree, node.id)),
     // The place in the book itself, which a filtered tree's rows do not show.
     moveBy: (row: TreeRow, step: 1 | -1) => {
       const index = findNode(tree, row.node.id)?.index ?? row.index;

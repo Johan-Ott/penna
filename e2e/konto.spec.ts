@@ -38,3 +38,17 @@ test("the example book is copied once, however often it is asked for", async ({ 
 
   await expect(summary).toHaveText(before);
 });
+
+test("a book renamed on the shelf shows its new name there at once", async ({ page }) => {
+  await openExample(page);
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Bokhylla" }).click();
+  await page.getByRole("button", { name: "Bokens meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Byt namn…" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Byt namn på boken" });
+  await dialog.getByLabel("Titel").fill("Isvägen");
+  await dialog.getByRole("button", { name: "Byt namn" }).click();
+
+  await expect(page.locator(".books")).toContainText("Isvägen");
+});

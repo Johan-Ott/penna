@@ -54,3 +54,17 @@ test("the newsletter is signed with Om författaren from the profile", async ({ 
   await page.getByRole("button", { name: /Omslaget är här/ }).click();
   await expect(page.locator("canvas.studio-card")).toBeVisible();
 });
+
+test("copying the chapter says so, and its plain text keeps the paragraphs", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.getByRole("button", { name: /Kapitel till nyhetsbrev/ }).click();
+  await expect(page.locator(".studio-mail-body p").nth(3)).toBeVisible();
+  await page.getByRole("button", { name: "Substack och Patreon" }).click();
+
+  await expect(page.getByRole("button", { name: "Kopierad" })).toBeVisible();
+  const plain = await page.evaluate(() => navigator.clipboard.readText());
+  expect(plain.split(/\r?\n\r?\n/).length).toBeGreaterThan(2);
+});

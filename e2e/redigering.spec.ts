@@ -1,8 +1,8 @@
 import { Bookmark, Document, Packer, Paragraph, TextRun } from "docx";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
-import { editor, openExample } from "./helpers";
+import { expect, test, type Page } from "@playwright/test";
+import { cursorAfterFirstParagraph, editor, openExample } from "./helpers";
 
 const KOKET = "01J9Z4K2QX0000000000000001";
 
@@ -114,4 +114,35 @@ test("a test reader's comments in Word come into Granska, on the words they are 
 
   await expect(page.getByText("Vem skickade det?").first()).toBeVisible();
   await expect(editor(page).locator(".commented", { hasText: "Kuvertet" })).toBeVisible();
+});
+
+async function pressTimes(page: Page, key: string, times: number) {
+  for (let count = 0; count < times; count += 1) await page.keyboard.press(key);
+}
+
+test("the tree counts the words once they are saved", async ({ page }) => {
+  await openExample(page);
+  const sceneWords = page.locator(".tree-row.active .tree-meta");
+  const before = Number((await sceneWords.innerText()).replace(/\D/g, ""));
+  await cursorAfterFirstParagraph(page);
+
+  await page.keyboard.type(" Hon log åt honom.");
+
+  await expect(sceneWords).toHaveText(String(before + 4));
+});
+
+test("redo with nothing left to redo leaves the text as it is", async ({ page }) => {
+  await openExample(page);
+  await cursorAfterFirstParagraph(page);
+  await page.keyboard.type(" Ångra mig.");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("En rad till.");
+  await pressTimes(page, "ControlOrMeta+z", 3);
+  await pressTimes(page, "ControlOrMeta+Shift+z", 2);
+  await expect(editor(page)).toContainText("En rad till.");
+
+  await pressTimes(page, "ControlOrMeta+Shift+z", 3);
+
+  await expect(editor(page)).toContainText("Ångra mig.");
+  await expect(editor(page)).toContainText("En rad till.");
 });

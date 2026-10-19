@@ -48,9 +48,10 @@ export function useShelf(libraryDir: string | null, knownProjects: string[]) {
   }, [libraryDir, known]);
   useEffect(() => {
     void reload();
-    if (!libraryDir) return;
-    const stopWatching = platform.watchFolder(libraryDir, () => void reload());
-    return () => void stopWatching.then((stop) => stop());
-  }, [libraryDir, reload]);
+    // A book opened from elsewhere, such as the example, is not in the library's folder.
+    const dirs = [...(libraryDir ? [libraryDir] : []), ...(known ? known.split("\n") : [])];
+    const stops = dirs.map((dir) => platform.watchFolder(dir, () => void reload()));
+    return () => stops.forEach((stopWatching) => void stopWatching.then((stop) => stop()));
+  }, [libraryDir, known, reload]);
   return books;
 }

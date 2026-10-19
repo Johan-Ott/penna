@@ -7,7 +7,7 @@ import type { Project } from "../useProject.js";
 import { chapterBlocks, copyHtml, mailHtml, simpleHtml, type Signature } from "./newsletter.js";
 import type { CardFormat, Look } from "./studioCanvas.js";
 import type { ImageChoices } from "./studioDraw.js";
-import { ImageActions } from "../share/ImageActions.js";
+import { CopyButton, ImageActions } from "../share/ImageActions.js";
 import { t } from "../../i18n/i18n.js";
 
 const looks = (): [Look, string][] => [
@@ -62,7 +62,7 @@ export function ImagePanel(props: {
   choices: ImageChoices;
   onChange: (choices: ImageChoices) => void;
   extra: ReactNode;
-  onCopy: () => void;
+  onCopy: () => Promise<unknown>;
   onSave: () => void;
 }) {
   return (
@@ -163,20 +163,20 @@ function ChapterChoice({ letter }: { letter: Letter }) {
 }
 
 export function NewsletterPanel({ letter }: { letter: Letter }) {
-  const copy = (html: string) => void copyHtml(html).catch(recordFailure("Kunde inte kopiera"));
   return (
     <>
       <ChapterChoice letter={letter} />
       <span className="studio-label">{t("Kopiera färdigformaterat för")}</span>
-      <button
+      <CopyButton
         className="button secondary"
-        onClick={() => copy(simpleHtml(letter.title, letter.blocks))}
-      >
-        {t("Substack och Patreon")}
-      </button>
-      <button className="button primary" onClick={() => copy(letter.html)}>
-        {t("E-post (HTML)")}
-      </button>
+        label={t("Substack och Patreon")}
+        copy={() => copyHtml(simpleHtml(letter.title, letter.blocks))}
+      />
+      <CopyButton
+        className="button primary"
+        label={t("E-post (HTML)")}
+        copy={() => copyHtml(letter.html)}
+      />
       <span className="setting-hint">
         {t("Penna skickar inget själv. Du klistrar in där du redan har dina läsare.")}
       </span>

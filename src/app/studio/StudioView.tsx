@@ -90,7 +90,7 @@ function ImageCard(props: StudioProps & { card: ImageCardId }) {
           choices={choices}
           onChange={setChoices}
           extra={cardExtra(props.card, props)}
-          onCopy={() => run(copyPng)}
+          onCopy={async () => canvas.current && copyPng(canvas.current)}
           onSave={() => run((element) => savePng(element, name))}
         />
       </div>

@@ -75,7 +75,12 @@ export function mailHtml(title: string, intro: string, blocks: Node[], signature
 
 /** Put on the clipboard as HTML, with the plain text beside it for programs that take only that. */
 export async function copyHtml(html: string) {
-  const plain = new DOMParser().parseFromString(html, "text/html").body.innerText;
+  // A parsed page has no layout, so innerText would run the paragraphs together.
+  const page = new DOMParser().parseFromString(html, "text/html");
+  const plain = Array.from(page.body.querySelectorAll("p, h1, h2, h3, li"))
+    .map((block) => block.textContent?.trim())
+    .filter(Boolean)
+    .join("\n\n");
   await navigator.clipboard.write([
     new ClipboardItem({
       "text/html": new Blob([html], { type: "text/html" }),
