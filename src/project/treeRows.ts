@@ -1,5 +1,12 @@
-import { findNode, moveNode, TRASH_ID, type FoundNode, type TreeNode } from "./tree.js";
-import { isSpecial } from "./sorts.js";
+import {
+  findNode,
+  moveNode,
+  moveToTrash,
+  TRASH_ID,
+  type FoundNode,
+  type TreeNode,
+} from "./tree.js";
+import { isNoteSide, isSpecial } from "./sorts.js";
 
 export interface TreeRow {
   node: TreeNode;
@@ -26,6 +33,22 @@ export function visibleRows(
 export type DropPosition = "before" | "after" | "inside";
 
 /** Indexes count after the dragged node is taken out. */
+// Which part of the tree a node is in: the book, the notes or Papperskorg.
+function sideOf(tree: TreeNode[], id: string | null) {
+  const top = tree.find((node) => node.id === id || findNode(node.children ?? [], id ?? ""));
+  if (!top || !isNoteSide(top)) return "book";
+  return top.id === TRASH_ID ? "trash" : "notes";
+}
+
+// A scene of the book does not turn into a note by a drag, and one dropped in Papperskorg
+// remembers where it was. Null for an ordinary move.
+function acrossSides(tree: TreeNode[], draggedId: string, row: TreeRow, position: DropPosition) {
+  const from = sideOf(tree, draggedId);
+  const into = sideOf(tree, position === "inside" ? row.node.id : row.parentId);
+  if (from === "book" && into === "notes") return tree;
+  return from !== "trash" && into === "trash" ? moveToTrash(tree, draggedId) : null;
+}
+
 export function dropMove(
   tree: TreeNode[],
   draggedId: string,
@@ -34,11 +57,15 @@ export function dropMove(
 ) {
   const dragged = findNode(tree, draggedId);
   if (!dragged) return tree;
+  return acrossSides(tree, draggedId, row, position) ?? moveTo(tree, dragged, row, position);
+}
+
+function moveTo(tree: TreeNode[], dragged: FoundNode, row: TreeRow, position: DropPosition) {
   if (position === "inside") return dropInside(tree, dragged, row);
   const isSameParent = (dragged.parent?.id ?? null) === row.parentId;
   const shift = isSameParent && dragged.index < row.index ? 1 : 0;
   const index = row.index + (position === "after" ? 1 : 0) - shift;
-  return moveNode(tree, draggedId, row.parentId, index);
+  return moveNode(tree, dragged.node.id, row.parentId, index);
 }
 
 function dropInside(tree: TreeNode[], dragged: FoundNode, row: TreeRow) {

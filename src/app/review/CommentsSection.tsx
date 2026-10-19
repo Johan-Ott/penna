@@ -64,6 +64,9 @@ function CommentActions({ comment, comments }: { comment: Comment; comments: Com
       >
         {comment.resolved ? t("Öppna igen") : t("Lös")}
       </button>
+      <button className="link-button quiet" onClick={() => comments.remove(comment.id)}>
+        {t("Ta bort")}
+      </button>
     </div>
   );
 }

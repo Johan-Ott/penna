@@ -60,7 +60,7 @@ function AddPieces(props: DialogProps) {
       <PieceToggles chosen={pieces} onChange={setPieces} />
       <OwnTemplatePicker own={own} value={ownId} onChange={setOwnId} />
       <span className="setting-hint">
-        {t("Anteckningssorter, labels och kapitel som boken inte redan har.")}
+        {t("Anteckningssorter, etiketter och kapitel som boken inte redan har.")}
       </span>
       <button
         className="button primary small"
@@ -106,7 +106,7 @@ function SaveAsTemplate(props: DialogProps) {
       />
       <span className="setting-hint">
         {t(
-          "Delar, kapitel och Vad händer?, anteckningssorter, labels och mål. Texten följer inte med.",
+          "Delar, kapitel och Vad händer?, anteckningssorter, etiketter och mål. Texten följer inte med.",
         )}
       </span>
       <SaveButtons

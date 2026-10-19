@@ -92,8 +92,8 @@ function NewLabel(props: LabelsDialogProps & { labels: Label[] }) {
   return (
     <form className="label-new" onSubmit={(event) => (event.preventDefault(), add())}>
       <input
-        aria-label={t("Ny label")}
-        placeholder={t("Ny label, till exempel Elin eller Skriv om")}
+        aria-label={t("Ny etikett")}
+        placeholder={t("Ny etikett, till exempel Elin eller Skriv om")}
         value={name}
         onChange={(event) => setName(event.target.value)}
       />
@@ -108,11 +108,11 @@ function NewLabel(props: LabelsDialogProps & { labels: Label[] }) {
 export function LabelsDialog(props: LabelsDialogProps) {
   const labels = labelsOf(props.project.fields);
   return (
-    <Dialog label={t("Status och labels")} className="labels-dialog" onClose={props.onClose}>
+    <Dialog label={t("Status och etiketter")} className="labels-dialog" onClose={props.onClose}>
       <span className="field-label">{t("Status")}</span>
       <StatusStepsEditor project={props.project} onUpdate={props.onUpdate} />
-      <span className="field-label labels-heading">{t("Labels")}</span>
-      {labels.length === 0 && <p className="dialog-text">{t("Boken har inga labels än.")}</p>}
+      <span className="field-label labels-heading">{t("Etiketter")}</span>
+      {labels.length === 0 && <p className="dialog-text">{t("Boken har inga etiketter än.")}</p>}
       <ul className="label-list">
         {labels.map((label) => (
           <LabelRow key={label.id} {...props} label={label} labels={labels} />

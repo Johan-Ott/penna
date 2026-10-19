@@ -11,18 +11,18 @@ test.beforeEach(async ({ page }) => {
 
 test("a label is made on one scene and ticked only there, and can be removed", async ({ page }) => {
   await treeRow(page, "Köket").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
-  const dialog = page.getByRole("dialog", { name: "Status och labels" });
-  await dialog.getByRole("textbox", { name: "Ny label" }).fill("Tempo");
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Status och etiketter" });
+  await dialog.getByRole("textbox", { name: "Ny etikett" }).fill("Tempo");
   await dialog.getByRole("button", { name: "Lägg till" }).click();
   await expect(dialog.getByRole("checkbox", { name: "Sätt Tempo på raden" })).toBeChecked();
   await page.keyboard.press("Escape");
 
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
   await expect(page.getByRole("menuitemradio", { name: "Tempo" })).not.toBeChecked();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
   await expect(dialog.getByRole("checkbox", { name: "Sätt Tempo på raden" })).not.toBeChecked();
   await dialog.getByRole("button", { name: "Ta bort Tempo" }).click();
 
@@ -33,10 +33,10 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
   page,
 }) => {
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
-  const dialog = page.getByRole("dialog", { name: "Status och labels" });
-  await dialog.getByRole("textbox", { name: "Ny label" }).fill("Tempo");
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Status och etiketter" });
+  await dialog.getByRole("textbox", { name: "Ny etikett" }).fill("Tempo");
   await dialog.getByRole("button", { name: "Lägg till" }).click();
   await page.keyboard.press("Escape");
   await expect(sidebar(page).locator('.tree-dot[title="Tempo"]')).toHaveCount(1);
@@ -52,17 +52,17 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
 
 test("a label is ticked on another scene straight from the row menu's Labels", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
-  await page.getByRole("textbox", { name: "Ny label" }).fill("Elin");
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  await page.getByRole("textbox", { name: "Ny etikett" }).fill("Elin");
   await page
-    .getByRole("dialog", { name: "Status och labels" })
+    .getByRole("dialog", { name: "Status och etiketter" })
     .getByRole("button", { name: "Lägg till" })
     .click();
   await page.keyboard.press("Escape");
 
   await treeRow(page, "Köket").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).hover();
+  await page.getByRole("menuitem", { name: "Etiketter" }).hover();
   await page.getByRole("menuitemradio", { name: "Elin" }).click();
 
   await expect(sidebar(page).locator('.tree-dot[title="Elin"]')).toHaveCount(2);
@@ -70,11 +70,11 @@ test("a label is ticked on another scene straight from the row menu's Labels", a
 
 test("the palette's label chip finds only what has the label", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
-  await page.getByRole("textbox", { name: "Ny label" }).fill("Tempo");
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  await page.getByRole("textbox", { name: "Ny etikett" }).fill("Tempo");
   await page
-    .getByRole("dialog", { name: "Status och labels" })
+    .getByRole("dialog", { name: "Status och etiketter" })
     .getByRole("button", { name: "Lägg till" })
     .click();
   await page.keyboard.press("Escape");
@@ -103,10 +103,10 @@ test("a status step gets the book's own name, shown in the row menu", async ({ p
 
 test("Innehåll shows each chapter's labels, its scenes' too", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
-  await page.getByRole("menuitem", { name: "Labels" }).click();
-  await page.getByRole("menuitem", { name: "Hantera labels…" }).click();
-  await page.getByRole("textbox", { name: "Ny label" }).fill("Elin");
-  const dialog = page.getByRole("dialog", { name: "Status och labels" });
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  await page.getByRole("textbox", { name: "Ny etikett" }).fill("Elin");
+  const dialog = page.getByRole("dialog", { name: "Status och etiketter" });
   await dialog.getByRole("button", { name: "Lägg till" }).click();
   await page.keyboard.press("Escape");
 

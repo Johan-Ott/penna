@@ -45,7 +45,7 @@ export function WordsByLabel({ project }: { project: Project }) {
   if (used.length === 0) return null;
   return (
     <section className="progress-section">
-      <span className="progress-label">{t("Ord per label")}</span>
+      <span className="progress-label">{t("Ord per etikett")}</span>
       {used.map(({ label, words }) => (
         <div key={label.id} className="chapter-bar">
           <span className="chapter-name">

@@ -19,6 +19,7 @@ import { commentsPlugin, type CommentAnchor } from "./commentMarks.js";
 import { insertFootnote, uniqueFootnoteLabels } from "./footnoteEditing.js";
 import { pageMarksPlugin } from "./pageMarks.js";
 import { revisionPlugin } from "./revisionMarks.js";
+import { suggestionPlugin } from "./suggestionMarks.js";
 import type { RevisionChange } from "../manuscript/revision.js";
 import { t } from "../i18n/i18n.js";
 
@@ -58,6 +59,8 @@ export interface EditorSwitches {
   pageMarks: () => (number | undefined)[] | null;
   /** The editor's changes to the open text that are not yet accepted or rejected. */
   revisionChanges: () => RevisionChange[];
+  /** In Förslagsläge, the scene's text as it was when it began; otherwise null. */
+  suggestedFrom: () => string | null;
   /** Null where Penna does not check the spelling itself. */
   spelling: () => SpellingSwitch | null;
 }
@@ -75,6 +78,7 @@ export const DEFAULT_SWITCHES: EditorSwitches = {
   onComment: () => undefined,
   pageMarks: () => null,
   revisionChanges: () => [],
+  suggestedFrom: () => null,
   spelling: () => null,
 };
 
@@ -136,6 +140,7 @@ export function createEditorState(doc: Node, switches = DEFAULT_SWITCHES): Edito
       commentsPlugin(switches.commentAnchors, switches.onComment),
       pageMarksPlugin(switches.pageMarks),
       revisionPlugin(switches.revisionChanges),
+      suggestionPlugin(switches.suggestedFrom),
       placeholder(t("Börja skriva…")),
     ],
   });

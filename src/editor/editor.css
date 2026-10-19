@@ -313,3 +313,17 @@
   color: var(--text-dim);
   pointer-events: none;
 }
+
+/* Förslagsläge as it is written: what is new in green, what is cut struck through beside it */
+.suggestion-added {
+  background: color-mix(in srgb, #1a8f4a 16%, transparent);
+  text-decoration: underline;
+  text-decoration-color: #1a8f4a;
+}
+
+.suggestion-removed {
+  background: color-mix(in srgb, #d14 12%, transparent);
+  text-decoration: line-through;
+  text-decoration-color: #d14;
+  user-select: none;
+}

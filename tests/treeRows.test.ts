@@ -85,6 +85,20 @@ describe("dropMove", () => {
 
     expect(childIds(moved, "kap2")).toEqual(["s3", "s1"]);
   });
+
+  it("does not turn a scene of the book into a note", () => {
+    const tree = sampleTree();
+
+    expect(dropMove(tree, "s1", rowOf(tree, CHARACTERS_ID), "inside")).toBe(tree);
+  });
+
+  it("drops a scene in Papperskorg so it can go back to its chapter", () => {
+    const tree = sampleTree();
+
+    const trashed = dropMove(tree, "s1", rowOf(tree, TRASH_ID), "inside");
+
+    expect(findNode(trashed, "s1")?.node.trashedFrom).toBe("kap1");
+  });
 });
 
 describe("isInTrash", () => {

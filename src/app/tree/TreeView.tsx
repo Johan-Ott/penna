@@ -1,5 +1,5 @@
 import type { DragEvent, ReactNode } from "react";
-import { useSwipes } from "./useSwipes.js";
+import { swipesOf, TrashUndo } from "./useSwipes.js";
 import {
   withoutEmptyFixedSorts,
   withoutEmptySorts,
@@ -35,7 +35,6 @@ function menuOf(row: Row, tree: Tree, menuFor: ReturnType<typeof menuActions>) {
 function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: Tree }) {
   const { view, actions, drag, openMenu } = tree;
   const menuFor = menuActions(actions, props, view);
-  const swipes = useSwipes(props, tree);
   return [
     ...rows.map((row) => (
       <TreeRow
@@ -47,10 +46,9 @@ function Rows({ rows, props, tree }: { rows: Row[]; props: TreeViewProps; tree: 
         {...rowHandlers(row, actions, view)}
         {...(isEmptySort(row.node) ? { onActivate: () => props.onNewNote(row.node.id) } : {})}
         onContextMenu={(event) => openMenu(event, menuOf(row, tree, menuFor))}
-        {...swipes.swipesOf(row)}
+        {...swipesOf(row, props, tree)}
       />
     )),
-    <span key="undo">{swipes.undo}</span>,
   ];
 }
 
@@ -166,6 +164,7 @@ export function TreeView(props: TreeViewProps & BookExtras) {
       </div>
       {view.menu && <Menu {...view.menu} label={t("Boken")} onClose={() => view.setMenu(null)} />}
       <LabelsLayer props={props} view={view} />
+      <TrashUndo props={props} tree={tree} />
     </div>
   );
 }

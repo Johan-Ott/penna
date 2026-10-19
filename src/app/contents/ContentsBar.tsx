@@ -11,7 +11,7 @@ function ContentsFilter(props: { query: string; onQuery: (query: string) => void
       </svg>
       <input
         aria-label={t("Filtrera")}
-        placeholder={t("Visa var en person, plats eller label finns")}
+        placeholder={t("Visa var en person, plats eller etikett finns")}
         value={props.query}
         onChange={(event) => props.onQuery(event.target.value)}
       />

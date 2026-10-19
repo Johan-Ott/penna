@@ -91,6 +91,17 @@ function withResolved(comments: Comment[], id: string, resolved: boolean) {
   return comments.map((comment) => (comment.id === id ? { ...comment, resolved } : comment));
 }
 
+// With its replies, which belong to it.
+const withoutComment = (comments: Comment[], id: string) =>
+  comments.filter((comment) => comment.id !== id && comment.replyTo !== id);
+
+// A comment begun in one scene is not left waiting in the next.
+function useDraft(sceneId: string | undefined) {
+  const [draft, setDraft] = useState<Anchor | null>(null);
+  useEffect(() => setDraft(null), [sceneId]);
+  return [draft, setDraft] as const;
+}
+
 export function useComments(parts: {
   project: Project | null;
   scene: OpenScene | null;
@@ -98,7 +109,7 @@ export function useComments(parts: {
   author: string;
 }) {
   const { comments, save } = useCommentFile(parts.project, parts.scene);
-  const [draft, setDraft] = useState<Anchor | null>(null);
+  const [draft, setDraft] = useDraft(parts.scene?.id);
   const [focused, setFocused] = useState<string | null>(null);
   const { editor } = parts;
   useCommentMarks(editor, comments, setFocused);
@@ -118,5 +129,6 @@ export function useComments(parts: {
     },
     reply: (to: Comment, body: string) => save([...comments, newReply(to, body, author)]),
     setResolved: (id: string, resolved: boolean) => save(withResolved(comments, id, resolved)),
+    remove: (id: string) => save(withoutComment(comments, id)),
   };
 }

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SCENE_STATUSES } from "../../manuscript/sceneFile.js";
-import type { TreeNode } from "../../project/tree.js";
+import { TRASH_ID, type TreeNode } from "../../project/tree.js";
 import type { TreeRow as Row } from "../../project/treeRows.js";
 import { nodeLabel } from "../../project/treeLabels.js";
 import { rowView, type Tree, type TreeViewProps } from "./useTreeView.js";
@@ -15,45 +15,57 @@ function nextStatusOf(row: Row, props: TreeViewProps, tree: Tree) {
   return SCENE_STATUSES[(SCENE_STATUSES.indexOf(status) + 1) % SCENE_STATUSES.length] ?? null;
 }
 
-function swipesFor(
-  row: Row,
-  props: TreeViewProps,
-  tree: Tree,
-  onTrashed: (node: TreeNode) => void,
-) {
+function swipesFor(row: Row, props: TreeViewProps, tree: Tree) {
   const { actions } = tree;
   if (!isTouch() || actions.isInTrash(row.node.id) || !actions.canEdit(row.node)) return {};
   const next = nextStatusOf(row, props, tree);
   return {
-    onSwipeLeft: () => (actions.trash(row.node), onTrashed(row.node)),
+    onSwipeLeft: () => actions.trash(row.node),
     onSwipeRight: next ? () => props.onSetSceneStatus(row.node.id, next) : undefined,
   };
 }
 
 const UNDO_MS = 8000;
 
-// On a phone a row swipes: left to the trash, with a moment to take it back, and right to the
-// scene's next status.
-export function useSwipes(props: TreeViewProps, tree: Tree) {
+// Whatever goes to Papperskorg, by a swipe, the menu or a drag, is seen as it arrives there.
+function useNewlyTrashed({ dir, tree }: TreeViewProps["project"]) {
   const [trashed, setTrashed] = useState<TreeNode | null>(null);
+  const seen = useRef<{ dir: string; ids: Set<string> } | null>(null);
+  useEffect(() => {
+    const inTrash = tree.find((node) => node.id === TRASH_ID)?.children ?? [];
+    const before = seen.current;
+    seen.current = { dir, ids: new Set(inTrash.map((node) => node.id)) };
+    const fresh = before?.dir === dir && inTrash.find((node) => !before.ids.has(node.id));
+    if (fresh) setTrashed(fresh);
+  }, [dir, tree]);
   useEffect(() => {
     if (!trashed) return;
     const timer = setTimeout(() => setTrashed(null), UNDO_MS);
     return () => clearTimeout(timer);
   }, [trashed]);
-  const swipesOf = (row: Row) => swipesFor(row, props, tree, setTrashed);
-  const { actions } = tree;
-  const undo = trashed && (
+  return [trashed, setTrashed] as const;
+}
+
+// On a phone a row swipes: left to the trash and right to the scene's next status.
+export const swipesOf = (row: Row, props: TreeViewProps, tree: Tree) => swipesFor(row, props, tree);
+
+/** Anything thrown away, by a swipe, the menu or a drag, has a moment to be taken back. */
+export function TrashUndo({ props, tree }: { props: TreeViewProps; tree: Tree }) {
+  const [trashed, setTrashed] = useNewlyTrashed(props.project);
+  if (!trashed) return null;
+  return (
     <div className="toast inverted tree-undo" role="status">
       <span>
         {t("{title} ligger i papperskorgen.", {
           title: nodeLabel(trashed, props.project.tree, props.project.summaries),
         })}
       </span>
-      <button className="link-button" onClick={() => (actions.restore(trashed), setTrashed(null))}>
+      <button
+        className="link-button"
+        onClick={() => (tree.actions.restore(trashed), setTrashed(null))}
+      >
         {t("Ångra")}
       </button>
     </div>
   );
-  return { swipesOf, undo };
 }

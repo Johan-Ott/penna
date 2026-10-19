@@ -72,7 +72,7 @@ export function labelMenu(props: TreeViewProps, view: Tree["view"]) {
         onSelect: () => onUpdateProject({ tree: tree() }),
       };
     });
-    const dialog = labels.length > 0 ? t("Hantera labels…") : t("Ny label…");
+    const dialog = labels.length > 0 ? t("Hantera etiketter…") : t("Ny etikett…");
     const open = () => view.setLabelsFor(node.id);
     return [...ticks, { label: dialog, separatorBefore: labels.length > 0, onSelect: open }];
   };

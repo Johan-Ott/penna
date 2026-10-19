@@ -59,6 +59,7 @@ interface EditorModes {
   /** Reads a picture in the open book's bilder/ folder. */
   pictureUrl: PictureUrl;
   revisionChanges: RevisionChange[];
+  suggestedFrom: string | null;
   spelling: SpellingSwitch | null;
 }
 
@@ -78,6 +79,7 @@ const START_MODES: EditorModes = {
   onComment: () => undefined,
   pictureUrl: async () => null,
   revisionChanges: [],
+  suggestedFrom: null,
   spelling: null,
 };
 
@@ -100,6 +102,7 @@ function useModeSwitches() {
     onComment: (id) => modes.current.onComment(id),
     pictureUrl: (name) => modes.current.pictureUrl(name),
     revisionChanges: () => modes.current.revisionChanges,
+    suggestedFrom: () => modes.current.suggestedFrom,
     spelling: () => modes.current.spelling,
   }));
   return { switches, modes };

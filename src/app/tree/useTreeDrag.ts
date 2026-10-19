@@ -17,8 +17,21 @@ function positionInRow(event: DragEvent<HTMLElement>, node: TreeNode): DropPosit
 
 type Changes = { onChangeTree: (tree: TreeNode[]) => void; expand: (ids: string[]) => void };
 
+// A drop the tree refuses, such as a scene onto Personer, leaves the row folded as it was.
+function dropOn(
+  tree: TreeNode[],
+  { onChangeTree, expand }: Changes,
+  draggedId: string,
+  { row, position }: { row: TreeRow; position: DropPosition },
+) {
+  const moved = dropMove(tree, draggedId, row, position);
+  if (moved === tree) return;
+  onChangeTree(moved);
+  if (position === "inside") expand([row.node.id]);
+}
+
 /** A drop only changes the tree, never a scene file; a folded chapter dropped into unfolds. */
-export function useTreeDrag(tree: TreeNode[], { onChangeTree, expand }: Changes) {
+export function useTreeDrag(tree: TreeNode[], changes: Changes) {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
   const reset = () => (setDraggedId(null), setDropTarget(null));
@@ -37,8 +50,7 @@ export function useTreeDrag(tree: TreeNode[], { onChangeTree, expand }: Changes)
     onDrop: (event: DragEvent<HTMLElement>) => {
       event.preventDefault();
       if (draggedId && dropTarget)
-        onChangeTree(dropMove(tree, draggedId, row, dropTarget.position));
-      if (dropTarget?.position === "inside") expand([row.node.id]);
+        dropOn(tree, changes, draggedId, { row, position: dropTarget.position });
       reset();
     },
     onDragEnd: reset,

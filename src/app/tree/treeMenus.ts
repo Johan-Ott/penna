@@ -172,7 +172,7 @@ function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   const { labelItems } = actions;
   return [
     ...(labelItems
-      ? [{ label: t("Labels"), separatorBefore: true, submenu: labelItems(node) }]
+      ? [{ label: t("Etiketter"), separatorBefore: true, submenu: labelItems(node) }]
       : []),
     {
       label: t("Byt namn"),

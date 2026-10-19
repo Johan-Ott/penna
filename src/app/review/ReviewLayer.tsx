@@ -1,3 +1,4 @@
+import type { Comment } from "../../project/comments.js";
 import { useEffect, useRef, useState } from "react";
 import { useSettledDoc } from "../../editor/editorStore.js";
 import { PAUSE_MS } from "../../editor/repetitionMarks.js";
@@ -23,6 +24,10 @@ import { RevisionSection } from "./RevisionSection.js";
 import { usePhone } from "../phone/usePhone.js";
 import { SuggestStart } from "./Suggesting.js";
 import type { useComments } from "./useComments.js";
+
+// Only what still waits: a reply belongs to its comment, and a resolved one is done.
+const openComments = (comments: Comment[]) =>
+  comments.filter((comment) => !comment.replyTo && !comment.resolved).length;
 import { t } from "../../i18n/i18n.js";
 
 type Comments = ReturnType<typeof useComments>;
@@ -153,7 +158,7 @@ function ShownReview(props: ShownProps) {
       onReplaceAll={(suspect) => app.search.scope.replaceAll(replaceAllQuery(suspect))}
       onIgnore={(word) => void app.updateFields({ ignoredNames: [...review.ignored, word] })}
       isPinnedOpen={props.comments.draft !== null}
-      commentCount={props.comments.comments.length}
+      commentCount={openComments(props.comments.comments)}
       isOpen={app.writingMode.isReviewOpen}
       onOpenChange={app.writingMode.setReviewOpen}
       onCount={app.writingMode.setReviewCount}
