@@ -44,13 +44,17 @@ function Tools(props: { app: AppState; project: Project; onSettings: () => void 
 }
 
 // Aa: the writing settings, with the focus mode as a switch since the phone has no Esc or topbar.
-function PhoneSettings({ writingMode }: Pick<AppState, "writingMode">) {
+function PhoneSettings({
+  writingMode,
+  onClose,
+}: Pick<AppState, "writingMode"> & { onClose: () => void }) {
   return (
     <WritingSettingsPanel
       settings={writingMode.settings}
       onChange={writingMode.onChangeSettings}
       showsFocusOptions={writingMode.isFocusMode}
       focusMode={{ isOn: writingMode.isFocusMode, onFlip: writingMode.onToggleFocus }}
+      onClose={onClose}
     />
   );
 }
@@ -64,7 +68,9 @@ export function PhoneToolbar({ app, project }: { app: AppState; project: Project
   const toggleSettings = () => setSettingsOpen(!isSettingsOpen);
   return (
     <>
-      {isSettingsOpen && <PhoneSettings writingMode={writingMode} />}
+      {isSettingsOpen && (
+        <PhoneSettings writingMode={writingMode} onClose={() => setSettingsOpen(false)} />
+      )}
       <div
         className="phone-toolbar"
         role="toolbar"

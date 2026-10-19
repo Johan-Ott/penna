@@ -1,3 +1,4 @@
+import { useEscape } from "@llkit/keys.js";
 import { useRootClass } from "@llkit/useRootClass.js";
 import {
   changeSize,
@@ -31,6 +32,8 @@ interface PanelProps {
   showsFocusOptions: boolean;
   /** On a phone, which has no shortcut or topbar button for it, the focus mode is a switch here. */
   focusMode?: { isOn: boolean; onFlip: () => void };
+  /** Escape closes it, as Android's back does through Escape. */
+  onClose?: () => void;
 }
 
 const WIDTH_LABELS = { smal: t("Smal"), normal: t("Normal"), bred: t("Bred") } as const;
@@ -178,6 +181,7 @@ function FocusSwitch({ focusMode }: { focusMode: PanelProps["focusMode"] | undef
 export function WritingSettingsPanel(props: PanelProps) {
   const { settings, onChange } = props;
   useRootClass("look-shown");
+  useEscape(() => props.onClose?.());
   return (
     <div className="settings-panel" role="dialog" aria-label={t("Skrivinställningar")}>
       <TypographySettings {...props} />
