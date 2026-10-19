@@ -262,14 +262,19 @@
 }
 
 /* The selection bar on a phone: one slim dark row under the selected words. */
+/* Too many choices for a narrow screen scroll sideways from the first, rather than spilling over
+   both edges. */
 .selection-bar.phone {
   left: 50%;
   flex-wrap: nowrap;
-  justify-content: center;
+  justify-content: safe center;
   width: max-content;
   max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
   gap: 0;
-  padding: 2px;
+  padding: 2px 24px 2px 2px;
   border: 0;
   border-radius: 10px;
   background: var(--primary);
@@ -583,7 +588,7 @@ body .phone-view .submit-text {
   border: 0;
   border-radius: 8px;
   background: transparent;
-  padding: 0 8px;
+  padding: 0 6px;
   color: var(--text);
   font: inherit;
   font-size: 15px;
@@ -633,11 +638,18 @@ body .phone-view .submit-text {
     border-radius: 0;
   }
 
+  /* The text scrolls within the screen, so the buttons under it stay in view. */
   .snapshots {
     flex-direction: column;
     flex-grow: 1;
     height: auto;
+    min-height: 0;
     max-height: none;
+  }
+
+  .snapshots .snapshot-view {
+    min-height: 0;
+    padding-bottom: calc(16px + var(--safe-bottom));
   }
 
   .snapshot-list {
@@ -804,11 +816,16 @@ body .phone-view .submit-text {
 
 /* The scene's eyebrow and who is named in it are one row each, swiped sideways when they are
    longer than the screen, so the text begins near the top. */
-.phone-app .text-eyebrow,
 .scene-strip {
   flex-wrap: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
+}
+
+/* När goes to a line of its own rather than off the screen's edge. */
+.phone-app .text-eyebrow {
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
 .phone-app .text-place,
@@ -1209,4 +1226,16 @@ body .phone-app .text-when input {
   position: fixed;
   bottom: calc(56px + env(safe-area-inset-bottom) + 16px);
   z-index: var(--layer-float);
+}
+
+/* A version's two buttons, one under the other, so neither wraps and is cut off. */
+@media (max-width: 600px) {
+  .snapshot-view .review-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .snapshot-view .review-actions .restore {
+    align-self: stretch;
+  }
 }

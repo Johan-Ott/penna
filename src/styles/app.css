@@ -1184,6 +1184,14 @@ button.book-cover:hover {
   padding-top: 8px;
 }
 
+.snapshot-take input {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+}
+
 .snapshot-view {
   display: flex;
   flex-direction: column;
