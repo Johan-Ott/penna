@@ -1,4 +1,4 @@
-// `npm run build:android`: out/Penna.apk, signed with Penna's own key in ~/.penna (never in git),
+// `npm run build:android`: out/Skrivro.apk, signed with Skrivro's own key in ~/.penna (never in git),
 // or else with Android's test key, which must never reach a release: phones cannot change keys.
 import { execFileSync } from "node:child_process";
 import {
@@ -41,7 +41,7 @@ function addOwnSources() {
   for (const file of readdirSync("src-tauri/android")) {
     copyFileSync(
       join("src-tauri/android", file),
-      join(android, "src/main/java/se/penna/app", file),
+      join(android, "src/main/java/se/skrivro/app", file),
     );
   }
   cpSync("src-tauri/icons/android", join(android, "src/main/res"), { recursive: true });
@@ -71,7 +71,7 @@ addOwnSources();
 // `node scripts/drive-app.mjs --android`. The emulator is a test phone; no real books are near it.
 if (process.argv.includes("--emulator")) {
   const adb = join(sdk, "platform-tools", "adb");
-  step("Penna byggs för emulatorn (x86_64, felsökning)", "npx", [
+  step("Skrivro byggs för emulatorn (x86_64, felsökning)", "npx", [
     "tauri android build --debug --apk --target x86_64",
   ]);
   const debug = "src-tauri/gen/android/app/build/outputs/apk/universal/debug";
@@ -80,38 +80,38 @@ if (process.argv.includes("--emulator")) {
   try {
     step("Installeras i emulatorn", adb, [`install -r -d ${join(debug, apk)}`]);
   } catch {
-    step("Fullt i emulatorn: Penna avinstalleras först", adb, ["uninstall se.penna.app"]);
+    step("Fullt i emulatorn: Skrivro avinstalleras först", adb, ["uninstall se.skrivro.app"]);
     step("Installeras i emulatorn", adb, [`install ${join(debug, apk)}`]);
   }
-  step("Startas", adb, ["shell monkey -p se.penna.app 1"]);
+  step("Startas", adb, ["shell monkey -p se.skrivro.app 1"]);
   say("Klart: node scripts/drive-app.mjs --android steg.mjs");
   process.exit(0);
 }
 
-// `npm run build:android -- --play`: out/Penna.aab for Google Play, signed with the same key as
+// `npm run build:android -- --play`: out/Skrivro.aab for Google Play, signed with the same key as
 // the APK, so a phone can move between Play and the website's file.
 if (process.argv.includes("--play")) {
   if (!existsSync(releaseKey) || !existsSync(releasePass)) {
-    process.stderr.write("Pennas nyckel saknas i ~/.penna: Play får aldrig testnyckeln.\n");
+    process.stderr.write("Skrivros nyckel saknas i ~/.penna: Play får aldrig testnyckeln.\n");
     process.exit(1);
   }
-  step("Penna byggs för Google Play (arm64)", "npx", [
+  step("Skrivro byggs för Google Play (arm64)", "npx", [
     "tauri android build --aab --target aarch64",
   ]);
   const bundle = "src-tauri/gen/android/app/build/outputs/bundle/universalRelease";
   const aab = join(bundle, readdirSync(bundle).find((name) => name.endsWith(".aab")) ?? "");
   mkdirSync("out", { recursive: true });
-  copyFileSync(aab, join("out", "Penna.aab"));
+  copyFileSync(aab, join("out", "Skrivro.aab"));
   // Quoted, as Java usually lies under Program Files.
   const jarsigner = `"${join(process.env.JAVA_HOME ?? "", "bin", "jarsigner")}"`;
   step("Filen signeras", jarsigner, [
-    `-keystore ${releaseKey} -storepass:file ${releasePass} ${join("out", "Penna.aab")} penna`,
+    `-keystore ${releaseKey} -storepass:file ${releasePass} ${join("out", "Skrivro.aab")} penna`,
   ]);
-  say("Klart: out/Penna.aab");
+  say("Klart: out/Skrivro.aab");
   process.exit(0);
 }
 
-step("Penna byggs för moderna telefoner (arm64)", "npx", [
+step("Skrivro byggs för moderna telefoner (arm64)", "npx", [
   "tauri android build --apk --target aarch64",
 ]);
 
@@ -125,5 +125,5 @@ const hasReleaseKey = existsSync(releaseKey) && existsSync(releasePass);
 const key = hasReleaseKey
   ? `--ks ${releaseKey} --ks-pass file:${releasePass}`
   : `--ks ${testKey} --ks-pass pass:android`;
-step("Filen signeras", signer, [`sign ${key} --out ${join("out", "Penna.apk")} ${aligned}`]);
-say(hasReleaseKey ? "Klart: out/Penna.apk" : "Klart, men med testnyckeln: inte för release.");
+step("Filen signeras", signer, [`sign ${key} --out ${join("out", "Skrivro.apk")} ${aligned}`]);
+say(hasReleaseKey ? "Klart: out/Skrivro.apk" : "Klart, men med testnyckeln: inte för release.");

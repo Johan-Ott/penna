@@ -55,6 +55,12 @@ function TakeSnapshot({ onTake }: { onTake: (label: string) => void }) {
   );
 }
 
+const NoSnapshots = () => (
+  <p className="snapshot-empty">
+    {t("Inga versioner än. Skrivro sparar en själv när du skriver om en större del av texten.")}
+  </p>
+);
+
 function SnapshotList({ state, nowWords }: Pick<SnapshotsDialogProps, "state" | "nowWords">) {
   const now = Date.now();
   const item = (key: string, title: string, meta: string) => (
@@ -75,11 +81,7 @@ function SnapshotList({ state, nowWords }: Pick<SnapshotsDialogProps, "state" | 
         const { title, meta } = itemLabels(snapshot, now);
         return item(snapshot.fileName, title, meta);
       })}
-      {state.snapshots.length === 0 && (
-        <p className="snapshot-empty">
-          {t("Inga versioner än. Penna sparar en själv när du skriver om en större del av texten.")}
-        </p>
-      )}
+      {state.snapshots.length === 0 && <NoSnapshots />}
       <TakeSnapshot onTake={state.take} />
     </div>
   );

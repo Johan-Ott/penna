@@ -1,7 +1,7 @@
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
-import type { Drive } from "./drive.js";
+import { appFolder, type Drive } from "./drive.js";
 
 // Which Drive folder a book syncs with, and each file as it was at the last sync;
 // project.json keeps its whole text for the merge.
@@ -40,7 +40,7 @@ async function isSameBook(drive: Drive, folderId: string, localScenes: string[])
   return !remote.length || !localScenes.length || remote.some((path) => localScenes.includes(path));
 }
 
-// Penna/<book folder> in My Drive, made the first time; another book of the same name is left
+// Skrivro/<book folder> in My Drive, made the first time; another book of the same name is left
 // alone and this one gets "<name> (2)".
 export async function bookFolder(
   drive: Drive,
@@ -49,13 +49,12 @@ export async function bookFolder(
   localScenes: string[],
 ) {
   if (state.folderId) return state.folderId;
-  const penna =
-    (await drive.findFolder("Penna", null)) ?? (await drive.createFolder("Penna", null));
+  const appDir = await appFolder(drive);
   const name = dir.slice(dir.lastIndexOf("/") + 1);
   for (let number = 1; ; number++) {
     const candidate = number === 1 ? name : `${name} (${number})`;
-    const found = await drive.findFolder(candidate, penna);
-    if (!found) return drive.createFolder(candidate, penna);
+    const found = await drive.findFolder(candidate, appDir);
+    if (!found) return drive.createFolder(candidate, appDir);
     if (await isSameBook(drive, found, localScenes)) return found;
   }
 }

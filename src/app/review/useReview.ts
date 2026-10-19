@@ -57,7 +57,7 @@ function othersThan(project: Project, sceneId: string, cards: Card[]) {
   return people.map((card) => card.name).filter((name) => !pov.includes(name));
 }
 
-// Asked of Penna's own dictionary at each pause, so only where the platform has one.
+// Asked of Skrivro's own dictionary at each pause, so only where the platform has one.
 function useSplitCompounds(text: string, language: string) {
   const [notes, setNotes] = useState<ProseNote[]>([]);
   useEffect(() => {

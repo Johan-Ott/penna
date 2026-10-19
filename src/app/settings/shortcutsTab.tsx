@@ -45,7 +45,7 @@ function bindingFrom(event: KeyboardEvent): Binding | undefined {
 function problemWith(id: CommandId, binding: Binding) {
   const other = takenBy(id, binding);
   if (other) return t("Används redan av {name}", { name: COMMANDS[other].label });
-  return isReserved(binding) ? t("Används redan av Penna") : undefined;
+  return isReserved(binding) ? t("Används redan av Skrivro") : undefined;
 }
 
 // Pressing the button listens for the next keys with the shortcut key held; Escape leaves them

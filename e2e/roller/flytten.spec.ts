@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { expect, test } from "@playwright/test";
 import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 
-// A writer who has her novel in Word moves it into Penna on the first start: the chapters
+// A writer who has her novel in Word moves it into Skrivro on the first start: the chapters
 // become chapters, the text stays her text, and she can go on writing where she stopped.
 
 async function manuscript(folder: string) {
@@ -30,7 +30,7 @@ async function manuscript(folder: string) {
   return path;
 }
 
-test("a novel in Word moves into Penna on the first start, chapter by chapter", async ({
+test("a novel in Word moves into Skrivro on the first start, chapter by chapter", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1400, height: 900 });

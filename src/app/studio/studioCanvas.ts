@@ -118,7 +118,7 @@ export function startCard(canvas: HTMLCanvasElement, look: Look, format: CardFor
   return { context, height, ink: LOOKS[look].ink };
 }
 
-/** "Skriven i Penna" in the corner, when the writer keeps it. */
+/** "Skriven i Skrivro" in the corner, when the writer keeps it. */
 export const penMark = (card: Card) =>
   text(
     card,

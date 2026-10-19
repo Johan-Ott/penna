@@ -11,7 +11,7 @@
 - Signerade uppdateringar: appen frågar GitHub Releases vid start.
 - `.github/workflows/release.yml`: en tagg `vX.Y.Z` bygger Windows till ett utkast. macOS väntar
   på Apple Developer-kontot i punkt 3.
-- Typsnittens licenser ligger i `public/fonts/`; Om Penna nämner typsnitten och Typst.
+- Typsnittens licenser ligger i `public/fonts/`; Om Skrivro nämner typsnitten och Typst.
 
 ## Johan gör, en gång
 
@@ -29,8 +29,8 @@
 4. **Butiker:** pris och engångsköp, skärmdumpar, butikstext på svenska och engelska,
    integritetsetiketten "Data samlas inte in".
 5. **Webbsida:** nedladdning, support-e-post och integritetspolicy (krävs av butikerna även när
-   ingen data samlas in). När adressen och e-posten finns kan Om Penna länka till dem.
-6. **Varumärkeskoll** av namnet Penna.
+   ingen data samlas in). När adressen och e-posten finns kan Om Skrivro länka till dem.
+6. **Varumärkeskoll** av namnet Skrivro.
 
 ## Prova innan släppet, i det riktiga fönstret
 
@@ -46,7 +46,7 @@
 
 ```bash
 npm run version -- 0.1.0
-git commit -am "Penna 0.1.0" && git tag v0.1.0 && git push --follow-tags
+git commit -am "Skrivro 0.1.0" && git tag v0.1.0 && git push --follow-tags
 ```
 
 Bygg Android-appen och lägg den på utkastet innan det publiceras. Telefonerna letar efter en
@@ -54,7 +54,7 @@ Bygg Android-appen och lägg den på utkastet innan det publiceras. Telefonerna 
 
 ```bash
 npm run build:android
-gh release upload v0.1.0 out/Penna.apk
+gh release upload v0.1.0 out/Skrivro.apk
 ```
 
 Publicera sedan utkastet under Releases på GitHub. Datorerna och telefonerna ser det från

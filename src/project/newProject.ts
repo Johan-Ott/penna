@@ -85,7 +85,7 @@ async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode
   return tree;
 }
 
-// The writer's own templates are read from the Penna folder; the built-in ones from Penna.
+// The writer's own templates are read from the Skrivro folder; the built-in ones from Skrivro.
 async function templateFor(fileSystem: FileSystem, libraryDir: string, details: ProjectDetails) {
   const own = details.structure.startsWith(OWN_PREFIX)
     ? await readOwnTemplates(fileSystem, libraryDir)
@@ -96,7 +96,7 @@ async function templateFor(fileSystem: FileSystem, libraryDir: string, details: 
   return composeTemplate(structure, pieces);
 }
 
-// The template's goal, labels and note sorts; Penna's standard labels when it adds none.
+// The template's goal, labels and note sorts; Skrivro's standard labels when it adds none.
 function templateParts(template: BookTemplate) {
   const labels = template.labels.map(([name = "", color = ""]) => ({
     id: newSceneId(),

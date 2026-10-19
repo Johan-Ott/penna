@@ -2,7 +2,7 @@ import { t, uiLanguage } from "../../i18n/i18n.js";
 import { restartGuide } from "../guide/guide.js";
 import { platform } from "../platform.js";
 
-/** Nytt i Penna on the website, in the language Penna is shown in. */
+/** Nytt i Skrivro on the website, in the language Skrivro is shown in. */
 export const newsPage = () =>
   `https://johan-ott.github.io/penna/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
 
@@ -56,7 +56,7 @@ const SECTIONS: [string, string[]][] = [
     t("Känt i den tidiga versionen"),
     [
       t(
-        "Penna finns för Windows och Android. Mac-versionen byggs men är inte signerad eller prövad än, och iPad kommer senare.",
+        "Skrivro finns för Windows och Android. Mac-versionen byggs men är inte signerad eller prövad än, och iPad kommer senare.",
       ),
       t(
         "Windows kan varna för en okänd utgivare när du installerar. Välj Mer info och sedan Kör ändå.",
@@ -80,7 +80,7 @@ export function HelpTab() {
           className="button secondary small"
           onClick={() => void platform.openLink(newsPage())}
         >
-          {t("Nytt i Penna och vad som kommer")}
+          {t("Nytt i Skrivro och vad som kommer")}
         </button>
       </div>
       {SECTIONS.map(([title, lines]) => (

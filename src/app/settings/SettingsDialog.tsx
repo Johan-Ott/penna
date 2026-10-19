@@ -19,13 +19,13 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Konto"), SyncTab],
   [t("Hjälp"), HelpTab],
   [t("Kortkommandon"), ShortcutsTab],
-  [t("Om Penna"), AboutTab],
+  [t("Om Skrivro"), AboutTab],
 ];
 // A phone has no keyboard to take shortcuts from.
 const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));
 
-// The tabs that hold settings, and the shortcuts, searched together; Hjälp and Om Penna are reading.
-const READING = [t("Hjälp"), t("Om Penna")];
+// The tabs that hold settings, and the shortcuts, searched together; Hjälp and Om Skrivro are reading.
+const READING = [t("Hjälp"), t("Om Skrivro")];
 const SEARCHED = TABS.filter(([label]) => !READING.includes(label) && isShown(label));
 
 // Every settings tab is drawn, and the rows whose words do not hold the search are hidden.

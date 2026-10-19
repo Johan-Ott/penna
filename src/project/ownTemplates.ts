@@ -5,7 +5,7 @@ import { projectGoals } from "./progress.js";
 import type { BookTemplate } from "./templates.js";
 import { isSpecialFolder, type TreeNode } from "./tree.js";
 
-// The writer's own templates: one JSON file each in the Penna folder's mallar/, to keep or share.
+// The writer's own templates: one JSON file each in the Skrivro folder's mallar/, to keep or share.
 
 /** Own templates' ids start with this, so they are told from the built-in structures. */
 export const OWN_PREFIX = "egen:";

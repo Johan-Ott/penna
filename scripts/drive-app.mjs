@@ -1,5 +1,5 @@
-// `node scripts/drive-app.mjs steps.mjs`: runs `export default async ({ page }) => …` in Penna
-// Test, or with `--android` in the emulator's Penna (npm run build:android -- --emulator).
+// `node scripts/drive-app.mjs steps.mjs`: runs `export default async ({ page }) => …` in Skrivro
+// Test, or with `--android` in the emulator's Skrivro (npm run build:android -- --emulator).
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
 import { _android as android, chromium } from "@playwright/test";
@@ -12,12 +12,12 @@ async function connect() {
   if (process.argv.includes("--android")) {
     const [device] = await android.devices();
     if (!device) throw new Error("No emulator: start it and npm run build:android -- --emulator");
-    const webView = await device.webView({ pkg: "se.penna.app" });
+    const webView = await device.webView({ pkg: "se.skrivro.app" });
     return { page: await webView.page(), close: () => device.close() };
   }
   const browser = await chromium.connectOverCDP("http://127.0.0.1:9333");
   const [page] = browser.contexts()[0]?.pages() ?? [];
-  if (!page) throw new Error("Penna Test is not running: npm run app:test");
+  if (!page) throw new Error("Skrivro Test is not running: npm run app:test");
   return { page, close: () => browser.close() };
 }
 

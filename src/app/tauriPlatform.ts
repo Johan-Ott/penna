@@ -12,8 +12,8 @@ import type { Platform, RemoteState, Spelling } from "./platform.js";
 import { androidSignIn, computerSignIn } from "./tauriGoogleSignIn.js";
 import { t } from "../i18n/i18n.js";
 
-// Penna through Tauri: llkit's device, and the books' own parts: removing a book, its backups,
-// the spelling check, Typst, Google and the remote control, each a command in Penna's Rust.
+// Skrivro through Tauri: llkit's device, and the books' own parts: removing a book, its backups,
+// the spelling check, Typst, Google and the remote control, each a command in Skrivro's Rust.
 
 function googleSignInHere() {
   if (/Android/i.test(navigator.userAgent)) return { googleSignIn: androidSignIn };

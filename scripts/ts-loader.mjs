@@ -1,4 +1,4 @@
-// Lets Node run Penna's own TypeScript for the book CLI: "./tree.js" in the source is tree.ts on
+// Lets Node run Skrivro's own TypeScript for the book CLI: "./tree.js" in the source is tree.ts on
 // disk, and a JSON file loads as a module. Node strips the types itself.
 import { existsSync, readFileSync } from "node:fs";
 import { register } from "node:module";

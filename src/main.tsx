@@ -34,7 +34,7 @@ document.documentElement.classList.toggle("android", /Android/i.test(navigator.u
 // them. The browser version has no such window and needs none.
 document.documentElement.classList.toggle("mac-window", isMac && !!platform.windowControls);
 const root = document.getElementById("root");
-if (!root) throw new Error("index.html has no #root element for Penna to render into.");
+if (!root) throw new Error("index.html has no #root element for Skrivro to render into.");
 createRoot(root).render(
   <StrictMode>
     <App />

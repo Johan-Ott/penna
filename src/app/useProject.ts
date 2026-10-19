@@ -19,7 +19,7 @@ export interface Project extends OpenedProject {
   tree: TreeNode[];
   summaries: Record<string, SceneSummary>;
   repairCopy: string | null;
-  /** Saved by a newer Penna: nothing is written, so project.json is never downgraded. */
+  /** Saved by a newer Skrivro: nothing is written, so project.json is never downgraded. */
   isReadOnly: boolean;
 }
 

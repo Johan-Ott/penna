@@ -7,7 +7,7 @@ import {
 } from "@llkit/feedback/sendFeedback.js";
 
 // As the app does when it starts.
-provideAppName("Penna");
+provideAppName("Skrivro");
 provideFeedbackAddress("feedback@example.com");
 
 const feedback = { kind: "fel" as const, message: " Sidkartan visar fel sida. ", hasReport: false };
@@ -26,14 +26,14 @@ describe("feedback", () => {
     const { to, subject, body } = mail(feedbackMail(feedback));
 
     expect(to).toBe("feedback@example.com");
-    expect(subject).toBe("Penna test: Fel");
+    expect(subject).toBe("Skrivro test: Fel");
     expect(body).toBe("Sidkartan visar fel sida.");
   });
 
   it("puts the report under the message when it goes along", () => {
     const text = feedbackText({ ...feedback, hasReport: true });
 
-    expect(text).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
+    expect(text).toMatch(/^Sidkartan visar fel sida\.\n\n---\nSkrivro /);
   });
 
   it("leaves a report too long for a mail link to be pasted from the clipboard", () => {

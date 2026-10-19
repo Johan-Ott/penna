@@ -7,7 +7,7 @@ import {
 
 export interface AppPreferences {
   isOnboardingDone: boolean;
-  /** The Penna folder where new projects are made, for example OneDrive/Penna. */
+  /** The Skrivro folder where new projects are made, for example OneDrive/Skrivro. */
   libraryDir: string | null;
   lastProjectDir: string | null;
   /** Projects opened from outside the library, so the shelf can show them too. */
@@ -15,7 +15,7 @@ export interface AppPreferences {
   authorName: string;
   defaultDailyGoal: number;
   isAutoSnapshotOn: boolean;
-  /** The language of Penna's own interface; each book has its own language too. */
+  /** The language of Skrivro's own interface; each book has its own language too. */
   uiLanguage: UiLanguage;
   /** The language a new book is written in, such as "sv-SE"; the first start chooses it. */
   bookLanguage: string;

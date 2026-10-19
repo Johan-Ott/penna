@@ -1,7 +1,7 @@
 # **APP_NAME**
 
-Byggd på llkit, som kopierades hit från Penna. Ändra inte i `llkit/` här: ändra i Pennas och
-hämta den med `npm run llkit:uppdatera ../__APP_SLUG__` från Penna.
+Byggd på llkit, som kopierades hit från Skrivro. Ändra inte i `llkit/` här: ändra i Skrivros och
+hämta den med `npm run llkit:uppdatera ../__APP_SLUG__` från Skrivro.
 
 - `npm install` en gång, sedan `npm run app` för appen i eget fönster, `npm run dev:web` i
   webbläsaren.

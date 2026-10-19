@@ -2,7 +2,7 @@ import { COMMENT, connections, GUIDE, GUIDE_IDS, SECRET, secretNode, STICKY } fr
 
 export const DEMO_PROJECT_DIR = "/Vintervägen.penna";
 
-// The example shows what Penna does: chapters with what happens and when, a subtitle and an
+// The example shows what Skrivro does: chapters with what happens and when, a subtitle and an
 // epigraph, a footnote, notes linked by name, and one misspelt name for the review to find.
 
 const scene = (id: string, title: string, status: string, body: string) => ({
@@ -174,7 +174,7 @@ const PROJECT = {
   ],
 };
 
-/** Shown when Penna runs in a browser without Tauri. */
+/** Shown when Skrivro runs in a browser without Tauri. */
 export const DEMO_PROJECT_FILES: Record<string, string> = {
   [`${DEMO_PROJECT_DIR}/project.json`]: `${JSON.stringify(PROJECT, null, 2)}\n`,
   ...scene(SCENE_IDS.koket, "Köket", "redigering", KOKET),

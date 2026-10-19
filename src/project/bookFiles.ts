@@ -28,8 +28,8 @@ import { nodeLabel } from "./treeLabels.js";
 
 export type { BookFolder } from "./bookFolder.js";
 
-// A book changed straight in its folder, without Penna running, with the app's own tree
-// functions; a running Penna sees the files change. docs/format.md describes the files.
+// A book changed straight in its folder, without Skrivro running, with the app's own tree
+// functions; a running Skrivro sees the files change. docs/format.md describes the files.
 
 // A chapter starts with a scene, as in the app, so there is somewhere to write at once.
 async function newNode(book: BookFolder, kind: NodeKind, title: string): Promise<TreeNode> {

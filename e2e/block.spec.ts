@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import type { platform as appPlatform } from "../src/app/platform";
 import { openExample } from "./helpers";
 
-const BOOK = "/Användare/Elin/Dokument/Penna/Vintervägen.penna";
+const BOOK = "/Användare/Elin/Dokument/Skrivro/Vintervägen.penna";
 
 test.beforeEach(async ({ page }) => {
   await openExample(page);

@@ -1,7 +1,7 @@
 import { addEnglish } from "@llkit/i18n.js";
 import english from "./en.json";
 
-// Penna's texts, looked up by llkit's i18n; Penna imports t and the rest from here.
+// Skrivro's texts, looked up by llkit's i18n; Skrivro imports t and the rest from here.
 addEnglish(english);
 
 export {

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Penna",
+  "productName": "Skrivro",
   "version": "0.4.4",
-  "identifier": "se.penna.app",
+  "identifier": "se.skrivro.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Penna",
+        "title": "Skrivro",
         "width": 1280,
         "height": 820,
         "minWidth": 720,
@@ -37,7 +37,7 @@
     ],
     "category": "Productivity",
     "shortDescription": "En lokal skrivapp för romanförfattare",
-    "longDescription": "Penna är en skrivapp för romanförfattare. Texten sparas som vanliga filer i en mapp du väljer, utan konton och utan servrar.",
+    "longDescription": "Skrivro är en skrivapp för romanförfattare. Texten sparas som vanliga filer i en mapp du väljer, utan konton och utan servrar.",
     "copyright": "© 2026 Lone Lodge",
     "windows": {
       "webviewInstallMode": {

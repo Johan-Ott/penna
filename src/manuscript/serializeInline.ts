@@ -23,7 +23,7 @@ function outerWrapper(nodes: Node[], start: number, done: Wrapper[]): Wrapper | 
   return longestFirst[0];
 }
 
-// Penna's style fences are not CommonMark, so remark does not escape them at a line start.
+// Skrivro's style fences are not CommonMark, so remark does not escape them at a line start.
 function textWithSafeFences(value: string): PhrasingContent[] {
   return value.split(/(?<=^|\n)(?=:::)/).flatMap((part, index) => {
     const startsLine = part.startsWith(":::") && (index > 0 || value.startsWith(":::"));

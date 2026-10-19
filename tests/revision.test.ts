@@ -69,7 +69,7 @@ describe("an editor's changes", () => {
 });
 
 describe("a Word manuscript coming back", () => {
-  it("is read scene by scene between the marks Penna put in it", async () => {
+  it("is read scene by scene between the marks Skrivro put in it", async () => {
     const scenes = new Map([
       ["S1AAAAAAAAAAAAAAAAAAAAAAAA", parseMarkdown("Isen låg tjock.\n\nElin gick ut.\n")],
       ["S2AAAAAAAAAAAAAAAAAAAAAAAA", parseMarkdown("Maja väntade.\n")],
@@ -94,7 +94,7 @@ describe("a Word manuscript coming back", () => {
     expect(texts.get("S2AAAAAAAAAAAAAAAAAAAAAAAA")).toBe("Maja väntade.\n");
   });
 
-  it("gives nothing for a Word file Penna did not make", async () => {
+  it("gives nothing for a Word file Skrivro did not make", async () => {
     const bytes = new Uint8Array(
       await Packer.toBuffer(new Document({ sections: [{ children: [] }] })),
     );

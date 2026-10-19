@@ -20,7 +20,7 @@ function fakeFetch(body: unknown, status = 200) {
 }
 
 describe("googleAuth", () => {
-  it("asks only for the files Penna makes, with a challenge and room for the address", async () => {
+  it("asks only for the files Skrivro makes, with a challenge and room for the address", async () => {
     const { verifier, challenge } = await keyChallenge();
 
     const url = signInUrl(client, challenge, "S1");

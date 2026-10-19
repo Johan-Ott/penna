@@ -2,7 +2,7 @@ import { createGuide } from "@llkit/guide/guide.js";
 import { t } from "../../i18n/i18n.js";
 import { platform } from "../platform.js";
 
-// Penna's guide for a new writer: a tip in each part of Penna, in the order a book is made.
+// Skrivro's guide for a new writer: a tip in each part of Skrivro, in the order a book is made.
 
 export const STEPS = [
   {
@@ -10,9 +10,9 @@ export const STEPS = [
     name: t("Skriv"),
     // A phone keeps the tree under Boken, not to the left.
     text: platform.isPhone
-      ? t("Skriv här. Penna sparar av sig själv. Kapitel och scener lägger du till under Boken.")
+      ? t("Skriv här. Skrivro sparar av sig själv. Kapitel och scener lägger du till under Boken.")
       : t(
-          "Skriv här. Penna sparar av sig själv. Kapitel och scener lägger du till i trädet till vänster.",
+          "Skriv här. Skrivro sparar av sig själv. Kapitel och scener lägger du till i trädet till vänster.",
         ),
   },
   {

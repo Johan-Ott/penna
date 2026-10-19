@@ -35,7 +35,7 @@ function profileFrom(fileText: string): Profile {
   }
 }
 
-/** The profile in the Penna folder; signed in with Google, it follows to every device. */
+/** The profile in the Skrivro folder; signed in with Google, it follows to every device. */
 export function useProfile(libraryDir: string | null) {
   const [profile, setProfile] = useState(NO_PROFILE);
   const [isLoaded, setLoaded] = useState(false);

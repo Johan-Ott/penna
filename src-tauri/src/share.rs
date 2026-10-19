@@ -1,4 +1,4 @@
-//! Sharing on a phone: the file is written to Penna's cache and handed to Android's share sheet
+//! Sharing on a phone: the file is written to Skrivro's cache and handed to Android's share sheet
 //! by src-tauri/android/SharePlugin.kt, so it can be sent on or saved to Files or Drive.
 
 use tauri::plugin::{Builder, PluginHandle, TauriPlugin};
@@ -11,7 +11,7 @@ pub fn init() -> TauriPlugin<Wry> {
         .setup(|app, api| {
             #[cfg(target_os = "android")]
             app.manage(Share(
-                api.register_android_plugin("se.penna.app", "SharePlugin")?,
+                api.register_android_plugin("se.skrivro.app", "SharePlugin")?,
             ));
             let _ = (app, api);
             Ok(())
@@ -35,7 +35,7 @@ pub fn share_file(
         .join("dela");
     std::fs::create_dir_all(&dir).map_err(|error| error.to_string())?;
     let path = dir.join(if name.is_empty() {
-        "Penna".into()
+        "Skrivro".into()
     } else {
         name
     });

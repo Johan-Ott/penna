@@ -20,3 +20,11 @@ export interface Drive {
 }
 
 export class DriveChanged extends Error {}
+
+/** Skrivro/ at the top of My Drive, or Penna/ where an earlier version put the books. */
+export const findAppFolder = async (drive: Drive) =>
+  (await drive.findFolder("Skrivro", null)) ?? (await drive.findFolder("Penna", null));
+
+/** The app's folder, made the first time it is needed. */
+export const appFolder = async (drive: Drive) =>
+  (await findAppFolder(drive)) ?? (await drive.createFolder("Skrivro", null));

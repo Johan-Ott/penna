@@ -4,7 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 // A novelist who only has her phone: starts a book, writes a first chapter over a few
 // sittings, fixes what she wrote, and reads it back. As a person would, through the screen.
 
-// Typed one key at a time, so Penna's typography turns "--" into a dash as she writes.
+// Typed one key at a time, so Skrivro's typography turns "--" into a dash as she writes.
 async function write(page: Page, text: string) {
   await page.keyboard.type(text, { delay: 2 });
 }

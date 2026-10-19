@@ -43,7 +43,7 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   [
     "spellcheck",
     t("Stavningskontroll"),
-    t("Penna stryker under felstavade ord i bokens språk. Finska har ingen ordlista än."),
+    t("Skrivro stryker under felstavade ord i bokens språk. Finska har ingen ordlista än."),
   ],
   [
     "typography",

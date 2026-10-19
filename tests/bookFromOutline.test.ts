@@ -10,10 +10,10 @@ describe("createBookFromOutline", () => {
     const files = createMemoryFileSystem({});
     const outline = "# Akt 1\n\n## Skörden\n\nVale arbetar.\n\n## Kretsen\n\nMiddag.\n";
 
-    const created = await createBookFromOutline(files, "/Penna", { title: "Vardhavn" }, outline);
+    const created = await createBookFromOutline(files, "/Skrivro", { title: "Vardhavn" }, outline);
 
     const project = await readProjectFile(files, created.dir, []);
-    expect(created.dir).toBe("/Penna/Vardhavn.penna");
+    expect(created.dir).toBe("/Skrivro/Vardhavn.penna");
     expect(project.fields).toMatchObject({ title: "Vardhavn", type: "roman" });
     const [part] = project.tree;
     expect(part).toMatchObject({ kind: "part", title: "Akt 1" });
@@ -24,7 +24,7 @@ describe("createBookFromOutline", () => {
   it("makes a book with one chapter and scene when no outline is given", async () => {
     const files = createMemoryFileSystem({});
 
-    const created = await createBookFromOutline(files, "/Penna", { title: "Vardhavn" });
+    const created = await createBookFromOutline(files, "/Skrivro", { title: "Vardhavn" });
 
     const project = await readProjectFile(files, created.dir, []);
     expect(manuscriptSceneIds(project.tree)).toEqual([created.sceneId]);
@@ -35,7 +35,7 @@ describe("createBookFromOutline", () => {
 
     const created = await createBookFromOutline(
       files,
-      "/Penna",
+      "/Skrivro",
       { title: "Vardhavn" },
       "# Akt 1\n\n## Kroppen\n",
     );
@@ -52,7 +52,7 @@ describe("createBookFromOutline", () => {
 
     const created = await createBookFromOutline(
       files,
-      "/Penna",
+      "/Skrivro",
       details,
       "# Akt 1\n\n## Kroppen\n",
     );
@@ -66,11 +66,11 @@ describe("createBookFromOutline", () => {
   it("names the structures and pieces there are when one is unknown", async () => {
     const files = createMemoryFileSystem({});
 
-    const wrongStructure = createBookFromOutline(files, "/Penna", {
+    const wrongStructure = createBookFromOutline(files, "/Skrivro", {
       title: "A",
       structure: "epos",
     });
-    const wrongPiece = createBookFromOutline(files, "/Penna", { title: "B", pieces: ["vampyr"] });
+    const wrongPiece = createBookFromOutline(files, "/Skrivro", { title: "B", pieces: ["vampyr"] });
 
     await expect(wrongStructure).rejects.toThrow(/romantasy/);
     await expect(wrongPiece).rejects.toThrow(/deckare/);

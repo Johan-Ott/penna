@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { anchorAt, type Anchor } from "../project/comments.js";
 
-// The comments a reader or an editor wrote in a Word manuscript made by Penna, each with the
+// The comments a reader or an editor wrote in a Word manuscript made by Skrivro, each with the
 // scene it stands in and the words it is on. Word, Google Docs, LibreOffice and Pages all keep them.
 
 export interface WordComment extends Anchor {
@@ -70,7 +70,7 @@ function commentRanges(xml: string) {
   return walk;
 }
 
-/** The file's comments in the scenes Penna marked; none when it has no comments. */
+/** The file's comments in the scenes Skrivro marked; none when it has no comments. */
 export async function docxComments(docx: Uint8Array): Promise<WordComment[]> {
   const zip = await JSZip.loadAsync(docx);
   const commentsXml = await zip.file("word/comments.xml")?.async("string");

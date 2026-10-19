@@ -81,7 +81,7 @@ export function wornFlair(id: string, earned: Earned): Flair | null {
 }
 
 /** What the journey has counted up to today, as the flair asks for it. */
-// For trying the styles in Penna Test: only where Penna runs from the source, never in a release.
+// For trying the styles in Skrivro Test: only where Skrivro runs from the source, never in a release.
 const isAllOpen = () => {
   try {
     return import.meta.env.DEV && localStorage.getItem("penna.allt-upplast") === "ja";

@@ -97,7 +97,7 @@ function ReadBackMessage(props: {
     return (
       <p>
         {t(
-          "Filen saknar Pennas markeringar. Läs in ett manus som exporterats från Penna och redigerats i Word.",
+          "Filen saknar Skrivros markeringar. Läs in ett manus som exporterats från Skrivro och redigerats i Word.",
         )}
       </p>
     );

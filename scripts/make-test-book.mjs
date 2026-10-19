@@ -1,5 +1,5 @@
 // A long book for testing speed and the page map: node scripts/make-test-book.mjs <folder> [words]
-// Writes "Testbok.penna" inside <folder>; open it in Penna with Öppna mapp.
+// Writes "Testbok.penna" inside <folder>; open it in Skrivro with Öppna mapp.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 

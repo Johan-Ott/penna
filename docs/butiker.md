@@ -1,15 +1,15 @@
 # Butikerna och Google-inloggningen
 
-Allt som behövs för att Penna ska kunna släppas till alla: Google Play, Microsoft Store och
+Allt som behövs för att Skrivro ska kunna släppas till alla: Google Play, Microsoft Store och
 Googles inloggning i produktion. Texterna nedan klistras in som de står.
 
 ## Google-inloggningen (Google Cloud Console)
 
-Penna ber bara om `drive.file`: filer som Penna själv skapat. Det är ett icke-känsligt scope,
+Skrivro ber bara om `drive.file`: filer som Skrivro själv skapat. Det är ett icke-känsligt scope,
 så ingen säkerhetsgranskning krävs, bara varumärkesverifiering.
 
 - **OAuth consent screen → Publishing status:** Testing → **In production**.
-- **App name:** Penna
+- **App name:** Skrivro
 - **User support email och Developer contact:** johan.lonelodge@gmail.com
 - **App logo:** `site/penna-logo.png` (120 × 120 px eller större, kvadratisk)
 - **Application home page:** https://johan-ott.github.io/penna/
@@ -18,7 +18,7 @@ så ingen säkerhetsgranskning krävs, bara varumärkesverifiering.
 - **Authorized domains:** `johan-ott.github.io`. Domänen verifieras i Google Search Console
   med en HTML-tagg i `site/index.html`.
 - **Scopes:** endast `.../auth/drive.file`.
-- **Android-klienten:** OAuth-klienten av typen Android ska ha SHA-1 för **både** Pennas egen
+- **Android-klienten:** OAuth-klienten av typen Android ska ha SHA-1 för **både** Skrivros egen
   nyckel och Play-signeringen om Play signerar om appen (se Google Play nedan). Annars fungerar
   inloggningen inte i appen från Play.
 
@@ -26,8 +26,8 @@ så ingen säkerhetsgranskning krävs, bara varumärkesverifiering.
 
 ### Fil och signering
 
-- Bygg: `npm run build:android -- --play` → `out/Penna.aab`.
-- **App signing:** välj att ladda upp Pennas egen nyckel (`~/.penna/penna-release.jks`) som
+- Bygg: `npm run build:android -- --play` → `out/Skrivro.aab`.
+- **App signing:** välj att ladda upp Skrivros egen nyckel (`~/.penna/penna-release.jks`) som
   appens signeringsnyckel. Då har appen från Play och APK:n från webbplatsen samma signatur, och
   en telefon kan byta mellan dem utan att avinstallera. Väljer Play en egen nyckel måste dess
   SHA-1 läggas till i Google Cloud (se ovan), och webbplatsens APK och Play-appen kan inte
@@ -37,17 +37,19 @@ så ingen säkerhetsgranskning krävs, bara varumärkesverifiering.
 
 ### Butikstexter
 
-**Appens namn:** Penna: skriv din bok
+**Appens namn:** Skrivro: skriv din bok
 
 **Kort beskrivning (sv, högst 80 tecken):**
 Skriv din bok i lugn och ro, från första idé till färdigt manus och e-bok.
 
+**App name (en):** Skrivro: write your book
+
 **Short description (en, max 80 characters):**
-Write your book in peace, from the first idea to a finished manuscript and e-book.
+Write your book in peace, from first idea to finished manuscript and e-book.
 
 **Fullständig beskrivning (sv):**
 
-Penna är ett skrivprogram för dig som skriver böcker. Lugnt, svenskt och utan konto.
+Skrivro är ett skrivprogram för dig som skriver böcker. Lugnt, svenskt och utan konto.
 
 Skriv
 
@@ -69,14 +71,14 @@ Gör klart
 
 Dina texter är dina
 
-- Böckerna ligger på din telefon. Penna samlar inte in något.
-- Vill du ha dem på flera enheter synkar Penna via din egen Google Drive.
+- Böckerna ligger på din telefon. Skrivro har ingen server och samlar inget om dig.
+- Vill du ha dem på flera enheter synkar Skrivro via din egen Google Drive.
 
-Penna finns även för Windows och är gratis under betan.
+Skrivro finns även för Windows och är gratis under betan.
 
 **Full description (en):**
 
-Penna is a writing app for people who write books. Calm, simple and with no account.
+Skrivro is a writing app for people who write books. Calm, simple and with no account.
 
 Write
 
@@ -98,10 +100,10 @@ Finish it
 
 Your writing is yours
 
-- Your books stay on your phone. Penna collects nothing.
-- If you want them on several devices, Penna syncs through your own Google Drive.
+- Your books stay on your phone. Skrivro has no server and collects nothing about you.
+- If you want them on several devices, Skrivro syncs through your own Google Drive.
 
-Penna is also available for Windows and is free during the beta.
+Skrivro is also available for Windows and is free during the beta.
 
 ### Övrigt i Play Console
 
@@ -112,7 +114,7 @@ Penna is also available for Windows and is free during the beta.
 - **Appåtkomst:** Alla funktioner finns utan inloggning (inloggning behövs bara för synk).
 - **Innehållsklassning (IARC):** Verktyg/produktivitet; inget våld, inga köp, ingen chatt
   mellan användare, ingen platsdelning → Alla / PEGI 3.
-- **Målgrupp:** 13 år och äldre (Penna är inte gjord för barn, och Google-inloggning kräver 13).
+- **Målgrupp:** 13 år och äldre (Skrivro är inte gjord för barn, och Google-inloggning kräver 13).
 - **Nyhetsappar, statliga appar, hälsa, finans:** Nej.
 
 ### Datasäkerhet (Data safety)
@@ -138,16 +140,16 @@ Play räknar allt som lämnar telefonen som insamlat, även till användarens eg
 - **Integritetspolicy:** https://johan-ott.github.io/penna/integritet.html
 - **Ålder:** IARC-frågorna besvaras som för Play → 3+.
 - **Beskrivning:** samma texter som för Play.
-- **Kraschdata:** Partner Center visar krascher för Store-appen utan kod i Penna.
+- **Kraschdata:** Partner Center visar krascher för Store-appen utan kod i Skrivro.
 
 ## Kraschdata och felrapporter
 
-Penna skickar ingenting av sig själv. Krascher och "svarar inte" syns i Play Console (Android
-vitals) och i Partner Center. Penna sparar sina senaste fel på enheten, och efter en krasch
+Skrivro skickar ingenting av sig själv. Krascher och "svarar inte" syns i Play Console (Android
+vitals) och i Partner Center. Skrivro sparar sina senaste fel på enheten, och efter en krasch
 erbjuder nästa start att mejla dem.
 
 ## Pris
 
-Gratis i alla butiker under betan. Från 1.0 är tanken Penna Pro: skrivandet förblir gratis, och
+Gratis i alla butiker under betan. Från 1.0 är tanken Skrivro Pro: skrivandet förblir gratis, och
 export till tryck, e-bok, omslag och Studio låses upp med ett engångsköp, samma i alla versioner
 (Play Billing på Android, egen licens för Windows och webbplatsen).

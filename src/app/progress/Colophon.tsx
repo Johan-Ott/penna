@@ -16,7 +16,7 @@ const ColophonPage = ({ lines }: { lines: string[] }) => (
       <p key={line}>{line}</p>
     ))}
     <span className="colophon-rule" aria-hidden="true" />
-    <span className="colophon-foot">{t("Skriven i Penna.")}</span>
+    <span className="colophon-foot">{t("Skriven i Skrivro.")}</span>
   </div>
 );
 

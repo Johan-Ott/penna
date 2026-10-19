@@ -111,7 +111,7 @@ const undoFix = (view: EditorView): boolean => {
   return true;
 };
 
-/** Corrects an obvious misspelling once the word is finished, where Penna checks the spelling. */
+/** Corrects an obvious misspelling once the word is finished, where Skrivro checks the spelling. */
 export function autocorrectPlugin(isOn: () => boolean, spelling: () => SpellingSwitch | null) {
   return new Plugin<Fix | null>({
     key: lastFix,

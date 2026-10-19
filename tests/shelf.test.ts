@@ -44,13 +44,13 @@ describe("whenUpdated", () => {
 describe("readShelf", () => {
   it("lists the projects in the library and those opened from elsewhere, and marks missing ones", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/Isen.penna/project.json": '{"title":"Isen","type":"roman","tree":[]}',
-      "/Penna/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: klar\n---\nTvå ord.",
-      "/Penna/inte-ett-projekt/anteckning.md": "x",
+      "/Skrivro/Isen.penna/project.json": '{"title":"Isen","type":"roman","tree":[]}',
+      "/Skrivro/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: klar\n---\nTvå ord.",
+      "/Skrivro/inte-ett-projekt/anteckning.md": "x",
       "/Annat/Fyren.penna/project.json": '{"title":"Fyren","tree":[]}',
     });
 
-    const books = await readShelf(files, "/Penna", [
+    const books = await readShelf(files, "/Skrivro", [
       "/Annat/Fyren.penna",
       "/Borta/Saltstank.penna",
     ]);
@@ -68,11 +68,11 @@ describe("readShelf", () => {
 describe("shelfGroups", () => {
   it("keeps the books of a series together under its name, books on their own first", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/A.penna/project.json": '{"title":"Isen","series":"Vintern.serie","tree":[]}',
-      "/Penna/B.penna/project.json": '{"title":"Fristående","tree":[]}',
-      "/Penna/C.penna/project.json": '{"title":"Fyren","series":"Vintern.serie","tree":[]}',
+      "/Skrivro/A.penna/project.json": '{"title":"Isen","series":"Vintern.serie","tree":[]}',
+      "/Skrivro/B.penna/project.json": '{"title":"Fristående","tree":[]}',
+      "/Skrivro/C.penna/project.json": '{"title":"Fyren","series":"Vintern.serie","tree":[]}',
     });
-    const books = await readShelf(files, "/Penna", []);
+    const books = await readShelf(files, "/Skrivro", []);
 
     const groups = shelfGroups(books);
 
@@ -84,13 +84,13 @@ describe("shelfGroups", () => {
 
   it("orders a series by the books' numbers, and books without a number last", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/A.penna/project.json":
+      "/Skrivro/A.penna/project.json":
         '{"title":"Tvåan","series":"V.serie","seriesNumber":2,"tree":[]}',
-      "/Penna/B.penna/project.json": '{"title":"Utan","series":"V.serie","tree":[]}',
-      "/Penna/C.penna/project.json":
+      "/Skrivro/B.penna/project.json": '{"title":"Utan","series":"V.serie","tree":[]}',
+      "/Skrivro/C.penna/project.json":
         '{"title":"Ettan","series":"V.serie","seriesNumber":1,"tree":[]}',
     });
-    const books = await readShelf(files, "/Penna", []);
+    const books = await readShelf(files, "/Skrivro", []);
 
     const [series] = shelfGroups(books);
 
@@ -105,12 +105,12 @@ describe("shelfGroups", () => {
 describe("a book being written", () => {
   it("counts its words toward the goal, and says what the deadline asks per day", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/Isen.penna/project.json":
+      "/Skrivro/Isen.penna/project.json":
         '{"title":"Isen","totalGoal":1000,"deadline":"2027-01-31","genre":"deckare","tree":[]}',
-      "/Penna/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: utkast\n---\nTvå ord.",
+      "/Skrivro/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: utkast\n---\nTvå ord.",
     });
 
-    const [book] = await readShelf(files, "/Penna", []);
+    const [book] = await readShelf(files, "/Skrivro", []);
 
     expect(book).toMatchObject({ goal: 1000, progress: 0, genre: "deckare" });
     expect(book && deadlineLine(book, "2027-01-01")).toBe("4 veckor kvar · 34 ord/dag");
@@ -120,10 +120,10 @@ describe("a book being written", () => {
 
   it("stands first on the shelf when it was written in last", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/A.penna/project.json": '{"title":"Gammal","tree":[]}',
-      "/Penna/B.penna/project.json": '{"title":"Ny","tree":[]}',
+      "/Skrivro/A.penna/project.json": '{"title":"Gammal","tree":[]}',
+      "/Skrivro/B.penna/project.json": '{"title":"Ny","tree":[]}',
     });
-    const books = await readShelf(files, "/Penna", []);
+    const books = await readShelf(files, "/Skrivro", []);
     const [old, recent] = books;
     if (!old || !recent) throw new Error("two books expected");
 

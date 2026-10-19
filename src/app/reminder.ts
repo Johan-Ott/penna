@@ -28,7 +28,7 @@ export function nextReminder(hour: number | null, now: number, todayWords: numbe
   return when;
 }
 
-// On a phone Penna is mostly closed, so the phone itself keeps the next reminder.
+// On a phone Skrivro is mostly closed, so the phone itself keeps the next reminder.
 function useScheduledReminder(hour: number | null, hasWritten: boolean) {
   useEffect(() => {
     const when = nextReminder(hour, Date.now(), hasWritten ? 1 : 0);
@@ -42,7 +42,7 @@ export function useReminder(hour: number | null, todayWords: number) {
   useOpenReminder(platform.scheduleReminder ? null : hour, todayWords);
 }
 
-/** On a computer: needs Penna to be open. */
+/** On a computer: needs Skrivro to be open. */
 function useOpenReminder(hour: number | null, todayWords: number) {
   const lastReminded = useRef<string | null>(null);
   const words = useRef(todayWords);

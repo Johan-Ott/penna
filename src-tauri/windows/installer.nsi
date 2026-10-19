@@ -1,4 +1,4 @@
-; Tauri's own installer template (tauri-cli 2.12.1), with the changes marked "Penna:".
+; Tauri's own installer template (tauri-cli 2.12.1), with the changes marked "Skrivro:".
 Unicode true
 ManifestDPIAware true
 ; Add in `dpiAwareness` `PerMonitorV2` to manifest for Windows 10 1607+ (note this should not affect lower versions since they should be able to ignore this and pick up `dpiAware` `true` set by `ManifestDPIAware true`)
@@ -166,10 +166,10 @@ VIAddVersionKey "ProductVersion" "${VERSION}"
 !define MUI_LANGDLL_REGISTRY_KEY "${MANUPRODUCTKEY}"
 !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
-; Penna: the one page anyone sees, as a small window of its own (windows/window.nsh),
+; Skrivro: the one page anyone sees, as a small window of its own (windows/window.nsh),
 ; shaped before it first shows.
 !include "${PENNA_WINDOWS}\window.nsh"
-!define MUI_CUSTOMFUNCTION_GUIINIT PennaGuiInit
+!define MUI_CUSTOMFUNCTION_GUIINIT SkrivroGuiInit
 
 ; Installer pages, must be ordered as they appear
 ; 1. Welcome Page
@@ -406,8 +406,8 @@ Var AppStartMenuFolder
 !insertmacro MUI_PAGE_STARTMENU Application $AppStartMenuFolder
 
 ; 7. Installation page
-; Penna: the installation page gets the picture and the thin bar.
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PennaWindow
+; Skrivro: the installation page gets the picture and the thin bar.
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW SkrivroWindow
 !insertmacro MUI_PAGE_INSTFILES
 
 ; 8. Finish page
@@ -488,7 +488,7 @@ Function .onInit
   ${IfNot} ${Errors}
     StrCpy $PassiveMode 1
   ${EndIf}
-  ; Penna: one click, like Spotify and Discord; no questions, only the progress window.
+  ; Skrivro: one click, like Spotify and Discord; no questions, only the progress window.
   StrCpy $PassiveMode 1
 
   ${GetOptions} $CMDLINE "/NS" $NoShortcutMode
@@ -752,7 +752,7 @@ Section Install
 SectionEnd
 
 Function .onInstSuccess
-  ; Penna: a silent install starts the app only with `/R`; otherwise Penna opens when it is in.
+  ; Skrivro: a silent install starts the app only with `/R`; otherwise Skrivro opens when it is in.
   ${If} ${Silent}
     ${GetOptions} $CMDLINE "/R" $R0
     ${IfNot} ${Errors}

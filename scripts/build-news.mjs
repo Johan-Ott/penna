@@ -47,11 +47,11 @@ const SWEDISH = {
   other: ["news.html", "en", "English"],
   home: "index.html",
   download: ["index.html#ladda-ner", "Ladda ner"],
-  title: "Nytt i Penna",
-  lead: "Var Penna är just nu, vad som är nytt och vad som kommer härnäst.",
+  title: "Nytt i Skrivro",
+  lead: "Var Skrivro är just nu, vad som är nytt och vad som kommer härnäst.",
   nowTitle: "Där vi är nu",
   now: (current) =>
-    `Penna är i öppen beta, gratis för alla. Den senaste versionen är <strong>${current}</strong>, för Windows och Android. Vi bygger vidare hela tiden, med det ni skriver till oss som karta.`,
+    `Skrivro är i öppen beta, gratis för alla. Den senaste versionen är <strong>${current}</strong>, för Windows och Android. Vi bygger vidare hela tiden, med det ni skriver till oss som karta.`,
   boardTitle: "Tavlan",
   boardLead:
     "Vad vi bygger nu, vad som kommer och vad som är klart. Tryck på det du vill ha, så räknar vi rösterna.",
@@ -60,7 +60,7 @@ const SWEDISH = {
   empty: "Inget här just nu.",
   vote: "Röst",
   missing: "Saknas något?",
-  idea: ["Föreslå en idé", "Idé till Penna"],
+  idea: ["Föreslå en idé", "Idé till Skrivro"],
 };
 
 const ENGLISH = {
@@ -69,11 +69,11 @@ const ENGLISH = {
   other: ["nytt.html", "sv", "Svenska"],
   home: "en.html",
   download: ["en.html#download", "Download"],
-  title: "What is new in Penna",
-  lead: "Where Penna is right now, what is new and what comes next.",
+  title: "What is new in Skrivro",
+  lead: "Where Skrivro is right now, what is new and what comes next.",
   nowTitle: "Where we are",
   now: (current) =>
-    `Penna is in open beta, free for everyone. The latest version is <strong>${current}</strong>, for Windows and Android. We keep building all the time, with what you write to us as the map.`,
+    `Skrivro is in open beta, free for everyone. The latest version is <strong>${current}</strong>, for Windows and Android. We keep building all the time, with what you write to us as the map.`,
   boardTitle: "The board",
   boardLead:
     "What we are building now, what is coming and what is done. Tap what you want, and we count the votes.",
@@ -82,7 +82,7 @@ const ENGLISH = {
   empty: "Nothing here right now.",
   vote: "Vote",
   missing: "Missing something?",
-  idea: ["Suggest an idea", "Idea for Penna"],
+  idea: ["Suggest an idea", "Idea for Skrivro"],
 };
 
 const escape = (words) =>
@@ -139,7 +139,7 @@ const top = (text) => `<!doctype html>
   <body>
     <header class="top">
       <nav class="wrap">
-        <a class="brand" href="${text.home}"><img src="penna-logo.png" alt="" />Penna</a>
+        <a class="brand" href="${text.home}"><img src="penna-logo.png" alt="" />Skrivro</a>
         <a class="language" href="${text.other[0]}" lang="${text.other[1]}">${text.other[2]}</a>
         <a class="button" href="${text.download[0]}">${text.download[1]}</a>
       </nav>
@@ -178,13 +178,13 @@ const notesAt = process.argv.indexOf("--notes");
 if (notesAt !== -1) {
   const news = await latestNews(process.argv[notesAt + 1]);
   const list = (lang) => news.items.map((title) => `- ${inLanguage(title, lang)}`).join("\n");
-  const download = "**Windows:** Penna-setup.exe · **Android:** Penna.apk";
+  const download = "**Windows:** Skrivro-setup.exe · **Android:** Skrivro.apk";
   process.stdout.write(`### Nytt\n${list("sv")}\n\n### New\n${list("en")}\n\n${download}\n`);
 } else {
   const [news, columns] = await Promise.all([latestNews(), roadmap()]);
   for (const text of [SWEDISH, ENGLISH])
     writeFileSync(`site/${text.file}`, page(text, news, columns));
   process.stdout.write(
-    `Nytt i Penna: ${columns.flat().length} på tavlan, ${news.items.length} klara\n`,
+    `Nytt i Skrivro: ${columns.flat().length} på tavlan, ${news.items.length} klara\n`,
   );
 }

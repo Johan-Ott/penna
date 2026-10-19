@@ -32,7 +32,7 @@ function withoutTitlePage(book: ImportedNode[], title: string) {
 async function readBook(fileSystem: FileSystem, path: string, bytes: Uint8Array) {
   const extension = extensionOf(path);
   if (extension === "scrivx" && !path.includes("/")) {
-    throw new ImportError(t("Välj Scrivener-projektet med Välj fil…, så hittar Penna texterna."));
+    throw new ImportError(t("Välj Scrivener-projektet med Välj fil…, så hittar Skrivro texterna."));
   }
   if (extension === "scrivx") return readScrivener(fileSystem, parentOf(path));
   if (extension === "docx") {

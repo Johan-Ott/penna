@@ -32,7 +32,7 @@ const reportOf = (entries: Entry[], info: { app: string; version: string; device
   return `${info.app} ${info.version}\n${info.device}\n\n${errors}\n`;
 };
 
-/** The latest errors, kept on the device so they outlive a crash. Never sent by Penna itself. */
+/** The latest errors, kept on the device so they outlive a crash. Never sent by Skrivro itself. */
 export function createErrorLog(now: () => number, shelf: Shelf | null = null) {
   const entries: Entry[] = [];
   let isRunning = false;

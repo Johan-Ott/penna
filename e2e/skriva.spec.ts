@@ -21,7 +21,7 @@ test("writing adds words to today's count", async ({ page }) => {
   await expect(page.getByText(/^2 \/ /)).toBeVisible();
 });
 
-test("Ctrl+S saves at once and says that Penna saves by itself", async ({ page }) => {
+test("Ctrl+S saves at once and says that Skrivro saves by itself", async ({ page }) => {
   await cursorAfterFirstParagraph(page);
   await page.keyboard.type(" Spara nu.");
 
@@ -30,7 +30,7 @@ test("Ctrl+S saves at once and says that Penna saves by itself", async ({ page }
   await expect(page.getByRole("status").filter({ hasText: "Sparat" })).toBeVisible();
 });
 
-test("a right-click in the text opens Penna's own menu, and Markera allt selects it all", async ({
+test("a right-click in the text opens Skrivro's own menu, and Markera allt selects it all", async ({
   page,
 }) => {
   await selectFirstWord(page);
@@ -150,11 +150,11 @@ test("settings open with Ctrl+comma and show the sync tab", async ({ page }) => 
   await expect(page.getByText("Synk finns inte på den här enheten än.")).toBeVisible();
 });
 
-test("Om Penna shows the errors since the start, here none", async ({ page }) => {
+test("Om Skrivro shows the errors since the start, here none", async ({ page }) => {
   await editor(page).click();
 
   await page.keyboard.press("ControlOrMeta+,");
-  await page.getByRole("button", { name: "Om Penna" }).click();
+  await page.getByRole("button", { name: "Om Skrivro" }).click();
 
   await expect(page.getByText("Inga fel sedan starten.")).toBeVisible();
 });

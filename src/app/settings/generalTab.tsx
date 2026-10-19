@@ -14,7 +14,7 @@ function BookLanguage({ book }: Pick<TabProps, "book">) {
   return (
     <Row
       label={t("Bokens språk")}
-      hint={t("Stavningskontroll och e-bokens språk. Penna startar om vid byte.")}
+      hint={t("Stavningskontroll och e-bokens språk. Skrivro startar om vid byte.")}
     >
       <Dropdown
         label={t("Bokens språk")}

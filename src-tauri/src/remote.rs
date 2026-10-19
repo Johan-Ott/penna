@@ -1,5 +1,5 @@
-//! "Styr Penna från den här datorn", for one start at a time: turning it on leaves a file in
-//! Penna's own folder, and the next start takes the file away as it opens the WebView on port
+//! "Styr Skrivro från den här datorn", for one start at a time: turning it on leaves a file in
+//! Skrivro's own folder, and the next start takes the file away as it opens the WebView on port
 //! 9334 for scripts/penna.mjs. Only this computer can reach the port, and the app says it is open.
 
 use std::path::PathBuf;
@@ -36,7 +36,7 @@ pub struct RemoteState {
 /// Asks for the next start, or takes that back; with no value it only says how it stands.
 #[tauri::command]
 pub fn remote_control(app: tauri::AppHandle, turn_on: Option<bool>) -> Result<RemoteState, String> {
-    let path = flag(&app).ok_or("Pennas mapp hittas inte")?;
+    let path = flag(&app).ok_or("Skrivros mapp hittas inte")?;
     match turn_on {
         Some(true) => {
             std::fs::create_dir_all(path.parent().unwrap_or(&path)).map_err(|e| e.to_string())?;

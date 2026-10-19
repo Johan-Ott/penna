@@ -9,7 +9,7 @@ import { bookCalls } from "./remoteBook.js";
 import { settingCallsInApp } from "./remoteBookSettings.js";
 
 // window.penna: the app's own commands and open book, for a tool on this computer to drive
-// Penna with as a game's console does; everything goes through what the app already does.
+// Skrivro with as a game's console does; everything goes through what the app already does.
 
 type Row = { id: string; kind: TreeNode["kind"]; title: string; depth: number };
 
@@ -92,14 +92,14 @@ function api(current: () => AppState) {
   return { ...all, batch: (steps: unknown) => runBatch(all, steps) };
 }
 
-export type PennaApi = ReturnType<typeof api>;
+export type SkrivroApi = ReturnType<typeof api>;
 
 /** Puts window.penna in place for as long as the app runs. */
 export function useRemote(app: AppState) {
   const latest = useRef(app);
   latest.current = app;
   useEffect(() => {
-    const page = window as { penna?: PennaApi };
+    const page = window as { penna?: SkrivroApi };
     page.penna = api(() => latest.current);
     return () => void delete page.penna;
   }, []);

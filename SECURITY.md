@@ -1,6 +1,6 @@
 # Säkerhet
 
-Hittar du en säkerhetsbrist i Penna, skriv till johan.lonelodge@gmail.com med "Säkerhet" i ämnet,
+Hittar du en säkerhetsbrist i Skrivro, skriv till johan.lonelodge@gmail.com med "Säkerhet" i ämnet,
 och vänta med att berätta offentligt tills den är rättad. Du får svar inom några dagar.
 
 Bara den senaste versionen får säkerhetsrättelser. Datorerna uppdateras själva, och telefonerna

@@ -25,7 +25,7 @@ describe("readProjectFile", () => {
     expect(project.isNewerFormat).toBe(false);
   });
 
-  it("knows a project saved by a newer Penna, so it can be opened read-only", async () => {
+  it("knows a project saved by a newer Skrivro, so it can be opened read-only", async () => {
     const stored = { formatVersion: 2, tree: [{ id: "s1", kind: "scene" }] };
     const files = createMemoryFileSystem({ [PROJECT_PATH]: JSON.stringify(stored) });
 
@@ -98,7 +98,7 @@ describe("readProjectFile", () => {
     expect(JSON.parse(await files.readText(PROJECT_PATH)).title).toBe("Vintervägen");
   });
 
-  it("never rewrites a newer Penna's project.json, even with nodes it does not know", async () => {
+  it("never rewrites a newer Skrivro's project.json, even with nodes it does not know", async () => {
     const text = JSON.stringify({ formatVersion: 2, tree: [{ id: "x", kind: "tidslinje" }] });
     const files = createMemoryFileSystem({ [PROJECT_PATH]: text });
 

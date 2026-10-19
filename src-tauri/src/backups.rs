@@ -1,9 +1,9 @@
-//! The automatic copies of each book live in Penna's own folder, under backups/. Penna never
+//! The automatic copies of each book live in Skrivro's own folder, under backups/. Skrivro never
 //! deletes the writer's files; this only removes old copies, and only inside that folder.
 
 use tauri::Manager;
 
-/// Deletes one old copy: a .zip file inside backups/ in Penna's own folder, nothing else.
+/// Deletes one old copy: a .zip file inside backups/ in Skrivro's own folder, nothing else.
 #[tauri::command]
 pub fn remove_backup(app: tauri::AppHandle, path: String) -> Result<(), String> {
     let own = app
@@ -20,7 +20,7 @@ pub fn remove_backup(app: tauri::AppHandle, path: String) -> Result<(), String> 
         || !is_copy
         || target.components().any(|part| part.as_os_str() == "..")
     {
-        return Err("Det är ingen säkerhetskopia i Pennas egen mapp".into());
+        return Err("Det är ingen säkerhetskopia i Skrivros egen mapp".into());
     }
     std::fs::remove_file(&target).map_err(|error| error.to_string())
 }

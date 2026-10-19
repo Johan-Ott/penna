@@ -16,20 +16,25 @@ interface KnownFolders {
 export function libraryCandidates({ home, documents }: KnownFolders): LibraryCandidate[] {
   const appleSync = "Mac, iPhone, iPad";
   return [
-    { id: "icloud", label: "iCloud Drive", hint: appleSync, path: `${home}/iCloudDrive/Penna` },
+    { id: "icloud", label: "iCloud Drive", hint: appleSync, path: `${home}/iCloudDrive/Skrivro` },
     {
       id: "icloud-mac",
       label: "iCloud Drive",
       hint: appleSync,
-      path: `${home}/Library/Mobile Documents/com~apple~CloudDocs/Penna`,
+      path: `${home}/Library/Mobile Documents/com~apple~CloudDocs/Skrivro`,
     },
-    { id: "dropbox", label: "Dropbox", hint: t("Alla enheter"), path: `${home}/Dropbox/Penna` },
-    { id: "onedrive", label: "OneDrive", hint: t("Alla enheter"), path: `${home}/OneDrive/Penna` },
+    { id: "dropbox", label: "Dropbox", hint: t("Alla enheter"), path: `${home}/Dropbox/Skrivro` },
+    {
+      id: "onedrive",
+      label: "OneDrive",
+      hint: t("Alla enheter"),
+      path: `${home}/OneDrive/Skrivro`,
+    },
     {
       id: "local",
       label: t("Bara den här enheten"),
       hint: t("Ingen synk"),
-      path: `${documents}/Penna`,
+      path: `${documents}/Skrivro`,
     },
   ];
 }

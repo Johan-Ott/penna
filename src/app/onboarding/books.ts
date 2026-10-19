@@ -5,14 +5,15 @@ import {
   type ProjectDetails,
 } from "../../project/newProject.js";
 import { structures, suggestedStructure } from "../../project/templates.js";
+import { libraryOf as journeyLibrary } from "../journey/journeyFile.js";
 import { platform } from "../platform.js";
 
 // How a book comes to the shelf: made new from a title and its kind, read in from a manuscript,
 // or the example. Each lands in the writer's library and is opened by the caller.
 
-/** Penna's own folder in Documents, unless the writer has chosen another. */
+/** The writer's library, made if it is not there yet. */
 export async function libraryOf(libraryDir: string | null) {
-  const dir = libraryDir ?? `${(await platform.knownFolders()).documents}/Penna`;
+  const dir = await journeyLibrary(libraryDir);
   await platform.fileSystem.makeDir(dir);
   return dir;
 }
@@ -32,7 +33,7 @@ export const startDetails = (dailyGoal: number, language = "sv-SE"): ProjectDeta
   language,
 });
 
-/** The details with the structure Penna suggests for them, and that structure's goal. */
+/** The details with the structure Skrivro suggests for them, and that structure's goal. */
 export function withSuggestion(details: ProjectDetails): ProjectDetails {
   const structure = suggestedStructure(details.type, details.genre ?? "", details.pieces);
   return withStructure(details, structure);

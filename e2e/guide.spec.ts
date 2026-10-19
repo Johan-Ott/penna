@@ -9,7 +9,7 @@ test("the guide shows one tip at a time where the writer is, and can be skipped"
   await openExample(page);
   const tip = page.getByRole("note", { name: "Tips" });
 
-  await expect(tip).toContainText("Penna sparar av sig själv");
+  await expect(tip).toContainText("Skrivro sparar av sig själv");
   await expect(tip.getByRole("listitem")).toHaveCount(5);
   await tip.getByRole("button", { name: "Uppfattat" }).click();
   await expect(tip).toBeHidden();

@@ -1,5 +1,5 @@
 // `node --import ./scripts/ts-loader.mjs scripts/book.ts <bokmapp> <anrop> [argument…]`: one
-// call on a book's files, Penna running or not; penna.mjs --book uses it. The answer is JSON.
+// call on a book's files, Skrivro running or not; penna.mjs --book uses it. The answer is JSON.
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { bookFileCalls } from "../src/project/bookFiles.js";

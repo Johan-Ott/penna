@@ -29,12 +29,12 @@ const summaries = {
 describe("markdownFolderZip", () => {
   it("names folders after parts and chapters and files after scenes, notes apart, trash left out", async () => {
     const files = createMemoryFileSystem({
-      "/Penna/Isen.penna/scenes/hamn.md": "---\nid: hamn\n---\nBåten låg still.",
-      "/Penna/Isen.penna/scenes/fraga.md": "---\nid: fraga\n---\nIngen visste.",
-      "/Penna/Isen.penna/scenes/elin.md": "---\nid: elin\n---\nFiskare.",
-      "/Penna/Isen.penna/scenes/bort.md": "---\nid: bort\n---\nBorta.",
+      "/Skrivro/Isen.penna/scenes/hamn.md": "---\nid: hamn\n---\nBåten låg still.",
+      "/Skrivro/Isen.penna/scenes/fraga.md": "---\nid: fraga\n---\nIngen visste.",
+      "/Skrivro/Isen.penna/scenes/elin.md": "---\nid: elin\n---\nFiskare.",
+      "/Skrivro/Isen.penna/scenes/bort.md": "---\nid: bort\n---\nBorta.",
     });
-    const book = { dir: "/Penna/Isen.penna", name: "Isen", tree, summaries };
+    const book = { dir: "/Skrivro/Isen.penna", name: "Isen", tree, summaries };
 
     const zip = await JSZip.loadAsync(await markdownFolderZip(files, book));
 

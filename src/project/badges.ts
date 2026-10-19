@@ -1,7 +1,7 @@
 import type { Summary } from "./inkwell.js";
 import { t } from "../i18n/i18n.js";
 
-/** Första resan leads a new writer through Penna; the milestones come with time. */
+/** Första resan leads a new writer through Skrivro; the milestones come with time. */
 export type BadgeGroup = "resan" | "milstolpe";
 
 export interface Badge {

@@ -1,4 +1,4 @@
-// Penna's own tooltip in place of the system's, which neither looks like Penna nor follows its
+// Skrivro's own tooltip in place of the system's, which neither looks like Skrivro nor follows its
 // theme. Any element with a title gets it: the title moves to data-tip, so the system's stays away.
 
 const DELAY = 450;

@@ -69,7 +69,7 @@ export function ImagePanel(props: {
     <>
       <LookChoices choices={props.choices} onChange={props.onChange} />
       <SwitchRow
-        label={t("Skriven i Penna")}
+        label={t("Skriven i Skrivro")}
         isOn={props.choices.isMarked}
         onFlip={() => props.onChange({ ...props.choices, isMarked: !props.choices.isMarked })}
       />
@@ -115,7 +115,7 @@ function useChapter(project: Project, chapterId: string, isExcerpt: boolean) {
   return blocks;
 }
 
-/** Kapitel till nyhetsbrev: the chapter as HTML on the clipboard; Penna sends nothing itself. */
+/** Kapitel till nyhetsbrev: the chapter as HTML on the clipboard; Skrivro sends nothing itself. */
 export function useNewsletter(project: Project, signature: Signature) {
   const chapters = manuscriptNodes(project.tree, "chapter");
   const [chapterId, setChapterId] = useState(chapters[0]?.id ?? "");
@@ -179,7 +179,7 @@ export function NewsletterPanel({ letter }: { letter: Letter }) {
         copy={() => copyHtml(letter.html)}
       />
       <span className="setting-hint">
-        {t("Penna skickar inget själv. Du klistrar in där du redan har dina läsare.")}
+        {t("Skrivro skickar inget själv. Du klistrar in där du redan har dina läsare.")}
       </span>
     </>
   );

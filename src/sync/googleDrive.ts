@@ -108,7 +108,7 @@ async function createFolder(call: Call, name: string, parentId: string | null) {
   return (await sendFile(call, `${API}?fields=${FIELDS}`, send)).id;
 }
 
-/** The drive.file scope: Penna only ever sees the files it made itself. */
+/** The drive.file scope: Skrivro only ever sees the files it made itself. */
 export function googleDrive(token: () => Promise<string>, fetcher: typeof fetch = fetch): Drive {
   const call: Call = async (url, init = {}) => {
     const headers = { ...init.headers, Authorization: `Bearer ${await token()}` };

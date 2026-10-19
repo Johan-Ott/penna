@@ -19,7 +19,7 @@ async function synced() {
 describe("the sync log", () => {
   it("keeps the text before and after for a scene changed on the other device", async () => {
     const { cloud, computer } = await synced();
-    await cloud.writeAt("Penna/Isen.penna/scenes/S1.md", "Brevet låg på bordet.");
+    await cloud.writeAt("Skrivro/Isen.penna/scenes/S1.md", "Brevet låg på bordet.");
 
     await sync(computer, cloud);
 

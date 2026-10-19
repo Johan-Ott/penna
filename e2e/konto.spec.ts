@@ -20,7 +20,7 @@ test("the profile picture opens the account: profile, sign-in and updates", asyn
 
   await expect(page.getByRole("menuitem", { name: "Din profil…" })).toBeVisible();
   await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
-  await expect(page.getByText("Du har den senaste versionen av Penna.")).toBeVisible();
+  await expect(page.getByText("Du har den senaste versionen av Skrivro.")).toBeVisible();
 });
 
 test("the example book is copied once, however often it is asked for", async ({ page }) => {

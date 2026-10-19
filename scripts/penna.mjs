@@ -1,8 +1,8 @@
 // `node scripts/penna.mjs [--app] [--book <bokmapp>] <call> [args…]`, or `new <bibliotek> <titel>
 // [fil.md]` for a new book: the answer as JSON. The calls are listed in docs/styrning.md.
 //
-// With --book the call goes through Penna when it has that book open, so the app's own state
-// and the files never part; otherwise straight on the book's files, Penna running or not.
+// With --book the call goes through Skrivro when it has that book open, so the app's own state
+// and the files never part; otherwise straight on the book's files, Skrivro running or not.
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -18,7 +18,7 @@ const rest = argv.filter((arg, index) => arg !== "--app" && !isBookArg(index));
 const [call, ...args] = rest;
 if (!call) throw new Error("Usage: node scripts/penna.mjs [--app] [--book <mapp>] <call> [args…]");
 
-// --app reaches the real Penna, once Styr Penna från den här datorn is on; else Penna Test.
+// --app reaches the real Skrivro, once Styr Skrivro från den här datorn is on; else Skrivro Test.
 const port = isApp ? "9334" : "9333";
 const samePath = (one, other) =>
   resolve(one).replaceAll("\\", "/").toLowerCase() ===
@@ -70,7 +70,7 @@ async function runCall() {
     return;
   }
   if (!book)
-    throw new Error(`No Penna on port ${port}, and no --book to work on the files instead.`);
+    throw new Error(`No Skrivro on port ${port}, and no --book to work on the files instead.`);
   runScript("./book.ts", [book, call, ...args]);
 }
 

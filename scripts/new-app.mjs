@@ -1,4 +1,4 @@
-// `npm run ny-app <namn>`: a new app beside Penna, in its own folder and repository, built on a
+// `npm run ny-app <namn>`: a new app beside Skrivro, in its own folder and repository, built on a
 // copy of llkit. The name is the app's name; its folder, crate and identifier are made from it.
 import { execSync } from "node:child_process";
 import {
@@ -36,7 +36,7 @@ const words = {
   __APP_SLUG__: slug,
   __APP_CRATE__: slug.replaceAll("-", "_"),
   __APP_ID__: `se.llstudios.${slug.replaceAll("-", "")}`,
-  // One signing key for all the apps: its public half is read from Penna.
+  // One signing key for all the apps: its public half is read from Skrivro.
   __APP_PUBKEY__: JSON.parse(readFileSync(join(penna, "src-tauri/tauri.conf.json"), "utf8")).plugins
     .updater.pubkey,
 };
@@ -70,6 +70,6 @@ process.stdout.write(`${name} finns nu i ${target}
   npm run app        (appen i ett eget fönster)
   npm run dev:web    (i webbläsaren)
 
-Ikonerna är Pennas tills appen får egna. llkit uppdateras med
-  npm run llkit:uppdatera ../${slug}     (körs här i Penna)
+Ikonerna är Skrivros tills appen får egna. llkit uppdateras med
+  npm run llkit:uppdatera ../${slug}     (körs här i Skrivro)
 `);

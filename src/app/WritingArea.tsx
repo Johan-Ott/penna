@@ -41,7 +41,7 @@ interface WritingAreaProps {
   selectionBar: ReactNode;
   header: ReactNode;
   footer: ReactNode;
-  /** Saved by a newer Penna: shown, never written to. */
+  /** Saved by a newer Skrivro: shown, never written to. */
   isReadOnly: boolean;
   /** Hidden, not removed, so the editor keeps its scene and undo history. */
   isHidden: boolean;

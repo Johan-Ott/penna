@@ -12,7 +12,7 @@ function dayTitle(words: number, goal: number) {
 }
 
 function dayText(words: number, goal: number | null) {
-  if (!goal) return t("Sätt ett dagsmål, så räknar Penna mot det.");
+  if (!goal) return t("Sätt ett dagsmål, så räknar Skrivro mot det.");
   const done = t("{words} av {goal} ord.", {
     words: formatNumber(words),
     goal: formatNumber(goal),

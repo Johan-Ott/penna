@@ -75,7 +75,7 @@ const isRomantasy = (genre: string, pieces: string[]) => {
   );
 };
 
-/** The structure Penna suggests for a kind of book, its genre and the pieces blended in. */
+/** The structure Skrivro suggests for a kind of book, its genre and the pieces blended in. */
 export function suggestedStructure(type: string, genre: string, pieces: string[]): string {
   if (type === "noveller") return "novell";
   if (type === "fackbok") return pieces.includes("memoar") ? "memoar" : "fackbok";
@@ -86,7 +86,7 @@ export function suggestedStructure(type: string, genre: string, pieces: string[]
 
 const unique = (values: string[]) => [...new Set(values)];
 
-// Penna's standard labels stay, with the pieces' own after them.
+// Skrivro's standard labels stay, with the pieces' own after them.
 function labelsWith(pieces: TemplatePiece[], own: string[][]) {
   const added = [...own, ...pieces.flatMap((piece) => piece.labels)];
   if (added.length === 0) return [];

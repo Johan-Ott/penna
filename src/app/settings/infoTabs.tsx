@@ -16,7 +16,7 @@ const ErrorReportButton = () => (
   />
 );
 
-// What went wrong since Penna started, shown here instead of only in the copied report.
+// What went wrong since Skrivro started, shown here instead of only in the copied report.
 function RecentErrors() {
   const [latest] = useState(() => errorLog.latest());
   if (latest.length === 0)
@@ -35,7 +35,7 @@ function RecentErrors() {
   );
 }
 
-// What Penna is built with, as their licences ask.
+// What Skrivro is built with, as their licences ask.
 function Credits() {
   return (
     <>
@@ -56,7 +56,7 @@ function Credits() {
   );
 }
 
-// The website's pages, in the language Penna is shown in.
+// The website's pages, in the language Skrivro is shown in.
 const SITE = "https://johan-ott.github.io/penna/";
 const sitePage = (swedish: string, english: string) =>
   SITE + (uiLanguage() === "en" ? english : swedish);
@@ -75,7 +75,7 @@ function SiteLinks() {
       <Row
         label={t("Integritet")}
         hint={t(
-          "Penna har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Penna frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr. De ser att en enhet frågar, aldrig vad du skriver. Feedback skickar du själv, som ett vanligt mejl.",
+          "Skrivro har inga konton och samlar inte in något. Dina texter lämnar enheten bara till din egen Google Drive, om du kopplar den. Skrivro frågar GitHub om det finns en ny version och hämtar ordlistor från jsDelivr. De ser att en enhet frågar, aldrig vad du skriver. Feedback skickar du själv, som ett vanligt mejl.",
         )}
       >
         <Link url={sitePage("integritet.html", "privacy.html")} label={t("Integritetspolicy")} />
@@ -83,7 +83,7 @@ function SiteLinks() {
       <Row
         label={t("Villkor och licenser")}
         hint={t(
-          "Penna är gratis under betan och levereras i befintligt skick. Dina texter är dina; ta egna säkerhetskopior av det som är viktigt.",
+          "Skrivro är gratis under betan och levereras i befintligt skick. Dina texter är dina; ta egna säkerhetskopior av det som är viktigt.",
         )}
       >
         <Link url={sitePage("villkor.html", "terms.html")} label={t("Läs villkoren")} />

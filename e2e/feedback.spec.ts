@@ -38,7 +38,7 @@ test("feedback opens a mail, and the report goes along only with something wrong
   const opened = await page.evaluate(
     () => (window as unknown as { openedMail: string }).openedMail,
   );
-  expect(opened).toMatch(/^mailto:johan\.lonelodge@gmail\.com\?subject=Penna/);
+  expect(opened).toMatch(/^mailto:johan\.lonelodge@gmail\.com\?subject=Skrivro/);
   expect(decodeURIComponent(opened)).toContain("Fler kapitelmallar som standard.");
 });
 
@@ -54,10 +54,10 @@ test("the text is copied too, in case no mail program opens", async ({ page, con
   const copied = await page.evaluate(async () =>
     (await navigator.clipboard.readText()).replace(/\r\n/g, "\n"),
   );
-  expect(copied).toMatch(/^Sidkartan visar fel sida\.\n\n---\nPenna /);
+  expect(copied).toMatch(/^Sidkartan visar fel sida\.\n\n---\nSkrivro /);
 });
 
-test("after an update, Penna shows what is new once, and asks what the writer thinks", async ({
+test("after an update, Skrivro shows what is new once, and asks what the writer thinks", async ({
   page,
 }) => {
   await page.addInitScript((version) => {
@@ -65,13 +65,13 @@ test("after an update, Penna shows what is new once, and asks what the writer th
     localStorage.setItem("penna.app", JSON.stringify({ isOnboardingDone: true }));
     localStorage.setItem("penna.seenVersion", "0.0.1");
     localStorage.setItem(
-      "penna.updateNotes",
+      "skrivro.updateNotes",
       JSON.stringify({ version, notes: "* Tidslinje | Timeline" }),
     );
     sessionStorage.setItem("started", "yes");
   }, VERSION);
   await page.goto("/");
-  const news = page.getByRole("dialog", { name: `Nytt i Penna ${VERSION}` });
+  const news = page.getByRole("dialog", { name: `Nytt i Skrivro ${VERSION}` });
 
   await expect(news).toContainText("Tidslinje");
   await news.getByRole("button", { name: "Tyck till" }).click();
@@ -79,7 +79,7 @@ test("after an update, Penna shows what is new once, and asks what the writer th
 
   await page.reload();
   await expect(page.getByRole("button", { name: "Prova exempelboken" })).toBeVisible();
-  await expect(page.getByRole("dialog", { name: /Nytt i Penna/ })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: /Nytt i Skrivro/ })).toBeHidden();
 });
 
 test("after a crash with errors, the next start offers to send them, and sends nothing itself", async ({

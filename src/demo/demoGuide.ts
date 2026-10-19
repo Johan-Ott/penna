@@ -1,4 +1,4 @@
-// The example as a guide: a note that says what to try and where, and one of each thing Penna
+// The example as a guide: a note that says what to try and where, and one of each thing Skrivro
 // keeps beside the text, so every part of it has something to show.
 
 export const GUIDE_IDS = {
@@ -6,9 +6,9 @@ export const GUIDE_IDS = {
   secret: "01J9Z4K2QX0000000000000012",
 };
 
-export const GUIDE = `Vintervägen är en liten bok att prova Penna med. Allt i den går att ändra och ta bort.
+export const GUIDE = `Vintervägen är en liten bok att prova Skrivro med. Allt i den går att ändra och ta bort.
 
-**Skriva.** Öppna Köket under Brevet och skriv vidare. Penna sparar av sig själv. Ord med prickar under står flera gånger nära varandra: tryck på ett. I Isen är ett namn felstavat. Hittar du det?
+**Skriva.** Öppna Köket under Brevet och skriv vidare. Skrivro sparar av sig själv. Ord med prickar under står flera gånger nära varandra: tryck på ett. I Isen är ett namn felstavat. Hittar du det?
 
 **Anteckningar.** Elin, Arvid och Maja är personer, och deras namn blir länkar i texten. Elin är kopplad till de andra: öppna henne och se. En ny person börjar som ett kort blad med Vill, Rädd för och Döljer. Under Hemligheter står vad läsaren får veta, och när.
 

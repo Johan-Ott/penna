@@ -30,7 +30,7 @@ function sourceOf(node: PhrasingContent, source: string): string {
   return source.slice(start, end);
 }
 
-/** Inline content Penna does not edit (links, code, html) is kept as raw text. */
+/** Inline content Skrivro does not edit (links, code, html) is kept as raw text. */
 export function parseInline(
   children: PhrasingContent[],
   source: string,

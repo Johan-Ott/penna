@@ -25,7 +25,7 @@ import { Bookshelf } from "./shelf/Bookshelf.js";
 import { useCloudBooks } from "./shelf/useCloudBooks.js";
 import { shelfHandlers } from "./shelf/shelfHandlers.js";
 
-// Penna starts at the welcome the first time, and at the shelf after: every book is begun,
+// Skrivro starts at the welcome the first time, and at the shelf after: every book is begun,
 // fetched or opened from there.
 
 type App = Pick<AppState, "profile" | "journey" | "updateFields" | "startup"> & {
@@ -157,7 +157,7 @@ function Shelf({ app }: StartScreenProps) {
 
 // The chosen languages' dictionaries and Typst's compiler, fetched while the writer begins; what
 // fails here is fetched again the first time it is needed.
-function fetchWhatPennaNeeds(languages: string[]) {
+function fetchWhatSkrivroNeeds(languages: string[]) {
   const failed = recordFailure("Hämtningen vid första start");
   for (const language of languages) void platform.spelling?.prepare(language).catch(failed);
   void platform.prepareTypst?.().catch(failed);
@@ -176,7 +176,7 @@ export function StartScreen({ app }: StartScreenProps) {
       ...{ isOnboardingDone: true, libraryDir, bookLanguage, defaultDailyGoal: dailyGoal },
       ...(authorName ? { authorName } : {}),
     }));
-    fetchWhatPennaNeeds(choices.languages);
+    fetchWhatSkrivroNeeds(choices.languages);
   };
   const { settings, onChangeSettings } = app.writingMode;
   return (

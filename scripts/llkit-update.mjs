@@ -1,4 +1,4 @@
-// `npm run llkit:uppdatera <mapp>`: gives an app beside Penna this llkit, in place of its copy.
+// `npm run llkit:uppdatera <mapp>`: gives an app beside Skrivro this llkit, in place of its copy.
 // The app's own files are never touched; its git shows what changed in llkit.
 import { cpSync, existsSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -16,4 +16,4 @@ cpSync(join(penna, "llkit"), kit, {
   recursive: true,
   filter: (path) => !path.startsWith(join(penna, "llkit/template")),
 });
-process.stdout.write(`llkit i ${kit} är nu Pennas. Se ändringarna med git diff där.\n`);
+process.stdout.write(`llkit i ${kit} är nu Skrivros. Se ändringarna med git diff där.\n`);

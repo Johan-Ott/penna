@@ -1,7 +1,7 @@
 import { platform } from "../platform.js";
 
 /**
- * On a computer a right-click opens Penna's own menus, never the web view's with Emoji and Granska.
+ * On a computer a right-click opens Skrivro's own menus, never the web view's with Emoji and Granska.
  * A plain text field keeps the system's, with paste; a phone keeps its own long-press menu.
  */
 export function keepWebMenuOut() {

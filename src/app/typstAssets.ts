@@ -7,7 +7,7 @@ import { t } from "../i18n/i18n.js";
 type Answer = { id: number; result?: unknown; error?: string; isTypst?: boolean };
 type Waiting = { resolve: (result: unknown) => void; reject: (error: Error) => void };
 
-// Typst and its 28 MB compiler load the first time a book is set, not when Penna starts.
+// Typst and its 28 MB compiler load the first time a book is set, not when Skrivro starts.
 let worker: Worker | null = null;
 let nextId = 0;
 const waiting = new Map<number, Waiting>();

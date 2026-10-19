@@ -7,7 +7,7 @@ import { join } from "node:path";
 
 const SOURCE = "src-tauri/icons/icon-source.png";
 const TARGET = "src-tauri/icons";
-// Tauri also makes iOS and Windows Store icons; those wait until Penna is built for them.
+// Tauri also makes iOS and Windows Store icons; those wait until Skrivro is built for them.
 const KEPT = ["icon.ico", "icon.png", "icon.icns", "32x32.png", "128x128.png"];
 
 const workDir = mkdtempSync(join(tmpdir(), "penna-icons-"));

@@ -49,7 +49,7 @@ describe("structures and pieces", () => {
     expect(suggestedStructure("annat", "", [])).toBe("tom");
   });
 
-  it("keep Penna's standard labels to themselves when no piece adds any", () => {
+  it("keep Skrivro's standard labels to themselves when no piece adds any", () => {
     const structure = mystery();
     if (!structure) throw new Error("no mystery structure");
 
@@ -71,12 +71,12 @@ describe("own templates", () => {
     { id: "sort", kind: "sort", title: "Misstänkta", children: [] },
   ]);
 
-  it("take a book's shape, and are kept and read back from the Penna folder", async () => {
+  it("take a book's shape, and are kept and read back from the Skrivro folder", async () => {
     const files = createMemoryFileSystem({});
     const template = templateFromBook("Min deckare", { tree, fields: { totalGoal: 70_000 } });
 
-    await saveOwnTemplate(files, "/Penna", template);
-    const [read] = await readOwnTemplates(files, "/Penna");
+    await saveOwnTemplate(files, "/Skrivro", template);
+    const [read] = await readOwnTemplates(files, "/Skrivro");
 
     expect(read).toMatchObject({
       id: "egen:Min deckare.json",

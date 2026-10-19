@@ -34,7 +34,7 @@ export type ExternalChange = "unchanged" | "reload" | "conflict";
 
 export interface OpenSceneTexts {
   diskText: string;
-  /** What Penna last wrote to or read from disk. */
+  /** What Skrivro last wrote to or read from disk. */
   lastSavedText: string;
   editorText: string;
 }

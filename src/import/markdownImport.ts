@@ -8,7 +8,7 @@ export interface ImportedFile {
 export type ImportedNode =
   | { kind: "part" | "chapter"; title: string; summary?: string; children: ImportedNode[] }
   | { kind: "scene"; title: string; body: string; summary?: string; file?: ImportedFile }
-  /** Notes, such as Scrivener's Characters folder; `id` names one of Penna's own sorts. */
+  /** Notes, such as Scrivener's Characters folder; `id` names one of Skrivro's own sorts. */
   | { kind: "sort"; title: string; id?: string; children: ImportedNode[] };
 
 export class ImportError extends Error {}

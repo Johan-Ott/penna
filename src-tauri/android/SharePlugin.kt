@@ -1,4 +1,4 @@
-package se.penna.app
+package se.skrivro.app
 
 import android.app.Activity
 import android.content.Intent

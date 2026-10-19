@@ -8,7 +8,7 @@ export interface AppMenuActions {
   showShelf: () => void;
   newProject: () => void;
   openFolder: () => void;
-  /** A book from Penna/ in Google Drive; left out where there is no Drive or no library. */
+  /** A book from Skrivro/ in Google Drive; left out where there is no Drive or no library. */
   /** Null when no text is open, or on the bookshelf. */
   showVersions: (() => void) | null;
   /** Null on the bookshelf, where there is no book to pack. */
@@ -17,7 +17,7 @@ export interface AppMenuActions {
   importRevision: (() => void) | null;
   /** Skicka till redaktör and Läsarexemplar; empty on the bookshelf. */
   sharing: MenuItem[];
-  /** Null where Penna keeps no copies, as in the browser. */
+  /** Null where Skrivro keeps no copies, as in the browser. */
   showBackups: (() => void) | null;
   /** The book's own: Tema, Serie and Mallar och bitar; empty on the bookshelf. */
   book: MenuItem[];

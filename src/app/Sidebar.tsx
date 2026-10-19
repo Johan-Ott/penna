@@ -13,7 +13,7 @@ import { t } from "../i18n/i18n.js";
 type BookDialogProps = Pick<SidebarProps, "project" | "libraryDir" | "onUpdateProject">;
 
 interface SidebarProps extends TreeViewProps {
-  /** The Penna folder, where the writer's own templates are kept. */
+  /** The Skrivro folder, where the writer's own templates are kept. */
   libraryDir: string | null;
   seriesNotes: ReactNode;
   onJoinSeries: (folder: string | null, seriesNumber: number | null) => void;

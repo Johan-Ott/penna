@@ -24,7 +24,7 @@ export async function writeRevision(
   await writeAtomic(fileSystem, revisionPath(dir, sceneId), text);
 }
 
-/** Done with: moved to trash/ like everything Penna stops using, never deleted. */
+/** Done with: moved to trash/ like everything Skrivro stops using, never deleted. */
 export const finishRevision = (fileSystem: FileSystem, dir: string, sceneId: string) =>
   setAside(fileSystem, dir, revisionPath(dir, sceneId), `redigering-${sceneId}.txt`);
 

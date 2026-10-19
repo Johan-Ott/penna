@@ -33,7 +33,7 @@ async function bytesAt(url: string) {
   return new Uint8Array(await response.arrayBuffer());
 }
 
-// In the apps the window hands over the compiler Penna fetched; elsewhere it comes with the page.
+// In the apps the window hands over the compiler Skrivro fetched; elsewhere it comes with the page.
 let giveCompiler: (bytes: Uint8Array) => void = () => undefined;
 const handedOver = new Promise<Uint8Array>((resolve) => (giveCompiler = resolve));
 async function compilerBytes() {

@@ -3,11 +3,11 @@
 
 use std::io::Write;
 
-/// Writes only Penna's own temp files, those ending in ".penna-tmp".
+/// Writes only Skrivro's own temp files, those ending in ".penna-tmp".
 #[tauri::command]
 pub fn write_temp_text(path: String, text: String) -> Result<(), String> {
     if !path.ends_with(".penna-tmp") || path.contains("..") {
-        return Err("Det är ingen tillfällig fil från Penna".into());
+        return Err("Det är ingen tillfällig fil från Skrivro".into());
     }
     let mut file = std::fs::File::create(&path).map_err(|error| error.to_string())?;
     file.write_all(text.as_bytes())

@@ -1,4 +1,4 @@
-// Where Windows and macOS keep an app's own files. Penna is built for both, so a script that
+// Where Windows and macOS keep an app's own files. Skrivro is built for both, so a script that
 // names one of the two does nothing at all on the other.
 import { posix, win32 } from "node:path";
 

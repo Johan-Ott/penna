@@ -93,7 +93,7 @@ const isEmptySortRow = (row: TreeRow) =>
 
 export const withoutEmptySorts = (rows: TreeRow[]) => rows.filter((row) => !isEmptySortRow(row));
 
-/** Penna's own sorts wait until they hold a note; one the writer or a template added shows. */
+/** Skrivro's own sorts wait until they hold a note; one the writer or a template added shows. */
 export const withoutEmptyFixedSorts = (rows: TreeRow[]) =>
   rows.filter((row) => !(isEmptySortRow(row) && isSpecial(row.node.id)));
 

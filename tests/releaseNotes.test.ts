@@ -3,7 +3,7 @@ import { provideAppName } from "@llkit/appInfo.js";
 import { setUiLanguage } from "@llkit/i18n.js";
 import { changesIn, keepNotes, keptNotes } from "@llkit/releaseNotes.js";
 
-provideAppName("Penna");
+provideAppName("Skrivro");
 
 // The tests run outside a browser, so the kept notes go to a stand-in for localStorage.
 const kept = new Map<string, string>();
@@ -14,11 +14,12 @@ vi.stubGlobal("window", {
   },
 });
 
-const notes = "Penna 0.5, öppen beta.\n\n* Tidslinje | Timeline\n- Bara svenska\nLadda ner här.";
+const notes = "Skrivro 0.5, öppen beta.\n\n* Tidslinje | Timeline\n- Bara svenska\nLadda ner här.";
 
 describe("release notes", () => {
   it("reads the Swedish list, or the one under ### New, from a release", () => {
-    const release = "### Nytt\n- Tidslinje\n\n### New\n- Timeline\n\n**Windows:** Penna-setup.exe";
+    const release =
+      "### Nytt\n- Tidslinje\n\n### New\n- Timeline\n\n**Windows:** Skrivro-setup.exe";
 
     setUiLanguage("sv");
     expect(changesIn(release)).toEqual(["Tidslinje"]);

@@ -25,7 +25,7 @@ export async function replaceInScenes(
     if (before === null) continue;
     const result = replaceAllInText(before, query);
     if (result.count === 0) continue;
-    // A version first, so the scene can be found as it was even after Penna has closed.
+    // A version first, so the scene can be found as it was even after Skrivro has closed.
     const label = t("Före Ersätt alla");
     await takeSnapshot(fileSystem, { dir, id }, before, { time: Date.now(), label });
     await writeAtomic(fileSystem, scenePath(dir, id), result.text);

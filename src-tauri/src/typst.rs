@@ -1,5 +1,5 @@
 //! Typst's compiler, which sets the book as printed: 28 MB that the app does not carry. It is
-//! fetched once, at the version Penna is built with, and kept in Penna's own folder.
+//! fetched once, at the version Skrivro is built with, and kept in Skrivro's own folder.
 
 use crate::spelling::fetch_bytes;
 use tauri::{ipc::Response, AppHandle, Manager};
@@ -38,7 +38,7 @@ pub async fn prepare_typst(app: AppHandle) -> Result<(), String> {
     compiler(&app).await.map(|_| ())
 }
 
-/// What Penna has fetched so far: the dictionaries' languages, and whether the compiler is here.
+/// What Skrivro has fetched so far: the dictionaries' languages, and whether the compiler is here.
 #[derive(serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Fetched {

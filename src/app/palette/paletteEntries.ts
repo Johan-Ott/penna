@@ -32,7 +32,7 @@ export interface PaletteContext {
   changeSettings: (change: SettingsChange) => void;
   toggleFocusMode: () => void;
   openSearch: () => void;
-  /** Null on a phone, where Penna keeps its books in its own folder. */
+  /** Null on a phone, where Skrivro keeps its books in its own folder. */
   chooseFolder: (() => void) | null;
   showShelf: () => void;
   /** Null when no scene is open. */

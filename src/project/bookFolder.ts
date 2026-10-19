@@ -15,7 +15,7 @@ export type BookFolder = { fileSystem: FileSystem; dir: string };
 async function readFile({ fileSystem, dir }: BookFolder) {
   const listing = await openProjectFolder(fileSystem, dir);
   const file = await readProjectFile(fileSystem, dir, listing.scenes);
-  if (file.isNewerFormat) throw new Error("Boken är sparad av en nyare Penna och läses bara.");
+  if (file.isNewerFormat) throw new Error("Boken är sparad av en nyare Skrivro och läses bara.");
   return { file, scenes: listing.scenes };
 }
 

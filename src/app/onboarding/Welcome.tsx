@@ -8,8 +8,8 @@ import { FirstChoices, type Choices } from "./FirstChoices.js";
 import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
 
-// The first start, the same on a computer and a phone: Penna's language at the top, signed in
-// with Google so the books follow, or not, and then the few choices that make Penna one's own.
+// The first start, the same on a computer and a phone: Skrivro's language at the top, signed in
+// with Google so the books follow, or not, and then the few choices that make Skrivro one's own.
 
 type Start = (withGoogle: boolean) => void;
 
@@ -38,7 +38,7 @@ type WelcomeProps = {
   onTheme: (theme: Theme) => void;
 };
 
-// The way in: Penna's language, what Penna is, and signed in or not.
+// The way in: Skrivro's language, what Skrivro is, and signed in or not.
 function Greeting({ onWay }: { onWay: (withGoogle: boolean) => void }) {
   const canSignIn = platform.googleSignIn !== undefined;
   return (

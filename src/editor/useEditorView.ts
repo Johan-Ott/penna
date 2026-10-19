@@ -23,7 +23,7 @@ function createView(
     editable: switches.isEditable,
     // The line being written stays clear of what floats at the foot, such as the sprint's pill.
     scrollMargin: { top: 5, right: 5, bottom: 96, left: 5 },
-    // Penna's own check, where there is one, instead of the browser's.
+    // Skrivro's own check, where there is one, instead of the browser's.
     attributes: () => ({
       spellcheck: switches.isSpellcheckOn() && !switches.spelling() ? "true" : "false",
     }),

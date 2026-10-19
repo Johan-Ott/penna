@@ -7,7 +7,7 @@ import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 async function exampleBook() {
   const fileSystem = createMemoryFileSystem({});
-  const dir = await copyExampleProject(fileSystem, "/Penna");
+  const dir = await copyExampleProject(fileSystem, "/Skrivro");
   const calls = bookFileCalls({ fileSystem, dir });
   const tree = async () => (await readProjectFile(fileSystem, dir, [])).tree;
   return { fileSystem, dir, calls, tree };

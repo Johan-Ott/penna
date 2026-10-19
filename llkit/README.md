@@ -1,13 +1,13 @@
 # llkit
 
-What any llstudios app is built on. Penna is the first app on it.
+What any llstudios app is built on. Skrivro is the first app on it.
 
 - llkit knows nothing of the app: it never imports from `src/`. Lint stops it.
 - The app imports it as `@llkit/...`, for example `import { store } from "@llkit/store.js"`.
 - Texts: llkit's own are in `llkit/en.json`. An app hands in its English with `addEnglish` before
-  anything is shown (Penna does it in `src/i18n/i18n.ts`).
+  anything is shown (Skrivro does it in `src/i18n/i18n.ts`).
 - Something belongs here when a second app would want it as it is. Something with books, scenes or
-  Penna's name in it stays in `src/`.
+  Skrivro's name in it stays in `src/`.
 
 ## In it now
 
@@ -32,12 +32,12 @@ What any llstudios app is built on. Penna is the first app on it.
 
 ## A new app
 
-`npm run ny-app <namn>` makes the app in its own folder beside Penna, from `template/`, with a
+`npm run ny-app <namn>` makes the app in its own folder beside Skrivro, from `template/`, with a
 copy of llkit and a fresh git repository. The copy is never edited there: change llkit here and
 hand it over with `npm run llkit:uppdatera ../<mapp>`. `template/` is the new app's code, so
-Penna's typecheck, lint and text test leave it out.
+Skrivro's typecheck, lint and text test leave it out.
 
-## Still Penna's name
+## Still Skrivro's name
 
 - Atomic writes leave `.penna-tmp` files, which the crash recovery and a Rust command look for.
   They get a general name when a second app comes, with the old one still read.

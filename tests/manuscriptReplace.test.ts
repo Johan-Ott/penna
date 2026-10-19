@@ -29,7 +29,7 @@ describe("replaceInScenes", () => {
     expect(await files.readText("/bok/scenes/01ISEN.md")).toBe(ISEN);
   });
 
-  it("keeps each changed scene as a version first, for after Penna has closed", async () => {
+  it("keeps each changed scene as a version first, for after Skrivro has closed", async () => {
     const files = setup();
 
     await replaceInScenes(files, "/bok", ["01KOKET", "01ISEN"], QUERY);

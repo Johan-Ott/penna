@@ -57,7 +57,7 @@ async function takeBackFile(parts: TakeBackParts, change: FileChange) {
   const { project } = parts;
   const sceneId = sceneIdOf(change.path);
   if (change.kind === "removed") return putBack(project.dir, change);
-  // A new scene goes to Penna's own trash, where it can still be found.
+  // A new scene goes to Skrivro's own trash, where it can still be found.
   if (change.kind === "added")
     return sceneId ? parts.updateTree(moveToTrash(project.tree, sceneId)) : undefined;
   if (change.before === null || !(await keepWrittenSince(parts, change, sceneId))) return;

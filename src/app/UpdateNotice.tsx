@@ -8,7 +8,7 @@ import { keepNotes } from "@llkit/releaseNotes.js";
 import { t } from "../i18n/i18n.js";
 import { Changes, WhatsNew } from "./WhatsNew.js";
 
-// At the start and then every six hours, as long as Penna is open.
+// At the start and then every six hours, as long as Skrivro is open.
 const EVERY = 6 * 60 * 60 * 1000;
 const SAID_FOR = 4000;
 
@@ -37,7 +37,7 @@ function UpdateDialog(props: { update: AppUpdate; session: SceneSession; onClose
   const { progress, install } = useInstall(update, session);
   const action = update.isDownload ? t("Hämta") : t("Starta om och uppdatera");
   return (
-    <Dialog label={t("Penna {version} finns", { version: update.version })} onClose={onClose}>
+    <Dialog label={t("Skrivro {version} finns", { version: update.version })} onClose={onClose}>
       <Changes notes={update.notes ?? ""} />
       {progress !== null && !update.isDownload && (
         <progress className="update-progress" value={progress} max={1} aria-label={t("Hämtar")} />
@@ -64,7 +64,7 @@ function NewVersion({ update, session }: { update: AppUpdate; session: SceneSess
   return (
     <>
       <div className="toast update-notice" role="status">
-        <span>{t("Penna {version} finns.", { version: update.version })}</span>
+        <span>{t("Skrivro {version} finns.", { version: update.version })}</span>
         <button className="button primary small" onClick={() => setOpen(true)}>
           {t("Se vad som är nytt")}
         </button>
@@ -84,12 +84,12 @@ function IsLatest() {
   }, []);
   return (
     <div className="toast update-notice" role="status">
-      <span>{t("Du har den senaste versionen av Penna.")}</span>
+      <span>{t("Du har den senaste versionen av Skrivro.")}</span>
     </div>
   );
 }
 
-/** A newer Penna, offered quietly; when asked for by hand, that this is the newest; and after an
+/** A newer Skrivro, offered quietly; when asked for by hand, that this is the newest; and after an
  *  update, what is new. */
 function VersionNotice({ session }: { session: SceneSession }) {
   useRegularChecks();
@@ -98,7 +98,7 @@ function VersionNotice({ session }: { session: SceneSession }) {
   return isLatest ? <IsLatest /> : <WhatsNew />;
 }
 
-/** What Penna says at start: a new version, what is new, or an offer to report a crash. */
+/** What Skrivro says at start: a new version, what is new, or an offer to report a crash. */
 export const UpdateNotice = ({ session }: { session: SceneSession }) => (
   <>
     <VersionNotice session={session} />

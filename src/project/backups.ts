@@ -6,7 +6,7 @@ import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { parentOf } from "./libraryFolders.js";
 import { freeProjectDir } from "./newProject.js";
 
-// Every book is copied whole to backups/ in Penna's own folder, away from the book itself,
+// Every book is copied whole to backups/ in Skrivro's own folder, away from the book itself,
 // so a lost or broken book folder can always be brought back.
 
 export interface BackupFile {

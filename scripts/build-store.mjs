@@ -1,4 +1,4 @@
-// `npm run build:store`: out/Penna.msix, signed and updated by the Store, so no certificate.
+// `npm run build:store`: out/Skrivro.msix, signed and updated by the Store, so no certificate.
 // The names in src-tauri/store.json come from Partner Center > Product identity.
 import { execFileSync } from "node:child_process";
 import {
@@ -21,7 +21,7 @@ if (Object.values(store).some((value) => !value)) {
 }
 const { version } = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8"));
 
-say("== Penna byggs för Microsoft Store");
+say("== Skrivro byggs för Microsoft Store");
 execFileSync("npx", ["tauri build --no-bundle"], {
   stdio: "inherit",
   shell: true,
@@ -61,7 +61,7 @@ writeFileSync(
     <Resource Language="en-US" />
   </Resources>
   <Applications>
-    <Application Id="Penna" Executable="penna.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="Skrivro" Executable="penna.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="${store.displayName}" Description="${store.displayName}"
         BackgroundColor="transparent" Square150x150Logo="Assets\\Square150x150Logo.png"
         Square44x44Logo="Assets\\Square44x44Logo.png" />
@@ -83,10 +83,10 @@ const sdk = readdirSync(kits)
 mkdirSync("out", { recursive: true });
 execFileSync(
   join(kits, sdk, "x64", "makeappx.exe"),
-  ["pack", "/o", "/d", dir, "/p", "out/Penna.msix"],
+  ["pack", "/o", "/d", dir, "/p", "out/Skrivro.msix"],
   {
     stdio: "inherit",
   },
 );
 rmSync(dir, { recursive: true });
-say("Klart: out/Penna.msix. Ladda upp den under Packages i Partner Center.");
+say("Klart: out/Skrivro.msix. Ladda upp den under Packages i Partner Center.");

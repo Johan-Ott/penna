@@ -43,7 +43,7 @@ uppgifterna nedan är uppskattningar.
 
 ## Bitarna och vad proffsen håller reda på
 
-- **Deckare:** tidslinjen för vad som verkligen hände (i Penna: När på kapitlen), misstänkta med motiv, medel och tillfälle,
+- **Deckare:** tidslinjen för vad som verkligen hände (i Skrivro: När på kapitlen), misstänkta med motiv, medel och tillfälle,
   alibin, ledtrådar (var de planteras och var de löses) och falska spår.
 - **Thriller:** skurkens plan och tidslinje, som löper parallellt med huvudpersonens, och
   tidsgränserna.

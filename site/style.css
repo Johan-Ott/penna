@@ -767,7 +767,7 @@ body {
   font: 15px/1.55 var(--font-ui);
 }
 
-/* The news page: where Penna is, what is new and what is coming. */
+/* The news page: where Skrivro is, what is new and what is coming. */
 .news section {
   margin-top: 48px;
 }
@@ -797,7 +797,7 @@ body {
   margin-bottom: 18px;
 }
 
-/* Nytt i Penna as a board: in progress, soon, later and done, side by side. */
+/* Nytt i Skrivro as a board: in progress, soon, later and done, side by side. */
 main.news {
   max-width: 1120px;
   margin: 0 auto;

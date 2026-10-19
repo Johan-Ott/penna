@@ -91,7 +91,7 @@ export async function restoreDraft(
   }
 }
 
-/** Into the book's trash folder, as nothing in Penna is deleted outright. */
+/** Into the book's trash folder, as nothing in Skrivro is deleted outright. */
 export async function removeDraft(fileSystem: FileSystem, bookDir: string, draft: Draft) {
   await fileSystem.makeDir(joinPath(bookDir, "trash"));
   await fileSystem.rename(

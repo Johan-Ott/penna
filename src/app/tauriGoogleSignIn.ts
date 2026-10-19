@@ -29,7 +29,7 @@ export const androidSignIn: GoogleSignIn = {
 };
 
 async function signInInBrowser() {
-  if (!COMPUTER.secret) throw new Error(t("Den här versionen av Penna saknar Google-nyckeln"));
+  if (!COMPUTER.secret) throw new Error(t("Den här versionen av Skrivro saknar Google-nyckeln"));
   const { verifier, challenge } = await keyChallenge();
   const state = crypto.randomUUID();
   const answer = await invoke<{ redirect: string; query: string }>("sign_in_in_browser", {

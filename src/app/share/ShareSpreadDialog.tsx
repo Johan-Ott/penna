@@ -86,9 +86,9 @@ function ShareChoices({ choices, onChange, hasSpread }: ChoiceProps & { hasSprea
 function MarkRow({ choices, onChange }: ChoiceProps) {
   return (
     <div className="design-row">
-      <span>{t("Skriven i Penna")}</span>
+      <span>{t("Skriven i Skrivro")}</span>
       <Switch
-        label={t("Skriven i Penna")}
+        label={t("Skriven i Skrivro")}
         isOn={choices.isMarked}
         onFlip={() => onChange({ ...choices, isMarked: !choices.isMarked })}
       />

@@ -1,17 +1,17 @@
-# Penna, kort spec
+# Skrivro, kort spec
 
 Fullständig spec: https://claude.ai/artifact/X69SvjmxRQrtJjVszL9Qsn
-Design (canvas "Penna - skrivapp"): https://claude.ai/artifact/L7PB4FUJKpiCT2wjDWzepd
+Design (canvas "Skrivro - skrivapp"): https://claude.ai/artifact/L7PB4FUJKpiCT2wjDWzepd
 
 Specen gäller för beteende, canvasen för utseende, copy och tillstånd.
 
 ## Principer
 
 1. Lokalt först: vanliga filer i en mapp användaren väljer, helt offline.
-2. Inga egna servrar, inga Penna-konton: synk via användarens molnmapp (iCloud, Dropbox, OneDrive)
+2. Inga egna servrar, inga Skrivro-konton: synk via användarens molnmapp (iCloud, Dropbox, OneDrive)
    eller användarens egen Google Drive.
 3. Ingen prenumeration: engångsköp.
-4. Ingen inbyggd AI: Penna skickar ingen text till någon AI-tjänst. Den som vill kan styra Penna
+4. Ingen inbyggd AI: Skrivro skickar ingen text till någon AI-tjänst. Den som vill kan styra Skrivro
    från ett eget verktyg på datorn (docs/styrning.md).
 5. Semantik före utseende: man märker upp vad texten är, bokdesign bestämmer hur den ser ut.
 
@@ -56,7 +56,7 @@ Vintervägen.penna/
 
 - Anteckningar (personer, platser, saker, övrigt och egna sorter) är vanliga scenfiler (titel
   och prosa) i sorter i strukturen, i stället för poster i `entities.json` och `notes/`. De
-  skrivs, flyttas och slängs som scener. Titeln är namnet som Penna letar efter i texten;
+  skrivs, flyttas och slängs som scener. Titeln är namnet som Skrivro letar efter i texten;
   `link: false` i en antecknings front matter stänger av kopplingen. Kopplingar mellan
   anteckningar ligger i project.json. Skäl: allt är prosa, grunden först.
 - Tidslinjen är fältet När på kapitlen och en egen Tidsordning i Innehåll, i stället för en

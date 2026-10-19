@@ -2,7 +2,7 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
-// The version shown under "Om Penna" is the one Tauri builds the app with. Imported, so the dev
+// The version shown under "Om Skrivro" is the one Tauri builds the app with. Imported, so the dev
 // server starts over by itself when npm run version changes it.
 import tauriConfig from "./src-tauri/tauri.conf.json" with { type: "json" };
 
@@ -21,12 +21,12 @@ const typstLeftOut = (isBundled: boolean): Plugin => ({
 // Tauri expects the dev server on a fixed port and prints its own output. A Tauri build leaves
 // Typst's compiler out of the app, which fetches it once; the browser and the dev server keep it.
 export default defineConfig(({ command }) => {
-  // The dev server keeps it, unless PENNA_TYPST_FETCH=1 tries the apps' way in Penna Test.
+  // The dev server keeps it, unless PENNA_TYPST_FETCH=1 tries the apps' way in Skrivro Test.
   const isTypstBundled =
     command === "serve" ? !process.env["PENNA_TYPST_FETCH"] : !process.env["TAURI_ENV_PLATFORM"];
   return {
     plugins: [react()],
-    // llkit: what any llstudios app is built on, kept apart from what is Penna's own.
+    // llkit: what any llstudios app is built on, kept apart from what is Skrivro's own.
     resolve: { alias: { "@llkit": fileURLToPath(new URL("./llkit", import.meta.url)) } },
     clearScreen: false,
     server: { port: 1420, strictPort: true },

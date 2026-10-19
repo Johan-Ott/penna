@@ -88,7 +88,7 @@ function ProfileFoot({ onDone }: { onDone: () => void }) {
     <div className="profile-foot">
       <span className="setting-hint">
         {t(
-          "Profilen sparas i din Penna-mapp. Loggar du in med Google följer den med till dina andra enheter.",
+          "Profilen sparas i din Skrivro-mapp. Loggar du in med Google följer den med till dina andra enheter.",
         )}
       </span>
       <button className="button primary" onClick={onDone}>
@@ -120,7 +120,7 @@ function ProfilePart(props: {
   return <FlairPicker earned={earned} frame={form.frame} title={form.title} onChange={set} />;
 }
 
-/** Författarprofil: who writes, kept in the Penna folder; no account, no sign-in. */
+/** Författarprofil: who writes, kept in the Skrivro folder; no account, no sign-in. */
 export function ProfileDialog(props: {
   initial: Form;
   journey: Journey;

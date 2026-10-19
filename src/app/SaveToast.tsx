@@ -45,8 +45,8 @@ export function ReadOnlyNotice({ isReadOnly }: { isReadOnly: boolean }) {
   if (!isReadOnly) return null;
   return (
     <div className="toast" role="status">
-      <span>{t("Projektet är sparat av en nyare version av Penna och går bara att läsa.")}</span>
-      <span className="toast-meta">{t("Uppdatera Penna för att skriva i det")}</span>
+      <span>{t("Projektet är sparat av en nyare version av Skrivro och går bara att läsa.")}</span>
+      <span className="toast-meta">{t("Uppdatera Skrivro för att skriva i det")}</span>
     </div>
   );
 }
@@ -84,7 +84,7 @@ export function ReplaceToast(props: {
 
 const SAVED_MS = 2500;
 
-/** Ctrl+S saves what was just typed and says that Penna saves by itself. */
+/** Ctrl+S saves what was just typed and says that Skrivro saves by itself. */
 export function SavedNowToast({ onSave }: { onSave: () => Promise<boolean> }) {
   const [isShown, setShown] = useState(false);
   useShortcut("s", () => void onSave().then((isSaved) => isSaved && setShown(true)));
@@ -97,7 +97,7 @@ export function SavedNowToast({ onSave }: { onSave: () => Promise<boolean> }) {
   return (
     <div className="toast inverted" role="status">
       <span>{t("Sparat")}</span>
-      <span className="toast-meta">{t("Penna sparar av sig själv medan du skriver")}</span>
+      <span className="toast-meta">{t("Skrivro sparar av sig själv medan du skriver")}</span>
     </div>
   );
 }

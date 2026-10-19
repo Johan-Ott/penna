@@ -3,7 +3,7 @@ import { Row, Switch } from "@llkit/controls.js";
 import { platform, type RemoteState } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 
-/** Whether tools may drive Penna now and at the next start; null where they never can. */
+/** Whether tools may drive Skrivro now and at the next start; null where they never can. */
 export function useRemoteState() {
   const remote = platform.remoteControl;
   const [state, setState] = useState<RemoteState | null>(null);
@@ -12,18 +12,18 @@ export function useRemoteState() {
   return remote ? { state, flip } : null;
 }
 
-/** Styr Penna från den här datorn: for scripts/penna.mjs and Claude Code, for one start. */
+/** Styr Skrivro från den här datorn: for scripts/penna.mjs and Claude Code, for one start. */
 export function RemoteControlRow() {
   const remote = useRemoteState();
   if (!remote) return null;
   const isOpen = remote.state?.isOpen === true;
   return (
     <Row
-      label={t("Styr Penna från den här datorn")}
+      label={t("Styr Skrivro från den här datorn")}
       hint={
         isOpen
           ? t(
-              "På nu. Skript och verktyg som Claude Code på den här datorn kan läsa och ändra böckerna tills Penna stängs.",
+              "På nu. Skript och verktyg som Claude Code på den här datorn kan läsa och ändra böckerna tills Skrivro stängs.",
             )
           : t(
               "Gäller nästa start, och bara den. Skript och verktyg som Claude Code på den här datorn kan då läsa och ändra böckerna.",
@@ -31,7 +31,7 @@ export function RemoteControlRow() {
       }
     >
       <Switch
-        label={t("Styr Penna från den här datorn")}
+        label={t("Styr Skrivro från den här datorn")}
         isOn={remote.state?.isNext === true}
         onFlip={remote.flip}
       />
@@ -46,7 +46,7 @@ export function RemoteBadge() {
   return (
     <span
       className="remote-badge"
-      title={t("Verktyg på den här datorn kan styra Penna tills den stängs.")}
+      title={t("Verktyg på den här datorn kan styra Skrivro tills den stängs.")}
     >
       {t("Styrs utifrån")}
     </span>

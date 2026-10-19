@@ -24,7 +24,7 @@ function SignInRow({ updatePreferences }: Pick<TabProps, "updatePreferences">) {
   return (
     <Row
       label={t("Google-konto")}
-      hint={t("Logga in så sparas allt i mappen Penna i din egen Drive och följer med dig.")}
+      hint={t("Logga in så sparas allt i mappen Skrivro i din egen Drive och följer med dig.")}
     >
       <button className="button primary small" onClick={start}>
         {t("Logga in med Google")}
@@ -33,8 +33,8 @@ function SignInRow({ updatePreferences }: Pick<TabProps, "updatePreferences">) {
   );
 }
 
-// A book is a folder like any other, so a sync service can carry it without Penna knowing.
-// Only where Penna has a folder on the device: a phone keeps its books in the app's own.
+// A book is a folder like any other, so a sync service can carry it without Skrivro knowing.
+// Only where Skrivro has a folder on the device: a phone keeps its books in the app's own.
 function FolderRow() {
   if (!platform.showInFolder) return null;
   return (

@@ -25,8 +25,8 @@ describe("app preferences", () => {
     const storage = memoryStorage();
     const preferences = {
       isOnboardingDone: true,
-      libraryDir: "C:/OneDrive/Penna",
-      lastProjectDir: "C:/OneDrive/Penna/Isen.penna",
+      libraryDir: "C:/OneDrive/Skrivro",
+      lastProjectDir: "C:/OneDrive/Skrivro/Isen.penna",
       knownProjects: ["D:/Arkiv/Fyren.penna"],
       authorName: "Elin Berg",
       defaultDailyGoal: 750,

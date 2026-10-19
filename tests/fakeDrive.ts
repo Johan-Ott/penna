@@ -1,7 +1,7 @@
 import { DriveChanged, type Drive, type RemoteFile } from "../src/sync/drive";
 import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
-export const BOOK = "/Penna/Isen.penna";
+export const BOOK = "/Skrivro/Isen.penna";
 
 interface Stored {
   file: RemoteFile;

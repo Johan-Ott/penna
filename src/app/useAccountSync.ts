@@ -74,7 +74,7 @@ function useSyncRound(input: Input) {
   };
 }
 
-/** Syncs Penna/konto.json while the writer is signed in: at once, soon after a change, and every
+/** Syncs Skrivro/konto.json while the writer is signed in: at once, soon after a change, and every
  * five minutes. */
 function useAccountSync(input: Input) {
   const isOn = input.preferences.isDriveSyncOn && platform.googleSignIn !== undefined;
@@ -93,7 +93,7 @@ function useAccountSync(input: Input) {
   }, [isOn, isLoaded, key]);
 }
 
-/** The profile in the Penna folder, kept in step with the writer's other devices. */
+/** The profile in the Skrivro folder, kept in step with the writer's other devices. */
 export function useSyncedProfile(startup: Omit<Input, "profile">) {
   const profile = useProfile(startup.preferences.libraryDir);
   useAccountSync({ ...startup, profile });

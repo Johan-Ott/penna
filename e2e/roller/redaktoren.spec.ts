@@ -5,7 +5,7 @@ import JSZip from "jszip";
 import { openExample } from "../helpers";
 
 // A writer sends her manuscript to an editor in Word and reads the editor's file back: the
-// file Penna made, changed in Word as an editor would, and each change taken or left.
+// file Skrivro made, changed in Word as an editor would, and each change taken or left.
 
 async function editInWord(file: string, changes: [string, string][]) {
   const zip = await JSZip.loadAsync(readFileSync(file));

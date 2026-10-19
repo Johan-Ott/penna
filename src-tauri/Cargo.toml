@@ -3,7 +3,7 @@ name = "penna"
 version = "0.4.4"
 edition = "2021"
 
-# Android and iOS start Penna from the library; the desktop starts it from main.rs.
+# Android and iOS start Skrivro from the library; the desktop starts it from main.rs.
 [lib]
 name = "penna_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
@@ -39,6 +39,6 @@ opt-level = "s"
 panic = "abort"
 strip = true
 
-# The spelling check is slow unoptimised, so Penna Test spells as fast as the real app.
+# The spelling check is slow unoptimised, so Skrivro Test spells as fast as the real app.
 [profile.dev.package.spellbook]
 opt-level = 3

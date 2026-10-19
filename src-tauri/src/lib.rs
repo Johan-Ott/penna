@@ -28,7 +28,7 @@ fn open_window(app: &tauri::App) -> tauri::Result<()> {
         };
         builder.additional_browser_args(&args)
     };
-    // Penna's top bar is the title bar: Windows draws Penna's own buttons in it, and a Mac keeps
+    // Skrivro's top bar is the title bar: Windows draws Skrivro's own buttons in it, and a Mac keeps
     // its own buttons over it, which needs the window's frame left on.
     #[cfg(all(desktop, not(target_os = "macos")))]
     let builder = builder.decorations(false);
@@ -92,5 +92,5 @@ pub fn run() {
         .manage(spelling::Dictionaries::default())
         .setup(|app| Ok(open_window(app)?))
         .run(tauri::generate_context!())
-        .expect("error while running Penna");
+        .expect("error while running Skrivro");
 }

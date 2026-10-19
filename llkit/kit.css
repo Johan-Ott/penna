@@ -333,7 +333,7 @@
   border-color: transparent;
 }
 
-/* Penna's tooltip, in its own colours, over everything and never in the way of the pointer. */
+/* Skrivro's tooltip, in its own colours, over everything and never in the way of the pointer. */
 
 .tooltip {
   position: fixed;

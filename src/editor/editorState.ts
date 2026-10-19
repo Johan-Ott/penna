@@ -61,7 +61,7 @@ export interface EditorSwitches {
   revisionChanges: () => RevisionChange[];
   /** In Förslagsläge, the scene's text as it was when it began; otherwise null. */
   suggestedFrom: () => string | null;
-  /** Null where Penna does not check the spelling itself. */
+  /** Null where Skrivro does not check the spelling itself. */
   spelling: () => SpellingSwitch | null;
 }
 

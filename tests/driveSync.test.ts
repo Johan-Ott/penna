@@ -5,13 +5,13 @@ import { BOOK, twoDevices } from "./fakeDrive";
 const NOW = Date.parse("2026-10-04T12:00:00Z");
 
 describe("syncProject", () => {
-  it("puts a book in Penna/<book> in Drive, and brings it to another device", async () => {
+  it("puts a book in Skrivro/<book> in Drive, and brings it to another device", async () => {
     const { cloud, computer, phone } = twoDevices();
 
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
+    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
     expect(await phone.readText(`${BOOK}/scenes/S1.md`)).toBe("Brevet låg där.");
   });
 
@@ -113,7 +113,7 @@ describe("syncProject", () => {
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.isInTrash("Penna/Isen.penna/scenes/S1.md")).toBe(true);
+    expect(cloud.isInTrash("Skrivro/Isen.penna/scenes/S1.md")).toBe(true);
     expect(await phone.list(`${BOOK}/scenes`)).toEqual([]);
     expect(await phone.readText(`${BOOK}/trash/S1.md`)).toBe("Brevet låg där.");
   });
@@ -137,7 +137,7 @@ describe("syncProject", () => {
 
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Penna/Isen.penna/scenes/S1 (Drive 2026-10-04).md")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1 (Drive 2026-10-04).md")).toBeNull();
   });
 
   it("keeps the earlier text of a scene as a version before Drive's text replaces it", async () => {
@@ -183,7 +183,7 @@ describe("syncProject", () => {
 
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Penna/Isen.penna/.penna-sync.json")).toBeNull();
-    expect(cloud.textAt("Penna/Isen.penna/scenes/S1.md.penna-tmp")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.penna/.penna-sync.json")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md.penna-tmp")).toBeNull();
   });
 });

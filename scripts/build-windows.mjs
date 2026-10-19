@@ -5,9 +5,9 @@ import { copyFileSync, mkdirSync, readFileSync } from "node:fs";
 
 const say = (text) => process.stdout.write(`\n${text}\n`);
 const { version } = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8"));
-const name = `Penna_${version}_x64-setup.exe`;
+const name = `Skrivro_${version}_x64-setup.exe`;
 
-say("== Penna byggs för Windows");
+say("== Skrivro byggs för Windows");
 execFileSync("npx", ["tauri build --config src-tauri/tauri.installer.conf.json"], {
   stdio: "inherit",
   shell: true,

@@ -1,10 +1,10 @@
 {
-  "identifier": "se.penna.test",
-  "productName": "Penna Test",
+  "identifier": "se.skrivro.test",
+  "productName": "Skrivro Test",
   "app": {
     "windows": [
       {
-        "title": "Penna Test",
+        "title": "Skrivro Test",
         "width": 1280,
         "height": 820,
         "minWidth": 360,

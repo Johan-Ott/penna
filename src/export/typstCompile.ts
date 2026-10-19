@@ -26,7 +26,7 @@ async function startCompiler(assets: TypstAssets) {
   const fonts = await assets.fonts();
   await compiler.init({
     getModule: assets.compilerWasm,
-    // Only the fonts that ship with Penna, so a book never depends on the internet.
+    // Only the fonts that ship with Skrivro, so a book never depends on the internet.
     beforeBuild: [initOptions.disableDefaultFontAssets(), loadFonts(fonts)],
   });
   return compiler;

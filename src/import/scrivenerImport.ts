@@ -145,7 +145,7 @@ function draftBook(draft: BinderItem[], texts: ItemTexts): ImportedNode[] {
   return draft.flatMap((item) => branch(item, true));
 }
 
-// Characters and places land in Penna's own sorts; any other folder beside the draft is a sort
+// Characters and places land in Skrivro's own sorts; any other folder beside the draft is a sort
 // of its own, such as Research, where pictures and PDFs become research files.
 const OWN_SORTS: [RegExp, string][] = [
   [/character|karakt|person|figur/i, CHARACTERS_ID],

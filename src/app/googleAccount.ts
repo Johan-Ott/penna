@@ -2,8 +2,8 @@ import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import type { PreferenceChange } from "./useStartup.js";
 
-// Signing in with Google is the one account Penna has, and it is the writer's own: books,
-// profile and settings go to the Penna folder in their Drive and nowhere else.
+// Signing in with Google is the one account Skrivro has, and it is the writer's own: books,
+// profile and settings go to the Skrivro folder in their Drive and nowhere else.
 
 type Update = (change: PreferenceChange) => void;
 

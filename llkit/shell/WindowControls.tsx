@@ -57,7 +57,7 @@ export function WindowBar() {
   );
 }
 
-/** While Penna starts or reads a book from the shelf: the start picture, over this, and the
+/** While Skrivro starts or reads a book from the shelf: the start picture, over this, and the
  * window's buttons on top of it. */
 export function StartPicture({ saying }: { saying?: string | undefined }) {
   useRootClass("starting");

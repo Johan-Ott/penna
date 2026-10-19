@@ -1,24 +1,24 @@
-# Styra Penna utifrån
+# Styra Skrivro utifrån
 
-Penna kan styras av ett skript eller av Claude i Claude Code, genom samma kommandon och
+Skrivro kan styras av ett skript eller av Claude i Claude Code, genom samma kommandon och
 handlingar som appen själv använder. Det skrivs därför precis som om du gjort det för hand:
 autosparet, versionerna och trädet fungerar som vanligt.
 
 ## Kom igång
 
-**Med den vanliga Penna:** slå på Inställningar, Allmänt, "Styr Penna från den här datorn" och
-starta om Penna. Det gäller den starten och bara den: topplisten visar "Styrs utifrån" så länge
-det är på, och nästa gång Penna startar är det av igen. Anropen går mot dina riktiga böcker med
+**Med den vanliga Skrivro:** slå på Inställningar, Allmänt, "Styr Skrivro från den här datorn" och
+starta om Skrivro. Det gäller den starten och bara den: topplisten visar "Styrs utifrån" så länge
+det är på, och nästa gång Skrivro startar är det av igen. Anropen går mot dina riktiga böcker med
 `--app`:
 
 ```bash
 node scripts/penna.mjs --app tree
 ```
 
-**Med Penna Test**, för att prova utan att röra dina böcker:
+**Med Skrivro Test**, för att prova utan att röra dina böcker:
 
-1. Starta Penna Test: `npm run app:test`. Den har egna böcker under `%APPDATA%\se.penna.test`.
-2. Öppna boken du vill arbeta med i Penna Test.
+1. Starta Skrivro Test: `npm run app:test`. Den har egna böcker under `%APPDATA%\se.skrivro.test`.
+2. Öppna boken du vill arbeta med i Skrivro Test.
 3. Be Claude i Claude Code om något, till exempel "lägg till ett kapitel Stormen efter kapitel
    2 och sätt När till Mars", eller kör ett anrop själv:
 
@@ -28,14 +28,14 @@ node scripts/penna.mjs tree
 
 Svaret kommer som JSON.
 
-## Utan att Penna är igång: --book
+## Utan att Skrivro är igång: --book
 
-Med `--book <bokmapp>` fungerar anropen även när Penna är av. Har Penna samma bok öppen går
+Med `--book <bokmapp>` fungerar anropen även när Skrivro är av. Har Skrivro samma bok öppen går
 anropet genom appen, som vanligt; annars skrivs bokens filer direkt, med samma kod som appen
-använder. En Penna som startar eller redan bevakar mappen läser själv in ändringen.
+använder. En Skrivro som startar eller redan bevakar mappen läser själv in ändringen.
 
 ```bash
-node scripts/penna.mjs --book "C:/Users/Elin/Documents/Penna/Vintervägen.penna" tree
+node scripts/penna.mjs --book "C:/Users/Elin/Documents/Skrivro/Vintervägen.penna" tree
 node scripts/penna.mjs --book "…/Vintervägen.penna" write <scen-id> kapitel1.md
 ```
 
@@ -44,12 +44,12 @@ Det fungerar utan `--book` bara med appen igång. Bokens filer beskrivs i
 
 ## Ny bok
 
-`new` gör en ny bok i Penna-biblioteket, med samma kod som Ny bok i appen. Penna behöver inte
+`new` gör en ny bok i Skrivro-biblioteket, med samma kod som Ny bok i appen. Skrivro behöver inte
 vara igång. En disposition i Markdown blir bokens träd, som när Importera läser den: `#` blir
 delar, `##` kapitel och texten under dem scener.
 
 ```bash
-node scripts/penna.mjs new "C:/Users/Elin/Documents/Penna" Vintervägen disposition.md
+node scripts/penna.mjs new "C:/Users/Elin/Documents/Skrivro" Vintervägen disposition.md
 ```
 
 Svaret är bokens mapp och första scenens id. Sedan fungerar de andra anropen med `--book`.
@@ -85,7 +85,7 @@ Svaret är bokens mapp och första scenens id. Sedan fungerar de andra anropen m
 
 ## Bra att veta
 
-- Den vanliga Penna går bara att styra när du har slagit på det, en start i taget, och bara från
+- Den vanliga Skrivro går bara att styra när du har slagit på det, en start i taget, och bara från
   den här datorn. Porten har inget lösenord, så vilket program på datorn som helst kan använda
   den under den starten.
 - Varje ändring väntar tills appen tagit emot den, så flera anrop i rad bygger på varandra.

@@ -20,7 +20,7 @@ const text = () =>
       "**Anteckningar.** Personer, platser och saker lägger du till med + Ny anteckning. Deras namn blir länkar i texten.",
     ),
     t(
-      "**Hjälp på vägen.** Exempelboken på bokhyllan visar allt Penna kan, med exempel. Hjälp finns under Inställningar.",
+      "**Hjälp på vägen.** Exempelboken på bokhyllan visar allt Skrivro kan, med exempel. Hjälp finns under Inställningar.",
     ),
     t("När du inte behöver den här längre tar du bort den längst ner."),
   ].join("\n\n");

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { joinPath } from "@llkit/storage/fileSystem.js";
+import { findAppFolder } from "../../sync/drive.js";
 import { googleDrive } from "../../sync/googleDrive.js";
 import { syncProject } from "../../sync/driveSync.js";
 import { readState, STATE_FILE } from "../../sync/syncState.js";
@@ -19,9 +20,9 @@ export type CloudBook = { name: string; id: string };
 
 async function booksOnDrive(libraryDir: string): Promise<CloudBook[]> {
   const drive = driveOf();
-  const penna = drive && (await drive.findFolder("Penna", null));
-  if (!drive || !penna) return [];
-  const folders = (await drive.list(penna)).filter((file) => file.isFolder);
+  const folder = drive && (await findAppFolder(drive));
+  if (!drive || !folder) return [];
+  const folders = (await drive.list(folder)).filter((file) => file.isFolder);
   const synced = await Promise.all(
     folders.map((folder) =>
       platform.fileSystem.modifiedAt(joinPath(libraryDir, `${folder.name}/${STATE_FILE}`)),

@@ -20,7 +20,7 @@ function knownWords(names: string[], own: string[]) {
   return (word: string) => known.has(word) || (word.endsWith("s") && known.has(word.slice(0, -1)));
 }
 
-/** Penna's own spelling check in the book's language, where the platform has one. */
+/** Skrivro's own spelling check in the book's language, where the platform has one. */
 export function useSpelling(
   editor: ReturnType<typeof useEditorView>,
   project: Project | null,

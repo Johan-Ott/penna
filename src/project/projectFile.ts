@@ -11,7 +11,7 @@ export interface ProjectFile {
   isNewerFormat: boolean;
 }
 
-// The project.json format this Penna writes. A newer format needs a migration step per version.
+// The project.json format this Skrivro writes. A newer format needs a migration step per version.
 const FORMAT_VERSION = 1;
 
 const KINDS: NodeKind[] = ["part", "chapter", "scene", "folder", "sort"];

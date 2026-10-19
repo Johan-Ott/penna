@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "What Penna may do everywhere: read and write texts, dialogs, notices, restart, talk to Google Drive, and send feedback the writer chooses to send.",
+  "description": "What Skrivro may do everywhere: read and write texts, dialogs, notices, restart, talk to Google Drive, and send feedback the writer chooses to send.",
   "windows": ["main"],
   "permissions": [
     "core:default",

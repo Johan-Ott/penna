@@ -7,9 +7,9 @@ describe("errorLog", () => {
     log.record("Kunde inte spara Köket");
     log.record("Drive svarade 500");
 
-    const report = log.report({ app: "Penna", version: "0.1.0", device: "Windows" });
+    const report = log.report({ app: "Skrivro", version: "0.1.0", device: "Windows" });
 
-    expect(report).toContain("Penna 0.1.0");
+    expect(report).toContain("Skrivro 0.1.0");
     expect(report).toContain("Windows");
     expect(report.indexOf("Kunde inte spara")).toBeLessThan(report.indexOf("Drive svarade"));
     expect(report).toContain("2026-10-05T10:00:00");
@@ -30,7 +30,7 @@ describe("errorLog", () => {
     const log = createErrorLog(() => 0);
 
     for (let number = 1; number <= 25; number++) log.record(`fel ${number}`);
-    const report = log.report({ app: "Penna", version: "0.1.0", device: "Android" });
+    const report = log.report({ app: "Skrivro", version: "0.1.0", device: "Android" });
 
     expect(report).not.toContain("fel 5\n");
     expect(report).toContain("fel 6");
@@ -40,7 +40,9 @@ describe("errorLog", () => {
   it("says so when nothing has gone wrong", () => {
     const log = createErrorLog(() => 0);
 
-    expect(log.report({ app: "Penna", version: "0.1.0", device: "Android" })).toContain("Inga fel");
+    expect(log.report({ app: "Skrivro", version: "0.1.0", device: "Android" })).toContain(
+      "Inga fel",
+    );
   });
 
   const shelf = () => {
@@ -60,7 +62,7 @@ describe("errorLog", () => {
     const next = createErrorLog(() => 0, device);
 
     expect(next.start()).toBe(true);
-    expect(next.report({ app: "Penna", version: "0.4.4", device: "Android" })).toContain(
+    expect(next.report({ app: "Skrivro", version: "0.4.4", device: "Android" })).toContain(
       "Kunde inte spara Köket",
     );
   });

@@ -58,7 +58,7 @@ function useAnswers(props: Props) {
   const [isSwapping, setSwapping] = useState(false);
   const forward = () => {
     if (isSwapping) return setSwapping(false);
-    // The shape starts from what Penna suggests for the kind of book.
+    // The shape starts from what Skrivro suggests for the kind of book.
     if (step === 1) setDetails(withSuggestion(details));
     if (step < QUESTIONS.length) return setStep(step + 1);
     setMaking(true);

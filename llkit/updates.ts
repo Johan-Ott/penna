@@ -2,7 +2,7 @@ import { createStore } from "./store.js";
 import { device } from "./platform/device.js";
 import type { AppUpdate } from "./platform/types.js";
 
-// The update Penna has found, shared by the notice and the menus' Sök efter uppdateringar.
+// The update Skrivro has found, shared by the notice and the menus' Sök efter uppdateringar.
 
 interface Updates {
   update: AppUpdate | null;

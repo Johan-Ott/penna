@@ -76,7 +76,7 @@ function SectionHeading(props: {
   );
 }
 
-// Penna's own sorts show once they hold a note; + Ny anteckning offers them all.
+// Skrivro's own sorts show once they hold a note; + Ny anteckning offers them all.
 function BookNotes({ props, tree }: { props: TreeViewProps & BookExtras; tree: Tree }) {
   if (!props.seriesNotes) {
     const notes = withoutEmptyFixedSorts(tree.sections.notes);

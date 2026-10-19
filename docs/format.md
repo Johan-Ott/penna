@@ -1,9 +1,9 @@
 # Bokens filer
 
-En bok i Penna är en vanlig mapp med vanliga filer. Den här sidan beskriver dem, så att ett
-verktyg eller en annan AI kan läsa och skriva en bok utan att Penna är igång. Är Penna igång med
+En bok i Skrivro är en vanlig mapp med vanliga filer. Den här sidan beskriver dem, så att ett
+verktyg eller en annan AI kan läsa och skriva en bok utan att Skrivro är igång. Är Skrivro igång med
 boken öppen läser appen själv om det som ändrats, och den scen du skriver i skyddas (se
-**Om Penna är igång** nedan).
+**Om Skrivro är igång** nedan).
 
 Det enklaste sättet att ändra en bok utifrån är `scripts/penna.mjs --book <mapp>` (se
 [styrning.md](styrning.md)). Det använder samma kod som appen och skriver allt rätt. Den här
@@ -61,8 +61,8 @@ JSON med ett träd och bokens inställningar:
 }
 ```
 
-- **Behåll alla fält** du inte känner till. Penna skriver tillbaka dem som de är.
-- **`formatVersion`** är 1. Har en bok ett högre nummer är den sparad av en nyare Penna, och då
+- **Behåll alla fält** du inte känner till. Skrivro skriver tillbaka dem som de är.
+- **`formatVersion`** är 1. Har en bok ett högre nummer är den sparad av en nyare Skrivro, och då
   ska inget skrivas i den.
 - **Ordningen i `tree` är bokens ordning.**
 
@@ -120,21 +120,21 @@ en scen behåller den sitt id, så kommentarer, versioner och synk hittar den.
 ## Skriva säkert
 
 1. **Skriv hela filen till en tillfällig fil bredvid, och byt sedan namn** till det riktiga. Då
-   läser Penna aldrig en halvskriven fil. Använd ett eget namn, till exempel
-   `Köket.md.agent-tmp`, aldrig `.penna-tmp`: det är Pennas eget, och en sådan fil tas efter en
+   läser Skrivro aldrig en halvskriven fil. Använd ett eget namn, till exempel
+   `Köket.md.agent-tmp`, aldrig `.penna-tmp`: det är Skrivros eget, och en sådan fil tas efter en
    krasch för text som inte hann sparas.
 2. **En ny scen behöver både sin fil och en nod i trädet.** Skriv filen först och trädet sedan.
-   En scenfil som saknas i trädet hittar Penna ändå, och lägger den sist.
+   En scenfil som saknas i trädet hittar Skrivro ändå, och lägger den sist.
 3. **Radera aldrig.** Flytta en nod till `trash`-mappen i trädet, och lägg en fil man vill bli av
-   med i `trash/`. Penna raderar själv aldrig något.
-4. **Rör inte `.penna-sync.json`, `.penna-sync-log.json` eller `stats/`.** De är Pennas.
+   med i `trash/`. Skrivro raderar själv aldrig något.
+4. **Rör inte `.penna-sync.json`, `.penna-sync-log.json` eller `stats/`.** De är Skrivros.
 
-## Om Penna är igång
+## Om Skrivro är igång
 
-- Penna bevakar bokens mapp och läser om det som ändrats inom ett par sekunder.
+- Skrivro bevakar bokens mapp och läser om det som ändrats inom ett par sekunder.
 - Ändras **den scen som är öppen** och har du inget osparat i den, laddas den nya texten. Har du
-  skrivit något som inte hunnit sparas frågar Penna vilken version du vill ha, och den andra blir
+  skrivit något som inte hunnit sparas frågar Skrivro vilken version du vill ha, och den andra blir
   en version, så inget försvinner.
-- **Trädet är det enda som kan krocka.** Flyttar du något i Penna samtidigt som ett verktyg
+- **Trädet är det enda som kan krocka.** Flyttar du något i Skrivro samtidigt som ett verktyg
   skriver `project.json` vinner den som skriver sist. `penna.mjs --book` går därför genom appen
   när den har boken öppen.

@@ -80,13 +80,13 @@ function SaveButtons(props: { onShare: () => void; onKeep: () => void }) {
         {t("Spara som fil att dela")}
       </button>
       <button className="button primary small" onClick={props.onKeep}>
-        {t("Spara i Penna")}
+        {t("Spara i Skrivro")}
       </button>
     </div>
   );
 }
 
-// The book's shape kept as a template in the Penna folder, or saved as a file to share.
+// The book's shape kept as a template in the Skrivro folder, or saved as a file to share.
 function SaveAsTemplate(props: DialogProps) {
   const [name, setName] = useState(props.project.name);
   const [saved, setSaved] = useState("");

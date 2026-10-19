@@ -1,4 +1,4 @@
-package se.penna.app
+package se.skrivro.app
 
 import android.content.Context
 import android.graphics.Rect
@@ -22,7 +22,7 @@ class MainActivity : TauriActivity() {
   private var webView: WebView? = null
   private var safeAreaScript: ScriptHandler? = null
 
-  // Tauri's own back only steps the WebView's history, past Studio and open panels; Penna's
+  // Tauri's own back only steps the WebView's history, past Studio and open panels; Skrivro's
   // page decides instead.
   override val handleBackNavigation = false
 
@@ -80,7 +80,7 @@ class MainActivity : TauriActivity() {
   }
 
   // The newest callback answers first, and Tauri's app plugin adds one that only steps the
-  // history once the page has loaded; Penna's is put back on top after it.
+  // history once the page has loaded; Skrivro's is put back on top after it.
   private fun followBack() {
     back.remove()
     onBackPressedDispatcher.addCallback(this, back)
@@ -97,7 +97,7 @@ private class SelectionMenuFrame(context: Context) : FrameLayout(context) {
     super.startActionModeForChild(originalView, WithoutSelectionMenu(callback, context.getString(android.R.string.copy)), type)
 }
 
-// Penna's own bar holds what a selection needs, so the system's menu over it is emptied. The
+// Skrivro's own bar holds what a selection needs, so the system's menu over it is emptied. The
 // caret's menu, with paste, has no Copy and stays.
 private class WithoutSelectionMenu(
   private val inner: ActionMode.Callback,

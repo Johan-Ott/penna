@@ -9,13 +9,13 @@ const account = (changedAt: number, name: string): Account => ({
 });
 
 describe("syncAccount", () => {
-  it("puts the first device's account in Penna/konto.json, and gives it to the next", async () => {
+  it("puts the first device's account in Skrivro/konto.json, and gives it to the next", async () => {
     const cloud = createFakeDrive();
 
     expect(await syncAccount(cloud.drive, account(100, "Elin"))).toBeNull();
     const taken = await syncAccount(cloud.drive, account(0, ""));
 
-    expect(cloud.textAt("Penna/konto.json")).toContain('"authorName": "Elin"');
+    expect(cloud.textAt("Skrivro/konto.json")).toContain('"authorName": "Elin"');
     expect(taken?.settings.authorName).toBe("Elin");
   });
 
@@ -34,6 +34,6 @@ describe("syncAccount", () => {
     await syncAccount(cloud.drive, account(100, "Elin"));
 
     expect(await syncAccount(cloud.drive, account(100, "Elin"))).toBeNull();
-    expect(cloud.textAt("Penna/konto.json")).toContain('"changedAt": 100');
+    expect(cloud.textAt("Skrivro/konto.json")).toContain('"changedAt": 100');
   });
 });

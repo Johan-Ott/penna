@@ -15,7 +15,7 @@ import { Dialog } from "@llkit/controls.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 
-const THEME_FILE = { name: t("Penna-tema"), extension: "pennatema" };
+const THEME_FILE = { name: t("Skrivro-tema"), extension: "pennatema" };
 const SWATCHES: Record<"background" | "text" | "accent", string[]> = {
   background: ["#ffffff", "#f3efe6", "#eef2ec", "#f5ede8", "#1e1f24", "#121212"],
   text: ["#111111", "#2b2520", "#1f2a36", "#3a2226", "#ede8e0", "#c9d1d9"],
@@ -87,7 +87,7 @@ function ColourRow(props: {
 
 async function importTheme(onChange: (theme: Theme) => void) {
   const picked = await platform.pickFile({
-    name: t("Penna-tema"),
+    name: t("Skrivro-tema"),
     extensions: ["pennatema", "json"],
   });
   if (!picked) return;
@@ -148,7 +148,7 @@ function OwnTheme({ theme, onChange }: OwnProps) {
       <ColourRow label={t("Accent")} field="accent" theme={theme} onChange={onChange} />
       <FontRow theme={theme} onChange={onChange} />
       <span className="setting-hint">
-        {t("Tre färger räcker. Penna räknar fram resten och varnar om texten blir svårläst.")}
+        {t("Tre färger räcker. Skrivro räknar fram resten och varnar om texten blir svårläst.")}
       </span>
       <OwnActions theme={theme} onChange={onChange} />
     </div>

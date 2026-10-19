@@ -30,12 +30,12 @@ test("in a line of dialogue, who said it after a question keeps its small letter
   await expect(editor(page)).toContainText("– Varför? sa hon. Sedan gick hon.");
 });
 
-test("Sök efter uppdateringar says so when this is the newest Penna", async ({ page }) => {
+test("Sök efter uppdateringar says so when this is the newest Skrivro", async ({ page }) => {
   await page.getByRole("button", { name: "Meny" }).first().click();
   await page.getByRole("menuitem", { name: "Hjälp" }).click();
   await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
 
-  await expect(page.getByText("Du har den senaste versionen av Penna.")).toBeVisible();
+  await expect(page.getByText("Du har den senaste versionen av Skrivro.")).toBeVisible();
 });
 
 test("a writing sprint counts the words written and can be ended", async ({ page }) => {

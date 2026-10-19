@@ -157,7 +157,7 @@ export function BackupsDialog(props: { app: BackupsApp; dirs: string[]; onClose:
     <Dialog label={t("Säkerhetskopior")} className="backups-dialog" onClose={props.onClose}>
       <span className="setting-hint">
         {t(
-          "Penna kopierar boken när den öppnas och var halvtimme medan du skriver. De tio senaste sparas, en per dag i trettio dagar, och alla du ger ett namn.",
+          "Skrivro kopierar boken när den öppnas och var halvtimme medan du skriver. De tio senaste sparas, en per dag i trettio dagar, och alla du ger ett namn.",
         )}
       </span>
       {autoBackup.failure && (

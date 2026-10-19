@@ -127,7 +127,7 @@ export function VersionsTab({ preferences, updatePreferences, book }: TabProps) 
       </Row>
       <Row
         label={t("Var versionerna sparas")}
-        hint={t("I projektmappen, under snapshots. Penna raderar aldrig en version.")}
+        hint={t("I projektmappen, under snapshots. Skrivro raderar aldrig en version.")}
       />
       {book && <ZipRow onExportZip={book.onExportZip} />}
     </>

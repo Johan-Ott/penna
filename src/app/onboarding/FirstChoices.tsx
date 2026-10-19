@@ -6,7 +6,7 @@ import { platform } from "../platform.js";
 import { t, uiLanguage } from "../../i18n/i18n.js";
 
 // The first start's choices: which languages the books are written in, whose dictionaries are
-// fetched now, how Penna looks, and a day's goal. Each can be changed later in Inställningar.
+// fetched now, how Skrivro looks, and a day's goal. Each can be changed later in Inställningar.
 
 export interface Choices {
   /** On covers and title pages; empty until written. */
@@ -74,7 +74,7 @@ export function FirstChoices(props: {
   const [authorName, setAuthorName] = useState("");
   return (
     <div className="first-choices">
-      <h2>{t("Gör Penna till din")}</h2>
+      <h2>{t("Gör Skrivro till din")}</h2>
       <AuthorField value={authorName} onChange={setAuthorName} />
       <LanguageChips chosen={languages} onChange={setLanguages} />
       <span className="field-label">{t("Utseende")}</span>

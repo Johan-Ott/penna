@@ -12,8 +12,8 @@ mod desktop {
     const KEYRING_USER: &str = "google-drive";
     const WAIT: Duration = Duration::from_secs(300);
     const DONE_PAGE: &str = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n\
-        <!doctype html><title>Penna</title><p style=\"font:18px sans-serif;margin:3em\">\
-        Klart, Penna är kopplad till Google Drive. Du kan stänga fliken.</p>";
+        <!doctype html><title>Skrivro</title><p style=\"font:18px sans-serif;margin:3em\">\
+        Klart, Skrivro är kopplad till Google Drive. Du kan stänga fliken.</p>";
 
     #[derive(serde::Serialize)]
     pub struct BrowserAnswer {
@@ -75,7 +75,7 @@ mod desktop {
         let query = tauri::async_runtime::spawn_blocking(move || answer_once(&listener))
             .await
             .map_err(|error| error.to_string())??;
-        // Bring Penna back in front after the browser.
+        // Bring Skrivro back in front after the browser.
         if let Some(window) = app.get_webview_window("main") {
             let _ = window.unminimize();
             let _ = window.set_focus();
@@ -130,7 +130,7 @@ mod mobile {
                 // iPad gets its own sign-in later; until then it has none.
                 #[cfg(target_os = "android")]
                 app.manage(GoogleSignIn(
-                    api.register_android_plugin("se.penna.app", "GoogleSignInPlugin")?,
+                    api.register_android_plugin("se.skrivro.app", "GoogleSignInPlugin")?,
                 ));
                 let _ = (app, api);
                 Ok(())

@@ -1,6 +1,6 @@
-//! Penna's own spelling check, the same on every device: Hunspell dictionaries read by spellbook.
+//! Skrivro's own spelling check, the same on every device: Hunspell dictionaries read by spellbook.
 //! Each is fetched the first time it is chosen or a book needs it, at a fixed version, and kept in
-//! Penna's own folder, so the app itself carries none. Finnish has none.
+//! Skrivro's own folder, so the app itself carries none. Finnish has none.
 
 use spellbook::Dictionary;
 use std::collections::HashMap;

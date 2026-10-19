@@ -53,7 +53,7 @@ function pennaBack(depth: number) {
 }
 
 // Outside a book, on the shelf and in the first steps, back still closes what lies on top or goes
-// one step back; with nothing left it leaves Penna, as Android expects.
+// one step back; with nothing left it leaves Skrivro, as Android expects.
 type BackPage = { pennaBack?: () => boolean };
 const outsideBook = () => pennaBack(1);
 (window as BackPage).pennaBack = outsideBook;

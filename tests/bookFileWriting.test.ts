@@ -9,7 +9,7 @@ const SCENE = "01J9Z4K2QX0000000000000001";
 
 async function exampleBook() {
   const fileSystem = createMemoryFileSystem({});
-  const dir = await copyExampleProject(fileSystem, "/Penna");
+  const dir = await copyExampleProject(fileSystem, "/Skrivro");
   const calls = bookFileCalls({ fileSystem, dir });
   const fields = async () => (await readProjectFile(fileSystem, dir, [])).fields;
   return { fileSystem, dir, calls, fields };
@@ -57,7 +57,7 @@ describe("bookFileCalls for writing", () => {
 
   it("puts a book in a series by name, the same series for the next book", async () => {
     const { fileSystem, calls, fields } = await exampleBook();
-    const second = await copyExampleProject(fileSystem, "/Penna");
+    const second = await copyExampleProject(fileSystem, "/Skrivro");
 
     const folder = await calls.series("Vale");
     const again = await bookFileCalls({ fileSystem, dir: second }).series("vale");

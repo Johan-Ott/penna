@@ -42,7 +42,7 @@ export function CrashDialog({
       <div className="dialog" role="alertdialog" aria-modal="true" aria-labelledby="crash-title">
         <div className="dialog-heading">
           <span id="crash-title" className="dialog-title">
-            {t("Penna stängdes innan allt hann sparas")}
+            {t("Skrivro stängdes innan allt hann sparas")}
           </span>
           <span className="dialog-text">
             {t(

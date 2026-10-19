@@ -14,18 +14,18 @@ export type {
   WindowControls,
 } from "@llkit/platform/types.js";
 
-/** Penna's platform: llkit's device, and what only Penna does with it. */
+/** Skrivro's platform: llkit's device, and what only Skrivro does with it. */
 export interface Platform extends BasePlatform {
-  /** Tools on this computer may drive Penna for the next start only; open is this start. */
+  /** Tools on this computer may drive Skrivro for the next start only; open is this start. */
   remoteControl?: (turnOn?: boolean) => Promise<RemoteState>;
-  /** Missing where Penna cannot sign in: the browser, and iPad for now. */
+  /** Missing where Skrivro cannot sign in: the browser, and iPad for now. */
   googleSignIn?: GoogleSignIn;
   /** Asks first; true when the book was removed. Missing in the browser version. */
   /** `isEverywhere`: the question says the copy in Drive goes too; the caller removes it. */
   removeBook?: (dir: string, title: string, isEverywhere?: boolean) => Promise<boolean>;
-  /** Copies of every book in Penna's own folder. Missing in the browser version. */
+  /** Copies of every book in Skrivro's own folder. Missing in the browser version. */
   backups?: Backups;
-  /** Penna's own spelling check; missing in the browser, which checks the spelling itself. */
+  /** Skrivro's own spelling check; missing in the browser, which checks the spelling itself. */
   spelling?: Spelling;
   /** Typst's compiler, fetched once by the apps; missing in the browser, where it comes along. */
   typstCompiler?: () => Promise<ArrayBuffer>;
@@ -68,5 +68,5 @@ export interface RemoteState {
 
 export const platform: Platform = isTauri() ? tauriPlatform : browserPlatform;
 provideDevice(platform);
-provideAppName("Penna");
+provideAppName("Skrivro");
 provideFeedbackAddress("johan.lonelodge@gmail.com");

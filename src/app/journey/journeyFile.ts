@@ -4,11 +4,15 @@ import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { platform } from "../platform.js";
 
-// One file per device in the Penna folder, so two computers never write over each other.
+// One file per device in the Skrivro folder, so two computers never write over each other.
 const folderOf = (library: string) => joinPath(library, "skrivresa");
 
+/** The writer's chosen folder, or Skrivro in Documents; Penna there is where the books lived before. */
 export async function libraryOf(libraryDir: string | null) {
-  return libraryDir ?? `${(await platform.knownFolders()).documents}/Penna`;
+  if (libraryDir) return libraryDir;
+  const { documents } = await platform.knownFolders();
+  const before = `${documents}/Penna`;
+  return (await platform.fileSystem.modifiedAt(before)) === null ? `${documents}/Skrivro` : before;
 }
 
 function statsFrom(value: unknown): Stats {

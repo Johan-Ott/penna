@@ -35,7 +35,7 @@ const FOREIGN_MARKDOWN = [
   "```",
   "",
   "::: okänd",
-  "Egen stil som Penna inte har.",
+  "Egen stil som Skrivro inte har.",
   ":::",
   "",
   "::: brev",
@@ -43,7 +43,7 @@ const FOREIGN_MARKDOWN = [
 ].join("\n");
 
 describe("Markdown round trip without edits", () => {
-  it("gives back a Penna scene unchanged", () => {
+  it("gives back a Skrivro scene unchanged", () => {
     const result = roundTrip(PENNA_SCENE);
 
     expect(result).toBe(PENNA_SCENE);
@@ -110,7 +110,7 @@ describe("parseMarkdown", () => {
     expect(doc.child(1).textContent).toBe("Kära Elin.");
   });
 
-  it("keeps blocks Penna does not know as raw text", () => {
+  it("keeps blocks Skrivro does not know as raw text", () => {
     const doc = parseMarkdown("# Rubrik\n\nText.");
 
     expect(doc.child(0).type.name).toBe("rawBlock");
