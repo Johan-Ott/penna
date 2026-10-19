@@ -144,3 +144,9 @@ Penna is also available for Windows and is free during the beta.
 Penna skickar ingenting av sig själv. Krascher och "svarar inte" syns i Play Console (Android
 vitals) och i Partner Center. Penna sparar sina senaste fel på enheten, och efter en krasch
 erbjuder nästa start att mejla dem.
+
+## Pris
+
+Gratis i alla butiker under betan. Från 1.0 är tanken Penna Pro: skrivandet förblir gratis, och
+export till tryck, e-bok, omslag och Studio låses upp med ett engångsköp, samma i alla versioner
+(Play Billing på Android, egen licens för Windows och webbplatsen).
