@@ -822,16 +822,36 @@ body .phone-view .submit-text {
   scrollbar-width: none;
 }
 
+/* What does not fit fades at the right edge, so it shows that the row goes on. */
+.scene-strip {
+  padding-right: 32px;
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+/* All of Skriv's tools fit across a narrow phone too, Aa last among them. */
+@media (max-width: 380px) {
+  .phone-tool {
+    min-width: 36px;
+    padding: 0 4px;
+    font-size: 14px;
+  }
+}
+
 /* När goes to a line of its own rather than off the screen's edge. */
 .phone-app .text-eyebrow {
   flex-wrap: wrap;
   row-gap: 6px;
 }
 
-.phone-app .text-place,
 .phone-app .text-when {
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+/* On a narrow phone Läs kapitlet and Versioner go under the place rather than off the edge. */
+.phone-app .text-place {
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
 .phone-app .text-place > *,

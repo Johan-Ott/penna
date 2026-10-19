@@ -2489,6 +2489,12 @@
   object-fit: cover;
 }
 
+/* A filled figure, whatever line icons around it set for their own strokes. */
+.avatar svg {
+  fill: currentColor;
+  stroke: none;
+}
+
 .profile-dialog {
   width: min(560px, calc(100vw - 48px));
   max-height: calc(100vh - 48px);

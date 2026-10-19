@@ -88,6 +88,28 @@ if (process.argv.includes("--emulator")) {
   process.exit(0);
 }
 
+// `npm run build:android -- --play`: out/Penna.aab for Google Play, signed with the same key as
+// the APK, so a phone can move between Play and the website's file.
+if (process.argv.includes("--play")) {
+  if (!existsSync(releaseKey) || !existsSync(releasePass)) {
+    process.stderr.write("Pennas nyckel saknas i ~/.penna: Play får aldrig testnyckeln.\n");
+    process.exit(1);
+  }
+  step("Penna byggs för Google Play (arm64)", "npx", [
+    "tauri android build --aab --target aarch64",
+  ]);
+  const bundle = "src-tauri/gen/android/app/build/outputs/bundle/universalRelease";
+  const aab = join(bundle, readdirSync(bundle).find((name) => name.endsWith(".aab")) ?? "");
+  mkdirSync("out", { recursive: true });
+  copyFileSync(aab, join("out", "Penna.aab"));
+  const jarsigner = join(process.env.JAVA_HOME ?? "", "bin", "jarsigner");
+  step("Filen signeras", jarsigner, [
+    `-keystore ${releaseKey} -storepass:file ${releasePass} ${join("out", "Penna.aab")} penna`,
+  ]);
+  say("Klart: out/Penna.aab");
+  process.exit(0);
+}
+
 step("Penna byggs för moderna telefoner (arm64)", "npx", [
   "tauri android build --apk --target aarch64",
 ]);
