@@ -56,3 +56,11 @@ export async function docxHtml(bytes: Uint8Array): Promise<string> {
 export async function docxToMarkdown(bytes: Uint8Array): Promise<string> {
   return htmlToMarkdown(await docxHtml(bytes));
 }
+
+/** The title Word keeps in the file's properties, which Penna's own manuscript sets; null if none. */
+export async function docxTitle(bytes: Uint8Array): Promise<string | null> {
+  const { default: JSZip } = await import("jszip");
+  const core = await (await JSZip.loadAsync(bytes)).file("docProps/core.xml")?.async("string");
+  const title = core && /<dc:title>([^<]*)<\/dc:title>/.exec(core)?.[1];
+  return title ? decode(title).trim() || null : null;
+}

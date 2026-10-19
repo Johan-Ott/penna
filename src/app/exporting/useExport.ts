@@ -24,7 +24,8 @@ export type ExportState =
   | { kind: "idle" }
   | { kind: "running"; chapter: number; chapters: number }
   | { kind: "saved"; fileName: string; path: string }
-  | { kind: "failed"; sceneTitle: string; reason: string };
+  /** `sceneTitle`: the scene the export stopped at; null when it was the file that failed. */
+  | { kind: "failed"; sceneTitle: string | null; reason: string };
 
 export type ExportFormat = "manus" | "ebok" | "tryck" | "omslag" | "mappar" | PlainFormat;
 
@@ -131,7 +132,7 @@ async function exportBook(job: ExportJob, isCancelled: () => boolean): Promise<E
     const reason = error instanceof TypstError ? `Typst: ${error.message}` : null;
     return {
       kind: "failed",
-      sceneTitle: known ? error.sceneTitle : job.project.name,
+      sceneTitle: known ? error.sceneTitle : null,
       reason: known ? error.reason : (reason ?? t("Filen kunde inte skapas eller sparas.")),
     };
   }
@@ -153,7 +154,7 @@ async function saveBackup(project: Project): Promise<ExportState> {
     recordFailure("Säkerhetskopia")(error);
     return {
       kind: "failed",
-      sceneTitle: project.name,
+      sceneTitle: null,
       reason: t("Säkerhetskopian kunde inte sparas."),
     };
   }

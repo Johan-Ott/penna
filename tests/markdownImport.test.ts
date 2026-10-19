@@ -55,6 +55,18 @@ describe("splitManuscript", () => {
     ]);
   });
 
+  it("takes the short line under a bare Kapitel 1 as the chapter's name", () => {
+    const text =
+      "# Kapitel 1\n\nVardagen\n\nHon läste brevet igen.\n\n# Kapitel 2\n\nDet blev kväll.\n";
+
+    const book = splitManuscript(text);
+
+    expect(shape(book)).toEqual([
+      { "chapter Vardagen": ["Hon läste brevet igen: Hon läste br"] },
+      { "chapter Kapitel 2": ["Det blev kväll: Det blev kvä"] },
+    ]);
+  });
+
   it("names a scene by its first words, without markdown marks, at most six of them", () => {
     const book = splitManuscript("*Kära Elin*, om du läser det här har isen till slut släppt.\n");
 

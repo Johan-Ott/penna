@@ -47,6 +47,12 @@ export function Preview(props: {
 
 type Failure = Extract<ExportState, { kind: "failed" }>;
 
+const GoToScene = (props: { title: string; onOpenScene: (title: string) => void }) => (
+  <button className="button secondary small" onClick={() => props.onOpenScene(props.title)}>
+    {t("Gå till scenen")}
+  </button>
+);
+
 function ExportFailure(props: {
   failure: Failure;
   onOpenScene: (title: string) => void;
@@ -56,18 +62,17 @@ function ExportFailure(props: {
   return (
     <div className="export-error" role="alert">
       <span className="progress-title">
-        {t("Exporten stoppades i ”{title}”", { title: failure.sceneTitle })}
+        {failure.sceneTitle
+          ? t("Exporten stoppades i ”{title}”", { title: failure.sceneTitle })
+          : t("Exporten stoppades")}
       </span>
       <span className="setting-hint">
         {t("{reason} Inget har sparats.", { reason: failure.reason })}
       </span>
       <span className="export-error-actions">
-        <button
-          className="button secondary small"
-          onClick={() => props.onOpenScene(failure.sceneTitle)}
-        >
-          {t("Gå till scenen")}
-        </button>
+        {failure.sceneTitle && (
+          <GoToScene title={failure.sceneTitle} onOpenScene={props.onOpenScene} />
+        )}
         <button className="link-button quiet" onClick={props.onClose}>
           {t("Stäng")}
         </button>

@@ -1,3 +1,4 @@
+import { retitleBook } from "../../project/projectFile.js";
 import { useCallback, useEffect, useState } from "react";
 import {
   listBackups,
@@ -29,12 +30,15 @@ function useBackups() {
   return { books, reload };
 }
 
-// The copy becomes a book of its own next to the others; the original is never touched.
+// The copy becomes a book of its own next to the others, titled as a copy so it is never taken
+// for the original, which is never touched.
 async function restore(app: BackupsApp, book: string, file: BackupFile) {
   const library = app.startup.preferences.libraryDir ?? (await platform.knownFolders()).documents;
   const bytes = await platform.fileSystem.readBytes(file.path);
   const name = t("{book} från {date}", { book, date: when(file.time).replace(/:/g, ".") });
-  await app.open(await restoreBackup(platform.fileSystem, bytes, library, name));
+  const dir = await restoreBackup(platform.fileSystem, bytes, library, name);
+  await retitleBook(platform.fileSystem, dir, name).catch(recordFailure("Säkerhetskopia"));
+  await app.open(dir);
 }
 
 const Problem = ({ text }: { text: string }) => (

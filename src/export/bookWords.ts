@@ -159,6 +159,8 @@ export function contentsLabel(
   return item.title ? `${label}. ${item.title}` : label;
 }
 
-/** Rounded to hundreds, as agents and publishers expect. */
+/** Rounded to hundreds, as agents and publishers expect; a short text is never "about 0". */
 export const roundedWords = (words: number, language: string) =>
-  bookWords(language).about((Math.round(words / 100) * 100).toLocaleString(language));
+  bookWords(language).about(
+    Math.max(words > 0 ? 100 : 0, Math.round(words / 100) * 100).toLocaleString(language),
+  );

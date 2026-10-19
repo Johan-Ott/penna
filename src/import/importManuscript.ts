@@ -13,6 +13,22 @@ export const MANUSCRIPT_FILES = {
 const extensionOf = (path: string) => /\.([^./]+)$/.exec(path)?.[1]?.toLowerCase() ?? "";
 const nameOf = (path: string) => path.slice(path.lastIndexOf("/") + 1).replace(/\.[^.]+$/, "");
 
+async function titleIn(picked: { path: string; bytes: Uint8Array }) {
+  if (extensionOf(picked.path) !== "docx") return null;
+  const { docxTitle } = await import("./docxImport.js");
+  return docxTitle(picked.bytes);
+}
+
+// A manuscript opens on a title page: an untitled first text that holds the title, not a scene.
+function withoutTitlePage(book: ImportedNode[], title: string) {
+  const [first, ...rest] = book;
+  const isTitlePage =
+    first?.kind === "scene" &&
+    rest.length > 0 &&
+    first.body.toLowerCase().includes(title.toLowerCase());
+  return isTitlePage ? rest : book;
+}
+
 async function readBook(fileSystem: FileSystem, path: string, bytes: Uint8Array) {
   const extension = extensionOf(path);
   if (extension === "scrivx" && !path.includes("/")) {
@@ -32,5 +48,9 @@ export async function importManuscript(
 ): Promise<{ title: string; book: ImportedNode[] }> {
   const book = await readBook(fileSystem, picked.path, picked.bytes);
   if (book.length === 0) throw new ImportError(t("Filen innehöll ingen text att importera."));
-  return { title: nameOf(picked.path), book };
+  const title = await titleIn(picked);
+  return {
+    title: title ?? nameOf(picked.path),
+    book: title ? withoutTitlePage(book, title) : book,
+  };
 }

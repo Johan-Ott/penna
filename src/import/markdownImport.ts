@@ -62,14 +62,27 @@ interface Section {
   lines: string[];
 }
 
+// "Kapitel 3" alone with the chapter's name on the line under it, as many manuscripts are set.
+const LABEL_ONLY = /^(kapitel|chapter)\s+[\p{L}\p{N}]+$/iu;
+
+function namesLabel(section: Section | undefined, line: string) {
+  const heading = section?.heading;
+  if (!heading || !LABEL_ONLY.test(heading.title) || section.lines.some((seen) => seen.trim()))
+    return false;
+  const name = line.trim();
+  return name !== "" && name.split(/\s+/).length <= TITLE_WORDS && !/[.!?:;,]$/.test(name);
+}
+
 function sectionsOf(text: string): Section[] {
   const lines = text.replace(/\r\n?/g, "\n").split("\n");
   const hasMarkdownHeadings = lines.some((line) => ATX_HEADING.test(line));
   const sections: Section[] = [{ heading: null, lines: [] }];
   for (const line of lines) {
     const heading = headingOf(line, hasMarkdownHeadings);
+    const last = sections[sections.length - 1];
     if (heading) sections.push({ heading, lines: [] });
-    else sections[sections.length - 1]?.lines.push(line);
+    else if (last?.heading && namesLabel(last, line)) last.heading.title = line.trim();
+    else last?.lines.push(line);
   }
   return sections;
 }
