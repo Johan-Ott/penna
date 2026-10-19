@@ -22,3 +22,19 @@ test("the profile picture opens the account: profile, sign-in and updates", asyn
   await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
   await expect(page.getByText("Du har den senaste versionen av Penna.")).toBeVisible();
 });
+
+test("the example book is copied once, however often it is asked for", async ({ page }) => {
+  await openExample(page);
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Bokhylla" }).click();
+  const summary = page.locator(".shelf-summary");
+  await expect(summary).toContainText("·");
+  const before = await summary.innerText();
+
+  await page.getByRole("button", { name: "Prova exempelboken" }).click();
+  await expect(sidebar(page)).toContainText("Vintervägen");
+  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("menuitem", { name: "Bokhylla" }).click();
+
+  await expect(summary).toHaveText(before);
+});

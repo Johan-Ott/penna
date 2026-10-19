@@ -2,7 +2,13 @@ import { ClickCorrections } from "./spelling/ClickCorrections.js";
 import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
-import { CHARACTERS_ID, moveToTrash, SECRETS_ID, type TreeNode } from "../project/tree.js";
+import {
+  CHARACTERS_ID,
+  moveToTrash,
+  SECRETS_ID,
+  TRASH_ID,
+  type TreeNode,
+} from "../project/tree.js";
 import { chapterOf } from "../project/treeLabels.js";
 import type { AppState } from "./App.js";
 import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./notes/NotePage.js";
@@ -46,15 +52,30 @@ function sceneHeader(app: AppState, project: Project, sceneId: string) {
   );
 }
 
-// The welcome's way out: it goes to the trash, and the book forgets it was ever there.
+// The manuscript's first scene: notes live in sorts, and the trash is no place to go.
+function firstSceneIn(nodes: TreeNode[]): string | null {
+  for (const node of nodes) {
+    if (node.kind === "scene") return node.id;
+    if (node.kind === "sort" || node.id === TRASH_ID) continue;
+    const found = firstSceneIn(node.children ?? []);
+    if (found) return found;
+  }
+  return null;
+}
+
+// The welcome's way out: it goes to the trash, the book forgets it was ever there, and the
+// book's first scene opens in its place.
 function WelcomeFoot(props: { app: AppState; project: Project; id: string }) {
   if (props.project.fields["welcome"] !== props.id) return null;
-  const remove = () => {
+  const remove = async () => {
     const tree = moveToTrash(props.project.tree, props.id);
-    if (tree) void props.app.updateProject({ tree, fields: { welcome: undefined } });
+    if (!tree) return;
+    await props.app.updateProject({ tree, fields: { welcome: undefined } });
+    const first = firstSceneIn(tree);
+    if (first) openText(props.app)(first);
   };
   return (
-    <button className="button secondary welcome-remove" onClick={remove}>
+    <button className="button secondary welcome-remove" onClick={() => void remove()}>
       {t("Ta bort välkomsten")}
     </button>
   );

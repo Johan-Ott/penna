@@ -94,6 +94,32 @@ export function DiffText({ before, now }: { before: string; now: string }) {
   });
 }
 
+function NowText({ state, nowText }: Pick<SnapshotsDialogProps, "state" | "nowText">) {
+  return (
+    <>
+      {state.work === "restored" && (
+        <p className="snapshot-done" role="status">
+          {t("Versionen är återställd. Texten som den var innan finns sparad bland versionerna.")}
+        </p>
+      )}
+      <div className="snapshot-text">{nowText}</div>
+    </>
+  );
+}
+
+function RestoreButton({ state, snapshot }: { state: SnapshotState; snapshot: Snapshot }) {
+  const isWorking = state.work === "working";
+  return (
+    <button
+      className="button primary small restore"
+      disabled={isWorking}
+      onClick={() => state.restore(snapshot)}
+    >
+      {isWorking ? t("Återställer…") : t("Återställ den här versionen")}
+    </button>
+  );
+}
+
 function Comparison({
   state,
   nowText,
@@ -105,16 +131,14 @@ function Comparison({
     textRef.current?.querySelector("del, ins")?.scrollIntoView({ block: "center" });
   }, [state.chosen]);
   const snapshot = state.snapshots.find((candidate) => candidate.fileName === state.chosen);
-  if (!snapshot) return <div className="snapshot-text">{nowText}</div>;
+  if (!snapshot) return <NowText state={state} nowText={nowText} />;
   return (
     <>
       <div className="snapshot-text" ref={textRef}>
         <DiffText before={plainText(snapshot.body, "\n\n")} now={nowText} />
       </div>
       <div className="review-actions">
-        <button className="button primary small restore" onClick={() => state.restore(snapshot)}>
-          {t("Återställ den här versionen")}
-        </button>
+        <RestoreButton state={state} snapshot={snapshot} />
         {onBeside && (
           <button className="button secondary small" onClick={() => onBeside(snapshot)}>
             {t("Jämför bredvid texten")}

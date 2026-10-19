@@ -3,7 +3,7 @@ import type { ImportedNode } from "../import/markdownImport.js";
 import { newSceneText, withSceneStatus } from "../manuscript/sceneFile.js";
 import { createFileNote, saveResearchFile } from "./researchFiles.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
-import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
+import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { parentOf } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
@@ -171,12 +171,17 @@ export async function createProject(
   return { dir, sceneId: sceneId ?? welcome };
 }
 
+// The example is copied once: asked for again, the copy already on the shelf opens. Its files go
+// into a new folder, so they are written all at once rather than one by one, which a phone is slow at.
 export async function copyExampleProject(fileSystem: FileSystem, libraryDir: string) {
+  const existing = joinPath(libraryDir, "Vintervägen.penna");
+  if ((await readIfThere(fileSystem, joinPath(existing, "project.json"))) !== null) return existing;
   const dir = await freeProjectDir(fileSystem, libraryDir, "Vintervägen");
-  for (const [examplePath, text] of Object.entries(DEMO_PROJECT_FILES)) {
-    const path = dir + examplePath.slice(DEMO_PROJECT_DIR.length);
-    await fileSystem.makeDir(parentOf(path));
-    await writeAtomic(fileSystem, path, text);
-  }
+  const files = Object.entries(DEMO_PROJECT_FILES).map(
+    ([examplePath, text]) => [dir + examplePath.slice(DEMO_PROJECT_DIR.length), text] as const,
+  );
+  for (const folder of new Set(files.map(([path]) => parentOf(path))))
+    await fileSystem.makeDir(folder);
+  await Promise.all(files.map(([path, text]) => fileSystem.writeText(path, text)));
   return dir;
 }

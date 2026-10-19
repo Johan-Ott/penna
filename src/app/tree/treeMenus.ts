@@ -1,3 +1,4 @@
+import { platform } from "../platform.js";
 import { TRASH_ID, type NodeKind, type TreeNode } from "../../project/tree.js";
 import { SCENE_STATUSES, type SceneStatus } from "../../manuscript/sceneFile.js";
 import type { MenuItem } from "@llkit/Menu.js";
@@ -187,6 +188,21 @@ function editItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
   ];
 }
 
+function sceneItems(node: TreeNode, actions: TreeMenuActions): MenuItem[] {
+  if (node.kind !== "scene") return [];
+  return [
+    { label: t("Öppna"), onSelect: () => actions.open(node) },
+    // A phone has room for one text at a time.
+    ...(platform.isPhone
+      ? []
+      : [{ label: t("Öppna bredvid"), onSelect: () => actions.openBeside(node) }]),
+    { label: t("Versioner…"), onSelect: () => actions.showSnapshots(node) },
+    ...(actions.canMerge(node)
+      ? [{ label: t("Slå ihop med nästa scen"), onSelect: actions.mergeWithNext }]
+      : []),
+  ];
+}
+
 export function rowMenu(
   node: TreeNode,
   isInTrash: boolean,
@@ -197,17 +213,7 @@ export function rowMenu(
   if (isInTrash)
     return [{ label: t("Lägg tillbaka i manuset"), onSelect: () => actions.restore(node) }];
   const added = newItemsFor(node, actions);
-  const open =
-    node.kind === "scene"
-      ? [
-          { label: t("Öppna"), onSelect: () => actions.open(node) },
-          { label: t("Öppna bredvid"), onSelect: () => actions.openBeside(node) },
-          { label: t("Versioner…"), onSelect: () => actions.showSnapshots(node) },
-          ...(actions.canMerge(node)
-            ? [{ label: t("Slå ihop med nästa scen"), onSelect: actions.mergeWithNext }]
-            : []),
-        ]
-      : [];
+  const open = sceneItems(node, actions);
   const [firstAdded, ...restAdded] = added;
   const separatedAdd =
     firstAdded && open.length > 0

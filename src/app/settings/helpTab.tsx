@@ -21,7 +21,7 @@ const SECTIONS: [string, string[]][] = [
         "Bilder: Infoga bild… i paletten, eller Bild över tangentbordet på telefonen, lägger en karta eller ett foto i texten, smal, bred eller på egen sida.",
       ),
       t(
-        "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen tar den hela skärmen.",
+        "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen finns bara en text i taget.",
       ),
     ],
   ],

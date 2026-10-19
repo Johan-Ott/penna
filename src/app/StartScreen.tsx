@@ -15,9 +15,10 @@ import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
-import type { ProjectDetails } from "../project/newProject.js";
-import { exampleBook, importedBook, libraryOf, newBook, startDetails } from "./onboarding/books.js";
+import { libraryOf, startDetails } from "./onboarding/books.js";
+import { Opening, useBookActions } from "./shelf/useBookActions.js";
 import { NewBookDialog } from "./onboarding/NewBookDialog.js";
+import type { ProjectDetails } from "../project/newProject.js";
 import { Welcome } from "./onboarding/Welcome.js";
 import type { Choices } from "./onboarding/FirstChoices.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
@@ -35,30 +36,6 @@ type App = Pick<AppState, "profile" | "journey" | "updateFields" | "startup"> & 
   newProjectAsked: { current: boolean };
 };
 type StartScreenProps = { app: App };
-
-// Each way a book reaches the shelf, opened as soon as it is there.
-function bookActions(app: App) {
-  const { preferences } = app.startup;
-  const goal = preferences.defaultDailyGoal;
-  const library = () => libraryOf(preferences.libraryDir);
-  const opened = async (made: Promise<string | null>, what: string) => {
-    const dir = await made.catch(recordFailure(what));
-    if (dir) await app.open(dir);
-  };
-  return {
-    create: (details: ProjectDetails) =>
-      opened(
-        library().then((dir) => newBook(dir, details)),
-        "Boken kunde inte skapas",
-      ),
-    import: () =>
-      void opened(
-        library().then((dir) => importedBook(dir, goal)),
-        "Importen",
-      ),
-    example: () => void opened(library().then(exampleBook), "Exempelboken"),
-  };
-}
 
 // The shelf's menu, with the dialogs it opens.
 function useShelfMenu(app: App, onNewProject: () => void, isPhone: boolean) {
@@ -135,11 +112,27 @@ function useCloud(app: App) {
   return { ...cloud, onFetch: (name: string) => void fetchAndOpen(name) };
 }
 
+function NewBookSheet(props: {
+  app: App;
+  onCreate: (details: ProjectDetails) => Promise<void>;
+  onClose: () => void;
+}) {
+  const { preferences } = props.app.startup;
+  return (
+    <NewBookDialog
+      start={startDetails(preferences.defaultDailyGoal, preferences.bookLanguage)}
+      libraryDir={preferences.libraryDir ?? ""}
+      onCreate={props.onCreate}
+      onClose={props.onClose}
+    />
+  );
+}
+
 function Shelf({ app }: StartScreenProps) {
   const { preferences } = app.startup;
   const isPhone = usePhone();
   const [isNewBookOpen, setNewBookOpen] = useNewBookSheet(app);
-  const books = bookActions(app);
+  const books = useBookActions(app);
   const cloud = useCloud(app);
   return (
     <ShelfFrame app={app} onNewProject={() => setNewBookOpen(true)} isPhone={isPhone}>
@@ -147,20 +140,16 @@ function Shelf({ app }: StartScreenProps) {
         libraryDir={preferences.libraryDir}
         knownProjects={preferences.knownProjects}
         author={preferences.authorName}
-        onOpen={(dir) => void app.open(dir)}
+        onOpen={books.open}
         onNewProject={() => setNewBookOpen(true)}
         onImport={books.import}
         onOpenExample={books.example}
         cloud={cloud}
         {...shelfHandlers(app.startup, isPhone, cloud.look)}
       />
+      <Opening saying={books.busy} />
       {isNewBookOpen && (
-        <NewBookDialog
-          start={startDetails(preferences.defaultDailyGoal, preferences.bookLanguage)}
-          libraryDir={preferences.libraryDir ?? ""}
-          onCreate={books.create}
-          onClose={() => setNewBookOpen(false)}
-        />
+        <NewBookSheet app={app} onCreate={books.create} onClose={() => setNewBookOpen(false)} />
       )}
     </ShelfFrame>
   );

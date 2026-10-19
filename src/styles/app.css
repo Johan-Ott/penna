@@ -3646,3 +3646,44 @@ html.welcome-shown body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* While a book is copied or opened: what is happening, over the shelf. */
+.opening-book {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-size: 14px;
+  transform: translateX(-50%);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.opening-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: opening-turn 0.8s linear infinite;
+}
+
+@keyframes opening-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.snapshot-done {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  font-size: 14px;
+}
