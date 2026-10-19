@@ -173,11 +173,15 @@ function textEntries({ changeSettings: change }: PaletteContext): PaletteEntry[]
   ];
 }
 
+// Publicera is also found by what a writer wants from it.
 const viewEntries = (showView: PaletteContext["showView"]) =>
   showView
-    ? VIEWS.map(([view, label, keys]) =>
-        command(t("Gå till {view}", { view: label }), () => showView(view), keys),
-      )
+    ? [
+        ...VIEWS.map(([view, label, keys]) =>
+          command(t("Gå till {view}", { view: label }), () => showView(view), keys),
+        ),
+        command(t("Exportera som PDF, e-bok eller Word"), () => showView("publicera")),
+      ]
     : [];
 
 function switchEntries({

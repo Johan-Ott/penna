@@ -13,7 +13,7 @@ import { UpdateNotice } from "./UpdateNotice.js";
 import { useReminder } from "./reminder.js";
 import { useMentionLinks } from "./notes/useMentionLinks.js";
 import { cardActions } from "./notes/cardActions.js";
-import { useProject, type Project } from "./useProject.js";
+import { openingSaying, useProject, type Project } from "./useProject.js";
 import { useSeries } from "./useSeries.js";
 import { useSeriesActions } from "./notes/useSeriesActions.js";
 import { homesOf } from "./notes/noteHomes.js";
@@ -198,8 +198,8 @@ export function App() {
   const app = useAppState();
   useRemote(app);
   const Screen = usePhone() ? PhoneProject : ProjectScreen;
-  const { project } = app;
-  if (app.startup.isStarting || app.opening) return <StartPicture />;
+  const { project, opening } = app;
+  if (app.startup.isStarting || opening) return <StartPicture saying={openingSaying(opening)} />;
   return (
     <>
       {project && <Screen app={app} project={project} />}

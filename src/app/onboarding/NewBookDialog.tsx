@@ -22,6 +22,7 @@ function Steps(props: {
   isMaking: boolean;
   onBack: () => void;
   onForward: () => void;
+  onClose: () => void;
 }) {
   const isLast = props.step === QUESTIONS.length;
   return (
@@ -30,11 +31,10 @@ function Steps(props: {
         {t("Steg {step} av {steps}", { step: props.step, steps: QUESTIONS.length })}
       </span>
       <span className="spacer" />
-      {props.step > 1 && (
-        <button className="button ghost" onClick={props.onBack}>
-          {t("Tillbaka")}
-        </button>
-      )}
+      {/* The first step's way out is Avbryt; the others step back. */}
+      <button className="button ghost" onClick={props.step > 1 ? props.onBack : props.onClose}>
+        {props.step > 1 ? t("Tillbaka") : t("Avbryt")}
+      </button>
       <button className="button primary" disabled={props.isMaking} onClick={props.onForward}>
         {isLast ? t("Skapa boken") : t("Fortsätt")}
       </button>
@@ -80,7 +80,13 @@ export function NewBookDialog(props: Props) {
           onChange={setDetails}
           libraryDir={props.libraryDir}
         />
-        <Steps step={step} isMaking={isMaking} onBack={back} onForward={forward} />
+        <Steps
+          step={step}
+          isMaking={isMaking}
+          onBack={back}
+          onForward={forward}
+          onClose={props.onClose}
+        />
       </div>
     </Dialog>
   );

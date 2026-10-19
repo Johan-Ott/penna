@@ -59,14 +59,18 @@ export function WindowBar() {
 
 /** While Penna starts or reads a book from the shelf: the start picture, over this, and the
  * window's buttons on top of it. */
-export function StartPicture() {
+export function StartPicture({ saying }: { saying?: string | undefined }) {
   useRootClass("starting");
-  // The app always starts on this picture, so the tip goes when it first does; opening a book
-  // later shows the picture without it.
+  // The tip goes the first time; a book opened later shows `saying` under the logo instead.
   useLayoutEffect(() => () => document.getElementById("boot-tip")?.remove(), []);
   return (
     <div className="app-starting">
       <WindowBar />
+      {saying && (
+        <p className="app-starting-saying" role="status">
+          {saying}
+        </p>
+      )}
     </div>
   );
 }

@@ -1422,5 +1422,8 @@
   "Öppnar exempelboken…": "Opening the example book…",
   "Bredvid: välj Öppna bredvid i en scens meny, eller jämför en äldre version bredvid texten under Versioner. På telefonen finns bara en text i taget.": "Beside: choose Open beside in a scene's menu, or compare an older version beside the text under Versions. A phone has one text at a time.",
   "Versionen är återställd. Texten som den var innan finns sparad bland versionerna.": "The version is restored. The text as it was before is saved among the versions.",
-  "Återställer…": "Restoring…"
+  "Återställer…": "Restoring…",
+  "Öppnar {title}…": "Opening {title}…",
+  "Skriv här. Penna sparar av sig själv. Kapitel och scener lägger du till under Boken.": "Write here. Penna saves by itself. Add chapters and scenes under Book.",
+  "Exportera som PDF, e-bok eller Word": "Export as PDF, e-book or Word"
 }

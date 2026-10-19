@@ -173,6 +173,7 @@ export function NewNoteDialog(props: NewNoteDialogProps) {
         onClick={(event) => event.stopPropagation()}
         onSubmit={(event) => (event.preventDefault(), create())}
       >
+        <span className="dialog-title">{t("Ny anteckning")}</span>
         {props.series && (
           <HomeChoice series={props.series} isInSeries={isInSeries} onChange={changeHome} />
         )}

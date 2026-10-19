@@ -515,3 +515,22 @@
   height: 100vh;
   background: var(--bg);
 }
+
+.app-starting-saying {
+  position: fixed;
+  top: calc(50% + 64px);
+  left: 0;
+  right: 0;
+  z-index: 101;
+  margin: 0;
+  color: var(--text-muted);
+  font: 14px var(--font-ui);
+  text-align: center;
+}
+
+/* A tap answers at once, before whatever it starts has finished. Scale, not transform, so a
+   button placed with a transform stays where it is. */
+button:not(:disabled):active {
+  scale: 0.97;
+  opacity: 0.85;
+}

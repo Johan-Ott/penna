@@ -3687,3 +3687,25 @@ html.welcome-shown body {
   background: var(--bg-subtle);
   font-size: 14px;
 }
+
+.phone-project .tree-undo,
+.android .tree-undo {
+  bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+/* On a phone the first shelf's welcome goes under Ny bok, the whole width. */
+@media (max-width: 760px) {
+  .books .shelf-welcome {
+    grid-column: 1 / -1;
+    max-width: none;
+    padding: 4px 0 0;
+  }
+
+  .shelf-head {
+    gap: 4px 16px;
+  }
+
+  .shelf-head h2 {
+    flex-basis: 100%;
+  }
+}

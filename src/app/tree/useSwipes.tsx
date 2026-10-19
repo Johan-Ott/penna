@@ -30,7 +30,7 @@ function swipesFor(
   };
 }
 
-const UNDO_MS = 5000;
+const UNDO_MS = 8000;
 
 // On a phone a row swipes: left to the trash, with a moment to take it back, and right to the
 // scene's next status.
