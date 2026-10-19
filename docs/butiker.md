@@ -117,13 +117,14 @@ Penna is also available for Windows and is free during the beta.
 
 ### Datasäkerhet (Data safety)
 
-- **Samlar appen in eller delar användardata?** Nej.
-  - Böckerna sparas på enheten. Synk skickar dem till användarens egen Google Drive, på
-    användarens eget val och med användarens eget konto; Penna har ingen server och ser dem inte.
-  - Felrapporter skickas bara när användaren själv mejlar dem.
-- **Krypteras data under överföring?** Ja (HTTPS till Google Drive).
-- **Kan användaren be om att data raderas?** Data finns bara på enheten och i användarens
-  egen Drive; användaren raderar den själv.
+Play räknar allt som lämnar telefonen som insamlat, även till användarens egen Drive, så:
+
+- **Samlar appen in data?** Ja: endast **Filer och dokument** (böckerna), insamlat men inte
+  delat, inte tillfälligt, **valfritt** (bara med synk påslagen), syfte **App functionality**.
+- **Krypterat under överföring:** Ja. **Konton:** appen skapar inga egna; inloggning med eget
+  Google-konto (Other).
+- **Radering:** Ja, med steg på https://johan-ott.github.io/penna/privacy.html#delete
+- Felrapporter skickas bara när användaren själv mejlar dem, så de räknas inte.
 
 ## Microsoft Store (Partner Center)
 
