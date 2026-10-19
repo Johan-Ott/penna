@@ -60,7 +60,8 @@ function Stepper({ setting, plan }: { setting: Setting; plan: SprintPlan }) {
 
 const PHASE_NAMES = { pass: t("Pass"), kort: t("Kort paus"), lang: t("Lång paus") };
 
-function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number }) {
+function Running(props: { sprint: Sprint; todayWords: number; onEnd: () => void }) {
+  const { sprint, todayWords } = props;
   const now = useTick();
   const words = sprintWords(sprint, todayWords);
   const phase = phasesOf(sprint.plan)[sprint.phase] ?? "pass";
@@ -77,7 +78,10 @@ function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number })
         <button className="button secondary small" onClick={() => nextPhase(words)}>
           {t("Hoppa över")}
         </button>
-        <button className="button secondary small" onClick={() => endSprint(words)}>
+        <button
+          className="button secondary small"
+          onClick={() => (endSprint(words), props.onEnd())}
+        >
           {t("Avsluta")}
         </button>
       </div>
@@ -86,13 +90,13 @@ function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number })
 }
 
 /** Opened from the clock in the top bar, and from the sprint's bar while it runs. */
-export function SprintPanel({ todayWords }: { todayWords: number }) {
+export function SprintPanel({ todayWords, onEnd }: { todayWords: number; onEnd: () => void }) {
   const { plan, sprint, isPanelOpen } = useSprint();
   if (!isPanelOpen) return null;
   return (
     <BlockPanel id="sprint" title={t("Skrivsprint")} onClose={() => setPanelOpen(false)}>
       {sprint ? (
-        <Running sprint={sprint} todayWords={todayWords} />
+        <Running sprint={sprint} todayWords={todayWords} onEnd={onEnd} />
       ) : (
         <>
           <div className="sprint-settings">

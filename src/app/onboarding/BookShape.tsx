@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   composeTemplate,
   GENRES,
@@ -123,10 +122,13 @@ function Choices(props: FieldProps & { hasSteps: boolean }) {
   );
 }
 
-export function BookShape(props: ShapeProps) {
-  const { details } = props;
+/** `isSwapping`: the list of structures is open in place of the summary, held by the dialog so its
+ * Tillbaka closes the list first. */
+export function BookShape(
+  props: ShapeProps & { isSwapping: boolean; setSwapping: (isSwapping: boolean) => void },
+) {
+  const { details, isSwapping, setSwapping } = props;
   const { own, reload } = useOwnTemplates(props.libraryDir);
-  const [isSwapping, setSwapping] = useState(false);
   const all = [...structures(), ...own];
   const structure = all.find((each) => each.id === details.structure) ?? all[0];
   if (!structure) return null;

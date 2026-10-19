@@ -24,14 +24,17 @@ const HINTS: Record<FeedbackKind, string> = {
   annat: t("Skriv det du vill säga."),
 };
 
-type Outcome = "skriver" | "öppnad" | "kopierad";
+type Outcome = "skriver" | "öppnad" | "kopierad" | "inte-kopierad";
 
 // The text always goes to the clipboard too, in case no mail program opens.
 function useSending(feedback: Feedback) {
   const [outcome, setOutcome] = useState<Outcome>("skriver");
   const send = async () => {
-    await navigator.clipboard.writeText(feedbackText(feedback)).catch(recordFailure("Feedback"));
-    if (!canSendFeedback()) return setOutcome("kopierad");
+    const isCopied = await navigator.clipboard.writeText(feedbackText(feedback)).then(
+      () => true,
+      (error: unknown) => (recordFailure("Feedback")(error), false),
+    );
+    if (!canSendFeedback()) return setOutcome(isCopied ? "kopierad" : "inte-kopierad");
     await device().openLink(feedbackMail(feedback)).catch(recordFailure("Feedback"));
     setOutcome("öppnad");
   };
@@ -96,6 +99,7 @@ const DONE: Partial<Record<Outcome, string>> = {
     "Ditt mejlprogram öppnas med meddelandet ifyllt: skicka det därifrån. Öppnades inget är texten kopierad, så du kan klistra in den i ett mejl.",
   ),
   kopierad: t("Texten är kopierad: klistra in den i ett mejl till oss."),
+  "inte-kopierad": t("Texten kunde inte kopieras. Skriv den i ett mejl till oss i stället."),
 };
 
 /** Feedback straight from the app: what happened, and only what the writer chooses to include. */
@@ -119,6 +123,7 @@ export function FeedbackDialog({ onClose }: { onClose: () => void }) {
       ) : (
         <DialogButtons
           label={canSendFeedback() ? t("Skriv mejlet") : t("Kopiera")}
+          isReady={feedback.message.trim() !== ""}
           onCancel={onClose}
           onConfirm={() => void (feedback.message.trim() && outcome === "skriver" && send())}
         />

@@ -13,7 +13,7 @@ export function Avatar({ name, picture, size, frame = "" }: AvatarProps) {
   if (picture) return <img className={className} src={picture} alt="" style={style} />;
   return (
     <span className={className} style={style} aria-hidden="true">
-      {(name.trim().charAt(0) || "·").toUpperCase()}
+      {(name.trim().charAt(0) || "?").toUpperCase()}
     </span>
   );
 }

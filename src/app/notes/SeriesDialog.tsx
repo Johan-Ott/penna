@@ -179,6 +179,7 @@ export function SeriesDialog(props: SeriesDialogProps) {
         onClick={(event) => event.stopPropagation()}
         onSubmit={(event) => (event.preventDefault(), form.isReady && form.save())}
       >
+        <span className="dialog-title">{t("Serie")}</span>
         <SeriesChips folders={folders} choice={form.choice} onChoose={form.setChoice} />
         <ChoiceFields form={form} />
         <DialogActions isReady={form.isReady} label={t("Spara")} onClose={props.onClose} />

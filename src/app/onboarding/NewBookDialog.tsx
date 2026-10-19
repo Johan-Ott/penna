@@ -10,7 +10,9 @@ import { t } from "../../i18n/i18n.js";
 
 const QUESTIONS = [t("Vad skriver du?"), t("Vilken bok?"), t("Titel, röst och mål")];
 
-function Question(props: FieldProps & { step: number; libraryDir: string }) {
+type Swapping = { isSwapping: boolean; setSwapping: (isSwapping: boolean) => void };
+
+function Question(props: FieldProps & Swapping & { step: number; libraryDir: string }) {
   if (props.step === 1) return <BookTypes {...props} />;
   if (props.step === 2) return <BookShape {...props} />;
   return <TitleAndGoal {...props} />;
@@ -53,19 +55,22 @@ function useAnswers(props: Props) {
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState(props.start);
   const [isMaking, setMaking] = useState(false);
+  const [isSwapping, setSwapping] = useState(false);
   const forward = () => {
+    if (isSwapping) return setSwapping(false);
     // The shape starts from what Penna suggests for the kind of book.
     if (step === 1) setDetails(withSuggestion(details));
     if (step < QUESTIONS.length) return setStep(step + 1);
     setMaking(true);
     void props.onCreate(details).finally(() => setMaking(false));
   };
-  const back = () => setStep(step - 1);
-  return { step, details, setDetails, isMaking, forward, back };
+  const back = () => (isSwapping ? setSwapping(false) : setStep(step - 1));
+  return { step, details, setDetails, isMaking, forward, back, isSwapping, setSwapping };
 }
 
 export function NewBookDialog(props: Props) {
-  const { step, details, setDetails, isMaking, forward, back } = useAnswers(props);
+  const answers = useAnswers(props);
+  const { step, details, setDetails, isMaking, forward, back } = answers;
   return (
     <Dialog label={QUESTIONS[step - 1] ?? ""} className="new-book-dialog" onClose={props.onClose}>
       <div
@@ -79,6 +84,8 @@ export function NewBookDialog(props: Props) {
           details={details}
           onChange={setDetails}
           libraryDir={props.libraryDir}
+          isSwapping={answers.isSwapping}
+          setSwapping={answers.setSwapping}
         />
         <Steps
           step={step}

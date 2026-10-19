@@ -24,11 +24,19 @@ export interface Sprint {
   startWords: number | null;
 }
 
+/** `startWords` and `endedAt` let the result count words still being saved when it ended. */
+export interface SprintDone {
+  passes: number;
+  words: number;
+  startWords: number | null;
+  endedAt: number;
+}
+
 interface SprintState {
   plan: SprintPlan;
   sprint: Sprint | null;
   /** The last sprint's result, shown until it is closed. */
-  done: { passes: number; words: number } | null;
+  done: SprintDone | null;
   isPanelOpen: boolean;
 }
 
@@ -95,7 +103,9 @@ export function setStartWords(words: number) {
 
 export function endSprint(words: number) {
   const { sprint } = state.get();
-  change({ sprint: null, done: { passes: sprint ? passesBy(sprint.phase) : 0, words } });
+  const passes = sprint ? passesBy(sprint.phase) : 0;
+  const startWords = sprint?.startWords ?? null;
+  change({ sprint: null, done: { passes, words, startWords, endedAt: Date.now() } });
 }
 
 /** On to the next phase, or the sprint's end after the long break. False once it ended. */

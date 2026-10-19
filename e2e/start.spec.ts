@@ -77,3 +77,17 @@ test("the first start asks the writer's languages, and a new book takes the firs
   const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("penna.app") ?? "{}"));
   expect(stored).toMatchObject({ bookLanguage: "en-GB", defaultDailyGoal: 500 });
 });
+
+test("Tillbaka from the list of structures goes back to the book's summary", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Kom igång" }).click({ timeout: 50_000 });
+  await page.getByRole("button", { name: "Klar" }).click();
+  await page.getByRole("button", { name: "+ Ny bok" }).click();
+  await page.getByRole("button", { name: "Fortsätt" }).click();
+  await page.getByRole("button", { name: "Byt", exact: true }).click();
+
+  await page.getByRole("button", { name: "Tillbaka" }).click();
+
+  await expect(page.getByText("Steg 2 av 3")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Byt", exact: true })).toBeVisible();
+});

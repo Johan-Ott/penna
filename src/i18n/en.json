@@ -139,7 +139,6 @@
   "Ingen": "None",
   "Ingen scen är öppen": "No scene is open",
   "Ingen serie": "No series",
-  "Ingen statistik än": "No statistics yet",
   "Ingen synk": "No sync",
   "Inget att se över i den här scenen.": "Nothing to look at in this scene.",
   "Innehåll": "Contents",
@@ -1437,5 +1436,6 @@
   "Det finns redan en anteckning som heter {name}.": "There is already a note called {name}.",
   "Den finns nu i din profil.": "It is in your profile now.",
   "Inget kapitel har ”{query}”.": "No chapter has “{query}”.",
-  "Person, plats eller etikett": "Person, place or label"
+  "Person, plats eller etikett": "Person, place or label",
+  "Inga skrivdagar än": "No writing days yet"
 }

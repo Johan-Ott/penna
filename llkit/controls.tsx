@@ -146,6 +146,8 @@ export function DialogActions(props: { isReady: boolean; label?: string; onClose
 /** The row at the bottom of a dialog: Avbryt, and the action that saves. */
 export function DialogButtons(props: {
   label?: string;
+  /** False keeps the action grey until there is something to do it with. */
+  isReady?: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -154,7 +156,11 @@ export function DialogButtons(props: {
       <button className="button ghost" onClick={props.onCancel}>
         {t("Avbryt")}
       </button>
-      <button className="button primary" onClick={props.onConfirm}>
+      <button
+        className="button primary"
+        disabled={props.isReady === false}
+        onClick={props.onConfirm}
+      >
         {props.label ?? t("Spara")}
       </button>
     </div>

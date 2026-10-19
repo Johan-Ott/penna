@@ -433,6 +433,11 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
+/* A tip is about the screen, so it waits while a dialog lies over it. */
+body:has(.dialog-backdrop) .guide-tip {
+  display: none;
+}
+
 .guide-tip p {
   margin: 8px 0 12px;
   line-height: 1.5;

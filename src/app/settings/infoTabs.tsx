@@ -3,23 +3,18 @@ import { useState } from "react";
 import { errorLog } from "@llkit/errorLog.js";
 import { feedbackReport } from "@llkit/feedback/sendFeedback.js";
 import { Row } from "@llkit/controls.js";
+import { CopyButton } from "../share/ImageActions.js";
 import { checkForUpdates } from "@llkit/updates.js";
 import { numberLocale, t, uiLanguage } from "../../i18n/i18n.js";
 
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
-function ErrorReportButton() {
-  const [isCopied, setCopied] = useState(false);
-  const copy = async () => {
-    const report = feedbackReport();
-    await navigator.clipboard.writeText(report);
-    setCopied(true);
-  };
-  return (
-    <button className="button secondary small" onClick={() => void copy()}>
-      {isCopied ? t("Kopierad") : t("Kopiera felrapport")}
-    </button>
-  );
-}
+const ErrorReportButton = () => (
+  <CopyButton
+    className="button secondary small"
+    label={t("Kopiera felrapport")}
+    copy={() => navigator.clipboard.writeText(feedbackReport())}
+  />
+);
 
 // What went wrong since Penna started, shown here instead of only in the copied report.
 function RecentErrors() {

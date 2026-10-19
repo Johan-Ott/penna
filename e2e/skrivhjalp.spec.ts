@@ -96,3 +96,15 @@ test("an Upprepning card in Granska selects the word in the text", async ({ page
   const selected = await page.evaluate(() => window.getSelection()?.toString() ?? "");
   expect(selected.length).toBeGreaterThan(1);
 });
+
+test("words typed just before Avsluta count in the sprint's result", async ({ page }) => {
+  await runCommand(page, "Skrivsprint");
+  await cursorAfterFirstParagraph(page);
+  const sprint = page.getByRole("timer");
+  await expect(sprint).toContainText("0 ord");
+
+  await page.keyboard.type(" Hon log och gick.");
+  await sprint.getByRole("button", { name: "Avsluta" }).click();
+
+  await expect(page.getByText("Sprinten är klar: 4 ord på 1 pass.")).toBeVisible();
+});

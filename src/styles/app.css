@@ -145,10 +145,12 @@ select:focus-visible {
   padding: 64px 24px 0;
 }
 
+/* Over a dialog's backdrop too, so what a dialog did is seen. */
 .toast {
   position: absolute;
   bottom: 24px;
   left: 50%;
+  z-index: var(--layer-toast);
   display: flex;
   align-items: center;
   gap: 16px;

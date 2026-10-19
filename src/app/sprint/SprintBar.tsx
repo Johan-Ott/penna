@@ -13,6 +13,7 @@ import {
   useSprint,
   type Phase,
   type Sprint,
+  type SprintDone,
 } from "./sprint.js";
 import { clock, sprintWords, useTick } from "./sprintClock.js";
 import { SprintPanel } from "./SprintPanel.js";
@@ -39,7 +40,8 @@ function usePhaseEnds(sprint: Sprint, words: number, now: number) {
 }
 
 // Over the text while a sprint runs; a click opens its block.
-function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number }) {
+function Running(props: { sprint: Sprint; todayWords: number; onEnd: () => void }) {
+  const { sprint, todayWords } = props;
   const now = useTick();
   const words = sprintWords(sprint, todayWords);
   useEffect(() => {
@@ -53,19 +55,24 @@ function Running({ sprint, todayWords }: { sprint: Sprint; todayWords: number })
         {isBreak ? `${t("Paus")} ${clock(sprint.endsAt - now)}` : clock(sprint.endsAt - now)}
       </button>
       <span>{t("{words} ord", { words })}</span>
-      <button className="link-button" onClick={() => endSprint(words)}>
+      <button className="link-button" onClick={() => (endSprint(words), props.onEnd())}>
         {t("Avsluta")}
       </button>
     </div>
   );
 }
 
-function Result({ done }: { done: { passes: number; words: number } }) {
+// Words typed just before Avsluta are saved a moment after it, and counted when they are.
+const SETTLE_MS = 5000;
+
+function Result({ done, todayWords }: { done: SprintDone; todayWords: number }) {
+  const isSettling = done.startWords !== null && Date.now() - done.endedAt < SETTLE_MS;
+  const words = isSettling ? Math.max(done.words, todayWords - (done.startWords ?? 0)) : done.words;
   return (
     <div className="sprint-bar" role="status">
       <span>
         {t("Sprinten är klar: {words} ord på {passes} pass.", {
-          words: done.words,
+          words,
           passes: done.passes,
         })}
       </span>
@@ -77,13 +84,15 @@ function Result({ done }: { done: { passes: number; words: number } }) {
 }
 
 /** Over the text: the sprint's block when open, its bar while it runs, and its result. */
-export function SprintBar({ app }: { app: Pick<AppState, "today"> }) {
+export function SprintBar({ app }: { app: Pick<AppState, "today" | "session"> }) {
+  // What was typed is saved at once, so the result can count it.
+  const onEnd = () => void app.session.autosave.flush();
   const { sprint, done } = useSprint();
   return (
     <>
-      <SprintPanel todayWords={app.today.words} />
-      {sprint && <Running sprint={sprint} todayWords={app.today.words} />}
-      {!sprint && done && <Result done={done} />}
+      <SprintPanel todayWords={app.today.words} onEnd={onEnd} />
+      {sprint && <Running sprint={sprint} todayWords={app.today.words} onEnd={onEnd} />}
+      {!sprint && done && <Result done={done} todayWords={app.today.words} />}
     </>
   );
 }
