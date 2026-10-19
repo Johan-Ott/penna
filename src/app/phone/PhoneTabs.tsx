@@ -1,3 +1,4 @@
+import { useRootClass } from "@llkit/useRootClass.js";
 import type { ReactNode } from "react";
 import type { AppState } from "../App.js";
 import { ContentsScreen, PublishScreen, ReadScreen, SyncScreen } from "../shell/bookViews.js";
@@ -27,6 +28,8 @@ export function tabOf(screen: PhoneScreen, view: View): Tab {
 }
 
 export function TabBar(props: { tab: Tab; onTab: (tab: Tab) => void }) {
+  // Notices drawn outside the phone's screen still sit above the tabs.
+  useRootClass("with-phone-tabs");
   return (
     <nav className="phone-tabs" aria-label={t("Läge")}>
       {TABS.map(([tab, label, icon]) => (

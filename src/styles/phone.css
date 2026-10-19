@@ -1192,8 +1192,8 @@ body .phone-app .text-when input {
 }
 
 /* A notice on a phone sits above the tabs, never behind them. */
-.phone-app .toast {
+.with-phone-tabs .toast {
   position: fixed;
-  bottom: calc(var(--phone-tabs) + 16px);
+  bottom: calc(56px + env(safe-area-inset-bottom) + 16px);
   z-index: var(--layer-float);
 }
