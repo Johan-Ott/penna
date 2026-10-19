@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import {
   findNode,
   moveNode,
@@ -99,9 +99,24 @@ function sectionsOf(tree: TreeNode[], view: View) {
   return { sections: { ...all, book }, focused };
 }
 
+const nodeCount = (nodes: TreeNode[]): number =>
+  nodes.reduce((sum, node) => sum + 1 + nodeCount(node.children ?? []), 0);
+
+// Something added under a filter would not show, so the filter goes and the whole tree shows it.
+function useUnfilteredOnAdd(tree: TreeNode[], view: View) {
+  const count = nodeCount(tree);
+  const seen = useRef(count);
+  const { filter, setFilter } = view;
+  useEffect(() => {
+    if (count > seen.current && filter.length > 0) setFilter([]);
+    seen.current = count;
+  }, [count, filter, setFilter]);
+}
+
 export function useTreeView(props: TreeViewProps) {
   const { project } = props;
   const view = useTreeViewState(project.tree);
+  useUnfilteredOnAdd(project.tree, view);
   useRenameRequest(props, view);
   useFollowOpenScene(props, view);
   const actions = useTreeActions({

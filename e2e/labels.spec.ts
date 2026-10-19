@@ -50,6 +50,27 @@ test("a labelled scene shows its dot, and the filter keeps only it and its chapt
   await expect(treeRow(page, "Regnet")).toBeHidden();
 });
 
+test("a scene added while the tree is filtered shows, as the filter goes", async ({ page }) => {
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Etiketter" }).click();
+  await page.getByRole("menuitem", { name: "Hantera etiketter…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Status och etiketter" });
+  await dialog.getByRole("textbox", { name: "Ny etikett" }).fill("Tempo");
+  await dialog.getByRole("button", { name: "Lägg till" }).click();
+  await page.keyboard.press("Escape");
+  await sidebar(page).getByRole("button", { name: "Filtrera" }).click();
+  await page.getByRole("menuitemradio", { name: "Tempo" }).click();
+  await expect(treeRow(page, "Köket")).toBeHidden();
+
+  await treeRow(page, "Isen").click({ button: "right" });
+  await page
+    .getByRole("menuitem", { name: /^Ny scen/ })
+    .first()
+    .click();
+
+  await expect(treeRow(page, "Köket")).toBeVisible();
+});
+
 test("a label is ticked on another scene straight from the row menu's Labels", async ({ page }) => {
   await treeRow(page, "Isen").click({ button: "right" });
   await page.getByRole("menuitem", { name: "Etiketter" }).click();

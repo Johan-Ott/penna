@@ -398,7 +398,6 @@
   "1 dag i rad": "1 day in a row",
   "Sparat": "Saved",
   "Att göra · {count}": "To do · {count}",
-  "Visa var en person, plats eller etikett finns": "Show where a person, place or label is",
   "Rensa filtret": "Clear the filter",
   "Vems ögon?": "Whose eyes?",
   "{count} månader": "{count} months",
@@ -1434,5 +1433,10 @@
   "Utdraget är kapitlets första cirka 600 ord.": "The excerpt is the chapter's first 600 words or so.",
   "Undertitel (valfritt)": "Subtitle (optional)",
   "ISBN (valfritt)": "ISBN (optional)",
-  "Ett ISBN har 10 eller 13 siffror, som 978-91-…": "An ISBN has 10 or 13 digits, such as 978-91-…"
+  "Ett ISBN har 10 eller 13 siffror, som 978-91-…": "An ISBN has 10 or 13 digits, such as 978-91-…",
+  "Till exempel Ledtrådar": "Such as Clues",
+  "Det finns redan en anteckning som heter {name}.": "There is already a note called {name}.",
+  "Den finns nu i din profil.": "It is in your profile now.",
+  "Inget kapitel har ”{query}”.": "No chapter has “{query}”.",
+  "Person, plats eller etikett": "Person, place or label"
 }

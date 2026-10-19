@@ -48,7 +48,7 @@ function celebrateBook(project: Project, badges: BookBadge[]) {
     celebrate({
       kind: "badge",
       title: t("Ny utmärkelse: {name}", { name: badge.name }),
-      text: t("{book} · {hint}", { book: project.name, hint: badge.hint }),
+      text: project.name,
     });
   }
 }

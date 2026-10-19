@@ -37,3 +37,9 @@ test("a scene dragged onto another chapter moves into it", async ({ page }) => {
     .click();
   await expect(page.locator(".tree")).toContainText(/2\. Fyren[\s\S]*Isen/);
 });
+
+test("a filter that finds nothing says so", async ({ page }) => {
+  await page.getByRole("textbox", { name: "Filtrera" }).fill("xyzzy");
+
+  await expect(page.getByText("Inget kapitel har ”xyzzy”.")).toBeVisible();
+});

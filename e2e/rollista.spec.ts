@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { editor, openExample, runCommand, sidebar } from "./helpers";
+import { expect, test, type Page } from "@playwright/test";
+import { editor, openExample, runCommand, sidebar, treeRow } from "./helpers";
 
 test.beforeEach(async ({ page }) => openExample(page));
 
@@ -38,4 +38,43 @@ test("Innehåll shows where the reader learns a secret", async ({ page }) => {
   await runCommand(page, "Gå till Innehåll");
 
   await expect(page.locator(".contents-reveal")).toHaveText("Avslöjar: Henrik lever");
+});
+
+test("a new note with a name the book has says so, and Skapa waits for a name", async ({
+  page,
+}) => {
+  await page.getByText("+ Ny anteckning").click();
+  const dialog = page.getByRole("dialog", { name: "Ny anteckning" });
+  await expect(dialog.getByRole("button", { name: "Skapa" })).toBeDisabled();
+
+  await page.keyboard.type("Elin");
+
+  await expect(dialog).toContainText("Det finns redan en anteckning som heter Elin.");
+});
+
+async function openElin(page: Page) {
+  await treeRow(page, "Personer").click();
+  await treeRow(page, "Elin").click();
+}
+
+test("a connection is typed at once, and shows on the other note's page too", async ({ page }) => {
+  await openElin(page);
+  await page.getByRole("button", { name: "+ Koppling" }).click();
+
+  await page.keyboard.type("syster");
+  await page.keyboard.press("Enter");
+  const made = page.locator(".connections .connection-name", { hasText: "syster" });
+  await expect(made).toBeVisible();
+  await made.click();
+
+  await expect(page.locator(".connections .connection-name", { hasText: "Elin" })).toBeVisible();
+});
+
+test("Escape closes the new connection's form", async ({ page }) => {
+  await openElin(page);
+  await page.getByRole("button", { name: "+ Koppling" }).click();
+
+  await page.keyboard.press("Escape");
+
+  await expect(page.getByRole("button", { name: "+ Koppling" })).toBeVisible();
 });

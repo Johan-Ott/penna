@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  connectedFrom,
   connectionsOf,
   withConnection,
   withoutConnection,
@@ -15,6 +16,12 @@ const otherNotes = (project: Project, noteId: string) =>
   sortsOf(project.tree)
     .flatMap((sort) => sceneIdsIn(project.tree, sort.id))
     .filter((id) => id !== noteId && project.summaries[id]);
+
+// One already linked would only have its role replaced; that is done by removing it first.
+function unlinkedNotes(project: Project, noteId: string) {
+  const linked = connectionsOf(project.fields, noteId).map((entry) => entry.id);
+  return otherNotes(project, noteId).filter((id) => !linked.includes(id));
+}
 
 function NoteSelect(props: {
   project: Project;
@@ -32,31 +39,42 @@ function NoteSelect(props: {
   );
 }
 
+const FormButtons = (props: { canAdd: boolean; onCancel: () => void }) => (
+  <>
+    <button type="submit" className="button primary small" disabled={!props.canAdd}>
+      {t("Lägg till")}
+    </button>
+    <button type="button" className="button ghost small" onClick={props.onCancel}>
+      {t("Avbryt")}
+    </button>
+  </>
+);
+
 function AddConnection(props: {
   project: Project;
   noteId: string;
   onAdd: (connection: Connection) => void;
   onCancel: () => void;
 }) {
-  const others = otherNotes(props.project, props.noteId);
+  const others = unlinkedNotes(props.project, props.noteId);
   const [otherId, setOtherId] = useState(others[0] ?? "");
   const [role, setRole] = useState("");
   const add = () => otherId && props.onAdd({ id: otherId, role });
   return (
-    <form className="connection-form" onSubmit={(event) => (event.preventDefault(), add())}>
+    <form
+      className="connection-form"
+      onSubmit={(event) => (event.preventDefault(), add())}
+      onKeyDown={(event) => event.key === "Escape" && (event.preventDefault(), props.onCancel())}
+    >
       <NoteSelect project={props.project} ids={others} value={otherId} onChange={setOtherId} />
       <input
+        autoFocus
         aria-label={t("Vem den andra är för den här")}
         placeholder={t("till exempel farbror")}
         value={role}
         onChange={(event) => setRole(event.target.value)}
       />
-      <button type="submit" className="button primary small" disabled={!otherId}>
-        {t("Lägg till")}
-      </button>
-      <button type="button" className="button ghost small" onClick={props.onCancel}>
-        {t("Avbryt")}
-      </button>
+      <FormButtons canAdd={otherId !== ""} onCancel={props.onCancel} />
     </form>
   );
 }
@@ -91,6 +109,11 @@ export function Connections(props: NotePageProps) {
     <div className="connections">
       {connectionsOf(project.fields, noteId).map((connection) => (
         <ConnectionChip key={connection.id} {...props} connection={connection} />
+      ))}
+      {connectedFrom(project.fields, noteId).map((id) => (
+        <button key={id} className="connection connection-name" onClick={() => props.onOpen(id)}>
+          {project.summaries[id]?.title ?? t("Hittas inte")}
+        </button>
       ))}
       {isAdding ? (
         <AddConnection {...props} onAdd={add} onCancel={() => setAdding(false)} />

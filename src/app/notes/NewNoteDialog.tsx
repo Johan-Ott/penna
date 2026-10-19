@@ -40,6 +40,7 @@ function NewSortChip(props: SortChipsProps) {
       className="chip-input"
       autoFocus
       aria-label={t("Namn på den nya sorten")}
+      placeholder={t("Till exempel Ledtrådar")}
       value={props.newSort}
       onChange={(event) => props.onNewSort(event.target.value)}
     />
@@ -69,6 +70,13 @@ function SortChips(props: SortChipsProps) {
 
 type Form = ReturnType<typeof useNoteForm>;
 
+// Names link in the text, so a second Elin is most likely a slip; it is still allowed.
+const hasNote = ({ tree, summaries }: Project, name: string) =>
+  name !== "" &&
+  sortsOf(tree)
+    .flatMap((sort) => sort.children ?? [])
+    .some((note) => nodeLabel(note, tree, summaries).toLowerCase() === name.toLowerCase());
+
 function LinkRow({ form }: { form: Form }) {
   const hint = form.isLinked
     ? t("”{name}” blir klickbart överallt i manuset.", { name: form.note.name || t("Namnet") })
@@ -95,6 +103,11 @@ function NoteFields({ form, project }: { form: Form; project: Project }) {
           value={form.name}
           onChange={(event) => form.setName(event.target.value)}
         />
+        {hasNote(project, form.note.name) && (
+          <span className="setting-hint">
+            {t("Det finns redan en anteckning som heter {name}.", { name: form.note.name })}
+          </span>
+        )}
       </label>
       {form.sortId === CHARACTERS_ID && form.newSort === null && (
         <NameSuggestions language={bookLanguage(project.fields)} onPick={form.setName} />

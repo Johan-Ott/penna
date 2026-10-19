@@ -26,6 +26,12 @@
   background: var(--bg);
 }
 
+/* A button that cannot be pressed yet looks it, such as Skapa before there is a name. */
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .link-button {
   border: 0;
   background: transparent;

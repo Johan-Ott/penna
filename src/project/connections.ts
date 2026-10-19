@@ -38,3 +38,9 @@ export function withoutConnection(fields: Fields, noteId: string, otherId: strin
     connections: { ...all, [noteId]: (all[noteId] ?? []).filter((entry) => entry.id !== otherId) },
   };
 }
+
+/** The notes that name this one among theirs, so a link shows from both sides. */
+export const connectedFrom = (fields: Fields, noteId: string) =>
+  Object.entries(allConnections(fields))
+    .filter(([id, list]) => id !== noteId && list.some((entry) => entry.id === noteId))
+    .map(([id]) => id);

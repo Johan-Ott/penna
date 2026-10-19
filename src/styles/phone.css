@@ -1063,6 +1063,7 @@ body .phone-app .text-when input {
   }
 
   body .tree-add,
+  body .tree-tool,
   body .icon-button {
     min-width: 44px;
     min-height: 44px;

@@ -51,3 +51,19 @@ test("Granska warns in a scene that names a secret before its reveal", async ({ 
     "Henrik",
   );
 });
+
+test("a person who learns the secret can be taken off again", async ({ page }) => {
+  await page.getByRole("button", { name: "+ Ny anteckning" }).click();
+  const dialog = page.getByRole("dialog", { name: "Ny anteckning" });
+  await dialog.getByRole("textbox", { name: "Namn" }).fill("Henrik");
+  await dialog.getByRole("radio", { name: "Hemligheter" }).click();
+  await dialog.getByRole("button", { name: "Skapa" }).click();
+  const panel = page.getByRole("region", { name: "Vem vet vad" });
+  await panel
+    .getByRole("combobox", { name: "Lägg till en person som får veta" })
+    .selectOption({ label: "Elin" });
+
+  await panel.getByRole("button", { name: "Ta bort Elin" }).click();
+
+  await expect(panel.getByRole("combobox", { name: "När Elin får veta" })).toHaveCount(0);
+});

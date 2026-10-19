@@ -61,7 +61,8 @@ const newBadges = (before: Journey, after: Journey): Celebration[] =>
     .map((badge) => ({
       kind: "badge",
       title: t("Ny utmärkelse: {name}", { name: badge.name }),
-      text: badge.hint,
+      // The hint says how to earn it, which reads as a request once it is earned.
+      text: t("Den finns nu i din profil."),
     }));
 
 type Change = (update: (own: Journey, today: string) => Journey, isGoalReached?: boolean) => void;
