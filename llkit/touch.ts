@@ -84,3 +84,13 @@ export function useSwipe(onLeft?: () => void, onRight?: () => void) {
   };
   return { offset, handlers, side: sideOf(offset) };
 }
+
+/** Keeps --visible-height at the part of the screen not under a phone's keyboard, for dialogs. */
+export function followVisibleHeight() {
+  const view = window.visualViewport;
+  if (!view) return;
+  const set = () =>
+    document.documentElement.style.setProperty("--visible-height", `${view.height}px`);
+  view.addEventListener("resize", set);
+  set();
+}

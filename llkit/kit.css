@@ -534,3 +534,16 @@ button:not(:disabled):active {
   scale: 0.97;
   opacity: 0.85;
 }
+
+/* A dialog stays in the part of the screen a phone's keyboard leaves free, and scrolls there. */
+.dialog-backdrop {
+  bottom: auto;
+  height: var(--visible-height, 100%);
+}
+
+@media (pointer: coarse) {
+  .dialog {
+    max-height: calc(var(--visible-height, 100dvh) - 32px);
+    overflow-y: auto;
+  }
+}

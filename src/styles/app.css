@@ -3309,7 +3309,7 @@ html.welcome-shown body {
 
 .new-book-dialog {
   width: min(560px, calc(100vw - 32px));
-  max-height: calc(100dvh - 48px);
+  max-height: calc(var(--visible-height, 100dvh) - 48px);
   overflow-y: auto;
 }
 
@@ -3686,11 +3686,6 @@ html.welcome-shown body {
   border-radius: 10px;
   background: var(--bg-subtle);
   font-size: 14px;
-}
-
-.phone-project .tree-undo,
-.android .tree-undo {
-  bottom: calc(96px + env(safe-area-inset-bottom));
 }
 
 /* On a phone the first shelf's welcome goes under Ny bok, the whole width. */

@@ -19,7 +19,7 @@ import { App } from "./app/App.js";
 import { recordUncaughtErrors } from "@llkit/errorLog.js";
 import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
 import { styledTooltips } from "@llkit/tooltips.js";
-import { longPressOpensMenus } from "@llkit/touch.js";
+import { followVisibleHeight, longPressOpensMenus } from "@llkit/touch.js";
 import { isMac } from "@llkit/thisComputer.js";
 import { platform } from "./app/platform.js";
 
@@ -27,6 +27,7 @@ recordUncaughtErrors();
 keepWebMenuOut();
 styledTooltips();
 longPressOpensMenus();
+followVisibleHeight();
 // Android has a back button, so the page can leave out its own ways to close.
 document.documentElement.classList.toggle("android", /Android/i.test(navigator.userAgent));
 // A Mac's app window keeps its own buttons over the top left, so the top bar leaves room for

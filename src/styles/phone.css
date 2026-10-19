@@ -1190,3 +1190,10 @@ body .phone-app .text-when input {
 .phone-view .cast-card {
   min-height: 0;
 }
+
+/* A notice on a phone sits above the tabs, never behind them. */
+.phone-app .toast {
+  position: fixed;
+  bottom: calc(var(--phone-tabs) + 16px);
+  z-index: var(--layer-float);
+}
