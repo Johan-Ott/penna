@@ -3696,11 +3696,27 @@ html.welcome-shown body {
     padding: 4px 0 0;
   }
 
+  /* The heading and Ny bok on the first row, the summary and the quieter links under it. */
   .shelf-head {
-    gap: 4px 16px;
+    gap: 6px 16px;
   }
 
   .shelf-head h2 {
+    flex: 1;
+  }
+
+  .shelf-head .shelf-summary {
+    display: none;
+  }
+
+  .shelf-links {
+    order: 1;
     flex-basis: 100%;
   }
+}
+
+.shelf-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
 }

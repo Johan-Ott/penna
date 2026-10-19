@@ -118,12 +118,14 @@ function ShelfHead(props: BookshelfProps & { books: ShelfBook[] | null }) {
     <div className="shelf-head">
       <h2>{t("Dina böcker")}</h2>
       <span className="shelf-summary">{props.books && summary(props.books)}</span>
-      <button className="link-button quiet" onClick={props.onOpenExample}>
-        {t("Prova exempelboken")}
-      </button>
-      <button className="link-button quiet" onClick={props.onImport}>
-        {t("Importera manus…")}
-      </button>
+      <span className="shelf-links">
+        <button className="link-button quiet" onClick={props.onOpenExample}>
+          {t("Prova exempelboken")}
+        </button>
+        <button className="link-button quiet" onClick={props.onImport}>
+          {t("Importera manus…")}
+        </button>
+      </span>
       {props.books?.some((book) => !book.isMissing) && (
         <button className="button primary small" onClick={props.onNewProject}>
           {t("+ Ny bok")}
