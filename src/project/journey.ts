@@ -40,7 +40,7 @@ export const inkRanks = (): readonly Step[] => [
   [t("Kulspets"), 500],
   [t("Blyerts"), 2000],
   [t("Reservoar"), 5000],
-  [t("Fjäderskrivro"), 10_000],
+  [t("Fjäderpenna"), 10_000],
   [t("Guldspets"), 25_000],
 ];
 

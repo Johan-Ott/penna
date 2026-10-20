@@ -56,7 +56,7 @@ export const STICKY = [
   {
     id: "01J9Z4K2QX00000000000000L1",
     color: "gul",
-    text: "Vem tände ljusen på isen?\n\nRita och sudda med skrivron och sudden här ovanför.",
+    text: "Vem tände ljusen på isen?\n\nRita och sudda med pennan och sudden här ovanför.",
     strokes: [],
     left: 24,
     top: 64,

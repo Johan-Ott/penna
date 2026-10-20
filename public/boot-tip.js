@@ -11,7 +11,7 @@
     "Sluta dagen mitt i en mening, så vet du var du börjar i morgon.",
     "Namnen i dina anteckningar blir länkar i texten.",
     "Granska hittar ord som upprepas för nära varandra.",
-    "Vässar skrivron…",
+    "Vässar pennan…",
     "Letar efter rätt ord…",
   ];
   var ENGLISH = [
