@@ -1,21 +1,25 @@
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 
-/** Every file under `dir`, by its path inside it, such as "scenes/S1.md". */
-export async function filesIn(fileSystem: FileSystem, dir: string, prefix = "") {
-  const found = new Map<string, Uint8Array>();
+const NOTHING = new Map<string, Uint8Array>();
+
+/** Every file under `dir`, by its path inside it, such as "scenes/S1.md". A folder's files are
+ * read at once rather than one after another: on a phone each read is a trip to the system. */
+export async function filesIn(
+  fileSystem: FileSystem,
+  dir: string,
+  prefix = "",
+): Promise<Map<string, Uint8Array>> {
   const folder = prefix ? joinPath(dir, prefix) : dir;
-  for (const name of await fileSystem.list(folder)) {
-    const path = prefix ? `${prefix}/${name}` : name;
-    // A folder cannot be read as a file, so whatever fails to read is walked into. A locked
-    // file is no folder either, and is left out rather than stopping a whole backup.
-    const bytes = await fileSystem.readBytes(joinPath(folder, name)).catch(() => null);
-    if (bytes) found.set(path, bytes);
-    else {
-      const inside = await filesIn(fileSystem, dir, path).catch(
-        () => new Map<string, Uint8Array>(),
-      );
-      for (const [inner, content] of inside) found.set(inner, content);
-    }
-  }
-  return found;
+  const names = await fileSystem.list(folder);
+  const read = await Promise.all(
+    names.map(async (name) => {
+      const path = prefix ? `${prefix}/${name}` : name;
+      // A folder cannot be read as a file, so whatever fails to read is walked into. A locked
+      // file is no folder either, and is left out rather than stopping a whole backup.
+      const bytes = await fileSystem.readBytes(joinPath(folder, name)).catch(() => null);
+      if (bytes) return new Map([[path, bytes]]);
+      return filesIn(fileSystem, dir, path).catch(() => NOTHING);
+    }),
+  );
+  return new Map(read.flatMap((files) => [...files]));
 }

@@ -28,8 +28,8 @@ export async function writeAtomic(
 
 /** Temp files left by a crash that hold newer text than their target. An empty one is a write
  * that never began, and is left out. */
-export async function findRecoverableTemps(fileSystem: FileSystem, dir: string) {
-  const tempNames = (await fileSystem.list(dir)).filter(isTempFile);
+export async function findRecoverableTemps(fileSystem: FileSystem, dir: string, names?: string[]) {
+  const tempNames = (names ?? (await fileSystem.list(dir))).filter(isTempFile);
   const found: RecoverableTemp[] = [];
   for (const name of tempNames) {
     const tempPath = joinPath(dir, name);

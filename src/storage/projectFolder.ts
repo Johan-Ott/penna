@@ -9,8 +9,9 @@ export interface OpenedProject extends SceneFolderListing {
 /** Writes nothing. */
 export async function openProjectFolder(fileSystem: FileSystem, dir: string) {
   const scenesDir = joinPath(dir, "scenes");
-  const listing = classifySceneFiles(await fileSystem.list(scenesDir));
-  const recoverable = await findRecoverableTemps(fileSystem, scenesDir);
+  const names = await fileSystem.list(scenesDir);
+  const listing = classifySceneFiles(names);
+  const recoverable = await findRecoverableTemps(fileSystem, scenesDir, names);
   const project: OpenedProject = { ...listing, recoverable };
   return project;
 }

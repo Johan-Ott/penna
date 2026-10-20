@@ -19,8 +19,9 @@ export type DriveStatus =
   | { kind: "done"; doneAt: number }
   | { kind: "failed"; message: string };
 
-// A book syncs when it opens and then every five minutes.
+// A book syncs a moment after it opens and then every five minutes.
 const EVERY = 5 * 60_000;
+const AFTER_OPENING = 5_000;
 
 const failure = (error: unknown): DriveStatus => ({
   kind: "failed",
@@ -106,9 +107,13 @@ export function useDriveSync(
   const { status, setStatus, syncNow } = useSyncRun(dirs, book);
   useEffect(() => {
     if (!isOn) return setStatus(OFF);
-    void syncNow();
+    // The book shows first; walking all its files at the same moment would hold it up.
+    const first = setTimeout(() => void syncNow(), AFTER_OPENING);
     const timer = setInterval(() => void syncNow(), EVERY);
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(first);
+      clearInterval(timer);
+    };
   }, [isOn, syncNow, setStatus]);
   return {
     isAvailable,
