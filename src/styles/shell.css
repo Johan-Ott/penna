@@ -3608,9 +3608,25 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-.note-tool.asking {
-  color: #a3271f;
-  font-size: 12px;
+/* After a note is thrown away: a moment to take it back, at the foot of the text. */
+.note-undo {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: var(--layer-float);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font: 14px var(--font-ui);
+  transform: translateX(-50%);
+}
+
+.note-undo .link-button {
+  color: inherit;
 }
 
 .note-body {

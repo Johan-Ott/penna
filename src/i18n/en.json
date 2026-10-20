@@ -1228,7 +1228,6 @@
   "Lavendel": "Lavender",
   "Rita": "Draw",
   "Ny lapp": "New note",
-  "Ta bort lappen": "Remove the note",
   "Ta bort?": "Remove?",
   "Lapp": "Note",
   "Lappens text": "The note's text",
@@ -1442,5 +1441,8 @@
   "Eget mål, ord om dagen": "Your own goal, words a day",
   "Till exempel 750": "For example 750",
   "I bokens egen mapp, i mappen snapshots. Skrivro raderar aldrig en version.": "In the book's own folder, in the snapshots folder. Skrivro never deletes a version.",
-  "Visa mappen": "Show the folder"
+  "Visa mappen": "Show the folder",
+  "Släng lappen": "Throw the note away",
+  "Göm lappen": "Hide the note",
+  "Lappen slängdes.": "The note was thrown away."
 }

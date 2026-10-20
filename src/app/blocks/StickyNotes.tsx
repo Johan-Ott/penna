@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { placeInRoom, rubOut } from "../../project/stickyNoteGeometry.js";
 import { NOTE_COLORS, type StickyNote } from "../../project/stickyNotes.js";
-import { CloseIcon, GripIcon, PenIcon, PlusIcon } from "../shell/icons.js";
+import { GripIcon, PenIcon, PlusIcon } from "../shell/icons.js";
+import { HideIcon, TrashIcon } from "./NoteIcons.js";
 import { EraserIcon } from "./EraserIcon.js";
 import { NoteDrawing, type NoteTool } from "./NoteDrawing.js";
 import { useKeptSize, useNoteDrag, useRoomSize } from "./stickyNoteHooks.js";
@@ -37,22 +38,31 @@ function ColorDots({ note, state }: Props) {
   );
 }
 
-// A note with nothing on it goes at once; one with text or a drawing asks first.
-function RemoveButton({ note, state }: Props) {
-  const [isAsking, setAsking] = useState(false);
-  const hasContent = note.text.trim() !== "" || note.strokes.length > 0;
-  const remove = () => (hasContent && !isAsking ? setAsking(true) : state.remove(note.id));
+// Göm puts a note away until Lappar opens again; the bin throws it away at once, and Ångra
+// brings it back.
+function NoteEnds(props: Props & Ends) {
+  const { note, state } = props;
+  const remove = () => {
+    state.remove(note.id);
+    props.onRemoved(note);
+  };
   return (
-    <button
-      className={isAsking ? "note-tool asking" : "note-tool"}
-      aria-label={t("Ta bort lappen")}
-      onClick={remove}
-      onMouseLeave={() => setAsking(false)}
-    >
-      {isAsking ? t("Ta bort?") : <CloseIcon />}
-    </button>
+    <>
+      <button className="note-tool" aria-label={t("Släng lappen")} onClick={remove}>
+        <TrashIcon />
+      </button>
+      <button
+        className="note-tool"
+        aria-label={t("Göm lappen")}
+        onClick={() => props.onHide(note.id)}
+      >
+        <HideIcon />
+      </button>
+    </>
   );
 }
+
+type Ends = { onHide: (id: string) => void; onRemoved: (note: StickyNote) => void };
 
 type Box = { left: number; top: number; width: number; height: number };
 
@@ -75,7 +85,8 @@ function ToolButton(props: {
 }
 
 function NoteHead(
-  props: Props & { shown: Box; tool: NoteTool | null; onTool: (tool: NoteTool | null) => void },
+  props: Props &
+    Ends & { shown: Box; tool: NoteTool | null; onTool: (tool: NoteTool | null) => void },
 ) {
   const { note, state } = props;
   const addNext = () =>
@@ -90,7 +101,7 @@ function NoteHead(
       <button className="note-tool" aria-label={t("Ny lapp")} onClick={addNext}>
         <PlusIcon />
       </button>
-      <RemoveButton note={note} state={state} />
+      <NoteEnds {...props} />
     </header>
   );
 }
@@ -118,7 +129,7 @@ function NoteBody(props: Props & { shown: Box; tool: NoteTool | null }) {
   );
 }
 
-function StickyNoteCard({ note, state }: Props) {
+function StickyNoteCard({ note, state, ...ends }: Props & Ends) {
   const card = useRef<HTMLElement>(null);
   const [tool, setTool] = useState<NoteTool | null>(null);
   const shown = placeInRoom(note, useRoomSize(card));
@@ -130,15 +141,41 @@ function StickyNoteCard({ note, state }: Props) {
       style={shown}
       aria-label={t("Lapp")}
     >
-      <NoteHead {...{ note, state, shown, tool }} onTool={setTool} />
+      <NoteHead {...{ note, state, shown, tool, ...ends }} onTool={setTool} />
       <NoteBody note={note} state={state} shown={shown} tool={tool} />
     </section>
   );
 }
 
-/** The book's notes over the text; opened with none, it starts the first. */
+const UNDO_MS = 6000;
+
+// A thrown note can be had back for a moment.
+function UndoRemove(props: { state: StickyNotesState; removed: StickyNote; onDone: () => void }) {
+  const { onDone } = props;
+  useEffect(() => {
+    const timer = setTimeout(onDone, UNDO_MS);
+    return () => clearTimeout(timer);
+  }, [props.removed, onDone]);
+  const undo = () => {
+    props.state.restore(props.removed);
+    onDone();
+  };
+  return (
+    <div className="note-undo" role="status">
+      {t("Lappen slängdes.")}
+      <button className="link-button" onClick={undo}>
+        {t("Ångra")}
+      </button>
+    </div>
+  );
+}
+
+/** The book's notes over the text; opened with none, it starts the first. A hidden note is back
+ * the next time Lappar opens, since the layer starts afresh. */
 export function StickyNotesLayer({ state }: { state: StickyNotesState }) {
   const { notes } = state;
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [removed, setRemoved] = useState<StickyNote | null>(null);
   const hasStarted = useRef(false);
   useEffect(() => {
     if (notes === null || hasStarted.current) return;
@@ -148,9 +185,18 @@ export function StickyNotesLayer({ state }: { state: StickyNotesState }) {
   }, [notes, state]);
   return (
     <>
-      {(notes ?? []).map((note) => (
-        <StickyNoteCard key={note.id} note={note} state={state} />
-      ))}
+      {(notes ?? [])
+        .filter((note) => !hidden.includes(note.id))
+        .map((note) => (
+          <StickyNoteCard
+            key={note.id}
+            note={note}
+            state={state}
+            onHide={(id) => setHidden([...hidden, id])}
+            onRemoved={setRemoved}
+          />
+        ))}
+      {removed && <UndoRemove state={state} removed={removed} onDone={() => setRemoved(null)} />}
     </>
   );
 }

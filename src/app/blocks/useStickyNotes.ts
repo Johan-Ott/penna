@@ -51,6 +51,7 @@ export function useStickyNotes(dir: string) {
     add: (place: { left: number; top: number }, color?: StickyNote["color"]) =>
       save([...shown.current, newStickyNote(place, color)]),
     remove: (id: string) => save(shown.current.filter((note) => note.id !== id)),
+    restore: (note: StickyNote) => save([...shown.current, note]),
   };
 }
 
