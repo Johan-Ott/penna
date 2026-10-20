@@ -58,6 +58,9 @@ function Found(props: TabProps & { query: string }) {
 /** Where "Hjälp och kortkommandon" opens. */
 export const HELP_TAB = 4;
 
+/** Where "Om Skrivro" opens. */
+export const ABOUT_TAB = 6;
+
 const SearchField = (props: { query: string; onQuery: (query: string) => void }) => (
   <input
     className="settings-text settings-search"

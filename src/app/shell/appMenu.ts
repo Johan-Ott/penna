@@ -23,6 +23,7 @@ export interface AppMenuActions {
   book: MenuItem[];
   openSettings: () => void;
   openShortcuts: () => void;
+  openAbout: () => void;
   sendFeedback: () => void;
 }
 
@@ -68,29 +69,40 @@ const bookGroups = (actions: AppMenuActions): MenuItem[] => [
   ...group(t("Kopior och export"), [
     ...bookItem(actions, "showVersions"),
     ...bookItem(actions, "exportZip"),
-    ...bookItem(actions, "showBackups"),
   ]),
 ];
 
+/** The menu beside the logo: the books, and what the open one holds. */
 export function appMenu(actions: AppMenuActions): MenuItem[] {
-  const help = {
-    label: t("Hjälp och kortkommandon"),
-    shortcut: "?",
-    onSelect: actions.openShortcuts,
-  };
   return [
     { label: t("Bokhylla"), shortcut: shortcutOf("shelf"), onSelect: actions.showShelf },
     { label: t("Ny bok"), shortcut: shortcutOf("newBook"), onSelect: actions.newProject },
     { label: t("Öppna bok…"), onSelect: actions.openFolder },
     ...group(t("Boken"), actions.book, true),
     ...bookGroups(actions),
+  ];
+}
+
+/** The menu under the logo: Skrivro itself, the same whichever book is open. */
+export function programMenu(actions: AppMenuActions): MenuItem[] {
+  const help = {
+    label: t("Hjälp och kortkommandon"),
+    shortcut: "?",
+    onSelect: actions.openShortcuts,
+  };
+  return [
+    { label: t("Om Skrivro"), onSelect: actions.openAbout },
     {
       label: t("Inställningar"),
       shortcut: shortcutOf("settings"),
       separatorBefore: true,
       onSelect: actions.openSettings,
     },
-    ...group(t("Hjälp"), helpItems(help, actions.sendFeedback)),
+    ...bookItem(actions, "showBackups"),
+    ...helpItems(help, actions.sendFeedback).map((item, index) => ({
+      ...item,
+      separatorBefore: index === 0,
+    })),
   ];
 }
 

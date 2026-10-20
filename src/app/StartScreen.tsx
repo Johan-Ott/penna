@@ -5,12 +5,12 @@ import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
 import { useMenuButton } from "@llkit/Menu.js";
 import { useCommandKey } from "./shortcuts.js";
-import { appMenu, phoneShelfMenu } from "./shell/appMenu.js";
+import { appMenu, phoneShelfMenu, programMenu } from "./shell/appMenu.js";
 import { ShelfTopbar } from "./shell/Topbar.js";
 import { PhoneShelf } from "./shelf/PhoneShelf.js";
 import { ProfileButton, ProfileLayer } from "./profile/ProfileLayer.js";
 import { usePhone } from "./phone/usePhone.js";
-import { SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
+import { ABOUT_TAB, SettingsLayer, HELP_TAB } from "./settings/SettingsDialog.js";
 import type { useWritingMode } from "./useWritingMode.js";
 import { t } from "../i18n/i18n.js";
 import { recordFailure } from "@llkit/errorLog.js";
@@ -51,18 +51,21 @@ function useShelfMenu(app: App, onNewProject: () => void, isPhone: boolean) {
     sendFeedback: feedback.open,
     openSettings: () => settings.open(),
     openShortcuts: () => settings.open(HELP_TAB),
+    openAbout: () => settings.open(ABOUT_TAB),
   };
   useCommandKey("newBook", onNewProject);
   const menu = useMenuButton(t("Meny"), isPhone ? phoneShelfMenu(actions) : appMenu(actions));
+  const program = useMenuButton(t("Skrivro"), programMenu(actions));
   const layers = (
     <>
       {menu.menu}
+      {program.menu}
       {backups.layer}
       {feedback.layer}
       <SettingsLayer {...app.startup} {...app.writingMode} dialog={settings} book={null} />
     </>
   );
-  return { open: menu.open, layers };
+  return { openers: { onMenu: menu.open, onProgramMenu: program.open }, layers };
 }
 
 function ShelfFrame(
@@ -79,14 +82,14 @@ function ShelfFrame(
   const profile = <ProfileButton app={app} />;
   if (props.isPhone)
     return (
-      <PhoneShelf onMenu={menu.open} profile={profile}>
+      <PhoneShelf onMenu={menu.openers.onMenu} profile={profile}>
         {props.children}
         {layers}
       </PhoneShelf>
     );
   return (
     <div className="shelf-app">
-      <ShelfTopbar title={t("Bokhylla")} onMenu={menu.open} profile={profile} />
+      <ShelfTopbar title={t("Bokhylla")} {...menu.openers} profile={profile} />
       <div className="main-card">{props.children}</div>
       {layers}
     </div>

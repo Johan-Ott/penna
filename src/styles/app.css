@@ -67,6 +67,21 @@ select:focus-visible {
   height: 22px;
 }
 
+.brand-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+}
+
+.brand-button:hover {
+  background: var(--surface-hover);
+}
+
 .brand-mark.large {
   width: 56px;
   height: 56px;

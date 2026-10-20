@@ -8,11 +8,11 @@ import { useBackupsDialog } from "../backups/BackupsDialog.js";
 import { useFeedbackDialog } from "@llkit/feedback/FeedbackDialog.js";
 import { useMenuButton } from "@llkit/Menu.js";
 import { useRevisionImport } from "../review/RevisionImport.js";
-import { HELP_TAB } from "../settings/SettingsDialog.js";
+import { ABOUT_TAB, HELP_TAB } from "../settings/SettingsDialog.js";
 import type { Project } from "../useProject.js";
 import { openIfOnDisk } from "../useSceneSession.js";
 import { useCommandKey } from "../shortcuts.js";
-import { appMenu } from "./appMenu.js";
+import { appMenu, programMenu } from "./appMenu.js";
 import { t } from "../../i18n/i18n.js";
 
 // Serie… is in the sidebar's book menu on a computer, and in the menu on a phone.
@@ -91,15 +91,19 @@ const useBookRename = (app: AppState, project: Project) =>
     (title) => void app.updateFields({ title }).then(() => app.refresh()),
   );
 
-/** The open book's menu, with the dialogs it opens. */
-export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
-  const dialogs = useMenuDialogs({ app, project });
-  const rename = useBookRename(app, project);
+type Dialogs = ReturnType<typeof useMenuDialogs>;
+type Shelf = ReturnType<typeof useShelfKeys>;
+
+// What the two menus can do with the open book.
+function menuActions(
+  { app, project }: { app: AppState; project: Project },
+  dialogs: Dialogs,
+  shelf: Shelf,
+  rename: () => void,
+) {
   const { backups, feedback, revision } = dialogs;
-  const { showShelf, newProject } = useShelfKeys(app);
-  const items = appMenu({
-    showShelf,
-    newProject,
+  return {
+    ...shelf,
     openFolder: () => void app.choose(),
     showVersions: app.scene ? () => app.snapshots.show(app.scene?.id ?? "") : null,
     exportZip: app.zip.backup,
@@ -107,17 +111,27 @@ export function useAppMenu({ app, project }: { app: AppState; project: Project }
     sharing: collaborationItems(project, app.zip.run),
     showBackups: backups.open,
     sendFeedback: feedback.open,
-    book: bookItems(dialogs, rename.open),
+    book: bookItems(dialogs, rename),
     openSettings: () => app.writingMode.settingsDialog.open(),
     openShortcuts: () => app.writingMode.settingsDialog.open(HELP_TAB),
-  });
-  const menu = useMenuButton(t("Meny"), items);
+    openAbout: () => app.writingMode.settingsDialog.open(ABOUT_TAB),
+  };
+}
+
+/** The open book's two menus, the logo's and the books', with the dialogs they open. */
+export function useAppMenu({ app, project }: { app: AppState; project: Project }) {
+  const dialogs = useMenuDialogs({ app, project });
+  const rename = useBookRename(app, project);
+  const actions = menuActions({ app, project }, dialogs, useShelfKeys(app), rename.open);
+  const menu = useMenuButton(t("Meny"), appMenu(actions));
+  const program = useMenuButton(t("Skrivro"), programMenu(actions));
   const layers = (
     <>
       {menu.menu}
+      {program.menu}
       {dialogs.layers}
       {rename.layer}
     </>
   );
-  return { open: menu.open, menu: layers };
+  return { openers: { onMenu: menu.open, onProgramMenu: program.open }, menu: layers };
 }

@@ -39,7 +39,9 @@ function useScreenNavigation({ app, project }: ScreenProps) {
   });
 }
 
-function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElement>) => void }) {
+type MenuOpen = (event: MouseEvent<HTMLElement>) => void;
+
+function ScreenTopbar(props: ScreenProps & { onMenu: MenuOpen; onProgramMenu: MenuOpen }) {
   const { app, project } = props;
   const { writingMode } = app;
   const isPublishing = writingMode.view === "publicera";
@@ -50,6 +52,7 @@ function ScreenTopbar(props: ScreenProps & { onMenu: (event: MouseEvent<HTMLElem
       today={app.today}
       navigation={useScreenNavigation(props)}
       onMenu={props.onMenu}
+      onProgramMenu={props.onProgramMenu}
       onToggleSidebar={writingMode.toggleSidebar}
       onView={writingMode.setView}
       onProgress={showDayGoal}
@@ -179,7 +182,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   ];
   return (
     <div className={classes.filter(Boolean).join(" ")}>
-      <ScreenTopbar app={app} project={project} onMenu={menu.open} />
+      <ScreenTopbar app={app} project={project} {...menu.openers} />
       {!isPublishing && <Sidebar {...sidebarProps(app, project)} pageOf={pageOf} />}
       <div className="sidebar-backdrop" onClick={() => writingMode.setSidebarOpen(false)} />
       <MainCard app={app} project={project} pageMap={pageMap} />

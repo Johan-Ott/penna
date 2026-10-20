@@ -35,7 +35,7 @@ test("an own theme is made from three colours and warns when the text is hard to
 });
 
 test("searching the settings leaves only the rows that hold the word", async ({ page }) => {
-  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("button", { name: "Skrivro", exact: true }).click();
   await page.getByRole("menuitem", { name: "Inställningar" }).click();
 
   await page.getByRole("searchbox", { name: "Sök i inställningarna" }).fill("stav");
@@ -46,7 +46,7 @@ test("searching the settings leaves only the rows that hold the word", async ({ 
 });
 
 test("a shortcut is found by searching the settings", async ({ page }) => {
-  await page.getByRole("button", { name: "Meny" }).first().click();
+  await page.getByRole("button", { name: "Skrivro", exact: true }).click();
   await page.getByRole("menuitem", { name: "Inställningar" }).click();
 
   await page.getByRole("searchbox", { name: "Sök i inställningarna" }).fill("fotnot");

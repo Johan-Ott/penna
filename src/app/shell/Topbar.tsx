@@ -28,6 +28,8 @@ export interface TopbarProps {
   today: Today;
   navigation: { canGoBack: boolean; canGoForward: boolean; back: () => void; forward: () => void };
   onMenu: (event: MouseEvent<HTMLElement>) => void;
+  /** The logo's menu: Skrivro itself, its settings and help. */
+  onProgramMenu: (event: MouseEvent<HTMLElement>) => void;
   onToggleSidebar: () => void;
   onView: (view: View) => void;
   onProgress: () => void;
@@ -38,7 +40,12 @@ export interface TopbarProps {
   profile: ReactNode;
 }
 
-const BrandMark = () => <img className="brand-mark" src={logo} alt="" />;
+// The logo, leftmost, opens Skrivro's own menu; the one beside it holds the books.
+const BrandMenu = ({ onOpen }: { onOpen: (event: MouseEvent<HTMLElement>) => void }) => (
+  <button className="brand-button" aria-label={t("Skrivro")} title={t("Skrivro")} onClick={onOpen}>
+    <img className="brand-mark" src={logo} alt="" />
+  </button>
+);
 
 function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   const isPublishing = view === "publicera";
@@ -62,14 +69,16 @@ function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   );
 }
 
-export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu" | "profile">) {
+export function ShelfTopbar(
+  props: Pick<TopbarProps, "title" | "onMenu" | "onProgramMenu" | "profile">,
+) {
   return (
     <header className="topbar" data-tauri-drag-region>
       <div className="topbar-start" data-tauri-drag-region>
+        <BrandMenu onOpen={props.onProgramMenu} />
         <IconButton label={t("Meny")} onClick={props.onMenu}>
           <MenuIcon />
         </IconButton>
-        <BrandMark />
         {props.profile}
       </div>
       <span className="topbar-title" data-tauri-drag-region>
@@ -101,10 +110,10 @@ function TopbarStart(props: TopbarProps) {
   const { navigation } = props;
   return (
     <div className="topbar-start" data-tauri-drag-region>
+      <BrandMenu onOpen={props.onProgramMenu} />
       <IconButton label={t("Meny")} onClick={props.onMenu}>
         <MenuIcon />
       </IconButton>
-      <BrandMark />
       <IconButton
         label={t("Visa eller dölj sidomenyn")}
         className="sidebar-toggle"

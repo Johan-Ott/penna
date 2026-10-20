@@ -15,8 +15,7 @@ async function openFeedback(page: Page) {
     };
   });
   await openExample(page);
-  await page.getByRole("button", { name: "Meny" }).first().click();
-  await page.getByRole("menuitem", { name: "Hjälp" }).click();
+  await page.getByRole("button", { name: "Skrivro", exact: true }).click();
   await page.getByRole("menuitem", { name: "Skicka feedback…" }).click();
   return page.getByRole("dialog", { name: "Skicka feedback" });
 }

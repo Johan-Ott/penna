@@ -31,8 +31,7 @@ test("in a line of dialogue, who said it after a question keeps its small letter
 });
 
 test("Sök efter uppdateringar says so when this is the newest Skrivro", async ({ page }) => {
-  await page.getByRole("button", { name: "Meny" }).first().click();
-  await page.getByRole("menuitem", { name: "Hjälp" }).click();
+  await page.getByRole("button", { name: "Skrivro", exact: true }).click();
   await page.getByRole("menuitem", { name: "Sök efter uppdateringar…" }).click();
 
   await expect(page.getByText("Du har den senaste versionen av Skrivro.")).toBeVisible();
