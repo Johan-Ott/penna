@@ -1,5 +1,5 @@
 import type { AppState } from "./App.js";
-import { signIn } from "./googleAccount.js";
+import { signInToAccount } from "./googleAccount.js";
 import { useFeedbackDialog } from "@llkit/feedback/FeedbackDialog.js";
 import { useBackupsDialog } from "./backups/BackupsDialog.js";
 import { useState, type ReactNode } from "react";
@@ -20,7 +20,7 @@ import { Opening, useBookActions } from "./shelf/useBookActions.js";
 import { NewBookDialog } from "./onboarding/NewBookDialog.js";
 import type { ProjectDetails } from "../project/newProject.js";
 import { Welcome } from "./onboarding/Welcome.js";
-import type { Choices } from "./onboarding/FirstChoices.js";
+import { firstLanguage, type Choices } from "./onboarding/FirstChoices.js";
 import { Bookshelf } from "./shelf/Bookshelf.js";
 import { useCloudBooks } from "./shelf/useCloudBooks.js";
 import { shelfHandlers } from "./shelf/shelfHandlers.js";
@@ -163,12 +163,11 @@ function fetchWhatSkrivroNeeds(languages: string[]) {
   void platform.prepareTypst?.().catch(failed);
 }
 
-export function StartScreen({ app }: StartScreenProps) {
-  const { preferences, updatePreferences } = app.startup;
-  if (preferences.isOnboardingDone) return <Shelf app={app} />;
-  const start = async (withGoogle: boolean, choices: Choices) => {
+// The first start's two ways to the shelf: choices made here, or the account from another device,
+// whose name and goal come along with the sync.
+function firstStart({ preferences, updatePreferences }: AppState["startup"]) {
+  const start = async (choices: Choices) => {
     const libraryDir = await libraryOf(preferences.libraryDir);
-    if (withGoogle) await signIn(updatePreferences);
     const [bookLanguage = "sv-SE"] = choices.languages;
     const { dailyGoal, authorName } = choices;
     updatePreferences((now) => ({
@@ -178,10 +177,25 @@ export function StartScreen({ app }: StartScreenProps) {
     }));
     fetchWhatSkrivroNeeds(choices.languages);
   };
+  const signInFirst = async () => {
+    const account = await signInToAccount(updatePreferences);
+    if (account) {
+      const { authorName, defaultDailyGoal } = account.settings;
+      await start({ authorName, languages: [firstLanguage()], dailyGoal: defaultDailyGoal });
+    }
+    return account !== null;
+  };
+  return { start, signInFirst };
+}
+
+export function StartScreen({ app }: StartScreenProps) {
+  if (app.startup.preferences.isOnboardingDone) return <Shelf app={app} />;
+  const { start, signInFirst } = firstStart(app.startup);
   const { settings, onChangeSettings } = app.writingMode;
   return (
     <Welcome
       onStart={start}
+      onSignIn={signInFirst}
       theme={settings.theme}
       onTheme={(theme) => onChangeSettings((current) => ({ ...current, theme }))}
     />

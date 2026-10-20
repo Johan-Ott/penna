@@ -1,4 +1,4 @@
-import { appFolder, DriveChanged, type Drive, type RemoteFile } from "./drive.js";
+import { appFolder, DriveChanged, findAppFolder, type Drive, type RemoteFile } from "./drive.js";
 
 // The writer's own profile and settings, in Skrivro/konto.json in their Drive. The newer side wins
 // whole: both are small and written by hand, so a merge would only surprise.
@@ -47,4 +47,11 @@ export async function syncAccount(drive: Drive, local: Account): Promise<Account
   if (remote && remote.changedAt > local.changedAt) return remote;
   if (remote?.changedAt !== local.changedAt) await send(drive, appDir, file, local);
   return null;
+}
+
+/** The account another device left in Drive, read without writing; null on the first device. */
+export async function readAccount(drive: Drive): Promise<Account | null> {
+  const appDir = await findAppFolder(drive);
+  const file = appDir && (await drive.list(appDir)).find((found) => found.name === ACCOUNT_FILE);
+  return file ? accountFrom(await drive.download(file.id)) : null;
 }

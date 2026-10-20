@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { syncAccount, type Account } from "../src/sync/accountSync";
+import { readAccount, syncAccount, type Account } from "../src/sync/accountSync";
 import { createFakeDrive } from "./fakeDrive";
 
 const account = (changedAt: number, name: string): Account => ({
@@ -35,5 +35,21 @@ describe("syncAccount", () => {
 
     expect(await syncAccount(cloud.drive, account(100, "Elin"))).toBeNull();
     expect(cloud.textAt("Skrivro/konto.json")).toContain('"changedAt": 100');
+  });
+});
+
+describe("readAccount", () => {
+  it("finds the account another device left, so the first start asks nothing", async () => {
+    const cloud = createFakeDrive();
+    await syncAccount(cloud.drive, account(100, "Elin"));
+
+    expect((await readAccount(cloud.drive))?.settings.authorName).toBe("Elin");
+  });
+
+  it("is null on the first device, and makes no folder in Drive", async () => {
+    const cloud = createFakeDrive();
+
+    expect(await readAccount(cloud.drive)).toBeNull();
+    expect(await cloud.drive.findFolder("Skrivro", null)).toBeNull();
   });
 });

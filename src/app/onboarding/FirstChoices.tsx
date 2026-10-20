@@ -16,6 +16,9 @@ export interface Choices {
   dailyGoal: number;
 }
 
+/** A new writer's first book language, from the language Skrivro is shown in. */
+export const firstLanguage = () => (uiLanguage() === "en" ? "en-GB" : "sv-SE");
+
 const THEMES = Object.entries(THEME_LABELS) as [Theme, string][];
 const GOALS: [string, string][] = ["250", "500", "1000", "2000"].map((goal) => [goal, goal]);
 
@@ -69,7 +72,7 @@ export function FirstChoices(props: {
   onTheme: (theme: Theme) => void;
   onDone: (choices: Choices) => void;
 }) {
-  const [languages, setLanguages] = useState([uiLanguage() === "en" ? "en-GB" : "sv-SE"]);
+  const [languages, setLanguages] = useState([firstLanguage()]);
   const [dailyGoal, setDailyGoal] = useState("1000");
   const [authorName, setAuthorName] = useState("");
   return (

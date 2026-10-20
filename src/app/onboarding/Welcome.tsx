@@ -7,6 +7,7 @@ import { UiLanguageChoice } from "../settings/UiLanguageChoice.js";
 import { FirstChoices, type Choices } from "./FirstChoices.js";
 import { WindowBar } from "@llkit/shell/WindowControls.js";
 import { t } from "../../i18n/i18n.js";
+import { recordFailure } from "@llkit/errorLog.js";
 
 // The first start, the same on a computer and a phone: Skrivro's language at the top, signed in
 // with Google so the books follow, or not, and then the few choices that make Skrivro one's own.
@@ -33,13 +34,22 @@ function WayIn({ onStart, canSignIn }: { onStart: Start; canSignIn: boolean }) {
 }
 
 type WelcomeProps = {
-  onStart: (withGoogle: boolean, choices: Choices) => Promise<void>;
+  onStart: (choices: Choices) => Promise<void>;
+  /** Signs in; true when the writer's account from another device was found and taken. */
+  onSignIn: () => Promise<boolean>;
   theme: Theme;
   onTheme: (theme: Theme) => void;
 };
 
+const Problem = ({ text }: { text: string | null }) =>
+  text ? (
+    <p className="onboarding-problem" role="alert">
+      {text}
+    </p>
+  ) : null;
+
 // The way in: Skrivro's language, what Skrivro is, and signed in or not.
-function Greeting({ onWay }: { onWay: (withGoogle: boolean) => void }) {
+function Greeting(props: { onWay: (withGoogle: boolean) => void; problem: string | null }) {
   const canSignIn = platform.googleSignIn !== undefined;
   return (
     <main className="welcome" data-tauri-drag-region>
@@ -47,6 +57,7 @@ function Greeting({ onWay }: { onWay: (withGoogle: boolean) => void }) {
       <div className="welcome-language">
         <UiLanguageChoice />
       </div>
+      <Problem text={props.problem} />
       <img className="brand-mark large" src={logo} alt="" />
       <h1>{t("Skriv var du än är.")}</h1>
       <p className="welcome-text">
@@ -55,30 +66,34 @@ function Greeting({ onWay }: { onWay: (withGoogle: boolean) => void }) {
           : t("Böckerna sparas som vanliga filer på den här enheten. Inget konto behövs.")}
       </p>
       <span className="spacer" />
-      <WayIn onStart={onWay} canSignIn={canSignIn} />
+      <WayIn onStart={props.onWay} canSignIn={canSignIn} />
       <p className="welcome-promise">{t("Dina texter är dina. Aldrig AI-träning.")}</p>
     </main>
   );
 }
 
+// Signed in on another device already, the writer has made their choices there.
 export function Welcome(props: WelcomeProps) {
   const [problem, setProblem] = useState<string | null>(null);
-  const [way, setWay] = useState<boolean | null>(null);
+  const [isChoosing, setChoosing] = useState(false);
   useRootClass("welcome-shown");
-  const start = (choices: Choices) =>
+  const onWay = (withGoogle: boolean) => {
+    setProblem(null);
+    if (!withGoogle) return setChoosing(true);
     void props
-      .onStart(way === true, choices)
+      .onSignIn()
+      .then((hasAccount) => setChoosing(!hasAccount))
       .catch(() => setProblem(t("Inloggningen blev inte klar. Försök igen.")));
-  if (way === null) return <Greeting onWay={setWay} />;
+  };
+  if (!isChoosing) return <Greeting onWay={onWay} problem={problem} />;
   return (
     <main className="welcome" data-tauri-drag-region>
       <WindowBar />
-      {problem && (
-        <p className="onboarding-problem" role="alert">
-          {problem}
-        </p>
-      )}
-      <FirstChoices theme={props.theme} onTheme={props.onTheme} onDone={start} />
+      <FirstChoices
+        theme={props.theme}
+        onTheme={props.onTheme}
+        onDone={(choices) => void props.onStart(choices).catch(recordFailure("Första starten"))}
+      />
     </main>
   );
 }
