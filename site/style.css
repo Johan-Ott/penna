@@ -403,6 +403,13 @@ h2 {
   transform: translateX(-50%);
 }
 
+/* The book's cover sits low and right of the middle in its screen, so the picture is moved to
+   show it whole and centred, at any width. */
+.frame.cover img {
+  top: -21%;
+  transform: translateX(-60%);
+}
+
 @media (max-width: 860px) {
   .feature {
     grid-template-columns: 1fr;
