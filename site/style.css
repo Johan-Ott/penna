@@ -610,13 +610,13 @@ h1 mark::after {
   font-weight: 600;
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.2s ease,
     box-shadow 0.2s;
 }
 
 .button:hover {
   opacity: 1;
-  transform: translateY(-2px) rotate(-1deg);
+  transform: scale(1.04);
 }
 
 .button.quiet {
@@ -727,11 +727,11 @@ body {
 .steps li {
   padding: 28px;
   border-radius: 20px;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.25s ease;
 }
 
 .steps li:hover {
-  transform: translateY(-4px) rotate(-0.5deg);
+  transform: scale(1.02);
 }
 
 .steps li:nth-child(1) {
@@ -899,12 +899,12 @@ main.news > h1 {
 
 .column a {
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.2s ease,
     border-color 0.2s;
 }
 
 .column a:hover {
-  transform: translateY(-2px);
+  transform: scale(1.02);
   border-color: var(--copper);
 }
 
