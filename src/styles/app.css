@@ -3117,11 +3117,12 @@ button.book-cover:hover {
   position: relative;
 }
 
-/* On a phone there is no margin to spare; the comments stay in Granska there. */
+/* As much room on both sides, so the text stays in the middle; on a phone there is no margin to
+   spare and the comments stay in Granska. */
 
 @media (min-width: 601px) {
   .page:has(> .margin-notes) {
-    padding-right: 248px;
+    padding-inline: 248px;
   }
 }
 

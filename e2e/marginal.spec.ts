@@ -17,6 +17,13 @@ test("a comment stands in the margin beside its words, and Klar ticks it off", a
 
   const note = page.locator(".margin-note");
   await expect(note).toContainText("Gulnat?");
+  const offCentre = await page.evaluate(() => {
+    const middle = (box: DOMRect) => (box.left + box.right) / 2;
+    const text = document.querySelector(".ProseMirror")?.getBoundingClientRect() ?? new DOMRect();
+    const card = document.querySelector(".page")?.getBoundingClientRect() ?? new DOMRect();
+    return Math.abs(middle(text) - middle(card));
+  });
+  expect(offCentre).toBeLessThan(2);
   await note.getByRole("button", { name: "Klar" }).click();
   await expect(note).toHaveCount(0);
 });
