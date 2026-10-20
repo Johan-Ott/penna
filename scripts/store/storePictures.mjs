@@ -33,15 +33,17 @@ const deskPicture = (caption, file) =>
   <img src="${dataUrl(file)}"></div>`,
   );
 
+const WORDMARK = `data:image/svg+xml;base64,${readFileSync("scripts/store/logotyp.svg").toString("base64")}`;
+
+// The wordmark carries its own S, so the banner needs no icon beside it.
 const banner = (caption) =>
   sheet(
     1024,
     500,
-    `<img src="${dataUrl("src-tauri/icons/icon-source.png")}"
-  style="position:absolute;left:84px;top:110px;width:280px">
-  <div style="position:absolute;left:400px;top:150px;width:600px">
-  <div style="font-size:84px;font-weight:700">Skrivro</div>
-  <div style="font-size:36px;line-height:1.3;margin-top:14px;color:#3d3a35">${caption}</div></div>`,
+    `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:18px">
+  <img src="${WORDMARK}" alt="Skrivro" style="width:620px">
+  <div style="font-size:38px;color:#3d3a35">${caption}</div></div>`,
   );
 
 export async function render(browser, html, size, out) {
@@ -106,7 +108,7 @@ export const playIcon = () =>
   sheet(
     512,
     512,
-    `<div style="position:absolute;inset:0;background:#0e6b4f"></div>
+    `<div style="position:absolute;inset:0;background:#103f32"></div>
   <img src="${dataUrl("src-tauri/icons/icon-source.png")}"
   style="position:absolute;left:-56px;top:-56px;width:624px">`,
   );

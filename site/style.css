@@ -135,10 +135,11 @@ nav .brand {
   text-decoration: none;
 }
 
+/* The wordmark, 980 × 300 with air above and below the letters. */
 nav .brand img {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  display: block;
+  height: 46px;
+  width: auto;
 }
 
 nav .links {
@@ -516,9 +517,9 @@ footer .brand {
 }
 
 footer .brand img {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
+  display: block;
+  height: 34px;
+  width: auto;
 }
 
 /* The privacy policy: plain reading. */
