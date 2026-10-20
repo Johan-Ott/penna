@@ -139,7 +139,7 @@ const top = (text) => `<!doctype html>
   <body>
     <header class="top">
       <nav class="wrap">
-        <a class="brand" href="${text.home}"><img src="skrivro-logo.png" alt="" />Skrivro</a>
+        <a class="brand" href="${text.home}"><picture><source srcset="skrivro-logotyp-mork.svg" media="(prefers-color-scheme: dark)" /><img class="wordmark" src="skrivro-logotyp.svg" alt="Skrivro" /></picture></a>
         <a class="language" href="${text.other[0]}" lang="${text.other[1]}">${text.other[2]}</a>
         <a class="button" href="${text.download[0]}">${text.download[1]}</a>
       </nav>

@@ -1,3 +1,4 @@
+import { platform } from "../platform.js";
 import {
   changeSize,
   REPEAT_WINDOWS,
@@ -22,6 +23,8 @@ export interface TabProps {
     language: string;
     onChangeLanguage: (language: string) => void;
     onExportZip: () => void;
+    /** Where the open book keeps its versions. */
+    snapshotsDir: string;
     drive: DriveSync;
   } | null;
 }
@@ -110,6 +113,25 @@ export function EditorTab(props: TabProps) {
   );
 }
 
+// Versions are files in the book's folder, so the writer can go and look.
+function WhereVersionsAre({ book }: Pick<TabProps, "book">) {
+  return (
+    <Row
+      label={t("Var versionerna sparas")}
+      hint={t("I bokens egen mapp, i mappen snapshots. Skrivro raderar aldrig en version.")}
+    >
+      {book && platform.showInFolder && (
+        <button
+          className="button secondary small"
+          onClick={() => void platform.showInFolder?.(book.snapshotsDir)}
+        >
+          {t("Visa mappen")}
+        </button>
+      )}
+    </Row>
+  );
+}
+
 export function VersionsTab({ preferences, updatePreferences, book }: TabProps) {
   return (
     <>
@@ -125,10 +147,7 @@ export function VersionsTab({ preferences, updatePreferences, book }: TabProps) 
           }
         />
       </Row>
-      <Row
-        label={t("Var versionerna sparas")}
-        hint={t("I projektmappen, under snapshots. Skrivro raderar aldrig en version.")}
-      />
+      <WhereVersionsAre book={book} />
       {book && <ZipRow onExportZip={book.onExportZip} />}
     </>
   );

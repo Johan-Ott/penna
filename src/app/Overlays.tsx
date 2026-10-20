@@ -1,3 +1,4 @@
+import { joinPath } from "@llkit/storage/fileSystem.js";
 import { labelsOf } from "../project/labels.js";
 import { useSettledDoc } from "../editor/editorStore.js";
 import { PAUSE_MS } from "../editor/repetitionMarks.js";
@@ -103,6 +104,7 @@ function bookSettings(app: OverlayParts, drive: DriveSync) {
     language: bookLanguage(app.project.fields),
     onChangeLanguage: (language: string) => void app.updateFields({ language }),
     onExportZip: app.zip.backup,
+    snapshotsDir: joinPath(app.project.dir, "snapshots"),
     drive,
   };
 }

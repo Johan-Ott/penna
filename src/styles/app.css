@@ -2629,18 +2629,16 @@ button.book-cover:hover {
   align-items: center;
 }
 
-/* With the keyboard up a phone has room for little, so the filters keep to one row that swipes
-   sideways and leave the rest to what was found. */
-@media (max-width: 600px) {
-  .palette-filters {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+/* The filters keep to one row that swipes sideways and leave the room to what was found; with
+   a phone's keyboard up there is little room to spare. */
+.palette-filters {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
 
-  .palette-filters .chip {
-    flex-shrink: 0;
-  }
+.palette-filters .chip {
+  flex-shrink: 0;
 }
 
 .label-color.outlined {
@@ -3575,6 +3573,20 @@ html.welcome-shown body {
 
 .first-choices .button {
   margin-top: 12px;
+}
+
+.first-choices-back {
+  align-self: flex-start;
+}
+
+.onboarding-goal {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-button);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
 }
 
 .welcome-language {

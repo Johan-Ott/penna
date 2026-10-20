@@ -106,6 +106,7 @@ export function Welcome(props: WelcomeProps) {
         theme={props.theme}
         onTheme={props.onTheme}
         onDone={(choices) => void props.onStart(choices).catch(recordFailure("Första starten"))}
+        onBack={() => setChoosing(false)}
       />
     </main>
   );

@@ -20,7 +20,39 @@ export interface Choices {
 export const firstLanguage = () => (uiLanguage() === "en" ? "en-GB" : "sv-SE");
 
 const THEMES = Object.entries(THEME_LABELS) as [Theme, string][];
-const GOALS: [string, string][] = ["250", "500", "1000", "2000"].map((goal) => [goal, goal]);
+// No goal first, two to start from, and the writer's own number.
+const OWN = "eget";
+const goals = (): [string, string][] => [
+  ["0", t("Inget mål")],
+  ["500", "500"],
+  ["1000", "1000"],
+  [OWN, t("Eget")],
+];
+
+function DailyGoal(props: { value: string; onChange: (goal: string) => void }) {
+  const [choice, setChoice] = useState(props.value);
+  const isOwn = choice === OWN;
+  const choose = (next: string) => {
+    setChoice(next);
+    props.onChange(next === OWN ? "" : next);
+  };
+  return (
+    <>
+      <span className="field-label">{t("Ord om dagen")}</span>
+      <Choice label={t("Ord om dagen")} value={choice} options={goals()} onSelect={choose} />
+      {isOwn && (
+        <input
+          className="onboarding-goal"
+          inputMode="numeric"
+          aria-label={t("Eget mål, ord om dagen")}
+          placeholder={t("Till exempel 750")}
+          value={props.value}
+          onChange={(event) => props.onChange(event.target.value.replace(/\D/g, ""))}
+        />
+      )}
+    </>
+  );
+}
 
 function LanguageChips(props: { chosen: string[]; onChange: (chosen: string[]) => void }) {
   const flip = (tag: string) =>
@@ -67,30 +99,41 @@ const FetchNote = () =>
     </p>
   ) : null;
 
+const choicesOf = (authorName: string, languages: string[], dailyGoal: string): Choices => ({
+  authorName: authorName.trim(),
+  languages,
+  dailyGoal: Number(dailyGoal) || 0,
+});
+
+const BackButton = ({ onBack }: { onBack: () => void }) => (
+  <button className="link-button first-choices-back" onClick={onBack}>
+    {t("← Tillbaka")}
+  </button>
+);
+
 export function FirstChoices(props: {
   theme: Theme;
   onTheme: (theme: Theme) => void;
   onDone: (choices: Choices) => void;
+  onBack: () => void;
 }) {
   const [languages, setLanguages] = useState([firstLanguage()]);
-  const [dailyGoal, setDailyGoal] = useState("1000");
+  const [dailyGoal, setDailyGoal] = useState("0");
   const [authorName, setAuthorName] = useState("");
   return (
     <div className="first-choices">
+      <BackButton onBack={props.onBack} />
       <h2>{t("Gör Skrivro till din")}</h2>
       <AuthorField value={authorName} onChange={setAuthorName} />
       <LanguageChips chosen={languages} onChange={setLanguages} />
       <span className="field-label">{t("Utseende")}</span>
       <Choice label={t("Utseende")} value={props.theme} options={THEMES} onSelect={props.onTheme} />
-      <span className="field-label">{t("Ord om dagen")}</span>
-      <Choice label={t("Ord om dagen")} value={dailyGoal} options={GOALS} onSelect={setDailyGoal} />
+      <DailyGoal value={dailyGoal} onChange={setDailyGoal} />
       <FetchNote />
       <button
         className="button primary large"
         disabled={languages.length === 0}
-        onClick={() =>
-          props.onDone({ authorName: authorName.trim(), languages, dailyGoal: Number(dailyGoal) })
-        }
+        onClick={() => props.onDone(choicesOf(authorName, languages, dailyGoal))}
       >
         {t("Klar")}
       </button>

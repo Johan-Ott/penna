@@ -124,7 +124,6 @@
   "Hämtar från molnet…": "Fetching from the cloud…",
   "Hämtar {count} scener från molnet…": "Fetching {count} scenes from the cloud…",
   "I kapitlet": "In the chapter",
-  "I projektmappen, under snapshots. Skrivro raderar aldrig en version.": "In the project folder, under snapshots. Skrivro never deletes a version.",
   "Idé": "Idea",
   "Ignorera": "Ignore",
   "Igår": "Yesterday",
@@ -1442,5 +1441,10 @@
   "eller": "or",
   "{file} är klar": "{file} is ready",
   "Loggar in…": "Signing in…",
-  "Hämtar dina böcker från Drive…": "Getting your books from Drive…"
+  "Hämtar dina böcker från Drive…": "Getting your books from Drive…",
+  "Eget": "Own",
+  "Eget mål, ord om dagen": "Your own goal, words a day",
+  "Till exempel 750": "For example 750",
+  "I bokens egen mapp, i mappen snapshots. Skrivro raderar aldrig en version.": "In the book's own folder, in the snapshots folder. Skrivro never deletes a version.",
+  "Visa mappen": "Show the folder"
 }
