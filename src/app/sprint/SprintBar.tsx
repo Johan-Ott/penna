@@ -39,6 +39,23 @@ function usePhaseEnds(sprint: Sprint, words: number, now: number) {
   }, [now, sprint, words]);
 }
 
+// The time left, with Paus in front of it during a break.
+function phaseClock(sprint: Sprint, now: number) {
+  const isBreak = phasesOf(sprint.plan)[sprint.phase] !== "pass";
+  return isBreak ? `${t("Paus")} ${clock(sprint.endsAt - now)}` : clock(sprint.endsAt - now);
+}
+
+/** A phone's bar while a sprint runs: its time and words where the day's words stood. */
+export function PhoneSprintClock(props: { sprint: Sprint; todayWords: number }) {
+  const now = useTick();
+  const words = sprintWords(props.sprint, props.todayWords);
+  return (
+    <button className="phone-bar-sub sprint-clock" onClick={() => setPanelOpen(true)}>
+      {`${phaseClock(props.sprint, now)} · ${t("{words} ord", { words })}`}
+    </button>
+  );
+}
+
 // Over the text while a sprint runs; a click opens its block.
 function Running(props: { sprint: Sprint; todayWords: number; onEnd: () => void }) {
   const { sprint, todayWords } = props;
@@ -48,11 +65,10 @@ function Running(props: { sprint: Sprint; todayWords: number; onEnd: () => void 
     if (sprint.startWords === null) setStartWords(todayWords);
   }, [sprint.startWords, todayWords]);
   usePhaseEnds(sprint, words, now);
-  const isBreak = phasesOf(sprint.plan)[sprint.phase] !== "pass";
   return (
     <div className="sprint-bar" role="timer">
       <button className="sprint-clock" onClick={() => setPanelOpen(true)}>
-        {isBreak ? `${t("Paus")} ${clock(sprint.endsAt - now)}` : clock(sprint.endsAt - now)}
+        {phaseClock(sprint, now)}
       </button>
       <span>{t("{words} ord", { words })}</span>
       <button className="link-button" onClick={() => (endSprint(words), props.onEnd())}>

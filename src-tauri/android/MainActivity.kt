@@ -1,6 +1,7 @@
 package se.skrivro.app
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.ActionMode
@@ -29,6 +30,7 @@ class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+    keepPhonesUpright()
     followInsets()
     followBack()
   }
@@ -37,6 +39,14 @@ class MainActivity : TauriActivity() {
     this.webView = webView
     followBack()
     ViewCompat.requestApplyInsets(findViewById(android.R.id.content))
+  }
+
+  // Turned on its side a phone would get the desktop layout on a screen too low for it, so a phone
+  // stays upright. A tablet turns freely.
+  private fun keepPhonesUpright() {
+    if (resources.configuration.smallestScreenWidthDp < 600) {
+      requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+    }
   }
 
   // Edge to edge, Android no longer shrinks the page for the keyboard, so the text and the tools

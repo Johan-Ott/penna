@@ -14,7 +14,8 @@ import { recordFailure } from "@llkit/errorLog.js";
 
 type Start = (withGoogle: boolean) => void;
 
-function WayIn({ onStart, canSignIn }: { onStart: Start; canSignIn: boolean }) {
+function WayIn(props: { onStart: Start; canSignIn: boolean; isSigningIn: boolean }) {
+  const { onStart, canSignIn, isSigningIn } = props;
   if (!canSignIn)
     return (
       <button className="button primary large" onClick={() => onStart(false)}>
@@ -23,10 +24,15 @@ function WayIn({ onStart, canSignIn }: { onStart: Start; canSignIn: boolean }) {
     );
   return (
     <>
-      <button className="button primary large" onClick={() => onStart(true)}>
-        {t("Logga in med Google")}
+      <button
+        className="button primary large"
+        disabled={isSigningIn}
+        aria-busy={isSigningIn}
+        onClick={() => onStart(true)}
+      >
+        {isSigningIn ? t("Loggar in…") : t("Logga in med Google")}
       </button>
-      <button className="link-button" onClick={() => onStart(false)}>
+      <button className="link-button" disabled={isSigningIn} onClick={() => onStart(false)}>
         {t("Börja utan konto")}
       </button>
     </>
@@ -49,7 +55,11 @@ const Problem = ({ text }: { text: string | null }) =>
   ) : null;
 
 // The way in: Skrivro's language, what Skrivro is, and signed in or not.
-function Greeting(props: { onWay: (withGoogle: boolean) => void; problem: string | null }) {
+function Greeting(props: {
+  onWay: (withGoogle: boolean) => void;
+  problem: string | null;
+  isSigningIn: boolean;
+}) {
   const canSignIn = platform.googleSignIn !== undefined;
   return (
     <main className="welcome" data-tauri-drag-region>
@@ -66,7 +76,7 @@ function Greeting(props: { onWay: (withGoogle: boolean) => void; problem: string
           : t("Böckerna sparas som vanliga filer på den här enheten. Inget konto behövs.")}
       </p>
       <span className="spacer" />
-      <WayIn onStart={props.onWay} canSignIn={canSignIn} />
+      <WayIn onStart={props.onWay} canSignIn={canSignIn} isSigningIn={props.isSigningIn} />
       <p className="welcome-promise">{t("Dina texter är dina. Aldrig AI-träning.")}</p>
     </main>
   );
@@ -76,16 +86,19 @@ function Greeting(props: { onWay: (withGoogle: boolean) => void; problem: string
 export function Welcome(props: WelcomeProps) {
   const [problem, setProblem] = useState<string | null>(null);
   const [isChoosing, setChoosing] = useState(false);
+  const [isSigningIn, setSigningIn] = useState(false);
   useRootClass("welcome-shown");
   const onWay = (withGoogle: boolean) => {
     setProblem(null);
     if (!withGoogle) return setChoosing(true);
+    setSigningIn(true);
     void props
       .onSignIn()
       .then((hasAccount) => setChoosing(!hasAccount))
-      .catch(() => setProblem(t("Inloggningen blev inte klar. Försök igen.")));
+      .catch(() => setProblem(t("Inloggningen blev inte klar. Försök igen.")))
+      .finally(() => setSigningIn(false));
   };
-  if (!isChoosing) return <Greeting onWay={onWay} problem={problem} />;
+  if (!isChoosing) return <Greeting onWay={onWay} problem={problem} isSigningIn={isSigningIn} />;
   return (
     <main className="welcome" data-tauri-drag-region>
       <WindowBar />

@@ -490,11 +490,14 @@ body .selection-bar.phone .icon-button {
   gap: 10px;
 }
 
+/* The people go under the filter, on as many rows as they need, rather than out past the edge. */
 .phone-view .contents-bar-filter {
   flex-basis: 100%;
+  flex-wrap: wrap;
 }
 
 .phone-view .contents-filter {
+  flex-basis: 100%;
   max-width: none;
 }
 
@@ -985,9 +988,21 @@ body .phone-app .text-when input {
   top: calc(max(28px, var(--safe-top)) + 52px);
 }
 
-/* Above the tools over the keyboard. */
+/* Above the tools over the keyboard. A running sprint shows in the phone's bar instead. */
 .phone-text .sprint-bar {
   bottom: 64px;
+}
+
+.phone-text .sprint-bar[role="timer"] {
+  display: none;
+}
+
+.phone-bar .sprint-clock {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Celebrations under the status bar, clear of the tabs and the tools at the foot. */

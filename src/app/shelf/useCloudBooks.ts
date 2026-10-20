@@ -41,16 +41,25 @@ export const trashOnDrive = async (folderId: string) => driveOf()?.trash(folderI
 /** How far a book's fetch has come, in files; `all` is 0 until Drive has been listed. */
 export type Fetching = { name: string; done: number; all: number };
 
-export function useCloudBooks(libraryDir: string | null, isSignedIn: boolean) {
+// Until Drive has answered (isListing), the shelf does not know yet whether it is empty.
+function useDriveList(libraryDir: string | null, isSignedIn: boolean) {
   const [books, setBooks] = useState<CloudBook[]>([]);
-  const [fetching, setFetching] = useState<Fetching | null>(null);
+  const [isListing, setListing] = useState(isSignedIn);
   const look = useCallback(() => {
     if (!libraryDir || !isSignedIn) return setBooks([]);
+    setListing(true);
     void booksOnDrive(libraryDir)
       .then(setBooks)
-      .catch(recordFailure("Böckerna i Drive kunde inte listas"));
+      .catch(recordFailure("Böckerna i Drive kunde inte listas"))
+      .finally(() => setListing(false));
   }, [libraryDir, isSignedIn]);
   useEffect(look, [look]);
+  return { books, isListing, look };
+}
+
+export function useCloudBooks(libraryDir: string | null, isSignedIn: boolean) {
+  const { books, isListing, look } = useDriveList(libraryDir, isSignedIn);
+  const [fetching, setFetching] = useState<Fetching | null>(null);
   const fetch = async (name: string) => {
     const drive = driveOf();
     if (!drive || !libraryDir) return null;
@@ -67,5 +76,5 @@ export function useCloudBooks(libraryDir: string | null, isSignedIn: boolean) {
   };
   const remove = (book: CloudBook) =>
     void trashOnDrive(book.id).then(look).catch(recordFailure("Borttagningen i Drive"));
-  return { books, fetching, fetch, remove, look };
+  return { books, isListing, fetching, fetch, remove, look };
 }

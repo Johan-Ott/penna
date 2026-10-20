@@ -2629,6 +2629,20 @@ button.book-cover:hover {
   align-items: center;
 }
 
+/* With the keyboard up a phone has room for little, so the filters keep to one row that swipes
+   sideways and leave the rest to what was found. */
+@media (max-width: 600px) {
+  .palette-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .palette-filters .chip {
+    flex-shrink: 0;
+  }
+}
+
 .label-color.outlined {
   box-shadow: inset 0 0 0 1.5px var(--text-label);
 }
@@ -3609,6 +3623,14 @@ html.welcome-shown body {
   margin: 0;
   color: var(--text-muted);
   line-height: 1.55;
+}
+
+/* While Drive is listed, in the welcome's place, so it does not come and go. */
+.shelf-listing {
+  align-self: center;
+  margin: 0;
+  padding-left: 24px;
+  color: var(--text-muted);
 }
 
 .help-actions {

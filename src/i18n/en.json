@@ -1440,5 +1440,7 @@
   "Inga skrivdagar än": "No writing days yet",
   "Återställt": "Restored",
   "eller": "or",
-  "{file} är klar": "{file} is ready"
+  "{file} är klar": "{file} is ready",
+  "Loggar in…": "Signing in…",
+  "Hämtar dina böcker från Drive…": "Getting your books from Drive…"
 }

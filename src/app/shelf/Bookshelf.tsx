@@ -25,6 +25,7 @@ interface BookshelfProps {
   onRemoveEverywhere: ((book: ShelfBook) => void) | null;
   cloud: {
     books: InCloud[];
+    isListing: boolean;
     fetching: Fetching | null;
     onFetch: (name: string) => void;
     remove: (book: InCloud) => void;
@@ -96,7 +97,11 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
     return (
       <div className="books">
         <Starts {...props} isEmpty />
-        {props.cloud.books.length === 0 && <Welcome {...props} />}
+        {props.cloud.isListing ? (
+          <p className="shelf-listing">{t("Hämtar dina böcker från Drive…")}</p>
+        ) : (
+          props.cloud.books.length === 0 && <Welcome {...props} />
+        )}
       </div>
     );
   return groups.map((group, index) => (
