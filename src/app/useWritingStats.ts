@@ -13,10 +13,8 @@ import {
 import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
 import { snapshotOnSave } from "../project/snapshots.js";
-import { rememberPlace } from "./resume/lastPlace.js";
+import { placeOf, rememberPlace } from "./resume/lastPlace.js";
 import { recordText } from "./journey/todayTexts.js";
-import type { EditorState } from "prosemirror-state";
-import { textBefore } from "../editor/documentText.js";
 import type { useSceneSession } from "./useSceneSession.js";
 import type { Project } from "./useProject.js";
 
@@ -93,11 +91,6 @@ export function useWritingStats(
     [dir, goal],
   );
   return { stats, today: todayOf(stats, project), recordSave };
-}
-
-function placeOf(sceneId: string, state: EditorState) {
-  const position = state.selection.from;
-  return { sceneId, position, before: textBefore(state.doc, position), writtenAt: Date.now() };
 }
 
 /** Each save is counted, remembered as where the writer is, and kept as an automatic version. */

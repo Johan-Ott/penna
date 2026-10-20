@@ -34,5 +34,6 @@
   "Klar": "Done",
   "Skicka": "Send",
   "Nej tack": "No thanks",
-  "{app} stängdes oväntat förra gången. Vill du skicka felrapporten till oss?": "{app} closed unexpectedly last time. Would you like to send us the error report?"
+  "{app} stängdes oväntat förra gången. Vill du skicka felrapporten till oss?": "{app} closed unexpectedly last time. Would you like to send us the error report?",
+  "Tillbaka": "Back"
 }

@@ -1,4 +1,7 @@
+import type { EditorState } from "prosemirror-state";
+import { useEffect } from "react";
 import { createStore } from "@llkit/store.js";
+import { textBefore } from "../../editor/documentText.js";
 import { welcomeBack } from "../../project/inkwell.js";
 import { dayKey } from "../../project/stats.js";
 import { chapterOf } from "../../project/treeLabels.js";
@@ -54,4 +57,45 @@ export function greetBack(project: Project, place: Place) {
   const where = chapter ? `${chapter.number}. ${chapter.title}` : null;
   const back = welcomeBack(dayKey(place.writtenAt), dayKey(Date.now()), where);
   if (back) celebrate(back);
+}
+
+/** Where the cursor is in a scene, with the words before it. */
+export function placeOf(sceneId: string, state: EditorState) {
+  const position = state.selection.from;
+  return { sceneId, position, before: textBefore(state.doc, position), writtenAt: Date.now() };
+}
+
+const LOOK_EVERY_MS = 2000;
+
+/** Where the writer is, not only where they last typed: kept while they move about the text, and
+ * when Skrivro closes, so the book opens there again. */
+export function useRememberPlace({
+  scene,
+  editor,
+}: {
+  scene: { id: string; dir: string } | null;
+  editor: { viewRef: { current: { state: EditorState } | null } };
+}) {
+  useEffect(() => {
+    if (!scene) return;
+    // Where the scene opened is not a place the writer chose, and Du slutade här may still be
+    // waiting to put the cursor back; only a move of their own is kept.
+    let last: string | null = null;
+    const keep = () => {
+      const state = editor.viewRef.current?.state;
+      if (!state || shown.get()) return;
+      const place = placeOf(scene.id, state);
+      const key = `${place.sceneId}:${place.position}`;
+      if (last === null || key === last) return void (last = key);
+      last = key;
+      rememberPlace(scene.dir, place);
+    };
+    const timer = setInterval(keep, LOOK_EVERY_MS);
+    globalThis.addEventListener("pagehide", keep);
+    return () => {
+      keep();
+      clearInterval(timer);
+      globalThis.removeEventListener("pagehide", keep);
+    };
+  }, [scene, editor]);
 }

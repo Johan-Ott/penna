@@ -36,7 +36,18 @@ fn open_window(app: &tauri::App) -> tauri::Result<()> {
     let builder = builder
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true);
-    builder.build()?;
+    // Hidden until the page has drawn its first frame (public/theme.js shows it), so the start is
+    // never a white flash; shown anyway after a moment, should the page not get that far.
+    #[cfg(desktop)]
+    let builder = builder.visible(false);
+    let window = builder.build()?;
+    #[cfg(desktop)]
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_secs(3));
+        let _ = window.show();
+    });
+    #[cfg(mobile)]
+    let _ = window;
     Ok(())
 }
 

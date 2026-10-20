@@ -759,15 +759,15 @@ body .phone-view .submit-text {
   padding: max(16px, var(--safe-top)) 6px 0;
 }
 
-.phone-app .read-back {
+.phone-app .read-head .back-button {
   width: 44px;
   height: 44px;
   padding: 0;
   font-size: 20px;
 }
 
-.phone-app .read-back-words,
-.phone-app .read-key,
+.phone-app .read-head .back-button-words,
+.phone-app .read-head .back-button-key,
 .phone-app .read-head-end .link-button {
   display: none;
 }

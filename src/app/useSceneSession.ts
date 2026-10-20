@@ -6,7 +6,7 @@ import { useEditorView } from "../editor/useEditorView.js";
 import type { SaveStatus } from "@llkit/storage/autosave.js";
 import { errorLog } from "@llkit/errorLog.js";
 import { platform } from "./platform.js";
-import { greetBack, placeIn, showResume } from "./resume/lastPlace.js";
+import { greetBack, placeIn, showResume, useRememberPlace } from "./resume/lastPlace.js";
 import {
   closeScene,
   createSceneSession,
@@ -70,6 +70,7 @@ export function useSceneSession() {
   sessionRef.current = session;
   useSavedOnLeaving(session);
 
+  useRememberPlace({ scene, editor });
   return { session, scene, saveStatus, conflict, editor, savedRef };
 }
 
@@ -88,7 +89,8 @@ const isTextOf = (
 function startOf(project: Project) {
   const onDisk = manuscriptSceneIds(project.tree).filter((id) => project.scenes.includes(id));
   const remembered = placeIn(project.dir);
-  const place = remembered && onDisk.includes(remembered.sceneId) ? remembered : null;
+  // A note is a place too: the book opens on it if that is where the writer was.
+  const place = remembered && project.scenes.includes(remembered.sceneId) ? remembered : null;
   return { firstScene: place?.sceneId ?? onDisk[0] ?? project.scenes[0], place };
 }
 
@@ -105,8 +107,9 @@ export function useOpenFirstScene(
     if (!project || isOwnText || project.recoverable.length > 0) return;
     const { firstScene, place } = startOf(project);
     if (!firstScene) return void closeScene(session);
+    // Du slutade här needs a sentence to show; a place without one just opens there.
     void openScene(session, project.dir, firstScene).then(() =>
-      place ? (showResume(place), greetBack(project, place)) : focusEditor(),
+      place?.before?.trim() ? (showResume(place), greetBack(project, place)) : focusEditor(),
     );
   }, [project, session, focusEditor, seriesDir]);
 }

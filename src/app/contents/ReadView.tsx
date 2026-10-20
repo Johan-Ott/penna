@@ -1,3 +1,4 @@
+import { BackButton } from "@llkit/controls.js";
 import type { Node } from "prosemirror-model";
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { readingScenes, type ReadingScene } from "../../project/reading.js";
@@ -143,10 +144,7 @@ function ReadFoot(props: {
 function ReadHead(props: ReadViewProps & { place: string; share: ReactNode }) {
   return (
     <header className="read-head">
-      <button className="read-back" aria-label={t("Tillbaka till texten")} onClick={props.onBack}>
-        ← <span className="read-back-words">{t("Tillbaka till texten")}</span>{" "}
-        <span className="read-key">Esc</span>
-      </button>
+      <BackButton label={t("Tillbaka till texten")} hint="Esc" onBack={props.onBack} />
       <span className="read-place">{props.place}</span>
       <span className="read-head-end">
         <button className="link-button quiet" onClick={props.onDesign}>

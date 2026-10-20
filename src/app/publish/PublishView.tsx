@@ -14,7 +14,7 @@ import {
   type ExportChoices,
   type ExportFormat,
 } from "../exporting/useExport.js";
-import { Choice } from "@llkit/controls.js";
+import { BackButton, Choice } from "@llkit/controls.js";
 import { SubmitStep } from "./SubmitStep.js";
 import { PublishTabs, type Step } from "./PublishTiles.js";
 import type { Project } from "../useProject.js";
@@ -165,9 +165,11 @@ export function PublishView(props: PublishProps) {
   return (
     <div className={publishing.step ? `publish step-${publishing.step}` : "publish"}>
       <aside className="publish-steps" aria-label={t("Publicera")}>
-        <button className="link-button quiet publish-back" onClick={props.onBack}>
-          {t("← Tillbaka till texten")}
-        </button>
+        <BackButton
+          className="publish-back"
+          label={t("Tillbaka till texten")}
+          onBack={props.onBack}
+        />
         <StepsOrTiles props={props} publishing={publishing} />
         <button
           className="button primary publish-button"

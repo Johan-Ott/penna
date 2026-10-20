@@ -16,7 +16,7 @@ test("Studio draws the week as a picture, and the countdown asks for a release d
   await page.getByLabel("Utgivningsdag").fill("2027-03-12");
   await page.getByLabel("Utgivningsdag").blur();
 
-  await page.getByRole("button", { name: "← Publicera" }).click();
+  await page.getByRole("button", { name: "Publicera", exact: true }).click();
   await page.getByRole("button", { name: /Studio/ }).click();
   await page.getByRole("button", { name: /Nedräkning/ }).click();
   await expect(page.getByLabel("Utgivningsdag")).toHaveValue("2027-03-12");
@@ -40,7 +40,7 @@ test("a milestone is named and kept with the book", async ({ page }) => {
 });
 
 test("the newsletter is signed with Om författaren from the profile", async ({ page }) => {
-  await page.getByRole("button", { name: "← Publicera" }).click();
+  await page.getByRole("button", { name: "Publicera", exact: true }).click();
   await page.getByRole("button", { name: /Tillbaka till texten/ }).click();
   await page.getByRole("button", { name: "Din profil" }).click();
   await page.getByRole("menuitem", { name: "Din profil…" }).click();

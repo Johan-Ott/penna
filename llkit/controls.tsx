@@ -103,6 +103,30 @@ export function CloseButton(props: { label?: string; onClose: () => void; isPhon
   );
 }
 
+/** Tillbaka at the top left of a view the writer went to, the same everywhere: an arrow and where
+ * it leads, with a key to press for it when there is one. */
+export function BackButton(props: {
+  label?: string;
+  hint?: string;
+  className?: string;
+  isPhoneBack?: boolean;
+  onBack: () => void;
+}) {
+  const label = props.label ?? t("Tillbaka");
+  return (
+    <button
+      className={props.className ? `back-button ${props.className}` : "back-button"}
+      aria-label={label}
+      data-phone-back={props.isPhoneBack || undefined}
+      onClick={props.onBack}
+    >
+      <span aria-hidden="true">←</span>
+      <span className="back-button-words">{label}</span>
+      {props.hint && <span className="back-button-key">{props.hint}</span>}
+    </button>
+  );
+}
+
 /** A modal dialog with a title; Escape or a click outside closes it. */
 export function Dialog(props: {
   label: string;

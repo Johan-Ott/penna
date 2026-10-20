@@ -67,7 +67,7 @@ test("a chapter is shown alone in the sidebar, and Hela boken brings the book ba
   const tree = page.locator(".sidebar .tree");
   await expect(tree).not.toContainText("1. Brevet");
   await expect(tree).toContainText("Fyren");
-  await page.getByRole("button", { name: "← Hela boken" }).click();
+  await page.getByRole("button", { name: "Hela boken" }).click();
   await expect(tree).toContainText("1. Brevet");
 });
 

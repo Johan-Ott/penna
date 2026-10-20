@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
-import { Choice } from "@llkit/controls.js";
+import { BackButton, Choice } from "@llkit/controls.js";
 import { platform } from "../platform.js";
 import { t, uiLanguage } from "../../i18n/i18n.js";
 
@@ -104,12 +104,6 @@ const choicesOf = (authorName: string, languages: string[], dailyGoal: string): 
   languages,
   dailyGoal: Number(dailyGoal) || 0,
 });
-
-const BackButton = ({ onBack }: { onBack: () => void }) => (
-  <button className="link-button first-choices-back" onClick={onBack}>
-    {t("← Tillbaka")}
-  </button>
-);
 
 export function FirstChoices(props: {
   theme: Theme;

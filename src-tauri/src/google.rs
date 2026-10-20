@@ -11,9 +11,11 @@ mod desktop {
 
     const KEYRING_USER: &str = "google-drive";
     const WAIT: Duration = Duration::from_secs(300);
-    const DONE_PAGE: &str = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n\
-        <!doctype html><title>Skrivro</title><p style=\"font:18px sans-serif;margin:3em\">\
-        Klart, Skrivro är kopplad till Google Drive. Du kan stänga fliken.</p>";
+    // The page the browser lands on once Google has said yes, in Skrivro's own colours.
+    const DONE_PAGE: &str = concat!(
+        "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n",
+        include_str!("google-done.html")
+    );
 
     #[derive(serde::Serialize)]
     pub struct BrowserAnswer {

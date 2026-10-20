@@ -3575,10 +3575,6 @@ html.welcome-shown body {
   margin-top: 12px;
 }
 
-.first-choices-back {
-  align-self: flex-start;
-}
-
 .onboarding-goal {
   height: 40px;
   padding: 0 12px;

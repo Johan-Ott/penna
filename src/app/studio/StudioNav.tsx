@@ -1,3 +1,4 @@
+import { BackButton } from "@llkit/controls.js";
 import type { ImageCardId } from "./studioDraw.js";
 import { t } from "../../i18n/i18n.js";
 
@@ -26,6 +27,30 @@ function groups(): [string, [CardId, string, string][]][] {
   ];
 }
 
+function StudioGroup(props: {
+  label: string;
+  items: ReturnType<typeof groups>[number][1];
+  card: CardId;
+  onCard: (card: CardId) => void;
+}) {
+  return (
+    <div className="studio-group">
+      <span className="sidebar-heading">{props.label}</span>
+      {props.items.map(([id, name, hint]) => (
+        <button
+          key={id}
+          className="studio-item"
+          aria-pressed={props.card === id}
+          onClick={() => props.onCard(id)}
+        >
+          <span className="studio-item-name">{name}</span>
+          <span className="insight-muted">{hint}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function StudioNav(props: {
   card: CardId;
   onCard: (card: CardId) => void;
@@ -33,24 +58,20 @@ export function StudioNav(props: {
 }) {
   return (
     <aside className="studio-nav" aria-label={t("Studio")}>
-      <button className="link-button quiet publish-back" data-phone-back onClick={props.onBack}>
-        {t("← Publicera")}
-      </button>
+      <BackButton
+        className="publish-back"
+        label={t("Publicera")}
+        isPhoneBack
+        onBack={props.onBack}
+      />
       {groups().map(([label, items]) => (
-        <div key={label} className="studio-group">
-          <span className="sidebar-heading">{label}</span>
-          {items.map(([id, name, hint]) => (
-            <button
-              key={id}
-              className="studio-item"
-              aria-pressed={props.card === id}
-              onClick={() => props.onCard(id)}
-            >
-              <span className="studio-item-name">{name}</span>
-              <span className="insight-muted">{hint}</span>
-            </button>
-          ))}
-        </div>
+        <StudioGroup
+          key={label}
+          label={label}
+          items={items}
+          card={props.card}
+          onCard={props.onCard}
+        />
       ))}
     </aside>
   );

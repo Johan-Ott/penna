@@ -12,3 +12,10 @@
   var isDark = theme === "mörkt" || (theme === "system" && isSystemDark);
   globalThis.document.documentElement.dataset.theme = isDark ? "dark" : "light";
 })();
+
+// The window waits hidden until the first frame, so WebView2's white never shows before it; the
+// app shows it itself after a few seconds should this never run.
+globalThis.requestAnimationFrame(function () {
+  var tauri = globalThis.__TAURI_INTERNALS__;
+  if (tauri) tauri.invoke("plugin:window|show", { label: "main" }).catch(function () {});
+});

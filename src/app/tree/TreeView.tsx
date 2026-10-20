@@ -1,3 +1,4 @@
+import { BackButton } from "@llkit/controls.js";
 import type { DragEvent, ReactNode } from "react";
 import { swipesOf, TrashUndo } from "./useSwipes.js";
 import {
@@ -136,9 +137,7 @@ function BookHeading({ props, tree }: { props: TreeViewProps; tree: Tree }) {
   if (!focused) return <TreeTools props={props} tree={tree} />;
   return (
     <>
-      <button className="tree-whole-book" onClick={() => view.setFocusId(null)}>
-        {t("← Hela boken")}
-      </button>
+      <BackButton label={t("Hela boken")} onBack={() => view.setFocusId(null)} />
       <SectionHeading label={nodeLabel(focused, project.tree, project.summaries)} />
     </>
   );
