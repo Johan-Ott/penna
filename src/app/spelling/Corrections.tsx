@@ -7,7 +7,7 @@ import { t } from "../../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
-function misspelledAtCaret(editor: Editor, state: EditorState | null) {
+export function misspelledAtCaret(editor: Editor, state: EditorState | null) {
   const spelling = editor.modes.current.spelling;
   if (!state || !spelling) return null;
   const { from, to, empty } = state.selection;

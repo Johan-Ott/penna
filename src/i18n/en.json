@@ -1449,5 +1449,16 @@
   "Fast formateringsrad": "Fixed formatting row",
   "Fetstil, kursiv och stilar överst hela tiden, inte bara när du markerar.": "Bold, italic and styles at the top all the time, not only when you select.",
   "Vänsterställt": "Left aligned",
-  "Justering": "Alignment"
+  "Justering": "Alignment",
+  "Visa raden bara vid markering": "Show the row only on a selection",
+  "Fäst raden överst": "Pin the row to the top",
+  "Understruken": "Underlined",
+  "Genomstruken": "Struck through",
+  "Tecken": "Characters",
+  "Historik": "History",
+  "Infoga": "Insert",
+  "Bild…": "Picture\u2026",
+  "Texten": "The text",
+  "Formatering": "Formatting",
+  "Lägg till kommentar": "Add a comment"
 }

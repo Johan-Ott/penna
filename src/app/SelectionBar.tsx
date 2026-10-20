@@ -7,10 +7,18 @@ import {
 } from "prosemirror-state";
 import { useEditorState } from "../editor/editorStore.js";
 import { useEffect, useState } from "react";
-import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
-import { insertFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
-import { AlignButtons } from "./AlignButtons.js";
+import { PinIcon, UnpinIcon } from "./AlignButtons.js";
+import {
+  BlockChoices,
+  CommentButton,
+  HistoryButtons,
+  InsertMenu,
+  MarkButtons,
+  TextActions,
+  type FormatActions,
+} from "./FormatButtons.js";
+import { misspelledAtCaret } from "./spelling/Corrections.js";
 import { StylePicker } from "./StylePicker.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
@@ -19,26 +27,6 @@ import { t, formatNumber } from "../i18n/i18n.js";
 type Editor = ReturnType<typeof useEditorView>;
 
 const BAR_HEIGHT = 40;
-
-function MarkButton(props: {
-  editorState: EditorState | null;
-  run: (command: Command) => void;
-  mark: "bold" | "italic";
-  label: string;
-}) {
-  const isPressed = props.editorState !== null && isMarkActive(props.editorState, props.mark);
-  const command = props.mark === "bold" ? toggleBold : toggleItalic;
-  return (
-    <button
-      className={`icon-button ${props.mark}`}
-      aria-label={props.label}
-      aria-pressed={isPressed}
-      onClick={() => props.run(command)}
-    >
-      {props.mark === "bold" ? "B" : "I"}
-    </button>
-  );
-}
 
 function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   if (!editorState) return null;
@@ -100,66 +88,87 @@ function barPosition(editor: Editor, isPhone: boolean) {
   return { left, top: view.coordsAtPos(selection.to).bottom + 6 };
 }
 
+// A misspelled word clicked or double-clicked has its corrections under it; the floating row
+// stays away so the two never stack.
 const wantedPosition = (editor: Editor, isWanted: boolean, isPhone: boolean) =>
-  isWanted ? barPosition(editor, isPhone) : null;
+  isWanted && misspelledAtCaret(editor, editor.viewRef.current?.state ?? null) === null
+    ? barPosition(editor, isPhone)
+    : null;
 
-interface BarProps {
+interface BarProps extends FormatActions {
   editor: Editor;
   /** Shown over the text all the time, as a word processor's row, rather than over a selection. */
   isFixed?: boolean;
-  onComment: () => void;
-  /** Left out where the computer has no voice. */
-  onReadAloud?: (() => void) | undefined;
+  /** Switches between that and floating over a selection; left out where there is no choice. */
+  onToggleFixed?: () => void;
 }
 
 // The phone's own menu over a selection is turned off (MainActivity.kt), so copying is here; the
 // footnote is in the tools over the keyboard.
-function PhoneClipboard() {
-  return (
-    <>
-      <button className="icon-button" onClick={() => document.execCommand("copy")}>
-        {t("Kopiera")}
-      </button>
-      <button className="icon-button" onClick={() => document.execCommand("cut")}>
-        {t("Klipp ut")}
-      </button>
-    </>
-  );
-}
-
-function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { isPhone: boolean }) {
-  return (
-    <>
-      {isPhone && <PhoneClipboard />}
-      <button className="icon-button" onClick={onComment}>
-        {t("Kommentera")}
-      </button>
-      {!isPhone && (
-        <button className="icon-button" onClick={() => editor.run(insertFootnote)}>
-          {t("Fotnot")}
-        </button>
-      )}
-      {onReadAloud && (
-        <button className="icon-button" onClick={onReadAloud}>
-          {t("Läs upp")}
-        </button>
-      )}
-    </>
-  );
-}
-
-// The paragraph's style and its alignment, side by side; a phone's bar has room for neither.
-const BlockChoices = (props: {
-  editorState: EditorState | null;
-  run: (command: Command) => void;
-}) => (
+const PhoneRow = ({ onComment, editorState, run }: RowProps) => (
   <>
-    <StylePicker {...props} />
-    <AlignButtons {...props} />
+    <MarkButtons editorState={editorState} run={run} />
+    <button className="icon-button" onClick={() => document.execCommand("copy")}>
+      {t("Kopiera")}
+    </button>
+    <button className="icon-button" onClick={() => document.execCommand("cut")}>
+      {t("Klipp ut")}
+    </button>
+    <button className="icon-button" onClick={onComment}>
+      {t("Kommentera")}
+    </button>
   </>
 );
 
-/** Marks, a comment or a footnote for the selected words, and the words as a picture to share. */
+// The row's last button: fixed over the text or floating over a selection, whichever it is not.
+const PinButton = (props: { isFixed: boolean; onToggle: () => void }) => {
+  const label = props.isFixed ? t("Visa raden bara vid markering") : t("Fäst raden överst");
+  return (
+    <button
+      className="icon-button bar-pin"
+      aria-label={label}
+      title={label}
+      onClick={props.onToggle}
+    >
+      {props.isFixed ? <UnpinIcon /> : <PinIcon />}
+    </button>
+  );
+};
+
+const Pin = (props: BarProps & { isFixed: boolean }) =>
+  props.onToggleFixed ? <PinButton isFixed={props.isFixed} onToggle={props.onToggleFixed} /> : null;
+
+type RowProps = BarProps & { editorState: EditorState | null; run: (command: Command) => void };
+
+// Over a selection only what is done to those words: the marks, the style and a comment.
+const FloatingRow = (props: RowProps) => (
+  <>
+    <MarkButtons {...props} />
+    <StylePicker {...props} />
+    <CommentButton onComment={props.onComment} />
+    <Pin {...props} isFixed={false} />
+  </>
+);
+
+// Fixed over the text, everything, as a word processor's row.
+const FixedRow = (props: RowProps) => (
+  <>
+    <HistoryButtons run={props.run} />
+    <BlockChoices {...props} />
+    <MarkButtons {...props} />
+    <InsertMenu {...props} />
+    <TextActions {...props} />
+    <SelectedWords editorState={props.editorState} />
+    <Pin {...props} isFixed />
+  </>
+);
+
+function RowContent(props: RowProps & { isPhone: boolean; isFixed: boolean }) {
+  if (props.isPhone) return <PhoneRow {...props} />;
+  return props.isFixed ? <FixedRow {...props} /> : <FloatingRow {...props} />;
+}
+
+/** The format row: floating over a selection, or fixed over the text when the writer wants it. */
 export function SelectionBar(props: BarProps) {
   const { editor } = props;
   const editorState = useEditorState(editor);
@@ -168,22 +177,16 @@ export function SelectionBar(props: BarProps) {
   const isFixed = props.isFixed === true && !isPhone;
   const position = isFixed ? {} : wantedPosition(editor, isWanted, isPhone);
   if (!position) return null;
-  const marks = { editorState, run: editor.run };
+  const classes = ["selection-bar", isPhone && "phone", isFixed && "fixed"];
   return (
     <div
-      className={["selection-bar", isPhone && "phone", isFixed && "fixed"]
-        .filter(Boolean)
-        .join(" ")}
+      className={classes.filter(Boolean).join(" ")}
       role="toolbar"
-      aria-label={t("Markering")}
+      aria-label={isFixed ? t("Formatering") : t("Markering")}
       style={position}
       onMouseDown={(event) => event.preventDefault()}
     >
-      <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
-      <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
-      {!isPhone && <BlockChoices editorState={editorState} run={editor.run} />}
-      <BarActions {...props} isPhone={isPhone} />
-      {!isPhone && <SelectedWords editorState={editorState} />}
+      <RowContent {...props} {...{ editorState, isPhone, isFixed }} run={editor.run} />
     </div>
   );
 }

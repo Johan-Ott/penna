@@ -52,6 +52,8 @@ function inline(paragraph: Node, convert: (text: string) => string, notes: Scene
     const marks = new Set(child.marks.map((mark) => mark.type.name));
     if (marks.has("italic")) text = `<em>${text}</em>`;
     if (marks.has("bold")) text = `<strong>${text}</strong>`;
+    if (marks.has("underline")) text = `<u>${text}</u>`;
+    if (marks.has("strike")) text = `<s>${text}</s>`;
     html += text;
   });
   return html;

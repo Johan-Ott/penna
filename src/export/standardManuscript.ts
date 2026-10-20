@@ -2,7 +2,6 @@ import {
   AlignmentType,
   Bookmark,
   Document,
-  FootnoteReferenceRun,
   Header,
   Packer,
   PageNumber,
@@ -12,7 +11,8 @@ import {
   type ParagraphChild,
 } from "docx";
 import type { Node } from "prosemirror-model";
-import { quoteConverter, type BookDetails, type OutlineItem, type Typography } from "./book.js";
+import type { BookDetails, OutlineItem, Typography } from "./book.js";
+import { runs, type TextSettings, type WordNotes } from "./wordRuns.js";
 import { bookWords, headingLabel, roundedWords } from "./bookWords.js";
 import { sceneEndMark, sceneStartMark } from "./sceneMarks.js";
 
@@ -34,45 +34,6 @@ const INDENT = 720;
 // Parts and chapters start a third of the way down a new page.
 const HEADING_DROP = 3600;
 const SCENE_BREAK = "* * *";
-
-// Word numbers footnotes through the whole document, in the order they are added.
-interface WordNotes {
-  entries: Record<number, { children: Paragraph[] }>;
-  count: number;
-}
-
-function noteReference(notes: WordNotes, text: string) {
-  notes.count += 1;
-  notes.entries[notes.count] = { children: [new Paragraph({ children: [new TextRun(text)] })] };
-  return new FootnoteReferenceRun(notes.count);
-}
-
-interface TextSettings {
-  typography: Typography;
-  notes: WordNotes;
-}
-
-function runs(paragraph: Node, settings: TextSettings): ParagraphChild[] {
-  const convert = quoteConverter(settings.typography);
-  const children: ParagraphChild[] = [];
-  paragraph.forEach((child) => {
-    if (child.type.name === "lineBreak") return void children.push(new TextRun({ break: 1 }));
-    if (child.type.name === "footnote") {
-      return void children.push(
-        noteReference(settings.notes, convert(String(child.attrs["text"]))),
-      );
-    }
-    const marks = new Set(child.marks.map((mark) => mark.type.name));
-    children.push(
-      new TextRun({
-        text: convert(child.text ?? ""),
-        italics: marks.has("italic"),
-        bold: marks.has("bold"),
-      }),
-    );
-  });
-  return children;
-}
 
 // Paragraphs are kept as options until the scene is done, so its marks can go inside them.
 type ParagraphOptions = { children: ParagraphChild[] } & Omit<IParagraphOptions, "children">;

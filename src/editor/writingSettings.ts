@@ -67,7 +67,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   tableOfContents: false,
   commentsInMargin: false,
   followOpenText: true,
-  formatBar: false,
+  formatBar: true,
 };
 
 const STORAGE_KEY = "skrivro.writing";

@@ -1,0 +1,46 @@
+import { FootnoteReferenceRun, Paragraph, TextRun, type ParagraphChild } from "docx";
+import type { Node } from "prosemirror-model";
+import { quoteConverter, type Typography } from "./book.js";
+
+// The standard manuscript's text, run by run: its marks as Word has them, and its footnotes.
+
+// Word numbers footnotes through the whole document, in the order they are added.
+export interface WordNotes {
+  entries: Record<number, { children: Paragraph[] }>;
+  count: number;
+}
+
+function noteReference(notes: WordNotes, text: string) {
+  notes.count += 1;
+  notes.entries[notes.count] = { children: [new Paragraph({ children: [new TextRun(text)] })] };
+  return new FootnoteReferenceRun(notes.count);
+}
+
+export interface TextSettings {
+  typography: Typography;
+  notes: WordNotes;
+}
+
+export function runs(paragraph: Node, settings: TextSettings): ParagraphChild[] {
+  const convert = quoteConverter(settings.typography);
+  const children: ParagraphChild[] = [];
+  paragraph.forEach((child) => {
+    if (child.type.name === "lineBreak") return void children.push(new TextRun({ break: 1 }));
+    if (child.type.name === "footnote") {
+      return void children.push(
+        noteReference(settings.notes, convert(String(child.attrs["text"]))),
+      );
+    }
+    const marks = new Set(child.marks.map((mark) => mark.type.name));
+    children.push(
+      new TextRun({
+        text: convert(child.text ?? ""),
+        italics: marks.has("italic"),
+        bold: marks.has("bold"),
+        ...(marks.has("underline") && { underline: {} }),
+        strike: marks.has("strike"),
+      }),
+    );
+  });
+  return children;
+}

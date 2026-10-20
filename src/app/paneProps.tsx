@@ -1,3 +1,4 @@
+import { insertChosenPicture } from "./palette/sceneContext.js";
 import { ClickCorrections } from "./spelling/ClickCorrections.js";
 import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
@@ -179,8 +180,10 @@ const selectionBarOf = (app: AppState, project: Project) => (
     <SelectionBar
       editor={app.editor}
       isFixed={app.writingMode.settings.formatBar}
+      onToggleFixed={app.writingMode.toggleFormatBar}
       onComment={app.comments.start}
       onReadAloud={speechContext(app, project).readAloud ?? undefined}
+      onInsertPicture={() => void insertChosenPicture(project.dir, app.editor.run)}
     />
     <FootnotePopover editor={app.editor} />
     <ClickCorrections editor={app.editor} onReview={() => app.writingMode.setReviewOpen(true)} />

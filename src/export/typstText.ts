@@ -18,6 +18,8 @@ function marked(text: string, child: Node) {
   const marks = new Set(child.marks.map((mark) => mark.type.name));
   if (marks.has("italic")) markup = `#emph[${markup}]`;
   if (marks.has("bold")) markup = `#strong[${markup}]`;
+  if (marks.has("underline")) markup = `#underline[${markup}]`;
+  if (marks.has("strike")) markup = `#strike[${markup}]`;
   return markup;
 }
 

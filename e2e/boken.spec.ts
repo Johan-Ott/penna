@@ -164,7 +164,7 @@ test("replace all changes every match in the scene and Ångra takes it back", as
 
   await page.getByRole("button", { name: "Alla", exact: true }).click();
   await expect(editor(page)).toContainText("hade snön lagt sig");
-  await page.getByRole("button", { name: "Ångra" }).click();
+  await page.getByText("Ångra", { exact: true }).click();
 
   await expect(editor(page)).toContainText("hade isen lagt sig");
 });

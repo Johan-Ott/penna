@@ -75,6 +75,7 @@ export function useWritingMode() {
     settingsDialog,
     settings,
     onChangeSettings: update,
+    toggleFormatBar: () => update((current) => ({ ...current, formatBar: !current.formatBar })),
     isFocusMode,
     onToggleFocus,
     isProgressOpen,

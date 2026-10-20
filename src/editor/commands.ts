@@ -23,6 +23,11 @@ export const STYLE_LABELS: Record<StyleChoice, string> = {
 
 export const toggleBold = toggleMark(schema.marks.bold);
 export const toggleItalic = toggleMark(schema.marks.italic);
+export const toggleUnderline = toggleMark(schema.marks.underline);
+export const toggleStrike = toggleMark(schema.marks.strike);
+
+/** The marks the format row turns on and off. */
+export type TextMark = "bold" | "italic" | "underline" | "strike";
 
 export const insertLineBreak: Command = (state, dispatch) => {
   dispatch?.(state.tr.replaceSelectionWith(schema.nodes.lineBreak.create()).scrollIntoView());
@@ -94,7 +99,7 @@ export function setStyle(style: StyleChoice): Command {
   };
 }
 
-export function isMarkActive(state: EditorState, markName: "bold" | "italic"): boolean {
+export function isMarkActive(state: EditorState, markName: TextMark): boolean {
   const markType = schema.marks[markName];
   const { from, to, empty, $from } = state.selection;
   if (empty) return Boolean(markType.isInSet(state.storedMarks ?? $from.marks()));
@@ -107,6 +112,8 @@ export const clearFormatting: Command = (state, dispatch) => {
   const transaction = state.tr
     .removeMark(from, to, schema.marks.bold)
     .removeMark(from, to, schema.marks.italic)
+    .removeMark(from, to, schema.marks.underline)
+    .removeMark(from, to, schema.marks.strike)
     .setStoredMarks([]);
   dispatch?.(transaction);
   return true;

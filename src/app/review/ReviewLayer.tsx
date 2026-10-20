@@ -1,7 +1,8 @@
 import { TextSelection, type Command } from "prosemirror-state";
 import type { Comment } from "../../project/comments.js";
 import { useEffect, useRef, useState } from "react";
-import { useSettledDoc } from "../../editor/editorStore.js";
+import { useEditorState, useSettledDoc } from "../../editor/editorStore.js";
+import { misspelledAtCaret } from "../spelling/Corrections.js";
 import { PAUSE_MS } from "../../editor/repetitionMarks.js";
 import type { Node } from "prosemirror-model";
 import { SearchQuery } from "prosemirror-search";
@@ -93,12 +94,14 @@ function useOpening(app: AppState, isWriting: boolean, focused: string | null) {
 }
 
 // A click on commented words shows the comment: in the margin when it stands there, else in Granska.
+// A misspelled word among them shows its corrections instead, so only one thing opens at a time.
 function useOpenedByClick(app: AppState, focused: string | null) {
   const { setReviewOpen, settings } = app.writingMode;
   const isInMargin = settings.commentsInMargin && !usePhone();
+  const isMisspelled = misspelledAtCaret(app.editor, useEditorState(app.editor)) !== null;
   useEffect(() => {
-    if (focused && !isInMargin) setReviewOpen(true);
-  }, [focused, isInMargin, setReviewOpen]);
+    if (focused && !isInMargin && !isMisspelled) setReviewOpen(true);
+  }, [focused, isInMargin, isMisspelled, setReviewOpen]);
 }
 
 // About the whole book, beside the open scene: people who fade out, names alike, worn gestures.

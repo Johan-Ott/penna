@@ -2,8 +2,16 @@ import type { Paragraph, PhrasingContent } from "mdast";
 import { toMarkdown } from "mdast-util-to-markdown";
 import type { Mark, Node } from "prosemirror-model";
 
-type Wrapper = "italic" | "bold";
-const WRAPPERS: Wrapper[] = ["italic", "bold"];
+type Wrapper = "italic" | "bold" | "underline" | "strike";
+const WRAPPERS: Wrapper[] = ["italic", "bold", "underline", "strike"];
+const TAGS: Partial<Record<Wrapper, string>> = { underline: "u", strike: "s" };
+
+// Italic and bold are Markdown's own; underline and strikethrough are written as HTML around them.
+function wrapped(wrapper: Wrapper, children: PhrasingContent[]): PhrasingContent[] {
+  const tag = TAGS[wrapper];
+  if (!tag) return [{ type: wrapper === "italic" ? "emphasis" : "strong", children }];
+  return [{ type: "html", value: `<${tag}>` }, ...children, { type: "html", value: `</${tag}>` }];
+}
 
 const hasMark = (node: Node, name: string) => node.marks.some((mark) => mark.type.name === name);
 
@@ -64,7 +72,7 @@ function toPhrasing(nodes: Node[], done: Wrapper[]): PhrasingContent[] {
     const end = runEnd(nodes, index, wrapper);
     const children = toPhrasing(nodes.slice(index, end), [...done, wrapper]);
     result.push(...leaves(nodes.slice(leafStart, index)));
-    result.push({ type: wrapper === "italic" ? "emphasis" : "strong", children });
+    result.push(...wrapped(wrapper, children));
     index = leafStart = end;
   }
   return [...result, ...leaves(nodes.slice(leafStart))];

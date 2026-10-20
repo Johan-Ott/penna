@@ -6,7 +6,14 @@ import { Fragment, type Node } from "prosemirror-model";
 import { search } from "prosemirror-search";
 import { EditorState, TextSelection, type Command } from "prosemirror-state";
 import { manuscriptSchema as schema } from "../manuscript/schema.js";
-import { insertLineBreak, insertSceneBreak, toggleBold, toggleItalic } from "./commands.js";
+import {
+  insertLineBreak,
+  insertSceneBreak,
+  toggleBold,
+  toggleItalic,
+  toggleStrike,
+  toggleUnderline,
+} from "./commands.js";
 import { autocorrectPlugin, autocorrectRules } from "./autocorrect.js";
 import { completionPlugin } from "./completion.js";
 import { NO_WORDS, type CompletionWords } from "./vocabulary.js";
@@ -103,6 +110,8 @@ const writingKeys = keymap({
   "Shift-Mod-z": always(redo),
   "Mod-b": toggleBold,
   "Mod-i": toggleItalic,
+  "Mod-u": toggleUnderline,
+  "Mod-Shift-x": toggleStrike,
   "Mod-Enter": insertSceneBreak,
   "Shift-Enter": insertLineBreak,
   "Mod-Alt-f": insertFootnote,

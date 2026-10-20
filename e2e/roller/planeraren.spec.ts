@@ -5,7 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 // writes a little, and plans the book in Innehåll with what happens and when.
 
 async function add(page: Page, what: string) {
-  await page.getByRole("button", { name: "Lägg till" }).click();
+  await page.getByRole("button", { name: "Lägg till", exact: true }).click();
   await page.getByRole("menuitem", { name: what }).click();
 }
 

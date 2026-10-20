@@ -157,6 +157,15 @@ export const manuscriptSchema = new Schema({
       ],
       toDOM: () => ["strong", 0],
     },
+    // Markdown has no underline or strikethrough, so they are kept as HTML's <u> and <s>.
+    underline: {
+      parseDOM: [{ tag: "u" }, { style: "text-decoration=underline" }],
+      toDOM: () => ["u", 0],
+    },
+    strike: {
+      parseDOM: [{ tag: "s" }, { tag: "del" }, { tag: "strike" }],
+      toDOM: () => ["s", 0],
+    },
     raw: { inclusive: false, toDOM: () => ["span", { class: "raw-inline" }, 0] },
   },
 });

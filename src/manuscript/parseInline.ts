@@ -30,20 +30,43 @@ function sourceOf(node: PhrasingContent, source: string): string {
   return source.slice(start, end);
 }
 
-/** Inline content Skrivro does not edit (links, code, html) is kept as raw text. */
+// <u> and <s> open underline and strikethrough for what follows them, </u> and </s> close it.
+function tagOf(child: PhrasingContent) {
+  if (child.type !== "html") return null;
+  const parts = /^<(\/?)([us])>$/i.exec(child.value.trim());
+  if (!parts) return null;
+  const mark = parts[2]?.toLowerCase() === "u" ? "underline" : "strike";
+  return { mark, isClose: parts[1] === "/" } as const;
+}
+
+function inlineNode(
+  child: PhrasingContent,
+  source: string,
+  marks: readonly Mark[],
+  notes: FootnoteTexts,
+): Node[] {
+  if (child.type === "text") return textWithNotes(child.value, marks, notes);
+  if (child.type === "break") return [schema.node("lineBreak")];
+  if (child.type === "emphasis" || child.type === "strong") {
+    const markName = child.type === "emphasis" ? "italic" : "bold";
+    return parseInline(child.children, source, schema.mark(markName).addToSet(marks), notes);
+  }
+  return textWithBreaks(sourceOf(child, source), schema.mark("raw").addToSet(marks));
+}
+
+/** Inline content Skrivro does not edit (links, code, other html) is kept as raw text. */
 export function parseInline(
   children: PhrasingContent[],
   source: string,
   marks: readonly Mark[],
   notes: FootnoteTexts,
 ): Node[] {
+  let current = marks;
   return children.flatMap((child) => {
-    if (child.type === "text") return textWithNotes(child.value, marks, notes);
-    if (child.type === "break") return [schema.node("lineBreak")];
-    if (child.type === "emphasis" || child.type === "strong") {
-      const markName = child.type === "emphasis" ? "italic" : "bold";
-      return parseInline(child.children, source, schema.mark(markName).addToSet(marks), notes);
-    }
-    return textWithBreaks(sourceOf(child, source), schema.mark("raw").addToSet(marks));
+    const tag = tagOf(child);
+    if (!tag) return inlineNode(child, source, current, notes);
+    const type = schema.marks[tag.mark];
+    current = tag.isClose ? type.removeFromSet(current) : type.create().addToSet(current);
+    return [];
   });
 }

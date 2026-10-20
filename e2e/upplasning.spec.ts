@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 test("the selected words are read aloud, and the pill stops the reading", async ({ page }) => {
   await selectFirstWord(page);
   await page
-    .getByRole("toolbar", { name: "Markering" })
+    .getByRole("toolbar", { name: "Formatering" })
     .getByRole("button", { name: "Läs upp" })
     .click();
 

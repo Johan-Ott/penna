@@ -151,6 +151,33 @@ select:focus-visible {
   font: italic 14px var(--font-prose);
 }
 
+.icon-button.underline {
+  text-decoration: underline;
+}
+
+.icon-button.strike {
+  text-decoration: line-through;
+}
+
+/* The format row's groups: history, style, alignment, marks, insert and the text's actions, each
+   kept together, with air and a thin line between them. */
+.bar-group {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.selection-bar.fixed {
+  gap: 6px;
+}
+
+.selection-bar.fixed > .bar-group + *,
+.selection-bar.fixed > * + .bar-group {
+  margin-left: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-soft);
+}
+
 .style-picker {
   height: 30px;
   padding: 0 4px;
