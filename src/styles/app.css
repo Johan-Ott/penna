@@ -1988,6 +1988,8 @@ button.book-cover:hover {
   top: -46px;
   right: 0;
   left: 0;
+  box-sizing: border-box;
+  height: 46px;
   z-index: var(--layer-float);
   justify-content: center;
   border: 0;
