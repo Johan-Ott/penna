@@ -1,12 +1,16 @@
 // The store pictures put together: a caption in the website's type over a screen from
-// storeImages.mjs, on the website's paper.
+// storeImages.mjs, on the website's paper. The phone's own five are in phonePictures.mjs.
 import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const font = (file) => pathToFileURL(resolve(`public/fonts/${file}`)).href;
-const dataUrl = (file) => `data:image/png;base64,${readFileSync(file).toString("base64")}`;
-const sheet = (width, height, body) => `<!doctype html><html><head><meta charset="utf-8"><style>
+export const dataUrl = (file) => `data:image/png;base64,${readFileSync(file).toString("base64")}`;
+export const sheet = (
+  width,
+  height,
+  body,
+) => `<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face { font-family: Literata; font-weight: 700; src: url("${font("literata-700-normal.ttf")}"); }
 @font-face { font-family: Literata; font-weight: 400; src: url("${font("literata-400-normal.ttf")}"); }
 html, body { margin: 0; width: ${width}px; height: ${height}px; overflow: hidden; }
@@ -19,20 +23,6 @@ h1 { position: absolute; left: 0; right: 0; margin: 0 auto; text-align: center; 
   background: #111; box-shadow: 0 40px 90px rgba(40, 30, 20, 0.22); }
 .frame img { display: block; width: 100%; }
 </style></head><body>${body}</body></html>`;
-
-// What the screen made, held up in front of the phone: the finished book on Publicera.
-const popOut = (file) =>
-  `<img src="${dataUrl(file)}" style="position:absolute;left:560px;top:1060px;width:440px;
-  transform:rotate(4deg);border-radius:10px;box-shadow:0 50px 90px rgba(40,30,20,0.35)">`;
-
-const phonePicture = (caption, file, extra = "") =>
-  sheet(
-    1080,
-    1920,
-    `<h1 style="top:120px;width:900px;font-size:70px">${caption}</h1>
-  <div class="frame" style="top:340px;width:760px;border:16px solid #111;border-radius:72px">
-  <img style="border-radius:56px" src="${dataUrl(file)}"></div>${extra}`,
-  );
 
 const deskPicture = (caption, file) =>
   sheet(
@@ -67,17 +57,6 @@ export async function compose(browser, lang, shots, raw) {
   for (const [index, [name, swedish, english]] of shots.entries()) {
     const caption = lang === "sv" ? swedish : english;
     const prefix = `${dir}/${index + 1}-${name}`;
-    const phoneSize = { width: 1080, height: 1920 };
-    await render(
-      browser,
-      phonePicture(
-        caption,
-        `${raw}/telefon-${name}.png`,
-        name === "publicera" ? popOut("out/store/omslag.png") : "",
-      ),
-      phoneSize,
-      `${prefix}-telefon.png`,
-    );
     const deskSize = { width: 1920, height: 1080 };
     await render(
       browser,

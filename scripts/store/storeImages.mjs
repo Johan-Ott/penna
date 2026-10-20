@@ -2,6 +2,7 @@
 // on http://127.0.0.1:1420 (npm run dev:web) with the book in showcaseBook.ts instead of the example.
 import { chromium } from "@playwright/test";
 import { mkdirSync } from "node:fs";
+import { composePhone } from "./phonePictures.mjs";
 import { bookCover, compose, playIcon, render } from "./storePictures.mjs";
 
 const APP = "http://127.0.0.1:1420/";
@@ -40,6 +41,8 @@ async function openShowcase(browser, viewport, scale) {
   await page.getByRole("button", { name: "Prova exempelboken" }).click();
   await page.locator(".ProseMirror").waitFor({ state: "attached" });
   await page.waitForTimeout(1200);
+  // An award earned while the example opens is the app's, not the picture's.
+  await page.addStyleTag({ content: ".celebrations { display: none !important; }" });
   return page;
 }
 
@@ -57,40 +60,53 @@ async function capture(page, name, action) {
   await page.screenshot({ path: `${RAW}/${name}.png` });
 }
 
-// A chapter of one scene opens it at once; one of more lists its scenes first.
-async function openFromTree(page, row, names) {
-  for (const name of names) {
-    if (await row(name).isVisible()) await row(name).click();
-    await settle(page);
-  }
-}
-
 async function phone(browser) {
   const page = await openShowcase(browser, { width: 390, height: 844 }, 3);
-  const tab = (name) =>
-    page.getByRole("navigation", { name: "Läge" }).getByRole("button", { name });
-  const row = (name) => page.getByRole("treeitem").filter({ hasText: name }).first();
-  const back = () => page.evaluate(() => globalThis.history.back());
-  await capture(page, "telefon-boken", async () => {});
   await capture(page, "telefon-skriv", () =>
     page.getByRole("button", { name: /Fortsätt skriva/ }).click(),
   );
-  await capture(page, "telefon-anteckning", async () => {
-    await back();
-    await row("Personer").click();
-    await row("Elias").click();
-  });
-  await capture(page, "telefon-granska", async () => {
-    await back();
-    await tab("Boken").click();
-    await openFromTree(page, row, ["Någon annans minne", "Arkivet"]);
-    await page.getByRole("button", { name: /att se över/ }).click();
-  });
-  await capture(page, "telefon-publicera", async () => {
-    await page.getByRole("button", { name: "Stäng granskning" }).click();
-    await tab("Publicera").click();
-    await showCover(page);
-  });
+  await capture(page, "telefon-las", () =>
+    page.getByRole("button", { name: "Läs kapitlet" }).click(),
+  );
+  await page.close();
+}
+
+const keep = (page, selector, name, nth = 0) =>
+  page
+    .locator(selector)
+    .nth(nth)
+    .screenshot({ path: `${RAW}/${name}.png` });
+
+// The paragraphs the phone's pictures lift out of the text, from a phone's narrow column so
+// their words are large.
+async function paragraphs(browser) {
+  const page = await openShowcase(browser, { width: 390, height: 844 }, 3);
+  await open(page, ARKIVET);
+  await settle(page);
+  await keep(page, ".ProseMirror p", "stycke-granska", 1);
+  await open(page, BRON);
+  await settle(page);
+  await keep(page, ".ProseMirror p", "stycke-person");
+  await page.close();
+}
+
+// The cards that go with them, from a window wide enough that Granska stays clear of the text.
+async function cards(browser) {
+  const page = await openShowcase(browser, { width: 2400, height: 900 }, 3);
+  await open(page, ARKIVET);
+  await settle(page);
+  await page
+    .getByRole("button", { name: /^Granska/ })
+    .first()
+    .click();
+  await settle(page);
+  await keep(page, ".review-item:has(.comment-quote)", "kommentar");
+  await page.getByRole("button", { name: "Stäng granskning" }).click();
+  await open(page, BRON);
+  await settle(page);
+  await page.locator(".ProseMirror").getByText("Elias", { exact: true }).first().click();
+  await settle(page);
+  await keep(page, ".mention-card", "person-kort");
   await page.close();
 }
 
@@ -136,10 +152,14 @@ const browser = await chromium.launch();
 await render(browser, bookCover(), { width: 1600, height: 2560 }, COVER);
 if (!process.argv.includes("--bara-bilder")) {
   await phone(browser);
+  await paragraphs(browser);
+  await cards(browser);
   await desk(browser);
 }
-await compose(browser, "sv", SHOTS, RAW);
-await compose(browser, "en", SHOTS, RAW);
+for (const lang of ["sv", "en"]) {
+  await composePhone(browser, lang, RAW);
+  await compose(browser, lang, SHOTS, RAW);
+}
 await render(browser, playIcon(), { width: 512, height: 512 }, "out/store/play-ikon.png");
 await browser.close();
 process.stdout.write("Klart: out/store/sv och out/store/en\n");
