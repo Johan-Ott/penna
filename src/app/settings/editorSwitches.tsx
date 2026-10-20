@@ -16,6 +16,7 @@ export type EditorSwitch =
   | "typography"
   | "autocorrect"
   | "completion"
+  | "formatBar"
   | "review";
 const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
   ["paper", t("Skriv på ett ark"), t("Texten på ett pappersark, med bokens sidor nederst.")],
@@ -30,6 +31,11 @@ const EDITOR_SWITCHES: [EditorSwitch, string, string][] = [
     t("Punktlinjer fram till sidnumret vid varje kapitel, som i en tryckt bok."),
   ],
   ["followOpenText", t("Sidomenyn följer texten"), t("Den fälls ut till texten du öppnar.")],
+  [
+    "formatBar",
+    t("Fast formateringsrad"),
+    t("Fetstil, kursiv och stilar överst hela tiden, inte bara när du markerar."),
+  ],
   [
     "commentsInMargin",
     t("Kommentarer i marginalen"),

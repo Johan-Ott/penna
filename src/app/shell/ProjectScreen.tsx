@@ -166,6 +166,16 @@ function useScreenKeysAndTheme({ app, project }: ScreenProps) {
   useBookTheme(project.fields);
 }
 
+// The screen's look follows Fokus, the sidebar and the format row.
+function screenClasses(writingMode: AppState["writingMode"], isPublishing: boolean) {
+  return [
+    "app",
+    writingMode.isFocusMode && "focus-mode",
+    writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
+    writingMode.settings.formatBar && !isPublishing && "format-bar-on",
+  ];
+}
+
 export function ProjectScreen({ app, project }: ScreenProps) {
   const { writingMode } = app;
   const menu = useAppMenu({ app, project });
@@ -175,11 +185,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   const pageOf = writingMode.settings.tableOfContents
     ? pageFinder(pageMap, project.tree)
     : undefined;
-  const classes = [
-    "app",
-    writingMode.isFocusMode && "focus-mode",
-    writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
-  ];
+  const classes = screenClasses(writingMode, isPublishing);
   return (
     <div className={classes.filter(Boolean).join(" ")}>
       <ScreenTopbar app={app} project={project} {...menu.openers} />

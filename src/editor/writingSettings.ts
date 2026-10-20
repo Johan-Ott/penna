@@ -41,6 +41,9 @@ export interface WritingSettings {
   commentsInMargin: boolean;
   /** The sidebar unfolds to the open text and shows it. */
   followOpenText: boolean;
+  /** Fetstil, kursiv and the styles in a row over the text all the time, as in a word processor,
+   * rather than only over a selection. */
+  formatBar: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -64,6 +67,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   tableOfContents: false,
   commentsInMargin: false,
   followOpenText: true,
+  formatBar: false,
 };
 
 const STORAGE_KEY = "skrivro.writing";
@@ -82,12 +86,14 @@ const WIDTHS: Record<TextWidth, string> = { smal: "520px", normal: "600px", bred
 const isOneOf = <T extends string>(value: unknown, options: Record<T, unknown>): value is T =>
   typeof value === "string" && value in options;
 
+const isSize = (value: unknown) =>
+  typeof value === "number" && value >= MIN_SIZE && value <= MAX_SIZE;
+
 // Each stored value is checked on its own, so one bad value never resets the others.
+// Older settings stored dark as a switch on top of the system theme, read here as Mörkt.
 function validated(stored: Record<string, unknown>): WritingSettings {
   const pick = <K extends keyof WritingSettings>(key: K, isValid: (value: unknown) => boolean) =>
     (isValid(stored[key]) ? stored[key] : DEFAULT_SETTINGS[key]) as WritingSettings[K];
-  const isSize = (value: unknown) =>
-    typeof value === "number" && value >= MIN_SIZE && value <= MAX_SIZE;
   const isBoolean = (value: unknown) => typeof value === "boolean";
   return {
     font: pick("font", (value) => isOneOf(value, FONTS)),
@@ -97,7 +103,6 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     indent: pick("indent", isBoolean),
     focus: pick("focus", (value) => ["av", "mening", "stycke"].includes(value as string)),
     typewriter: pick("typewriter", isBoolean),
-    // Older settings stored dark as a switch on top of the system theme.
     theme:
       stored["darkTheme"] === true ? "mörkt" : pick("theme", (value) => isOneOf(value, THEMES)),
     spellcheck: pick("spellcheck", isBoolean),
@@ -112,6 +117,7 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     tableOfContents: pick("tableOfContents", isBoolean),
     commentsInMargin: pick("commentsInMargin", isBoolean),
     followOpenText: pick("followOpenText", isBoolean),
+    formatBar: pick("formatBar", isBoolean),
   };
 }
 

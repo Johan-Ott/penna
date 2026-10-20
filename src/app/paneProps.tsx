@@ -178,6 +178,7 @@ const selectionBarOf = (app: AppState, project: Project) => (
   <>
     <SelectionBar
       editor={app.editor}
+      isFixed={app.writingMode.settings.formatBar}
       onComment={app.comments.start}
       onReadAloud={speechContext(app, project).readAloud ?? undefined}
     />

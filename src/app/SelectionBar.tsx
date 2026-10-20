@@ -1,4 +1,10 @@
-import { TextSelection, type Command, type EditorState } from "prosemirror-state";
+import {
+  AllSelection,
+  TextSelection,
+  type Command,
+  type EditorState,
+  type Selection,
+} from "prosemirror-state";
 import { useEditorState } from "../editor/editorStore.js";
 import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
@@ -73,18 +79,33 @@ const phoneBarTop = () =>
   BAR_HEIGHT -
   8;
 
+// Under the top bar at the least: a selection that starts above the screen, as Ctrl+A's does,
+// keeps its bar where it can be seen.
+const TOP_ROOM = 56;
+
+// The words chosen, whether dragged over or all of them with Ctrl+A.
+const isChosenText = (selection: Selection | undefined): selection is Selection =>
+  (selection instanceof TextSelection || selection instanceof AllSelection) && !selection.empty;
+
 function barPosition(editor: Editor, isPhone: boolean) {
   const view = editor.viewRef.current;
   const selection = view?.state.selection;
-  if (!view || !(selection instanceof TextSelection) || selection.empty) return null;
+  if (!view || !isChosenText(selection)) return null;
   if (isPhone) return { top: phoneBarTop() };
   const start = view.coordsAtPos(selection.from);
-  if (start.top > BAR_HEIGHT * 2) return { left: start.left, top: start.top - BAR_HEIGHT - 6 };
-  return { left: start.left, top: view.coordsAtPos(selection.to).bottom + 6 };
+  const left = Math.max(start.left, view.dom.getBoundingClientRect().left);
+  if (start.top > BAR_HEIGHT * 2) return { left, top: start.top - BAR_HEIGHT - 6 };
+  if (start.top < TOP_ROOM) return { left, top: TOP_ROOM };
+  return { left, top: view.coordsAtPos(selection.to).bottom + 6 };
 }
+
+const wantedPosition = (editor: Editor, isWanted: boolean, isPhone: boolean) =>
+  isWanted ? barPosition(editor, isPhone) : null;
 
 interface BarProps {
   editor: Editor;
+  /** Shown over the text all the time, as a word processor's row, rather than over a selection. */
+  isFixed?: boolean;
   onComment: () => void;
   /** Left out where the computer has no voice. */
   onReadAloud?: (() => void) | undefined;
@@ -132,12 +153,15 @@ export function SelectionBar(props: BarProps) {
   const editorState = useEditorState(editor);
   const isWanted = useIsBarWanted(editor);
   const isPhone = usePhone();
-  const position = isWanted ? barPosition(editor, isPhone) : null;
+  const isFixed = props.isFixed === true && !isPhone;
+  const position = isFixed ? {} : wantedPosition(editor, isWanted, isPhone);
   if (!position) return null;
   const marks = { editorState, run: editor.run };
   return (
     <div
-      className={isPhone ? "selection-bar phone" : "selection-bar"}
+      className={["selection-bar", isPhone && "phone", isFixed && "fixed"]
+        .filter(Boolean)
+        .join(" ")}
       role="toolbar"
       aria-label={t("Markering")}
       style={position}

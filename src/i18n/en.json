@@ -1445,5 +1445,7 @@
   "Släng lappen": "Throw the note away",
   "Göm lappen": "Hide the note",
   "Lappen slängdes.": "The note was thrown away.",
-  "Skrivro": "Skrivro"
+  "Skrivro": "Skrivro",
+  "Fast formateringsrad": "Fixed formatting row",
+  "Fetstil, kursiv och stilar överst hela tiden, inte bara när du markerar.": "Bold, italic and styles at the top all the time, not only when you select."
 }
