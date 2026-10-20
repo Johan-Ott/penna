@@ -102,7 +102,7 @@ export function EditorTab(props: TabProps) {
       <GroupTitle title={t("Medan du skriver")} />
       <SwitchRows
         {...props}
-        keys={["typewriter", "formatBar", "spellcheck", "typography", "autocorrect", "completion"]}
+        keys={["typewriter", "spellcheck", "typography", "autocorrect", "completion"]}
       />
       <GroupTitle title={t("Granskning")} />
       <SwitchRows {...props} keys={["review", "commentsInMargin"]} />

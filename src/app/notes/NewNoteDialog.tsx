@@ -1,3 +1,4 @@
+import { createStore } from "@llkit/store.js";
 import { useState } from "react";
 import { isLinkedByDefault } from "../../project/cards.js";
 import { CHARACTERS_ID, findNode, sortsOf } from "../../project/tree.js";
@@ -121,8 +122,18 @@ function NoteFields({ form, project }: { form: Form; project: Project }) {
   );
 }
 
+// A name chosen in the text, waiting for the dialog it opens.
+const offeredName = createStore("");
+
+/** Opens Ny anteckning with this name already written, as Gör till anteckning does. */
+export const offerNoteName = offeredName.set;
+
 function useNoteForm(initialSort: string) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => {
+    const offered = offeredName.get();
+    offeredName.set("");
+    return offered;
+  });
   const [sortId, setSortId] = useState(initialSort);
   const [newSort, setNewSort] = useState<string | null>(null);
   const [linkChoice, setLinkChoice] = useState<boolean | null>(null);

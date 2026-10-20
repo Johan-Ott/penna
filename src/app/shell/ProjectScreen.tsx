@@ -172,7 +172,7 @@ function screenClasses(writingMode: AppState["writingMode"], isPublishing: boole
     "app",
     writingMode.isFocusMode && "focus-mode",
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
-    writingMode.settings.formatBar && !isPublishing && "format-bar-on",
+    !isPublishing && "format-bar-on",
   ];
 }
 

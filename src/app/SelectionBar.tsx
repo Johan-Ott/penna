@@ -6,12 +6,11 @@ import {
   type Selection,
 } from "prosemirror-state";
 import { useEditorState } from "../editor/editorStore.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import type { useEditorView } from "../editor/useEditorView.js";
-import { PinIcon, UnpinIcon } from "./AlignButtons.js";
+import { SelectionActions, type SelectionActionProps } from "./SelectionActions.js";
 import {
   BlockChoices,
-  CommentButton,
   HistoryButtons,
   InsertMenu,
   MarkButtons,
@@ -19,14 +18,13 @@ import {
   type FormatActions,
 } from "./FormatButtons.js";
 import { misspelledAtCaret } from "./spelling/Corrections.js";
-import { StylePicker } from "./StylePicker.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
 import { t, formatNumber } from "../i18n/i18n.js";
 
 type Editor = ReturnType<typeof useEditorView>;
 
-const BAR_HEIGHT = 40;
+const BAR_HEIGHT = 46;
 
 function SelectedWords({ editorState }: { editorState: EditorState | null }) {
   if (!editorState) return null;
@@ -95,12 +93,8 @@ const wantedPosition = (editor: Editor, isWanted: boolean, isPhone: boolean) =>
     ? barPosition(editor, isPhone)
     : null;
 
-interface BarProps extends FormatActions {
+interface BarProps extends FormatActions, Omit<SelectionActionProps, "editorState"> {
   editor: Editor;
-  /** Shown over the text all the time, as a word processor's row, rather than over a selection. */
-  isFixed?: boolean;
-  /** Switches between that and floating over a selection; left out where there is no choice. */
-  onToggleFixed?: () => void;
 }
 
 // The phone's own menu over a selection is turned off (MainActivity.kt), so copying is here; the
@@ -120,35 +114,7 @@ const PhoneRow = ({ onComment, editorState, run }: RowProps) => (
   </>
 );
 
-// The row's last button: fixed over the text or floating over a selection, whichever it is not.
-const PinButton = (props: { isFixed: boolean; onToggle: () => void }) => {
-  const label = props.isFixed ? t("Visa raden bara vid markering") : t("Fäst raden överst");
-  return (
-    <button
-      className="icon-button bar-pin"
-      aria-label={label}
-      title={label}
-      onClick={props.onToggle}
-    >
-      {props.isFixed ? <UnpinIcon /> : <PinIcon />}
-    </button>
-  );
-};
-
-const Pin = (props: BarProps & { isFixed: boolean }) =>
-  props.onToggleFixed ? <PinButton isFixed={props.isFixed} onToggle={props.onToggleFixed} /> : null;
-
 type RowProps = BarProps & { editorState: EditorState | null; run: (command: Command) => void };
-
-// Over a selection only what is done to those words: the marks, the style and a comment.
-const FloatingRow = (props: RowProps) => (
-  <>
-    <MarkButtons {...props} />
-    <StylePicker {...props} />
-    <CommentButton onComment={props.onComment} />
-    <Pin {...props} isFixed={false} />
-  </>
-);
 
 // Fixed over the text, everything, as a word processor's row.
 const FixedRow = (props: RowProps) => (
@@ -159,34 +125,50 @@ const FixedRow = (props: RowProps) => (
     <InsertMenu {...props} />
     <TextActions {...props} />
     <SelectedWords editorState={props.editorState} />
-    <Pin {...props} isFixed />
   </>
 );
 
-function RowContent(props: RowProps & { isPhone: boolean; isFixed: boolean }) {
-  if (props.isPhone) return <PhoneRow {...props} />;
-  return props.isFixed ? <FixedRow {...props} /> : <FloatingRow {...props} />;
-}
+// A selection's row: what can be done with the words, as the formatting is in the row above; a
+// phone, with no row above, has its own.
+const FloatingContent = (props: RowProps & { isPhone: boolean }) =>
+  props.isPhone ? <PhoneRow {...props} /> : <SelectionActions {...props} />;
 
-/** The format row: floating over a selection, or fixed over the text when the writer wants it. */
+const Bar = (props: { className: string; label: string; style: object; children: ReactNode }) => (
+  <div
+    className={props.className}
+    role="toolbar"
+    aria-label={props.label}
+    style={props.style}
+    onMouseDown={(event) => event.preventDefault()}
+  >
+    {props.children}
+  </div>
+);
+
+/** The format row fixed over the text, and the row over a selection. */
 export function SelectionBar(props: BarProps) {
   const { editor } = props;
   const editorState = useEditorState(editor);
   const isWanted = useIsBarWanted(editor);
   const isPhone = usePhone();
-  const isFixed = props.isFixed === true && !isPhone;
-  const position = isFixed ? {} : wantedPosition(editor, isWanted, isPhone);
-  if (!position) return null;
-  const classes = ["selection-bar", isPhone && "phone", isFixed && "fixed"];
+  const floating = wantedPosition(editor, isWanted, isPhone);
+  const row = { ...props, editorState, run: editor.run, isPhone };
   return (
-    <div
-      className={classes.filter(Boolean).join(" ")}
-      role="toolbar"
-      aria-label={isFixed ? t("Formatering") : t("Markering")}
-      style={position}
-      onMouseDown={(event) => event.preventDefault()}
-    >
-      <RowContent {...props} {...{ editorState, isPhone, isFixed }} run={editor.run} />
-    </div>
+    <>
+      {!isPhone && (
+        <Bar className="selection-bar fixed" label={t("Formatering")} style={{}}>
+          <FixedRow {...row} />
+        </Bar>
+      )}
+      {floating && (
+        <Bar
+          className={isPhone ? "selection-bar phone" : "selection-bar"}
+          label={t("Markering")}
+          style={floating}
+        >
+          <FloatingContent {...row} />
+        </Bar>
+      )}
+    </>
   );
 }

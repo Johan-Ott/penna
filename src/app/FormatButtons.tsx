@@ -8,6 +8,7 @@ import {
   toggleItalic,
   toggleStrike,
   toggleUnderline,
+  clearFormatting,
   type TextMark,
 } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
@@ -43,9 +44,41 @@ const MARK_FACES: Record<TextMark, string> = {
   strike: "S",
 };
 
-export function MarkButtons({ editorState, run }: { editorState: EditorState | null; run: Run }) {
+const ClearIcon = () => (
+  <Icon size={16}>
+    <path d="M6 5h11" />
+    <path d="M12 5 8 19" />
+    <path d="m15 14 5 5m0-5-5 5" />
+  </Icon>
+);
+
+/** Fet, kursiv, understruken and genomstruken, with Rensa formatering after them. */
+export function MarkButtons(props: {
+  editorState: EditorState | null;
+  run: Run;
+  hasClear?: boolean;
+}) {
+  const clear = t("Rensa formatering");
   return (
     <span className="bar-group" role="group" aria-label={t("Tecken")}>
+      <MarkToggles editorState={props.editorState} run={props.run} />
+      {props.hasClear !== false && (
+        <button
+          className="icon-button"
+          aria-label={clear}
+          title={clear}
+          onClick={() => props.run(clearFormatting)}
+        >
+          <ClearIcon />
+        </button>
+      )}
+    </span>
+  );
+}
+
+function MarkToggles({ editorState, run }: { editorState: EditorState | null; run: Run }) {
+  return (
+    <>
       {MARKS.map(([mark, label, command, keys]) => (
         <button
           key={mark}
@@ -58,7 +91,7 @@ export function MarkButtons({ editorState, run }: { editorState: EditorState | n
           {MARK_FACES[mark]}
         </button>
       ))}
-    </span>
+    </>
   );
 }
 

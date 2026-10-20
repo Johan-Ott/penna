@@ -1,5 +1,4 @@
-import { insertChosenPicture } from "./palette/sceneContext.js";
-import { ClickCorrections } from "./spelling/ClickCorrections.js";
+import { selectionBarOf } from "./selectionBarOf.js";
 import { PersonSecrets, SecretPanel } from "./notes/SecretPanel.js";
 import type { ProjectChange } from "./labels/LabelsDialog.js";
 import { BesidePane } from "./beside/BesidePane.js";
@@ -16,8 +15,6 @@ import { NoteHeader, NoteMentions, noteSortOf, type NotePageProps } from "./note
 import { NoteVoice } from "./notes/NoteVoice.js";
 import { MarginNotes } from "./review/MarginNotes.js";
 import { ReviewLayer } from "./review/ReviewLayer.js";
-import { FootnotePopover } from "./FootnotePopover.js";
-import { SelectionBar } from "./SelectionBar.js";
 import { TextHeader } from "./TextHeader.js";
 import { SceneStrip } from "./phone/SceneStrip.js";
 import { openInHome } from "./notes/noteHomes.js";
@@ -25,7 +22,6 @@ import { SeriesNotes } from "./tree/TreeView.js";
 import type { OpenScene } from "./sceneSession.js";
 import type { Project } from "./useProject.js";
 import { t } from "../i18n/i18n.js";
-import { speechContext } from "./ReadAloud.js";
 
 const openText = (app: AppState) => (id: string) => {
   app.writingMode.setView("skriv");
@@ -174,21 +170,6 @@ function seriesTreeProps(app: AppState, series: Project) {
       void actions.series.notes.setLink(id, isLinked),
   };
 }
-
-const selectionBarOf = (app: AppState, project: Project) => (
-  <>
-    <SelectionBar
-      editor={app.editor}
-      isFixed={app.writingMode.settings.formatBar}
-      onToggleFixed={app.writingMode.toggleFormatBar}
-      onComment={app.comments.start}
-      onReadAloud={speechContext(app, project).readAloud ?? undefined}
-      onInsertPicture={() => void insertChosenPicture(project.dir, app.editor.run)}
-    />
-    <FootnotePopover editor={app.editor} />
-    <ClickCorrections editor={app.editor} onReview={() => app.writingMode.setReviewOpen(true)} />
-  </>
-);
 
 export function writingAreaProps(app: AppState, project: Project) {
   return {

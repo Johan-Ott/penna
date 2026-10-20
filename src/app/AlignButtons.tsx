@@ -22,23 +22,6 @@ const AlignCenterIcon = () => (
   </Icon>
 );
 
-/** The row fixed over the text. */
-export const PinIcon = () => (
-  <Icon size={16}>
-    <path d="M9 4h6l-1 5 3 3H7l3-3z" />
-    <path d="M12 12v8" />
-  </Icon>
-);
-
-/** The row let go, to float over a selection. */
-export const UnpinIcon = () => (
-  <Icon size={16}>
-    <path d="M9 4h6l-1 5 3 3H7l3-3z" />
-    <path d="M12 12v8" />
-    <path d="M4 4l16 16" />
-  </Icon>
-);
-
 const AlignRightIcon = () => (
   <Icon size={16}>
     <path d="M4 7h16" />

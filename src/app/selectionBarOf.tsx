@@ -1,0 +1,30 @@
+import type { AppState } from "./App.js";
+import { FootnotePopover } from "./FootnotePopover.js";
+import { offerNoteName } from "./notes/NewNoteDialog.js";
+import { insertChosenPicture } from "./palette/sceneContext.js";
+import { speechContext } from "./ReadAloud.js";
+import { SelectionBar } from "./SelectionBar.js";
+import { ClickCorrections } from "./spelling/ClickCorrections.js";
+import type { Project } from "./useProject.js";
+
+// What stands over the text while writing: the format row, a footnote's text and a click's help.
+export const selectionBarOf = (app: AppState, project: Project) => (
+  <>
+    <SelectionBar
+      editor={app.editor}
+      onComment={app.comments.start}
+      onReadAloud={speechContext(app, project).readAloud ?? undefined}
+      onInsertPicture={() => void insertChosenPicture(project.dir, app.editor.run)}
+      onSearchBook={(text) => {
+        app.search.scope.setOn(true);
+        app.writingMode.openSearchWith(text);
+      }}
+      onMakeNote={(name) => {
+        offerNoteName(name);
+        app.setNewNoteSort(null);
+      }}
+    />
+    <FootnotePopover editor={app.editor} />
+    <ClickCorrections editor={app.editor} onReview={() => app.writingMode.setReviewOpen(true)} />
+  </>
+);

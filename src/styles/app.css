@@ -167,12 +167,27 @@ select:focus-visible {
   align-items: center;
 }
 
-.selection-bar.fixed {
-  gap: 6px;
+/* Each button's icon or letter in its middle, so letters and drawn icons line up across the row. */
+.selection-bar .icon-button,
+.selection-bar .style-picker,
+.selection-bar .selection-words {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
-.selection-bar.fixed > .bar-group + *,
-.selection-bar.fixed > * + .bar-group {
+.selection-bar .icon-button svg {
+  display: block;
+}
+
+.selection-bar:not(.phone) {
+  gap: 6px;
+  padding: 4px 6px;
+}
+
+.selection-bar:not(.phone) > .bar-group + *,
+.selection-bar:not(.phone) > * + .bar-group {
   margin-left: 4px;
   padding-left: 10px;
   border-left: 1px solid var(--border-soft);

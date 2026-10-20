@@ -41,9 +41,6 @@ export interface WritingSettings {
   commentsInMargin: boolean;
   /** The sidebar unfolds to the open text and shows it. */
   followOpenText: boolean;
-  /** Fetstil, kursiv and the styles in a row over the text all the time, as in a word processor,
-   * rather than only over a selection. */
-  formatBar: boolean;
 }
 
 export const DEFAULT_SETTINGS: WritingSettings = {
@@ -67,7 +64,6 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   tableOfContents: false,
   commentsInMargin: false,
   followOpenText: true,
-  formatBar: true,
 };
 
 const STORAGE_KEY = "skrivro.writing";
@@ -117,7 +113,6 @@ function validated(stored: Record<string, unknown>): WritingSettings {
     tableOfContents: pick("tableOfContents", isBoolean),
     commentsInMargin: pick("commentsInMargin", isBoolean),
     followOpenText: pick("followOpenText", isBoolean),
-    formatBar: pick("formatBar", isBoolean),
   };
 }
 
