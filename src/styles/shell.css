@@ -245,6 +245,38 @@
   }
 }
 
+.palette-button {
+  gap: 8px;
+  width: auto;
+  padding: 0 6px 0 8px;
+  border: 1px solid var(--border-control);
+  color: var(--text-dim);
+}
+
+.palette-button kbd {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.palette-label {
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 1100px) {
+  .palette-label {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .palette-button kbd {
+    display: none;
+  }
+}
+
 .day-progress-bar {
   width: 96px;
   height: 3px;

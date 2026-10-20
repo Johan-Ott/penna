@@ -6,7 +6,7 @@ import { DayProgress } from "./DayProgress.js";
 import type { MouseEvent, ReactNode } from "react";
 import type { Today } from "../useWritingStats.js";
 import type { View } from "../useWritingMode.js";
-import { IconButton } from "./IconButton.js";
+import { IconButton, PaletteButton } from "./IconButton.js";
 import { t } from "../../i18n/i18n.js";
 import {
   BackIcon,
@@ -17,7 +17,6 @@ import {
   PenIcon,
   ReadIcon,
   ReviewIcon,
-  SearchIcon,
   SidebarIcon,
 } from "./icons.js";
 
@@ -159,9 +158,7 @@ function TopbarEnd(props: TopbarProps) {
       >
         <ReadIcon />
       </IconButton>
-      <IconButton label={t("Sök")} shortcut="palette" onClick={props.onSearch}>
-        <SearchIcon />
-      </IconButton>
+      <PaletteButton onSearch={props.onSearch} />
       <IconButton
         label={t("Fokusläge")}
         shortcut="focus"

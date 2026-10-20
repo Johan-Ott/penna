@@ -287,7 +287,7 @@ body .selection-bar.phone .icon-button {
   flex-shrink: 0;
   min-height: 0;
   height: 36px;
-  padding: 0 10px;
+  padding: 0 8px;
   font-size: 14px;
   white-space: nowrap;
   color: var(--on-primary);

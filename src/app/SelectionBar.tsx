@@ -97,19 +97,19 @@ interface BarProps extends FormatActions, Omit<SelectionActionProps, "editorStat
   editor: Editor;
 }
 
-// The phone's own menu over a selection is turned off (MainActivity.kt), so copying is here; the
-// footnote is in the tools over the keyboard.
+// The phone's own menu over a selection is turned off (MainActivity.kt), so copying is here, after
+// what only Skrivro does; the footnote is in the tools over the keyboard.
 const PhoneRow = ({ onComment, editorState, run }: RowProps) => (
   <>
-    <MarkButtons editorState={editorState} run={run} />
+    <MarkButtons editorState={editorState} run={run} hasClear={false} />
+    <button className="icon-button" onClick={onComment}>
+      {t("Kommentera")}
+    </button>
     <button className="icon-button" onClick={() => document.execCommand("copy")}>
       {t("Kopiera")}
     </button>
     <button className="icon-button" onClick={() => document.execCommand("cut")}>
       {t("Klipp ut")}
-    </button>
-    <button className="icon-button" onClick={onComment}>
-      {t("Kommentera")}
     </button>
   </>
 );
