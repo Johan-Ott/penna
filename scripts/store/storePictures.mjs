@@ -11,8 +11,8 @@ const sheet = (width, height, body) => `<!doctype html><html><head><meta charset
 @font-face { font-family: Literata; font-weight: 400; src: url("${font("literata-400-normal.ttf")}"); }
 html, body { margin: 0; width: ${width}px; height: ${height}px; overflow: hidden; }
 body { position: relative; font-family: Literata, Georgia, serif; color: #111;
-  background: radial-gradient(circle at 12% 8%, #ffe4d6 0, transparent 38%),
-    radial-gradient(circle at 92% 30%, #dcecff 0, transparent 40%), #fbf9f5; }
+  background: radial-gradient(circle at 12% 8%, #f6e3d4 0, transparent 38%),
+    radial-gradient(circle at 92% 30%, #e9ece8 0, transparent 40%), #fbf9f5; }
 h1 { position: absolute; left: 0; right: 0; margin: 0 auto; text-align: center; font-weight: 700;
   letter-spacing: -0.01em; line-height: 1.15; }
 .frame { position: absolute; left: 50%; transform: translateX(-50%); overflow: hidden;

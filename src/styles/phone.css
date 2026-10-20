@@ -128,7 +128,8 @@
 }
 
 .phone-continue-where {
-  color: var(--text-dim);
+  color: var(--on-primary);
+  opacity: 0.85;
   font-size: 12px;
   font-weight: 400;
 }

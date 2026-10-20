@@ -20,7 +20,7 @@
   --bg-subtle: #f6f5f2;
   --bg-panel: #faf9f6;
   --surface-hover: #eeede9;
-  --surface-selected: #e6e4df;
+  --surface-selected: #dbeae2;
   --border: #e7e5e1;
   --border-soft: #efeeea;
   --border-control: #dfddd8;
@@ -33,15 +33,17 @@
   --text-muted: #5c5c5c;
   --text-label: #6b6b6b;
   --text-dim: #c4c1bb;
-  --primary: #d9442a;
+  --primary: #0e6b4f;
   --on-primary: #ffffff;
   --match: #eceae6;
   --match-current: #d6d3cd;
-  --selection: #dedbd5;
+  --selection: #cfe6d9;
   --paper: #fbfaf7;
-  --accent: #3f6b4e;
+  --accent: #0e6b4f;
+  /* The warm second colour: the day's words and the logo's wave, never a button. */
+  --copper: #c4703f;
   --danger: #c62828;
-  --focus-ring: rgba(17, 17, 17, 0.12);
+  --focus-ring: rgba(14, 107, 79, 0.2);
   --status-utkast: #b5b5b5;
   --status-redigering: #6b6b6b;
   --status-klar: #2a2a2a;
@@ -57,10 +59,10 @@
   --shadow-high: 0 18px 48px rgba(0, 0, 0, 0.16);
   /* Framsteg's map of the last weeks, from no words to more than the goal. */
   --heat-0: #efeeea;
-  --heat-1: #d2cfc9;
-  --heat-2: #9c9892;
-  --heat-3: #5c5a56;
-  --heat-4: #111111;
+  --heat-1: #c6e3d3;
+  --heat-2: #7fc0a0;
+  --heat-3: #2f8d64;
+  --heat-4: #0e6b4f;
 
   color-scheme: light;
 }
@@ -84,13 +86,14 @@
   --text-muted: #a29e98;
   --text-label: #9c9892;
   --text-dim: #4a4844;
-  --primary: #ff7a52;
+  --primary: #7fd3a8;
   --on-primary: #191816;
   --match: #33312e;
   --match-current: #4a4844;
   --selection: #3a3835;
   --paper: #1e1d1b;
-  --accent: #7fae8d;
+  --accent: #7fd3a8;
+  --copper: #e08a5a;
   --danger: #ef7a7a;
   --focus-ring: rgba(242, 240, 235, 0.15);
   --status-utkast: #6a6a6a;

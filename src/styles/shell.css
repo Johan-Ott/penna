@@ -256,7 +256,7 @@
   display: block;
   height: 3px;
   border-radius: 2px;
-  background: var(--primary);
+  background: var(--copper);
 }
 
 .topbar-title {
