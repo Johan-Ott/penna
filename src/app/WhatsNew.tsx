@@ -20,7 +20,7 @@ export function Changes({ notes }: { notes: string }) {
   );
 }
 
-const SEEN = "penna.seenVersion";
+const SEEN = "skrivro.seenVersion";
 
 // Read once when Skrivro starts: a fresh install has nothing to tell, an update does.
 const updatedFrom = browserStorage().getItem(SEEN);
@@ -33,7 +33,7 @@ function useNotes(isShown: boolean) {
   const [notes, setNotes] = useState(() => keptNotes(__APP_VERSION__));
   useEffect(() => {
     if (!isShown || notes) return;
-    const release = `https://api.github.com/repos/Johan-Ott/penna/releases/tags/v${__APP_VERSION__}`;
+    const release = `https://api.github.com/repos/Johan-Ott/skrivro/releases/tags/v${__APP_VERSION__}`;
     void platform
       .webFetch(release)
       .then((response) => (response.ok ? response.json() : null))

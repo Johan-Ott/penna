@@ -18,7 +18,7 @@
 1. **GitHub-hemlighet:** repo → Settings → Secrets → Actions → `TAURI_SIGNING_PRIVATE_KEY` med
    innehållet i `~/.tauri/penna-updater.key`. Lösenordet är tomt. Säkerhetskopiera nyckelfilen.
 2. **Repot publikt eller en egen adress för uppdateringar.** Appen läser
-   `https://github.com/Johan-Ott/penna/releases/latest/download/latest.json`. Är repot privat
+   `https://github.com/Johan-Ott/skrivro/releases/latest/download/latest.json`. Är repot privat
    når appen den inte; då behövs ett publikt repo bara för släpp, eller en annan adress i
    `tauri.conf.json` under `plugins.updater.endpoints`.
 3. **Kodsignering**

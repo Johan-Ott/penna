@@ -40,7 +40,7 @@ interface SprintState {
   isPanelOpen: boolean;
 }
 
-const PLAN_KEY = "penna.sprint";
+const PLAN_KEY = "skrivro.sprint";
 export const DEFAULT_PLAN: SprintPlan = { session: 25, shortBreak: 5, longBreak: 15, rounds: 2 };
 
 function savedPlan(): SprintPlan {

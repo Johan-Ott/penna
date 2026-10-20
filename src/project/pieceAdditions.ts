@@ -5,7 +5,7 @@ import { templatePieces, type BookTemplate } from "./templates.js";
 import { insertNode, type TreeNode } from "./tree.js";
 
 // Pieces added to a book that already exists: what it lacks of their notes, labels and chapters.
-// Mallar och bitar and `penna.mjs pieces` both add them through here.
+// Mallar och bitar and `skrivro.mjs pieces` both add them through here.
 
 export interface Additions {
   sorts: string[];

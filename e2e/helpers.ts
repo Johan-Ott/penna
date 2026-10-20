@@ -3,8 +3,8 @@ import { expect, type Page } from "@playwright/test";
 /** Opens the example book "Vintervägen" with its first scene in the editor. */
 export async function openExample(page: Page) {
   await page.addInitScript(() => {
-    if (!localStorage.getItem("penna.app")) {
-      localStorage.setItem("penna.app", JSON.stringify({ isOnboardingDone: true }));
+    if (!localStorage.getItem("skrivro.app")) {
+      localStorage.setItem("skrivro.app", JSON.stringify({ isOnboardingDone: true }));
     }
   });
   await page.goto("/", { waitUntil: "domcontentloaded" });

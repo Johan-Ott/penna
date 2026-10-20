@@ -11,12 +11,13 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { invoke } from "@tauri-apps/api/core";
 import type { FileSystem } from "./fileSystem.js";
+import { TEMP_SUFFIX } from "./atomicWrite.js";
 
 export const tauriFileSystem: FileSystem = {
   readText: (path) => readTextFile(path),
   // A temp file goes all the way to the disk before writeAtomic renames it over the real file.
   writeText: (path, text) =>
-    path.endsWith(".penna-tmp")
+    path.endsWith(TEMP_SUFFIX)
       ? invoke("write_temp_text", { path, text })
       : writeTextFile(path, text),
   readBytes: (path) => readFile(path),

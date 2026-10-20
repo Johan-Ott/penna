@@ -13,7 +13,7 @@ describe("createBookFromOutline", () => {
     const created = await createBookFromOutline(files, "/Skrivro", { title: "Vardhavn" }, outline);
 
     const project = await readProjectFile(files, created.dir, []);
-    expect(created.dir).toBe("/Skrivro/Vardhavn.penna");
+    expect(created.dir).toBe("/Skrivro/Vardhavn.skrivro");
     expect(project.fields).toMatchObject({ title: "Vardhavn", type: "roman" });
     const [part] = project.tree;
     expect(part).toMatchObject({ kind: "part", title: "Akt 1" });

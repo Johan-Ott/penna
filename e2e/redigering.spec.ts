@@ -11,9 +11,9 @@ async function editorsFile(folder: string) {
   const paragraph = (text: string, marks: { start?: boolean; end?: boolean } = {}) =>
     new Paragraph({
       children: [
-        ...(marks.start ? [new Bookmark({ id: `penna_${KOKET}`, children: [] })] : []),
+        ...(marks.start ? [new Bookmark({ id: `skrivro_${KOKET}`, children: [] })] : []),
         new TextRun(text),
-        ...(marks.end ? [new Bookmark({ id: `pennaend_${KOKET}`, children: [] })] : []),
+        ...(marks.end ? [new Bookmark({ id: `skrivroend_${KOKET}`, children: [] })] : []),
       ],
     });
   const doc = new Document({
@@ -77,14 +77,14 @@ async function readersFile(folder: string) {
         children: [
           new Paragraph({
             children: [
-              new Bookmark({ id: `penna_${KOKET}`, children: [] }),
+              new Bookmark({ id: `skrivro_${KOKET}`, children: [] }),
               new TextRun("Brevet låg på köksbordet när Elin kom in från kylan. "),
               new CommentRangeStart(0),
               new TextRun("Kuvertet"),
               new CommentRangeEnd(0),
               new TextRun({ children: [new CommentReference(0)] }),
               new TextRun(" var gult av ålder."),
-              new Bookmark({ id: `pennaend_${KOKET}`, children: [] }),
+              new Bookmark({ id: `skrivroend_${KOKET}`, children: [] }),
             ],
           }),
         ],

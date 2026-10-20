@@ -1,6 +1,6 @@
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { scenePath } from "../storage/sceneId.js";
-import { parentOf } from "./libraryFolders.js";
+import { parentOf, withoutBookSuffix } from "./libraryFolders.js";
 import { projectFolderName } from "./newProject.js";
 import { writeProjectFile } from "./projectFile.js";
 import { connectionsOf, withConnection } from "./connections.js";
@@ -24,7 +24,7 @@ export async function listSeries(fileSystem: FileSystem, dir: string) {
 /** "Isen.serie", "Isen 2.serie", and so on. */
 export async function createSeries(fileSystem: FileSystem, dir: string, title: string) {
   const taken = new Set(await fileSystem.list(dir));
-  const base = projectFolderName(title).replace(/\.penna$/, "");
+  const base = withoutBookSuffix(projectFolderName(title));
   let folder = `${base}${SUFFIX}`;
   for (let number = 2; taken.has(folder); number++) folder = `${base} ${number}${SUFFIX}`;
   const seriesDir = joinPath(dir, folder);

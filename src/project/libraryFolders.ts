@@ -40,3 +40,8 @@ export function libraryCandidates({ home, documents }: KnownFolders): LibraryCan
 }
 
 export const parentOf = (path: string) => path.slice(0, path.lastIndexOf("/"));
+
+/** A book is a folder ending in .skrivro; books made while the app was called Penna end in .penna. */
+export const BOOK_SUFFIX = ".skrivro";
+export const withoutBookSuffix = (name: string) => name.replace(/\.(skrivro|penna)$/, "");
+export const isBookFolder = (name: string) => withoutBookSuffix(name) !== name;

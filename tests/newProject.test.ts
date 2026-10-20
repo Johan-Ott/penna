@@ -9,9 +9,9 @@ import { openProjectFolder } from "../src/storage/projectFolder";
 
 describe("projectFolderName", () => {
   it("turns a title into a folder name that works on every system", () => {
-    expect(projectFolderName("Vintervägen")).toBe("Vintervägen.penna");
-    expect(projectFolderName('Del 1: "Isen"?')).toBe("Del 1 Isen.penna");
-    expect(projectFolderName("   ")).toBe("Namnlöst projekt.penna");
+    expect(projectFolderName("Vintervägen")).toBe("Vintervägen.skrivro");
+    expect(projectFolderName('Del 1: "Isen"?')).toBe("Del 1 Isen.skrivro");
+    expect(projectFolderName("   ")).toBe("Namnlöst projekt.skrivro");
   });
 });
 
@@ -41,7 +41,7 @@ describe("createProject", () => {
     const created = await createProject(files, "/Skrivro", details);
 
     const project = await readProjectFile(files, created.dir, []);
-    expect(created.dir).toBe("/Skrivro/Vintervägen.penna");
+    expect(created.dir).toBe("/Skrivro/Vintervägen.skrivro");
     expect(project.fields).toMatchObject({ title: "Vintervägen", type: "roman", dailyGoal: 1000 });
     expect(manuscriptSceneIds(project.tree)).toEqual([]);
     expect(project.fields["welcome"]).toBe(created.sceneId);
@@ -149,12 +149,12 @@ describe("createProject", () => {
   });
 
   it("never writes into an existing project with the same name", async () => {
-    const files = createMemoryFileSystem({ "/Skrivro/Vintervägen.penna/project.json": "{}" });
+    const files = createMemoryFileSystem({ "/Skrivro/Vintervägen.skrivro/project.json": "{}" });
 
     const created = await createProject(files, "/Skrivro", details);
 
-    expect(created.dir).toBe("/Skrivro/Vintervägen 2.penna");
-    expect(await files.readText("/Skrivro/Vintervägen.penna/project.json")).toBe("{}");
+    expect(created.dir).toBe("/Skrivro/Vintervägen 2.skrivro");
+    expect(await files.readText("/Skrivro/Vintervägen.skrivro/project.json")).toBe("{}");
   });
 
   it("writes an imported book as scene files under its parts and chapters", async () => {
@@ -177,7 +177,7 @@ describe("createProject", () => {
 
     const dir = await copyExampleProject(files, "/Skrivro");
 
-    expect(dir).toBe("/Skrivro/Vintervägen.penna");
+    expect(dir).toBe("/Skrivro/Vintervägen.skrivro");
     expect((await openProjectFolder(files, dir)).scenes.length).toBeGreaterThan(0);
   });
 });

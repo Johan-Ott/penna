@@ -28,9 +28,9 @@ execFileSync("npx", ["tauri build --no-bundle"], {
   env: { ...process.env, PENNA_STORE: "1" },
 });
 
-const dir = mkdtempSync(join(tmpdir(), "penna-store-"));
+const dir = mkdtempSync(join(tmpdir(), "skrivro-store-"));
 mkdirSync(join(dir, "Assets"));
-copyFileSync("src-tauri/target/release/penna.exe", join(dir, "penna.exe"));
+copyFileSync("src-tauri/target/release/skrivro.exe", join(dir, "skrivro.exe"));
 const icons = join(dir, "icons");
 execFileSync("npx", ["tauri", "icon", "src-tauri/icons/icon-source.png", "-o", icons], {
   stdio: "ignore",
@@ -61,7 +61,7 @@ writeFileSync(
     <Resource Language="en-US" />
   </Resources>
   <Applications>
-    <Application Id="Skrivro" Executable="penna.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="Skrivro" Executable="skrivro.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="${store.displayName}" Description="${store.displayName}"
         BackgroundColor="transparent" Square150x150Logo="Assets\\Square150x150Logo.png"
         Square44x44Logo="Assets\\Square44x44Logo.png" />

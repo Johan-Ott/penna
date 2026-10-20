@@ -7,6 +7,7 @@ import { scenePath } from "../storage/sceneId.js";
 import { openProjectFolder } from "../storage/projectFolder.js";
 import { readSceneSummaries, type SceneSummary } from "./sceneSummaries.js";
 import { seriesTitle } from "./series.js";
+import { isBookFolder, withoutBookSuffix } from "./libraryFolders.js";
 import { manuscriptSceneIds, type TreeNode } from "./tree.js";
 import { t } from "../i18n/i18n.js";
 
@@ -90,7 +91,7 @@ export function whenUpdated(time: number, now: number): string {
   });
 }
 
-export const folderTitle = (dir: string) => (dir.split("/").pop() ?? dir).replace(/\.penna$/, "");
+export const folderTitle = (dir: string) => withoutBookSuffix(dir.split("/").pop() ?? dir);
 
 const NO_FIELDS = {
   title: undefined,
@@ -196,7 +197,7 @@ export async function readShelf(
 ) {
   const inLibrary = libraryDir
     ? (await fileSystem.list(libraryDir))
-        .filter((name) => name.endsWith(".penna"))
+        .filter(isBookFolder)
         .map((name) => joinPath(libraryDir, name))
     : [];
   const dirs = [...new Set([...inLibrary, ...knownDirs])];

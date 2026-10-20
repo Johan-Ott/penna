@@ -11,10 +11,10 @@ så ingen säkerhetsgranskning krävs, bara varumärkesverifiering.
 - **OAuth consent screen → Publishing status:** Testing → **In production**.
 - **App name:** Skrivro
 - **User support email och Developer contact:** johan.lonelodge@gmail.com
-- **App logo:** `site/penna-logo.png` (120 × 120 px eller större, kvadratisk)
-- **Application home page:** https://johan-ott.github.io/penna/
-- **Privacy policy:** https://johan-ott.github.io/penna/integritet.html
-- **Terms of service:** https://johan-ott.github.io/penna/villkor.html
+- **App logo:** `site/skrivro-logo.png` (120 × 120 px eller större, kvadratisk)
+- **Application home page:** https://johan-ott.github.io/skrivro/
+- **Privacy policy:** https://johan-ott.github.io/skrivro/integritet.html
+- **Terms of service:** https://johan-ott.github.io/skrivro/villkor.html
 - **Authorized domains:** `johan-ott.github.io`. Domänen verifieras i Google Search Console
   med en HTML-tagg i `site/index.html`.
 - **Scopes:** endast `.../auth/drive.file`.
@@ -108,8 +108,8 @@ Skrivro is also available for Windows and is free during the beta.
 ### Övrigt i Play Console
 
 - **Kategori:** Produktivitet. **Taggar:** Skrivande, Anteckningar, Dokument.
-- **Kontakt:** johan.lonelodge@gmail.com, webbplats https://johan-ott.github.io/penna/
-- **Integritetspolicy:** https://johan-ott.github.io/penna/integritet.html
+- **Kontakt:** johan.lonelodge@gmail.com, webbplats https://johan-ott.github.io/skrivro/
+- **Integritetspolicy:** https://johan-ott.github.io/skrivro/integritet.html
 - **Annonser:** Nej.
 - **Appåtkomst:** Alla funktioner finns utan inloggning (inloggning behövs bara för synk).
 - **Innehållsklassning (IARC):** Verktyg/produktivitet; inget våld, inga köp, ingen chatt
@@ -125,7 +125,7 @@ Play räknar allt som lämnar telefonen som insamlat, även till användarens eg
   delat, inte tillfälligt, **valfritt** (bara med synk påslagen), syfte **App functionality**.
 - **Krypterat under överföring:** Ja. **Konton:** appen skapar inga egna; inloggning med eget
   Google-konto (Other).
-- **Radering:** Ja, med steg på https://johan-ott.github.io/penna/privacy.html#delete
+- **Radering:** Ja, med steg på https://johan-ott.github.io/skrivro/privacy.html#delete
 - Felrapporter skickas bara när användaren själv mejlar dem, så de räknas inte.
 
 ## Microsoft Store (Partner Center)
@@ -137,7 +137,7 @@ Play räknar allt som lämnar telefonen som insamlat, även till användarens eg
 - Bygg sedan: `npm run build:store` → MSIX-filen att ladda upp. Store signerar den, så
   SmartScreen-varningen försvinner.
 - **Pris:** Gratis. **Kategori:** Produktivitet.
-- **Integritetspolicy:** https://johan-ott.github.io/penna/integritet.html
+- **Integritetspolicy:** https://johan-ott.github.io/skrivro/integritet.html
 - **Ålder:** IARC-frågorna besvaras som för Play → 3+.
 - **Beskrivning:** samma texter som för Play.
 - **Kraschdata:** Partner Center visar krascher för Store-appen utan kod i Skrivro.

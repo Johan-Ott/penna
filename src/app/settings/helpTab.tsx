@@ -4,7 +4,7 @@ import { platform } from "../platform.js";
 
 /** Nytt i Skrivro on the website, in the language Skrivro is shown in. */
 export const newsPage = () =>
-  `https://johan-ott.github.io/penna/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
+  `https://johan-ott.github.io/skrivro/${uiLanguage() === "en" ? "news.html" : "nytt.html"}`;
 
 // Short, for testers and new writers: where the book is, how it is kept safe, and what is missing.
 const SECTIONS: [string, string[]][] = [

@@ -73,7 +73,8 @@ test("the tabs go to Innehåll and Publicera, and back to Boken", async ({ page 
 });
 
 test("Android's back leaves Studio, then goes from Publicera to Innehåll", async ({ page }) => {
-  const back = () => page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
+  const back = () =>
+    page.evaluate(() => (window as { skrivroBack?: () => boolean }).skrivroBack?.());
   await page.getByRole("button", { name: "Innehåll" }).click();
   await page.getByRole("button", { name: "Publicera" }).click();
   await page.getByRole("button", { name: /Studio/ }).click();
@@ -91,7 +92,7 @@ test("Android's back closes Granska and stays in the text", async ({ page }) => 
   await page.getByRole("button", { name: /att se över/ }).click();
   await expect(page.locator(".review-panel.open")).toBeVisible();
 
-  await page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
+  await page.evaluate(() => (window as { skrivroBack?: () => boolean }).skrivroBack?.());
 
   await expect(page.locator(".review-panel.open")).toHaveCount(0);
   await expect(editor(page)).toBeVisible();

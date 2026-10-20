@@ -27,7 +27,7 @@ const innerBack = () =>
     .pop();
 
 /** Android's back: closes what lies on top, else the screen before; false when there is none. */
-function pennaBack(depth: number) {
+function skrivroBack(depth: number) {
   const layers = openLayers();
   const inner = innerBack();
   if (layers === 0 && inner) {
@@ -54,9 +54,9 @@ function pennaBack(depth: number) {
 
 // Outside a book, on the shelf and in the first steps, back still closes what lies on top or goes
 // one step back; with nothing left it leaves Skrivro, as Android expects.
-type BackPage = { pennaBack?: () => boolean };
-const outsideBook = () => pennaBack(1);
-(window as BackPage).pennaBack = outsideBook;
+type BackPage = { skrivroBack?: () => boolean };
+const outsideBook = () => skrivroBack(1);
+(window as BackPage).skrivroBack = outsideBook;
 
 /** Each screen is a history entry, so Android's back button returns to the screen before. */
 export function usePhoneNavigation() {
@@ -68,7 +68,7 @@ export function usePhoneNavigation() {
     return () => window.removeEventListener("popstate", onBack);
   }, []);
   const show = useCallback((screen: PhoneScreen) => {
-    window.history.pushState({ penna: screen.kind }, "");
+    window.history.pushState({ skrivro: screen.kind }, "");
     setStack((current) => [...current, screen]);
     requestAnimationFrame(toTop);
   }, []);
@@ -76,8 +76,8 @@ export function usePhoneNavigation() {
   useEffect(() => {
     const depth = stack.length;
     const page = window as BackPage;
-    page.pennaBack = () => pennaBack(depth);
-    return () => void (page.pennaBack = outsideBook);
+    page.skrivroBack = () => skrivroBack(depth);
+    return () => void (page.skrivroBack = outsideBook);
   }, [stack.length]);
   const screen = stack[stack.length - 1] ?? { kind: "book" };
   return { screen, depth: stack.length, show, back };

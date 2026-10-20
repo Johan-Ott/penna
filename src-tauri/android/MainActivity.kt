@@ -73,7 +73,7 @@ class MainActivity : TauriActivity() {
   private val back = object : OnBackPressedCallback(true) {
     override fun handleOnBackPressed() {
       val view = webView ?: return run { moveTaskToBack(true) }
-      view.evaluateJavascript("window.pennaBack ? window.pennaBack() : false") { handled ->
+      view.evaluateJavascript("window.skrivroBack ? window.skrivroBack() : false") { handled ->
         if (handled != "true") moveTaskToBack(true)
       }
     }

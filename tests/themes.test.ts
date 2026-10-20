@@ -33,7 +33,7 @@ describe("themes", () => {
     expect(contrast("#777777", "#ffffff")).toBeCloseTo(4.48, 1);
   });
 
-  it("keeps a theme the same through a .pennatema file", () => {
+  it("keeps a theme the same through a .skrivrotema file", () => {
     expect(themeFrom(JSON.parse(themeFileText(START_OWN)))).toEqual(START_OWN);
   });
 });

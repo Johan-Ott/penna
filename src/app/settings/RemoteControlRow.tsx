@@ -12,7 +12,7 @@ export function useRemoteState() {
   return remote ? { state, flip } : null;
 }
 
-/** Styr Skrivro från den här datorn: for scripts/penna.mjs and Claude Code, for one start. */
+/** Styr Skrivro från den här datorn: for scripts/skrivro.mjs and Claude Code, for one start. */
 export function RemoteControlRow() {
   const remote = useRemoteState();
   if (!remote) return null;

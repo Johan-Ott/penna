@@ -4,7 +4,7 @@ import { openExample, selectFirstWord } from "./helpers";
 test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 820 });
   await page.addInitScript(() =>
-    localStorage.setItem("penna.writing", JSON.stringify({ commentsInMargin: true })),
+    localStorage.setItem("skrivro.writing", JSON.stringify({ commentsInMargin: true })),
   );
   await openExample(page);
 });

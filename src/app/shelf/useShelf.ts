@@ -4,7 +4,7 @@ import { platform } from "../platform.js";
 
 // Reading every scene of every book takes seconds for long books, so the shelf as last read is
 // shown at once and replaced when the books are read again.
-const CACHE_KEY = "penna.shelf";
+const CACHE_KEY = "skrivro.shelf";
 
 function cachedShelf(libraryDir: string | null): ShelfBook[] | null {
   try {

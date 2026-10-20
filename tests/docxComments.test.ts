@@ -15,11 +15,11 @@ const run = (text: string) => `<w:r><w:t xml:space="preserve">${text}</w:t></w:r
 describe("docxComments", () => {
   it("finds each comment's scene, its words and what was written", async () => {
     const docx = await wordFile(
-      paragraph(`<w:bookmarkStart w:id="1" w:name="penna_S1"/>${run("Brevet låg där.")}`) +
+      paragraph(`<w:bookmarkStart w:id="1" w:name="skrivro_S1"/>${run("Brevet låg där.")}`) +
         paragraph(
           `${run("Isen ")}<w:commentRangeStart w:id="0"/>${run("bar")}<w:commentRangeEnd w:id="0"/>${run(" till fyren.")}`,
         ) +
-        paragraph(`<w:bookmarkStart w:id="2" w:name="penna_S2"/>${run("Våren kom.")}`),
+        paragraph(`<w:bookmarkStart w:id="2" w:name="skrivro_S2"/>${run("Våren kom.")}`),
       `<w:comment w:id="0" w:author="Testläsare &amp; vän"><w:p>${run("Bar den verkligen?")}</w:p></w:comment>`,
     );
 

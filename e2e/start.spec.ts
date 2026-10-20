@@ -74,7 +74,7 @@ test("the first start asks the writer's languages, and a new book takes the firs
   await page.getByRole("radio", { name: "500" }).click();
   await page.getByRole("button", { name: "Klar" }).click();
 
-  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("penna.app") ?? "{}"));
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("skrivro.app") ?? "{}"));
   expect(stored).toMatchObject({ bookLanguage: "en-GB", defaultDailyGoal: 500 });
 });
 

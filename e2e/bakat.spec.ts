@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const pressBack = (page: Page) =>
-  page.evaluate(() => (window as { pennaBack?: () => boolean }).pennaBack?.());
+  page.evaluate(() => (window as { skrivroBack?: () => boolean }).skrivroBack?.());
 
 test("back closes Aa and stays in the text", async ({ page }) => {
   await editor(page).click();

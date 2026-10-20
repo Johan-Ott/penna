@@ -9,7 +9,7 @@ import { platform } from "./platform.js";
 import { bookOf, until } from "./remoteBook.js";
 import type { AppState } from "./App.js";
 
-// window.penna's calls for the book's settings, labels, pieces, series and comments: the same
+// window.skrivro's calls for the book's settings, labels, pieces, series and comments: the same
 // changes as bookFileCalls, made through the open book so the app and the files agree.
 
 async function changeBook(current: () => AppState, change: (parts: BookParts) => BookParts) {

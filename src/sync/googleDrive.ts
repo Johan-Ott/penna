@@ -67,7 +67,7 @@ async function sendFile(
 
 // One multipart request with both the metadata and the content.
 function upload(call: Call, name: string, parentId: string, bytes: Uint8Array) {
-  const boundary = "penna-upload";
+  const boundary = "skrivro-upload";
   const metadata = JSON.stringify({ name, parents: [parentId] });
   const body = new Blob([
     `--${boundary}\r\nContent-Type: application/json\r\n\r\n${metadata}\r\n`,

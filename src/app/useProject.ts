@@ -1,4 +1,5 @@
 import { t } from "../i18n/i18n.js";
+import { withoutBookSuffix } from "../project/libraryFolders.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { readProjectFile, writeProjectFile } from "../project/projectFile.js";
 import {
@@ -24,7 +25,7 @@ export interface Project extends OpenedProject {
 }
 
 const folderName = (dir: string) =>
-  (dir.split("/").pop() ?? dir).replace(/\.penna$/, "").replace(/\.serie$/, "");
+  withoutBookSuffix(dir.split("/").pop() ?? dir).replace(/\.serie$/, "");
 
 /** What the start picture says while a book is read. */
 export const openingSaying = (dir: string | null) =>

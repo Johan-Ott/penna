@@ -8,7 +8,7 @@ import { nodeFileSystem } from "@llkit/storage/nodeFileSystem.js";
 let dir = "";
 
 beforeEach(async () => {
-  dir = await mkdtemp(joinPath(tmpdir(), "penna-test-"));
+  dir = await mkdtemp(joinPath(tmpdir(), "skrivro-test-"));
 });
 
 afterEach(async () => {

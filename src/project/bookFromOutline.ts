@@ -25,7 +25,7 @@ function withFirstScenes(nodes: ImportedNode[]): ImportedNode[] {
   });
 }
 
-/** What `penna.mjs new` can choose of Ny bok's questions; the rest are as onboarding starts them. */
+/** What `skrivro.mjs new` can choose of Ny bok's questions; the rest are as onboarding starts them. */
 export interface BookChoices {
   title: string;
   structure?: string;

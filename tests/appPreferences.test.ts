@@ -26,8 +26,8 @@ describe("app preferences", () => {
     const preferences = {
       isOnboardingDone: true,
       libraryDir: "C:/OneDrive/Skrivro",
-      lastProjectDir: "C:/OneDrive/Skrivro/Isen.penna",
-      knownProjects: ["D:/Arkiv/Fyren.penna"],
+      lastProjectDir: "C:/OneDrive/Skrivro/Isen.skrivro",
+      knownProjects: ["D:/Arkiv/Fyren.skrivro"],
       authorName: "Elin Berg",
       defaultDailyGoal: 750,
       isAutoSnapshotOn: false,
@@ -43,7 +43,7 @@ describe("app preferences", () => {
   });
 
   it("ignore stored values of the wrong kind", () => {
-    const storage = memoryStorage({ "penna.app": '{"isOnboardingDone":"ja","libraryDir":5}' });
+    const storage = memoryStorage({ "skrivro.app": '{"isOnboardingDone":"ja","libraryDir":5}' });
 
     expect(loadPreferences(storage)).toEqual(START_PREFERENCES);
   });
@@ -63,7 +63,7 @@ describe("settings in the app preferences", () => {
   it("keep a daily goal only when it is a positive whole number", () => {
     const goals = ["0", "-5", "12.5", '"mycket"'].map(
       (goal) =>
-        loadPreferences(memoryStorage({ "penna.app": `{"defaultDailyGoal":${goal}}` }))
+        loadPreferences(memoryStorage({ "skrivro.app": `{"defaultDailyGoal":${goal}}` }))
           .defaultDailyGoal,
     );
 
@@ -73,17 +73,17 @@ describe("settings in the app preferences", () => {
 
 describe("known projects", () => {
   it("remembers a project once, and forgets it again", () => {
-    const once = rememberProject(START_PREFERENCES, "D:/Arkiv/Fyren.penna");
-    const twice = rememberProject(once, "D:/Arkiv/Fyren.penna");
+    const once = rememberProject(START_PREFERENCES, "D:/Arkiv/Fyren.skrivro");
+    const twice = rememberProject(once, "D:/Arkiv/Fyren.skrivro");
 
-    expect(twice.knownProjects).toEqual(["D:/Arkiv/Fyren.penna"]);
-    expect(twice.lastProjectDir).toBe("D:/Arkiv/Fyren.penna");
-    expect(forgetProject(twice, "D:/Arkiv/Fyren.penna").knownProjects).toEqual([]);
+    expect(twice.knownProjects).toEqual(["D:/Arkiv/Fyren.skrivro"]);
+    expect(twice.lastProjectDir).toBe("D:/Arkiv/Fyren.skrivro");
+    expect(forgetProject(twice, "D:/Arkiv/Fyren.skrivro").knownProjects).toEqual([]);
   });
 
   it("drops stored entries that are not text", () => {
-    const storage = memoryStorage({ "penna.app": '{"knownProjects":["D:/A.penna",7]}' });
+    const storage = memoryStorage({ "skrivro.app": '{"knownProjects":["D:/A.skrivro",7]}' });
 
-    expect(loadPreferences(storage).knownProjects).toEqual(["D:/A.penna"]);
+    expect(loadPreferences(storage).knownProjects).toEqual(["D:/A.skrivro"]);
   });
 });

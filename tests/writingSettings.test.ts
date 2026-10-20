@@ -37,7 +37,7 @@ describe("writing settings", () => {
 
   it("ignore stored values that do not make sense", () => {
     const storage = memoryStorage({
-      "penna.writing": '{"size":"stor","font":"comic","indent":false}',
+      "skrivro.writing": '{"size":"stor","font":"comic","indent":false}',
     });
 
     const settings = loadSettings(storage);
@@ -50,10 +50,10 @@ describe("writing settings", () => {
   it("follow the system theme until the writer picks one, and keep an old dark choice", () => {
     const fresh = loadSettings(memoryStorage());
     const old = loadSettings(
-      memoryStorage({ "penna.writing": JSON.stringify({ darkTheme: true }) }),
+      memoryStorage({ "skrivro.writing": JSON.stringify({ darkTheme: true }) }),
     );
     const picked = loadSettings(
-      memoryStorage({ "penna.writing": JSON.stringify({ theme: "ljust" }) }),
+      memoryStorage({ "skrivro.writing": JSON.stringify({ theme: "ljust" }) }),
     );
 
     expect([fresh.theme, old.theme, picked.theme]).toEqual(["system", "mörkt", "ljust"]);

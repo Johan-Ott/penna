@@ -40,7 +40,7 @@ function commentBodies(xml: string) {
 }
 
 const TOKEN =
-  /<w:bookmarkStart[^>]*w:name="penna_([0-9A-Z]+)"|<w:commentRangeStart[^>]*w:id="([^"]+)"|<w:commentRangeEnd[^>]*w:id="([^"]+)"|<w:t(?:\s[^>]*)?>([^<]*)<\/w:t>|(<\/w:p>)/g;
+  /<w:bookmarkStart[^>]*w:name="skrivro_([0-9A-Z]+)"|<w:commentRangeStart[^>]*w:id="([^"]+)"|<w:commentRangeEnd[^>]*w:id="([^"]+)"|<w:t(?:\s[^>]*)?>([^<]*)<\/w:t>|(<\/w:p>)/g;
 
 type Range = { sceneId: string; from: number; to: number };
 type Walk = { scene: string; texts: Map<string, string>; ranges: Map<string, Range> };

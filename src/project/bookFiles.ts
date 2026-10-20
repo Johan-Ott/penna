@@ -39,7 +39,7 @@ async function newNode(book: BookFolder, kind: NodeKind, title: string): Promise
   return { id: newSceneId(), kind, title, children };
 }
 
-/** The tree as rows, as `penna.mjs tree` prints it with the app running. */
+/** The tree as rows, as `skrivro.mjs tree` prints it with the app running. */
 export async function treeRows(book: BookFolder) {
   const { tree, summaries } = await readBook(book);
   const walk = (nodes: TreeNode[], depth: number): object[] =>
@@ -131,7 +131,7 @@ const treeCalls = (book: BookFolder) => ({
   trash: (id: string) => changeTree(book, (tree) => moveToTrash(tree, id)),
 });
 
-/** The calls of `penna.mjs`, on the files: the same names and arguments as through the app. */
+/** The calls of `skrivro.mjs`, on the files: the same names and arguments as through the app. */
 export function bookFileCalls(book: BookFolder) {
   const calls = {
     tree: () => treeRows(book),

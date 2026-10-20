@@ -4,7 +4,7 @@ import { cpSync, existsSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const penna = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const skrivro = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const folder = process.argv[2];
 const kit = folder && resolve(folder, "llkit");
 if (!kit || !existsSync(kit)) {
@@ -12,8 +12,8 @@ if (!kit || !existsSync(kit)) {
   process.exit(1);
 }
 rmSync(kit, { recursive: true });
-cpSync(join(penna, "llkit"), kit, {
+cpSync(join(skrivro, "llkit"), kit, {
   recursive: true,
-  filter: (path) => !path.startsWith(join(penna, "llkit/template")),
+  filter: (path) => !path.startsWith(join(skrivro, "llkit/template")),
 });
 process.stdout.write(`llkit i ${kit} är nu Skrivros. Se ändringarna med git diff där.\n`);

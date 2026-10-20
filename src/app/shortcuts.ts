@@ -26,7 +26,7 @@ export const COMMANDS = {
 
 export type CommandId = keyof typeof COMMANDS;
 
-const KEY = "penna.kortkommandon";
+const KEY = "skrivro.kortkommandon";
 const listeners = new Set<() => void>();
 
 function changes(): Partial<Record<CommandId, Binding>> {

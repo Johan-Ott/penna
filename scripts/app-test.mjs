@@ -31,7 +31,7 @@ const build = {
 };
 const args = ["tauri", "dev", "--config", "src-tauri/tauri.test.conf.json"];
 // A file, since the shell would strip the quotes of JSON given on the command line.
-const extra = join(tmpdir(), "penna-test-build.json");
+const extra = join(tmpdir(), "skrivro-test-build.json");
 writeFileSync(extra, JSON.stringify({ build }));
 args.push("--config", extra);
 spawn("npx", args, {

@@ -19,7 +19,7 @@ export async function hashOf(bytes: Uint8Array) {
 const sameBytes = async (one?: Uint8Array, other?: Uint8Array) =>
   one && other ? (await hashOf(one)) === (await hashOf(other)) : one === other;
 
-export const DOWNLOAD_SUFFIX = ".penna-download";
+export const DOWNLOAD_SUFFIX = ".skrivro-download";
 
 // Written beside and renamed, so a half-downloaded file never replaces a whole one. The name
 // differs from the autosave's temp file, so the two never pick up each other's text.

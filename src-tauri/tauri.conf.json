@@ -62,7 +62,7 @@
     },
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlBMDlCMTQyODg2NEE2ODkKUldTSnBtU0lRckVKbXBTMFU5dXR5eTNtamVhbmdVZFNaTTZ1TVJZNXlzTVFrQVZiL2ZvcndSTkgK",
-      "endpoints": ["https://github.com/Johan-Ott/penna/releases/latest/download/latest.json"]
+      "endpoints": ["https://github.com/Johan-Ott/skrivro/releases/latest/download/latest.json"]
     }
   }
 }

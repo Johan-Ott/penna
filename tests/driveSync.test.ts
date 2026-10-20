@@ -11,7 +11,7 @@ describe("syncProject", () => {
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/S1.md")).toBe("Brevet låg där.");
     expect(await phone.readText(`${BOOK}/scenes/S1.md`)).toBe("Brevet låg där.");
   });
 
@@ -25,7 +25,7 @@ describe("syncProject", () => {
         void (
           done === 1 &&
           computer
-            .modifiedAt(`${BOOK}/.penna-sync.json`)
+            .modifiedAt(`${BOOK}/.skrivro-sync.json`)
             .then((time) => known.push(time === null ? null : "ja"))
         ),
     });
@@ -35,7 +35,7 @@ describe("syncProject", () => {
         void (
           done === 1 &&
           phone
-            .modifiedAt(`${BOOK}/.penna-sync.json`)
+            .modifiedAt(`${BOOK}/.skrivro-sync.json`)
             .then((time) => known.push(time === null ? null : "ja"))
         ),
     });
@@ -113,7 +113,7 @@ describe("syncProject", () => {
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.isInTrash("Skrivro/Isen.penna/scenes/S1.md")).toBe(true);
+    expect(cloud.isInTrash("Skrivro/Isen.skrivro/scenes/S1.md")).toBe(true);
     expect(await phone.list(`${BOOK}/scenes`)).toEqual([]);
     expect(await phone.readText(`${BOOK}/trash/S1.md`)).toBe("Brevet låg där.");
   });
@@ -137,7 +137,7 @@ describe("syncProject", () => {
 
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1 (Drive 2026-10-04).md")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/S1 (Drive 2026-10-04).md")).toBeNull();
   });
 
   it("keeps the earlier text of a scene as a version before Drive's text replaces it", async () => {
@@ -179,11 +179,11 @@ describe("syncProject", () => {
 
   it("leaves its own memory and half-written files out of Drive", async () => {
     const { cloud, computer } = twoDevices();
-    await computer.writeText(`${BOOK}/scenes/S1.md.penna-tmp`, "halv");
+    await computer.writeText(`${BOOK}/scenes/S1.md.skrivro-tmp`, "halv");
 
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Skrivro/Isen.penna/.penna-sync.json")).toBeNull();
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md.penna-tmp")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.skrivro/.skrivro-sync.json")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/S1.md.skrivro-tmp")).toBeNull();
   });
 });

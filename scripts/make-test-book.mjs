@@ -1,5 +1,5 @@
 // A long book for testing speed and the page map: node scripts/make-test-book.mjs <folder> [words]
-// Writes "Testbok.penna" inside <folder>; open it in Skrivro with Öppna mapp.
+// Writes "Testbok.skrivro" inside <folder>; open it in Skrivro with Öppna mapp.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -36,7 +36,7 @@ function sceneText(number) {
   return paragraphs.join("\n\n");
 }
 
-const dir = join(folder, "Testbok.penna");
+const dir = join(folder, "Testbok.skrivro");
 mkdirSync(join(dir, "scenes"), { recursive: true });
 const scenes = Math.ceil(Number(wordsArgument) / SCENE_WORDS);
 const chapters = [];

@@ -8,7 +8,7 @@ import { t } from "../../i18n/i18n.js";
 // Referensbild: one of the book's research pictures, a map or a photo, beside the text while
 // writing. The choice is kept per book.
 
-const choiceKey = (dir: string) => `penna.reference.${dir}`;
+const choiceKey = (dir: string) => `skrivro.reference.${dir}`;
 
 function readChoice(dir: string) {
   try {

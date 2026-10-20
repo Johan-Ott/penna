@@ -1,6 +1,9 @@
 import { joinPath, type FileSystem } from "./fileSystem.js";
 
-const TEMP_SUFFIX = ".penna-tmp";
+export const TEMP_SUFFIX = ".skrivro-tmp";
+/** The file a temp file stands for; the app wrote .penna-tmp while it was called Penna. */
+export const targetOfTemp = (path: string) => path.replace(/\.(skrivro|penna)-tmp$/, "");
+export const isTempFile = (path: string) => targetOfTemp(path) !== path;
 
 export interface RecoverableTemp {
   tempPath: string;
@@ -26,11 +29,11 @@ export async function writeAtomic(
 /** Temp files left by a crash that hold newer text than their target. An empty one is a write
  * that never began, and is left out. */
 export async function findRecoverableTemps(fileSystem: FileSystem, dir: string) {
-  const tempNames = (await fileSystem.list(dir)).filter((name) => name.endsWith(TEMP_SUFFIX));
+  const tempNames = (await fileSystem.list(dir)).filter(isTempFile);
   const found: RecoverableTemp[] = [];
   for (const name of tempNames) {
     const tempPath = joinPath(dir, name);
-    const targetPath = tempPath.slice(0, -TEMP_SUFFIX.length);
+    const targetPath = targetOfTemp(tempPath);
     const isEmpty = (await fileSystem.readBytes(tempPath).catch(() => null))?.length === 0;
     if (!isEmpty && (await isNewerThanTarget(fileSystem, tempPath, targetPath))) {
       found.push({ tempPath, targetPath });

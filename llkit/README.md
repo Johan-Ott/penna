@@ -39,7 +39,7 @@ Skrivro's typecheck, lint and text test leave it out.
 
 ## Still Skrivro's name
 
-- Atomic writes leave `.penna-tmp` files, which the crash recovery and a Rust command look for.
+- Atomic writes leave `.skrivro-tmp` files, which the crash recovery and a Rust command look for.
   They get a general name when a second app comes, with the old one still read.
 
 ## Styles

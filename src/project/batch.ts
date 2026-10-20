@@ -1,4 +1,4 @@
-// Several calls in one go, as `penna.mjs batch <fil.json>` runs them: [["add", "chapter",
+// Several calls in one go, as `skrivro.mjs batch <fil.json>` runs them: [["add", "chapter",
 // "Stormen"], ["set", "$0", "vad", "…"]], where "$0" is the first call's answer.
 
 type Calls = Record<string, unknown>;

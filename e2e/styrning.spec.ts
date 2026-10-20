@@ -3,7 +3,7 @@ import { editor, openExample } from "./helpers";
 
 test.beforeEach(async ({ page }) => openExample(page));
 
-// window.penna as a script on the computer would call it.
+// window.skrivro as a script on the computer would call it.
 interface Skrivro {
   add: (kind: string, title?: string, afterId?: string) => Promise<string | null>;
   note: (sort: string, name: string) => Promise<void>;
@@ -20,39 +20,41 @@ interface Skrivro {
   label: (id: string, name: string) => Promise<void>;
   open: (id: string) => void;
 }
-type WithSkrivro = Window & { penna: Skrivro };
+type WithSkrivro = Window & { skrivro: Skrivro };
 
-test("window.penna makes a scene with a command, writes in it, and reads it back", async ({
+test("window.skrivro makes a scene with a command, writes in it, and reads it back", async ({
   page,
 }) => {
-  expect(await page.evaluate(() => (window as unknown as WithSkrivro).penna.run("Ny scen"))).toBe(
+  expect(await page.evaluate(() => (window as unknown as WithSkrivro).skrivro.run("Ny scen"))).toBe(
     "Ny scen",
   );
   await expect(editor(page)).toBeFocused();
-  await page.evaluate(() => (window as unknown as WithSkrivro).penna.type("Isen bar till fyren."));
+  await page.evaluate(() =>
+    (window as unknown as WithSkrivro).skrivro.type("Isen bar till fyren."),
+  );
 
   await expect(editor(page)).toContainText("Isen bar till fyren.");
-  expect(await page.evaluate(() => (window as unknown as WithSkrivro).penna.text())).toContain(
+  expect(await page.evaluate(() => (window as unknown as WithSkrivro).skrivro.text())).toContain(
     "Isen bar till fyren.",
   );
 });
 
-test("window.penna opens a scene from the tree by its id", async ({ page }) => {
+test("window.skrivro opens a scene from the tree by its id", async ({ page }) => {
   await page.evaluate(() => {
-    const isen = (window as unknown as WithSkrivro).penna
+    const isen = (window as unknown as WithSkrivro).skrivro
       .tree()
       .find((row) => row.title === "Isen");
-    if (isen) (window as unknown as WithSkrivro).penna.open(isen.id);
+    if (isen) (window as unknown as WithSkrivro).skrivro.open(isen.id);
   });
 
   await expect(editor(page)).toContainText("Isen bar");
 });
 
-test("window.penna makes a named chapter, a person, and sets when a chapter happens", async ({
+test("window.skrivro makes a named chapter, a person, and sets when a chapter happens", async ({
   page,
 }) => {
   await page.evaluate(async () => {
-    const api = (window as unknown as WithSkrivro).penna;
+    const api = (window as unknown as WithSkrivro).skrivro;
     const id = await api.add("chapter", "Stormen");
     if (id) await api.set(id, "när", "Mars");
     await api.note("Personer", "Greta");
@@ -62,15 +64,15 @@ test("window.penna makes a named chapter, a person, and sets when a chapter happ
   await expect(page.locator(".tree")).toContainText("Greta");
 });
 
-test("window.penna sets the book's goal and puts a label on a chapter by its name", async ({
+test("window.skrivro sets the book's goal and puts a label on a chapter by its name", async ({
   page,
 }) => {
   const settings = await page.evaluate(async () => {
-    const penna = (window as unknown as WithSkrivro).penna;
-    await penna.book("totalmål", "90 000");
-    const chapter = penna.tree().find((row) => row.kind === "chapter");
-    if (chapter) await penna.label(chapter.id, "Ledtråd");
-    return penna.book();
+    const skrivro = (window as unknown as WithSkrivro).skrivro;
+    await skrivro.book("totalmål", "90 000");
+    const chapter = skrivro.tree().find((row) => row.kind === "chapter");
+    if (chapter) await skrivro.label(chapter.id, "Ledtråd");
+    return skrivro.book();
   });
 
   expect(settings.totalGoal).toBe(90000);

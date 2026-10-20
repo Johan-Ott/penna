@@ -1,6 +1,6 @@
 //! "Styr Skrivro från den här datorn", for one start at a time: turning it on leaves a file in
 //! Skrivro's own folder, and the next start takes the file away as it opens the WebView on port
-//! 9334 for scripts/penna.mjs. Only this computer can reach the port, and the app says it is open.
+//! 9334 for scripts/skrivro.mjs. Only this computer can reach the port, and the app says it is open.
 
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};

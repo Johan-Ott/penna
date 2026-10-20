@@ -37,7 +37,7 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   that. App preferences (onboarding done, the Skrivro library folder, last project, projects
   opened from elsewhere) live in localStorage (`appPreferences.ts`). New projects are made in
   the library folder by `project/newProject.ts`.
-- The shelf shows every `.penna` folder in the library plus `knownProjects`. Book status and
+- The shelf shows every `.skrivro` folder in the library plus `knownProjects`. Book status and
   progress come from the scenes' `status` in front matter (`project/shelf.ts`). A folder that
   is gone shows as "Hittas inte"; Skrivro never deletes it, only forgets it on request.
 - Sync copies, crash temp files and iCloud placeholders are found when a project is read
@@ -78,8 +78,8 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   before a save when the scene had none, or when the text moved 100+ words from the last one.
   Restoring snapshots the current text first (`app/snapshotActions.ts`).
 - Inställningar (Ctrl+, or the palette) lives in `app/settings/`. Writing settings (theme,
-  font, spellcheck, Swedish typography) are in `penna.writing`; author name, default daily goal
-  and automatic snapshots in `penna.app`. Editor switches are read through refs on every
+  font, spellcheck, Swedish typography) are in `skrivro.writing`; author name, default daily goal
+  and automatic snapshots in `skrivro.app`. Editor switches are read through refs on every
   update (`useEditorView`), so changing them needs no new editor state.
 - Views of a project (Skriv, Innehåll, Publicera; G S / G I / G P) are listed in `VIEWS` in
   `useWritingMode.ts`. The writing area stays mounted but hidden in other views, so the editor
@@ -187,7 +187,7 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   `tauri-plugin-persisted-scope` keeps folders picked in the dialog across restarts.
 - `npm run icons` rebuilds every icon from the logo `src-tauri/icons/icon-source.png`: desktop,
   Android launcher (`src-tauri/icons/android`, copied in by `build:android`) and
-  `src/assets/penna-logo.png` for the logo inside the app.
+  `src/assets/skrivro-logo.png` for the logo inside the app.
 - `src-tauri/`: plugin setup only. Permissions are in `capabilities/default.json`.
 - The webview has a strict CSP (`app.security.csp` in tauri.conf.json): only Skrivro's own files, plus
   `'wasm-unsafe-eval'` for Typst and inline styles for React. A new kind of resource (an outside
@@ -205,8 +205,8 @@ Run `npm run check` before saying a task is done. A Stop hook runs it too and bl
   own, under `%APPDATA%\se.skrivro.test` on Windows and `~/Library/Application Support`,
   `~/Library/Caches` and `~/Library/WebKit` on macOS. Its WebView listens on port 9333;
   `node scripts/drive-app.mjs steps.mjs` runs steps in it. File dialogs and questions take their
-  answers from `window.pennaTest` (`app/testMode.ts`), since no test can click a system dialog.
-- `node scripts/penna.mjs [--app] <call> [args]` makes one call to `window.penna` (`app/remote.ts`)
+  answers from `window.skrivroTest` (`app/testMode.ts`), since no test can click a system dialog.
+- `node scripts/skrivro.mjs [--app] <call> [args]` makes one call to `window.skrivro` (`app/remote.ts`)
   in Skrivro Test, or with `--app` in the real Skrivro once Inställningar, "Styr Skrivro från den här
   datorn" is on (port 9334, `src-tauri/src/remote.rs`; see docs/styrning.md): `state`, `tree`, `commands`, `run <command>`, `open <id>`, `text`, `type <text>`,
   `add <kind> [title] [afterId]`, `note <sort> <name>`, `rename <id> <title>`,

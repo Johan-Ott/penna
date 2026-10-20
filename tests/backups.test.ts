@@ -37,37 +37,39 @@ describe("which copies are kept", () => {
 describe("a copy of a book", () => {
   it("is a zip of the whole book in a folder of its own, under a name that tells when", async () => {
     const files = createMemoryFileSystem({
-      "/bok/Isen.penna/project.json": "{}",
-      "/bok/Isen.penna/scenes/S1.md": "Isen låg tjock.",
+      "/bok/Isen.skrivro/project.json": "{}",
+      "/bok/Isen.skrivro/scenes/S1.md": "Isen låg tjock.",
     });
 
     const path = await takeBackup(
       files,
       "/kopior",
-      ["/bok/Isen.penna"],
+      ["/bok/Isen.skrivro"],
       backupFileName(NOW, "Före"),
     );
 
-    expect(path).toBe(`${backupFolderOf("/kopior", "/bok/Isen.penna")}/2026-10-05 18-00 Före.zip`);
-    const [found] = await backupsIn(files, backupFolderOf("/kopior", "/bok/Isen.penna"));
+    expect(path).toBe(
+      `${backupFolderOf("/kopior", "/bok/Isen.skrivro")}/2026-10-05 18-00 Före.zip`,
+    );
+    const [found] = await backupsIn(files, backupFolderOf("/kopior", "/bok/Isen.skrivro"));
     expect(found).toMatchObject({ time: NOW, label: "Före" });
     expect((await listBackups(files, "/kopior")).map((book) => book.book)).toEqual(["Isen"]);
   });
 
   it("is restored as a new book beside the original, without the sync's state", async () => {
     const files = createMemoryFileSystem({
-      "/bok/Isen.penna/project.json": "{}",
-      "/bok/Isen.penna/scenes/S1.md": "Isen låg tjock.",
-      "/bok/Isen.penna/.penna-sync.json": "{}",
+      "/bok/Isen.skrivro/project.json": "{}",
+      "/bok/Isen.skrivro/scenes/S1.md": "Isen låg tjock.",
+      "/bok/Isen.skrivro/.skrivro-sync.json": "{}",
     });
-    const path = await takeBackup(files, "/kopior", ["/bok/Isen.penna"], backupFileName(NOW));
-    await files.writeText("/bok/Isen.penna/scenes/S1.md", "Förstörd.");
+    const path = await takeBackup(files, "/kopior", ["/bok/Isen.skrivro"], backupFileName(NOW));
+    await files.writeText("/bok/Isen.skrivro/scenes/S1.md", "Förstörd.");
 
     const dir = await restoreBackup(files, await files.readBytes(path), "/bok", "Isen från 5 okt");
 
-    expect(dir).toBe("/bok/Isen från 5 okt.penna");
+    expect(dir).toBe("/bok/Isen från 5 okt.skrivro");
     expect(await files.readText(`${dir}/scenes/S1.md`)).toBe("Isen låg tjock.");
-    expect(await files.list(dir)).not.toContain(".penna-sync.json");
-    expect(await files.readText("/bok/Isen.penna/scenes/S1.md")).toBe("Förstörd.");
+    expect(await files.list(dir)).not.toContain(".skrivro-sync.json");
+    expect(await files.readText("/bok/Isen.skrivro/scenes/S1.md")).toBe("Förstörd.");
   });
 });

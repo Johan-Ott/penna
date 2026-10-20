@@ -57,10 +57,10 @@ function Credits() {
 }
 
 // The website's pages, in the language Skrivro is shown in.
-const SITE = "https://johan-ott.github.io/penna/";
+const SITE = "https://johan-ott.github.io/skrivro/";
 const sitePage = (swedish: string, english: string) =>
   SITE + (uiLanguage() === "en" ? english : swedish);
-const SUPPORT_URL = "https://github.com/Johan-Ott/penna/issues";
+const SUPPORT_URL = "https://github.com/Johan-Ott/skrivro/issues";
 
 const Link = ({ url, label }: { url: string; label: string }) => (
   <button className="link-button" onClick={() => void platform.openLink(url)}>

@@ -47,6 +47,6 @@ export const STEPS = [
 
 export type StepId = (typeof STEPS)[number]["id"];
 
-export const guide = createGuide(STEPS, "penna.guide");
+export const guide = createGuide(STEPS, "skrivro.guide");
 
 export const restartGuide = guide.restart;

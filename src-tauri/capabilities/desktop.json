@@ -15,7 +15,11 @@
     "core:window:allow-close",
     {
       "identifier": "opener:allow-open-path",
-      "allow": [{ "path": "**/*.penna/filer/*" }, { "path": "**/*.serie/filer/*" }]
+      "allow": [
+        { "path": "**/*.skrivro/filer/*" },
+        { "path": "**/*.penna/filer/*" },
+        { "path": "**/*.serie/filer/*" }
+      ]
     },
     {
       "identifier": "fs:scope",

@@ -16,7 +16,7 @@ export interface Place {
 }
 
 // Kept in localStorage, per device: where you left off on this computer.
-const KEY = "penna.lastPlace";
+const KEY = "skrivro.lastPlace";
 
 function places(): Record<string, Place> {
   try {

@@ -66,7 +66,7 @@ export const DEFAULT_SETTINGS: WritingSettings = {
   followOpenText: true,
 };
 
-const STORAGE_KEY = "penna.writing";
+const STORAGE_KEY = "skrivro.writing";
 const MIN_SIZE = 14;
 const MAX_SIZE = 28;
 const LINE_HEIGHTS = [1.5, 1.6, 1.8, 2];

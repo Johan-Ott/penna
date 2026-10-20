@@ -3,7 +3,7 @@ import JSZip from "jszip";
 import { projectZip } from "../export/projectZip.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
-import { parentOf } from "./libraryFolders.js";
+import { parentOf, withoutBookSuffix } from "./libraryFolders.js";
 import { freeProjectDir } from "./newProject.js";
 
 // Every book is copied whole to backups/ in Skrivro's own folder, away from the book itself,
@@ -25,10 +25,10 @@ export interface BookBackups {
 const KEEP_NEWEST = 10;
 const KEEP_DAYS = 30;
 // The sync's state: a restored copy starts unsynced, so it never writes over the original in Drive.
-const SYNC_STATE = ".penna-sync.json";
+const SYNC_STATE = /^\.(skrivro|penna)-sync\.json$/;
 
 const pad = (value: number) => String(value).padStart(2, "0");
-const bookName = (dir: string) => dir.slice(dir.lastIndexOf("/") + 1).replace(/\.penna$/, "");
+const bookName = (dir: string) => withoutBookSuffix(dir.slice(dir.lastIndexOf("/") + 1));
 
 // A short mark of where the book lives, so two books in folders of the same name never share copies.
 function placeMark(dir: string) {
@@ -114,7 +114,7 @@ export async function restoreBackup(
   for (const entry of Object.values(zip.files)) {
     const [folder, ...rest] = entry.name.split("/");
     const inner = rest.join("/");
-    if (entry.dir || folder !== bookFolder || !inner || inner === SYNC_STATE) continue;
+    if (entry.dir || folder !== bookFolder || !inner || SYNC_STATE.test(inner)) continue;
     const path = joinPath(dir, inner);
     await fileSystem.makeDir(parentOf(path));
     await writeAtomic(fileSystem, path, await entry.async("uint8array"));

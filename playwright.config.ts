@@ -16,7 +16,7 @@ export default defineConfig({
       origins: [
         {
           origin: "http://127.0.0.1:1420",
-          localStorage: [{ name: "penna.guide", value: '{"isOff":true,"seen":[]}' }],
+          localStorage: [{ name: "skrivro.guide", value: '{"isOff":true,"seen":[]}' }],
         },
       ],
     },

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "../../assets/penna-logo.png";
+import logo from "../../assets/skrivro-logo.png";
 import { platform } from "../platform.js";
 import { useRootClass } from "@llkit/useRootClass.js";
 import type { Theme } from "../../editor/writingSettings.js";

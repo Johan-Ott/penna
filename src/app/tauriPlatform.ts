@@ -61,7 +61,7 @@ const spelling: Spelling = {
 const remoteControl = (turnOn?: boolean) => invoke<RemoteState>("remote_control", { turnOn });
 
 export const tauriPlatform: Platform = {
-  ...createTauriPlatform({ releases: "Johan-Ott/penna" }),
+  ...createTauriPlatform({ releases: "Johan-Ott/skrivro" }),
   ...(__STORE__ ? { checkForUpdate: async () => null } : {}),
   removeBook,
   backups,

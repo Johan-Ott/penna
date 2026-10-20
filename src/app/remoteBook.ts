@@ -18,7 +18,7 @@ import { writeOverScene } from "./sceneSession.js";
 import { platform } from "./platform.js";
 import type { AppState } from "./App.js";
 
-// window.penna's calls that change the book: the same actions the tree, the menus and Innehåll
+// window.skrivro's calls that change the book: the same actions the tree, the menus and Innehåll
 // use, so a script changes the book exactly as a hand would.
 
 type Field = "summary" | "when" | "pov";

@@ -5,14 +5,14 @@ verktyg eller en annan AI kan läsa och skriva en bok utan att Skrivro är igån
 boken öppen läser appen själv om det som ändrats, och den scen du skriver i skyddas (se
 **Om Skrivro är igång** nedan).
 
-Det enklaste sättet att ändra en bok utifrån är `scripts/penna.mjs --book <mapp>` (se
+Det enklaste sättet att ändra en bok utifrån är `scripts/skrivro.mjs --book <mapp>` (se
 [styrning.md](styrning.md)). Det använder samma kod som appen och skriver allt rätt. Den här
 sidan är för den som skriver filerna själv.
 
 ## Mappen
 
 ```
-Vintervägen.penna/
+Vintervägen.skrivro/
   project.json          trädet och bokens inställningar
   scenes/<id>.md         en fil per scen och per anteckning
   bilder/                bilder i texten och i bokens design
@@ -23,8 +23,8 @@ Vintervägen.penna/
   utkast/<id>/           sparade utkast av ett kapitel
   stats/<enhet>.json     dagens ord per enhet
   trash/                 det som slängts, så det går att lägga tillbaka
-  .penna-sync.json       Drive-synkens läge; rör inte
-  .penna-sync-log.json   vad synken förde med sig; rör inte
+  .skrivro-sync.json       Drive-synkens läge; rör inte
+  .skrivro-sync-log.json   vad synken förde med sig; rör inte
 ```
 
 En serie är en mapp som slutar på `.serie` och är byggd på samma sätt.
@@ -121,13 +121,13 @@ en scen behåller den sitt id, så kommentarer, versioner och synk hittar den.
 
 1. **Skriv hela filen till en tillfällig fil bredvid, och byt sedan namn** till det riktiga. Då
    läser Skrivro aldrig en halvskriven fil. Använd ett eget namn, till exempel
-   `Köket.md.agent-tmp`, aldrig `.penna-tmp`: det är Skrivros eget, och en sådan fil tas efter en
+   `Köket.md.agent-tmp`, aldrig `.skrivro-tmp`: det är Skrivros eget, och en sådan fil tas efter en
    krasch för text som inte hann sparas.
 2. **En ny scen behöver både sin fil och en nod i trädet.** Skriv filen först och trädet sedan.
    En scenfil som saknas i trädet hittar Skrivro ändå, och lägger den sist.
 3. **Radera aldrig.** Flytta en nod till `trash`-mappen i trädet, och lägg en fil man vill bli av
    med i `trash/`. Skrivro raderar själv aldrig något.
-4. **Rör inte `.penna-sync.json`, `.penna-sync-log.json` eller `stats/`.** De är Skrivros.
+4. **Rör inte `.skrivro-sync.json`, `.skrivro-sync-log.json` eller `stats/`.** De är Skrivros.
 
 ## Om Skrivro är igång
 
@@ -136,5 +136,5 @@ en scen behåller den sitt id, så kommentarer, versioner och synk hittar den.
   skrivit något som inte hunnit sparas frågar Skrivro vilken version du vill ha, och den andra blir
   en version, så inget försvinner.
 - **Trädet är det enda som kan krocka.** Flyttar du något i Skrivro samtidigt som ett verktyg
-  skriver `project.json` vinner den som skriver sist. `penna.mjs --book` går därför genom appen
+  skriver `project.json` vinner den som skriver sist. `skrivro.mjs --book` går därför genom appen
   när den har boken öppen.

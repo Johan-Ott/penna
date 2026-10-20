@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import type { platform as appPlatform } from "../src/app/platform";
 import { openExample } from "./helpers";
 
-const BOOK = "/Användare/Elin/Dokument/Skrivro/Vintervägen.penna";
+const BOOK = "/Användare/Elin/Dokument/Skrivro/Vintervägen.skrivro";
 
 // What a sync would have left: a changed scene, and a chapter renamed two ways.
 async function leaveSyncLog(page: Page) {
@@ -34,7 +34,7 @@ async function leaveSyncLog(page: Page) {
         },
       ],
     };
-    await platform.fileSystem.writeText(`${dir}/.penna-sync-log.json`, JSON.stringify(log));
+    await platform.fileSystem.writeText(`${dir}/.skrivro-sync-log.json`, JSON.stringify(log));
   }, BOOK);
 }
 

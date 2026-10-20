@@ -1,4 +1,4 @@
-// `npm run build:android`: out/Skrivro.apk, signed with Skrivro's own key in ~/.penna (never in git),
+// `npm run build:android`: out/Skrivro.apk, signed with the app's own key in ~/.penna (never in git),
 // or else with Android's test key, which must never reach a release: phones cannot change keys.
 import { execFileSync } from "node:child_process";
 import {
@@ -91,7 +91,7 @@ if (process.argv.includes("--emulator")) {
 // the APK, so a phone can move between Play and the website's file.
 if (process.argv.includes("--play")) {
   if (!existsSync(releaseKey) || !existsSync(releasePass)) {
-    process.stderr.write("Skrivros nyckel saknas i ~/.penna: Play får aldrig testnyckeln.\n");
+    process.stderr.write("Nyckeln saknas i ~/.penna: Play får aldrig testnyckeln.\n");
     process.exit(1);
   }
   step("Skrivro byggs för Google Play (arm64)", "npx", [

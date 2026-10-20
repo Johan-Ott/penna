@@ -5,7 +5,7 @@ import { createFileNote, saveResearchFile } from "./researchFiles.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId, scenePath } from "../storage/sceneId.js";
-import { parentOf } from "./libraryFolders.js";
+import { BOOK_SUFFIX, parentOf, withoutBookSuffix } from "./libraryFolders.js";
 import { writeProjectFile } from "./projectFile.js";
 import type { Narration } from "../manuscript/narration.js";
 import { manuscriptSceneIds, NOTES_ID, withSpecialFolders, type TreeNode } from "./tree.js";
@@ -41,15 +41,16 @@ const UNSAFE_IN_NAMES = /[\\/:*?"<>|]/g;
 
 export function projectFolderName(title: string): string {
   const name = title.replace(UNSAFE_IN_NAMES, "").replace(/\s+/g, " ").trim();
-  return `${name || t("Namnlöst projekt")}.penna`;
+  return `${name || t("Namnlöst projekt")}${BOOK_SUFFIX}`;
 }
 
-/** "Isen.penna", "Isen 2.penna", and so on. */
+/** "Isen.skrivro", "Isen 2.skrivro", and so on. */
 export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title: string) {
   const taken = new Set(await fileSystem.list(libraryDir));
-  const base = projectFolderName(title).replace(/\.penna$/, "");
-  let candidate = `${base}.penna`;
-  for (let number = 2; taken.has(candidate); number++) candidate = `${base} ${number}.penna`;
+  const base = withoutBookSuffix(projectFolderName(title));
+  let candidate = `${base}${BOOK_SUFFIX}`;
+  for (let number = 2; taken.has(candidate); number++)
+    candidate = `${base} ${number}${BOOK_SUFFIX}`;
   return joinPath(libraryDir, candidate);
 }
 
@@ -174,7 +175,7 @@ export async function createProject(
 // The example is copied once: asked for again, the copy already on the shelf opens. Its files go
 // into a new folder, so they are written all at once rather than one by one, which a phone is slow at.
 export async function copyExampleProject(fileSystem: FileSystem, libraryDir: string) {
-  const existing = joinPath(libraryDir, "Vintervägen.penna");
+  const existing = joinPath(libraryDir, `Vintervägen${BOOK_SUFFIX}`);
   if ((await readIfThere(fileSystem, joinPath(existing, "project.json"))) !== null) return existing;
   const dir = await freeProjectDir(fileSystem, libraryDir, "Vintervägen");
   const files = Object.entries(DEMO_PROJECT_FILES).map(

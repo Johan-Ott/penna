@@ -38,7 +38,7 @@ export const START_PREFERENCES: AppPreferences = {
   isDriveSyncOn: false,
 };
 
-const STORAGE_KEY = "penna.app";
+const STORAGE_KEY = "skrivro.app";
 const textOrNull = (value: unknown) => (typeof value === "string" ? value : null);
 const isHour = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value) && value >= 0 && value < 24;

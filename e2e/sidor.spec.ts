@@ -6,7 +6,7 @@ test("page breaks of the printed book show in the text, and Innehåll counts the
 }) => {
   await page.setViewportSize({ width: 1400, height: 900 });
   await page.addInitScript(() =>
-    localStorage.setItem("penna.writing", JSON.stringify({ showPages: true })),
+    localStorage.setItem("skrivro.writing", JSON.stringify({ showPages: true })),
   );
   await openExample(page);
   await editor(page).locator("p").first().click();

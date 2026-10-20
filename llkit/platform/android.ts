@@ -34,7 +34,7 @@ interface Release {
 }
 
 /** Installed from the APK, an Android phone gets a newer one from the app's latest GitHub release,
- * `repository` such as "Johan-Ott/penna". */
+ * `repository` such as "Johan-Ott/skrivro". */
 export async function checkForAndroidUpdate(repository: string): Promise<AppUpdate | null> {
   const response = await appFetch(`https://api.github.com/repos/${repository}/releases/latest`);
   if (!response.ok) return null;

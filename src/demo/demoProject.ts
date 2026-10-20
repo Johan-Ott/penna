@@ -1,6 +1,6 @@
 import { COMMENT, connections, GUIDE, GUIDE_IDS, SECRET, secretNode, STICKY } from "./demoGuide.js";
 
-export const DEMO_PROJECT_DIR = "/Vintervägen.penna";
+export const DEMO_PROJECT_DIR = "/Vintervägen.skrivro";
 
 // The example shows what Skrivro does: chapters with what happens and when, a subtitle and an
 // epigraph, a footnote, notes linked by name, and one misspelt name for the review to find.

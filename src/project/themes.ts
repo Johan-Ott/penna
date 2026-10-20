@@ -61,7 +61,8 @@ export const START_OWN: Theme = {
 const isColour = (value: unknown): value is string =>
   typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
 
-/** A theme from project.json or a .pennatema file; null for anything that is not one. */
+/** A theme from project.json or a .skrivrotema file (.pennatema before the name change); null for
+ * anything that is not one. */
 export function themeFrom(value: unknown): Theme | null {
   if (typeof value !== "object" || value === null) return null;
   const item = value as Record<string, unknown>;

@@ -15,7 +15,7 @@ import { Dialog } from "@llkit/controls.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
 
-const THEME_FILE = { name: t("Skrivro-tema"), extension: "pennatema" };
+const THEME_FILE = { name: t("Skrivro-tema"), extension: "skrivrotema" };
 const SWATCHES: Record<"background" | "text" | "accent", string[]> = {
   background: ["#ffffff", "#f3efe6", "#eef2ec", "#f5ede8", "#1e1f24", "#121212"],
   text: ["#111111", "#2b2520", "#1f2a36", "#3a2226", "#ede8e0", "#c9d1d9"],
@@ -88,7 +88,7 @@ function ColourRow(props: {
 async function importTheme(onChange: (theme: Theme) => void) {
   const picked = await platform.pickFile({
     name: t("Skrivro-tema"),
-    extensions: ["pennatema", "json"],
+    extensions: ["skrivrotema", "pennatema", "json"],
   });
   if (!picked) return;
   const theme = themeFrom(JSON.parse(new TextDecoder().decode(picked.bytes)) as unknown);
@@ -119,7 +119,7 @@ function FontRow({ theme, onChange }: OwnProps) {
 function OwnActions({ theme, onChange }: OwnProps) {
   const save = () =>
     void platform.saveFile(
-      `${t("Mitt tema")}.pennatema`,
+      `${t("Mitt tema")}.skrivrotema`,
       new TextEncoder().encode(themeFileText(theme)),
       THEME_FILE,
     );

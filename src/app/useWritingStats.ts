@@ -37,7 +37,7 @@ function todayOf(stats: Stats, project: Project | null): Today {
 
 // Made once at random and kept in localStorage.
 export function thisDevice() {
-  const key = "penna.device";
+  const key = "skrivro.device";
   try {
     const known = localStorage.getItem(key);
     if (known) return known;

@@ -69,7 +69,7 @@ export function searchPalette(entries: PaletteEntry[], query: string, uses: Uses
     .map((match) => match.entry);
 }
 
-const USES_KEY = "penna.palette.uses";
+const USES_KEY = "skrivro.palette.uses";
 
 export function readUses(): Uses {
   try {

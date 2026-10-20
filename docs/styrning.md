@@ -12,7 +12,7 @@ det är på, och nästa gång Skrivro startar är det av igen. Anropen går mot 
 `--app`:
 
 ```bash
-node scripts/penna.mjs --app tree
+node scripts/skrivro.mjs --app tree
 ```
 
 **Med Skrivro Test**, för att prova utan att röra dina böcker:
@@ -23,7 +23,7 @@ node scripts/penna.mjs --app tree
    2 och sätt När till Mars", eller kör ett anrop själv:
 
 ```bash
-node scripts/penna.mjs tree
+node scripts/skrivro.mjs tree
 ```
 
 Svaret kommer som JSON.
@@ -35,8 +35,8 @@ anropet genom appen, som vanligt; annars skrivs bokens filer direkt, med samma k
 använder. En Skrivro som startar eller redan bevakar mappen läser själv in ändringen.
 
 ```bash
-node scripts/penna.mjs --book "C:/Users/Elin/Documents/Skrivro/Vintervägen.penna" tree
-node scripts/penna.mjs --book "…/Vintervägen.penna" write <scen-id> kapitel1.md
+node scripts/skrivro.mjs --book "C:/Users/Elin/Documents/Skrivro/Vintervägen.skrivro" tree
+node scripts/skrivro.mjs --book "…/Vintervägen.skrivro" write <scen-id> kapitel1.md
 ```
 
 Det fungerar utan `--book` bara med appen igång. Bokens filer beskrivs i
@@ -49,7 +49,7 @@ vara igång. En disposition i Markdown blir bokens träd, som när Importera lä
 delar, `##` kapitel och texten under dem scener.
 
 ```bash
-node scripts/penna.mjs new "C:/Users/Elin/Documents/Skrivro" Vintervägen disposition.md
+node scripts/skrivro.mjs new "C:/Users/Elin/Documents/Skrivro" Vintervägen disposition.md
 ```
 
 Svaret är bokens mapp och första scenens id. Sedan fungerar de andra anropen med `--book`.

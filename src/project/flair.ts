@@ -84,7 +84,7 @@ export function wornFlair(id: string, earned: Earned): Flair | null {
 // For trying the styles in Skrivro Test: only where Skrivro runs from the source, never in a release.
 const isAllOpen = () => {
   try {
-    return import.meta.env.DEV && localStorage.getItem("penna.allt-upplast") === "ja";
+    return import.meta.env.DEV && localStorage.getItem("skrivro.allt-upplast") === "ja";
   } catch {
     return false;
   }

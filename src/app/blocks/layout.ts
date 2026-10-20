@@ -7,8 +7,8 @@ import { createStore } from "@llkit/store.js";
 export type Place = { left: number; top: number };
 export type Layout = { open: string[]; places: Record<string, Place> };
 
-const PLACES_KEY = "penna.blocks.places";
-const LAYOUTS_KEY = "penna.blocks.layouts";
+const PLACES_KEY = "skrivro.blocks.places";
+const LAYOUTS_KEY = "skrivro.blocks.layouts";
 export const LAYOUT_SLOTS = [1, 2, 3];
 
 function read<T>(key: string, empty: T): T {

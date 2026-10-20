@@ -11,8 +11,8 @@ import type { PreferenceChange } from "./useStartup.js";
 // The profile and the writer's own settings follow them to every device they sign in on. Each
 // device dates its last change, and the newer side wins.
 
-const CHANGED_KEY = "penna.account.changed";
-const LAST_KEY = "penna.account.last";
+const CHANGED_KEY = "skrivro.account.changed";
+const LAST_KEY = "skrivro.account.last";
 const EVERY = 5 * 60_000;
 const SOON = 2_000;
 

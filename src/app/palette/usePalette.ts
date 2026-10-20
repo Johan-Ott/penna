@@ -14,7 +14,7 @@ export function usePalette(context: PaletteContext | null) {
     isOpen: isOpen && context !== null,
     // Made only while open: a long book has hundreds of entries, and the app draws on every key.
     entries: isOpen ? entriesNow() : [],
-    /** The entries as they are now, for window.penna; made only when asked for. */
+    /** The entries as they are now, for window.skrivro; made only when asked for. */
     entriesNow,
     open: () => setOpen(true),
     close: () => setOpen(false),

@@ -3,7 +3,7 @@ import { joinPath } from "@llkit/storage/fileSystem.js";
 import { findAppFolder } from "../../sync/drive.js";
 import { googleDrive } from "../../sync/googleDrive.js";
 import { syncProject } from "../../sync/driveSync.js";
-import { readState, STATE_FILE } from "../../sync/syncState.js";
+import { isSyncedHere, readState } from "../../sync/syncState.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { platform } from "../platform.js";
 
@@ -24,12 +24,10 @@ async function booksOnDrive(libraryDir: string): Promise<CloudBook[]> {
   if (!drive || !folder) return [];
   const folders = (await drive.list(folder)).filter((file) => file.isFolder);
   const synced = await Promise.all(
-    folders.map((folder) =>
-      platform.fileSystem.modifiedAt(joinPath(libraryDir, `${folder.name}/${STATE_FILE}`)),
-    ),
+    folders.map((folder) => isSyncedHere(platform.fileSystem, joinPath(libraryDir, folder.name))),
   );
   return folders
-    .filter((_folder, index) => synced[index] === null)
+    .filter((_folder, index) => !synced[index])
     .map((folder) => ({ name: folder.name, id: folder.id }));
 }
 

@@ -1,4 +1,4 @@
-// `node scripts/penna.mjs [--app] [--book <bokmapp>] <call> [args…]`, or `new <bibliotek> <titel>
+// `node scripts/skrivro.mjs [--app] [--book <bokmapp>] <call> [args…]`, or `new <bibliotek> <titel>
 // [fil.md]` for a new book: the answer as JSON. The calls are listed in docs/styrning.md.
 //
 // With --book the call goes through Skrivro when it has that book open, so the app's own state
@@ -16,7 +16,8 @@ const isApp = argv.includes("--app");
 const isBookArg = (index) => bookAt >= 0 && (index === bookAt || index === bookAt + 1);
 const rest = argv.filter((arg, index) => arg !== "--app" && !isBookArg(index));
 const [call, ...args] = rest;
-if (!call) throw new Error("Usage: node scripts/penna.mjs [--app] [--book <mapp>] <call> [args…]");
+if (!call)
+  throw new Error("Usage: node scripts/skrivro.mjs [--app] [--book <mapp>] <call> [args…]");
 
 // --app reaches the real Skrivro, once Styr Skrivro från den här datorn is on; else Skrivro Test.
 const port = isApp ? "9334" : "9333";
@@ -41,12 +42,12 @@ async function throughApp() {
   const opened = await openPage().catch(() => null);
   if (!opened) return { isDone: false };
   const { browser, page } = opened;
-  const state = await page.evaluate(() => globalThis.penna?.state?.() ?? null);
+  const state = await page.evaluate(() => globalThis.skrivro?.state?.() ?? null);
   if (book && !(state?.dir && samePath(state.dir, book)))
     return browser.close().then(() => ({ isDone: false }));
   const values = valuesFor(call, args);
   const answer = await page.evaluate(
-    ([name, given]) => globalThis.penna?.[name]?.(...given) ?? `No call named ${name}`,
+    ([name, given]) => globalThis.skrivro?.[name]?.(...given) ?? `No call named ${name}`,
     [call, values],
   );
   await browser.close().catch(() => undefined);

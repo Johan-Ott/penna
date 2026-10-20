@@ -11,7 +11,7 @@
     "Sluta dagen mitt i en mening, så vet du var du börjar i morgon.",
     "Namnen i dina anteckningar blir länkar i texten.",
     "Granska hittar ord som upprepas för nära varandra.",
-    "Vässar pennan…",
+    "Vässar skrivron…",
     "Letar efter rätt ord…",
   ];
   var ENGLISH = [
@@ -29,7 +29,8 @@
   ];
   var language = "sv";
   try {
-    language = JSON.parse(globalThis.localStorage.getItem("penna.app") || "{}").uiLanguage || "sv";
+    language =
+      JSON.parse(globalThis.localStorage.getItem("skrivro.app") || "{}").uiLanguage || "sv";
   } catch {
     language = "sv";
   }

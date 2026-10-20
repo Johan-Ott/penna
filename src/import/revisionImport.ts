@@ -3,7 +3,7 @@ import { sceneEndMark } from "../export/sceneMarks.js";
 import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { docxHtml, htmlToMarkdown } from "./docxImport.js";
 
-const START = /<a id="penna_([0-9A-Z]+)"><\/a>/g;
+const START = /<a id="skrivro_([0-9A-Z]+)"><\/a>/g;
 // Word's footnote references stand where Skrivro has its own footnotes, so they count as the same.
 const FOOTNOTE = /<sup><a href="#footnote-\d+" id="footnote-ref-\d+">\[\d+\]<\/a><\/sup>/g;
 

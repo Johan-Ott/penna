@@ -13,7 +13,7 @@ import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 describe("series", () => {
   it("makes a series folder beside the books that holds only the note sorts", async () => {
-    const files = createMemoryFileSystem({ "/Skrivro/Vintervägen.penna/project.json": "{}" });
+    const files = createMemoryFileSystem({ "/Skrivro/Vintervägen.skrivro/project.json": "{}" });
 
     const folder = await createSeries(files, "/Skrivro", "Vintervägen");
 
@@ -37,14 +37,16 @@ describe("series", () => {
   it("lists the series in a folder and finds a book's series beside it", async () => {
     const files = createMemoryFileSystem({
       "/Skrivro/Isen.serie/project.json": "{}",
-      "/Skrivro/Bok.penna/project.json": "{}",
+      "/Skrivro/Bok.skrivro/project.json": "{}",
     });
 
     const found = await listSeries(files, "/Skrivro");
 
     expect(found).toEqual(["Isen.serie"]);
-    expect(seriesDirOf("/Skrivro/Bok.penna", { series: "Isen.serie" })).toBe("/Skrivro/Isen.serie");
-    expect(seriesDirOf("/Skrivro/Bok.penna", {})).toBeNull();
+    expect(seriesDirOf("/Skrivro/Bok.skrivro", { series: "Isen.serie" })).toBe(
+      "/Skrivro/Isen.serie",
+    );
+    expect(seriesDirOf("/Skrivro/Bok.skrivro", {})).toBeNull();
     expect(seriesTitle("Isen 2.serie")).toBe("Isen 2");
   });
 });
@@ -52,11 +54,11 @@ describe("series", () => {
 describe("moveNotesToSeries", () => {
   it("moves a book's notes into the same sorts of the series, file and connections too", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/Bok.penna/scenes/arvid.md": "---\ntitle: Arvid\n---\nFiskare.",
-      "/Skrivro/Bok.penna/scenes/fordon.md": "---\ntitle: Volvon\n---\n",
+      "/Skrivro/Bok.skrivro/scenes/arvid.md": "---\ntitle: Arvid\n---\nFiskare.",
+      "/Skrivro/Bok.skrivro/scenes/fordon.md": "---\ntitle: Volvon\n---\n",
     });
     const book = {
-      dir: "/Skrivro/Bok.penna",
+      dir: "/Skrivro/Bok.skrivro",
       fields: { connections: { arvid: [{ id: "elin", role: "brorsdotter" }] } },
       tree: withSpecialFolders([
         { id: CHARACTERS_ID, kind: "sort", children: [{ id: "arvid", kind: "scene" }] },
@@ -68,7 +70,7 @@ describe("moveNotesToSeries", () => {
     const moved = await moveNotesToSeries(files, book, series, ["arvid", "fordon"]);
 
     expect(await files.readText("/Skrivro/Isen.serie/scenes/arvid.md")).toContain("Fiskare.");
-    expect(await files.list("/Skrivro/Bok.penna/scenes")).toEqual([]);
+    expect(await files.list("/Skrivro/Bok.skrivro/scenes")).toEqual([]);
     expect(findNode(moved.seriesTree, "arvid")?.parent?.id).toBe(CHARACTERS_ID);
     expect(findNode(moved.seriesTree, "fordon")?.parent).toMatchObject({
       id: "egen",

@@ -3,6 +3,7 @@ import { Dialog } from "@llkit/controls.js";
 import { useMenuButton } from "@llkit/Menu.js";
 import type { CloudBook as Book, Fetching } from "./useCloudBooks.js";
 import { t } from "../../i18n/i18n.js";
+import { withoutBookSuffix } from "../../project/libraryFolders.js";
 
 // A book in the writer's Drive that this device has not fetched: pale, fetched and opened by a
 // tap, and removed from Drive from its menu, into Drive's trash for 30 days.
@@ -10,7 +11,7 @@ import { t } from "../../i18n/i18n.js";
 const fetchText = ({ done, all }: Fetching) =>
   all === 0 ? t("Hämtar…") : t("Hämtar {done} av {all}", { done, all });
 
-const title = (book: Book) => book.name.replace(/\.penna$/, "");
+const title = (book: Book) => withoutBookSuffix(book.name);
 
 function RemoveDialog(props: { book: Book; onRemove: () => void; onClose: () => void }) {
   return (

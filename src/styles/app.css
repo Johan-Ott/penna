@@ -60,7 +60,7 @@ select:focus-visible {
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-/* Skrivro's logo, from src/assets/penna-logo.png (made by `npm run icons`) */
+/* Skrivro's logo, from src/assets/skrivro-logo.png (made by `npm run icons`) */
 
 .brand-mark {
   width: 22px;

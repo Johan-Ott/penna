@@ -11,7 +11,7 @@ describe("syncProject keeps the text here", () => {
     const { cloud, computer, phone } = twoDevices();
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
-    await cloud.writeAt("Skrivro/Isen.penna/scenes/S1.md", "Från telefonen.");
+    await cloud.writeAt("Skrivro/Isen.skrivro/scenes/S1.md", "Från telefonen.");
     const download = cloud.drive.download;
     cloud.drive.download = async (id) => {
       await computer.writeText(`${BOOK}/scenes/S1.md`, "Skrivet under synken.");
@@ -59,7 +59,7 @@ describe("syncProject keeps the text here", () => {
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     await syncProject(phone, cloud.drive, BOOK, { now: NOW });
     for (const round of ["1", "2"]) {
-      await cloud.writeAt("Skrivro/Isen.penna/scenes/S1.md", `Telefonen ${round}.`);
+      await cloud.writeAt("Skrivro/Isen.skrivro/scenes/S1.md", `Telefonen ${round}.`);
       await computer.writeText(`${BOOK}/scenes/S1.md`, `Datorn ${round}.`);
       await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     }
@@ -80,24 +80,24 @@ describe("syncProject keeps two books apart", () => {
 
     await syncProject(other, cloud.drive, BOOK, { now: NOW });
 
-    expect(cloud.textAt("Skrivro/Isen.penna (2)/scenes/T1.md")).toBe("En helt annan bok.");
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/T1.md")).toBeNull();
+    expect(cloud.textAt("Skrivro/Isen.skrivro (2)/scenes/T1.md")).toBe("En helt annan bok.");
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/T1.md")).toBeNull();
     expect(await other.list(`${BOOK}/scenes`)).toEqual(["T1.md"]);
   });
 
   it("lets a copied book folder start afresh instead of changing the original's Drive folder", async () => {
     const { cloud, computer } = twoDevices();
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
-    const copy = `${BOOK.replace(".penna", "")} kopia.penna`;
-    for (const name of ["project.json", "scenes/S1.md", ".penna-sync.json"]) {
+    const copy = `${BOOK.replace(".skrivro", "")} kopia.skrivro`;
+    for (const name of ["project.json", "scenes/S1.md", ".skrivro-sync.json"]) {
       await computer.writeText(`${copy}/${name}`, await computer.readText(`${BOOK}/${name}`));
     }
     await computer.writeText(`${copy}/scenes/S1.md`, "Ett försök i kopian.");
 
     await syncProject(computer, cloud.drive, copy, { now: NOW });
 
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
-    expect(cloud.textAt("Skrivro/Isen kopia.penna/scenes/S1.md")).toBe("Ett försök i kopian.");
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/S1.md")).toBe("Brevet låg där.");
+    expect(cloud.textAt("Skrivro/Isen kopia.skrivro/scenes/S1.md")).toBe("Ett försök i kopian.");
   });
 });
 
@@ -111,7 +111,7 @@ describe("syncProject and a file it cannot read", () => {
 
     await expect(syncProject(computer, cloud.drive, BOOK, { now: NOW })).rejects.toThrow();
 
-    expect(cloud.textAt("Skrivro/Isen.penna/scenes/S1.md")).toBe("Brevet låg där.");
+    expect(cloud.textAt("Skrivro/Isen.skrivro/scenes/S1.md")).toBe("Brevet låg där.");
   });
 });
 
@@ -128,11 +128,11 @@ describe("syncProject and a book emptied on one side", () => {
     await syncProject(computer, cloud.drive, BOOK, { now: NOW });
     const emptied = createMemoryFileSystem({
       [`${BOOK}/project.json`]: "{}",
-      [`${BOOK}/.penna-sync.json`]: await computer.readText(`${BOOK}/.penna-sync.json`),
+      [`${BOOK}/.skrivro-sync.json`]: await computer.readText(`${BOOK}/.skrivro-sync.json`),
     });
 
     await expect(syncProject(emptied, cloud.drive, BOOK, { now: NOW })).rejects.toThrow();
 
-    expect(cloud.isInTrash("Skrivro/Isen.penna/scenes/S0.md")).toBe(false);
+    expect(cloud.isInTrash("Skrivro/Isen.skrivro/scenes/S0.md")).toBe(false);
   });
 });

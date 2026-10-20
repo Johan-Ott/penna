@@ -8,7 +8,7 @@ import { runBatch } from "../project/batch.js";
 import { bookCalls } from "./remoteBook.js";
 import { settingCallsInApp } from "./remoteBookSettings.js";
 
-// window.penna: the app's own commands and open book, for a tool on this computer to drive
+// window.skrivro: the app's own commands and open book, for a tool on this computer to drive
 // Skrivro with as a game's console does; everything goes through what the app already does.
 
 type Row = { id: string; kind: TreeNode["kind"]; title: string; depth: number };
@@ -94,13 +94,13 @@ function api(current: () => AppState) {
 
 export type SkrivroApi = ReturnType<typeof api>;
 
-/** Puts window.penna in place for as long as the app runs. */
+/** Puts window.skrivro in place for as long as the app runs. */
 export function useRemote(app: AppState) {
   const latest = useRef(app);
   latest.current = app;
   useEffect(() => {
-    const page = window as { penna?: SkrivroApi };
-    page.penna = api(() => latest.current);
-    return () => void delete page.penna;
+    const page = window as { skrivro?: SkrivroApi };
+    page.skrivro = api(() => latest.current);
+    return () => void delete page.skrivro;
   }, []);
 }

@@ -7,7 +7,7 @@ interface TodayTexts {
   texts: Record<string, { title: string; words: number }>;
 }
 
-const KEY = "penna.todayTexts";
+const KEY = "skrivro.todayTexts";
 
 function read(): TodayTexts {
   const today = dayKey(Date.now());

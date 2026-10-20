@@ -2,6 +2,7 @@ import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
 import { appFolder, type Drive } from "./drive.js";
+import { SYNC_LOG } from "./syncLog.js";
 
 // Which Drive folder a book syncs with, and each file as it was at the last sync;
 // project.json keeps its whole text for the merge.
@@ -18,10 +19,33 @@ export interface SyncState {
   files: Record<string, Synced>;
 }
 
-export const STATE_FILE = ".penna-sync.json";
+export const STATE_FILE = ".skrivro-sync.json";
+// What a book synced while the app was called Penna has in its folder, and what it is called now.
+const PENNA_FILES = [
+  [".penna-sync.json", STATE_FILE],
+  [".penna-sync-log.json", SYNC_LOG],
+] as const;
+
+const isThere = async (fileSystem: FileSystem, path: string) =>
+  (await fileSystem.modifiedAt(path)) !== null;
+
+/** The book has been synced on this device, under the new name or the old. */
+export const isSyncedHere = async (fileSystem: FileSystem, dir: string) =>
+  (await isThere(fileSystem, joinPath(dir, STATE_FILE))) ||
+  isThere(fileSystem, joinPath(dir, PENNA_FILES[0][0]));
+
+async function renamePennaFiles(fileSystem: FileSystem, dir: string) {
+  for (const [old, now] of PENNA_FILES) {
+    const [from, to] = [joinPath(dir, old), joinPath(dir, now)];
+    if ((await isThere(fileSystem, from)) && !(await isThere(fileSystem, to))) {
+      await fileSystem.rename(from, to);
+    }
+  }
+}
 
 export async function readState(fileSystem: FileSystem, dir: string): Promise<SyncState> {
   const fresh = { folderId: null, files: {} };
+  await renamePennaFiles(fileSystem, dir);
   try {
     const state = JSON.parse(await fileSystem.readText(joinPath(dir, STATE_FILE))) as SyncState;
     return state.dir && state.dir !== dir ? fresh : state;

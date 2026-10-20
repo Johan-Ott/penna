@@ -10,7 +10,7 @@ const TARGET = "src-tauri/icons";
 // Tauri also makes iOS and Windows Store icons; those wait until Skrivro is built for them.
 const KEPT = ["icon.ico", "icon.png", "icon.icns", "32x32.png", "128x128.png"];
 
-const workDir = mkdtempSync(join(tmpdir(), "penna-icons-"));
+const workDir = mkdtempSync(join(tmpdir(), "skrivro-icons-"));
 const result = spawnSync("npx", ["tauri", "icon", SOURCE, "-o", workDir], {
   stdio: "inherit",
   shell: true,
@@ -19,8 +19,8 @@ if (result.status === 0) {
   for (const name of KEPT) copyFileSync(join(workDir, name), join(TARGET, name));
   rmSync(join(TARGET, "android"), { recursive: true, force: true });
   cpSync(join(workDir, "android"), join(TARGET, "android"), { recursive: true });
-  copyFileSync(join(workDir, "128x128@2x.png"), "src/assets/penna-logo.png");
-  process.stdout.write(`Updated the icons in ${TARGET} and src/assets/penna-logo.png\n`);
+  copyFileSync(join(workDir, "128x128@2x.png"), "src/assets/skrivro-logo.png");
+  process.stdout.write(`Updated the icons in ${TARGET} and src/assets/skrivro-logo.png\n`);
 }
 rmSync(workDir, { recursive: true, force: true });
 process.exit(result.status ?? 1);

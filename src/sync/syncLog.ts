@@ -6,7 +6,7 @@ import { flatten, same, type TreeConflict } from "./mergeTree.js";
 // What the syncs brought here from Drive, kept in the book until the writer has looked:
 // texts that came, changed or went, the structure's changes, and its conflicts to choose.
 
-export const SYNC_LOG = ".penna-sync-log.json";
+export const SYNC_LOG = ".skrivro-sync-log.json";
 
 export interface FileChange {
   /** Such as "scenes/S1.md" or "bilder/karta.png". */

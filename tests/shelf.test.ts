@@ -44,15 +44,15 @@ describe("whenUpdated", () => {
 describe("readShelf", () => {
   it("lists the projects in the library and those opened from elsewhere, and marks missing ones", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/Isen.penna/project.json": '{"title":"Isen","type":"roman","tree":[]}',
-      "/Skrivro/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: klar\n---\nTvå ord.",
+      "/Skrivro/Isen.skrivro/project.json": '{"title":"Isen","type":"roman","tree":[]}',
+      "/Skrivro/Isen.skrivro/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: klar\n---\nTvå ord.",
       "/Skrivro/inte-ett-projekt/anteckning.md": "x",
-      "/Annat/Fyren.penna/project.json": '{"title":"Fyren","tree":[]}',
+      "/Annat/Fyren.skrivro/project.json": '{"title":"Fyren","tree":[]}',
     });
 
     const books = await readShelf(files, "/Skrivro", [
-      "/Annat/Fyren.penna",
-      "/Borta/Saltstank.penna",
+      "/Annat/Fyren.skrivro",
+      "/Borta/Saltstank.skrivro",
     ]);
 
     expect(books.map((book) => [book.title, book.isMissing])).toEqual([
@@ -68,9 +68,9 @@ describe("readShelf", () => {
 describe("shelfGroups", () => {
   it("keeps the books of a series together under its name, books on their own first", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/A.penna/project.json": '{"title":"Isen","series":"Vintern.serie","tree":[]}',
-      "/Skrivro/B.penna/project.json": '{"title":"Fristående","tree":[]}',
-      "/Skrivro/C.penna/project.json": '{"title":"Fyren","series":"Vintern.serie","tree":[]}',
+      "/Skrivro/A.skrivro/project.json": '{"title":"Isen","series":"Vintern.serie","tree":[]}',
+      "/Skrivro/B.skrivro/project.json": '{"title":"Fristående","tree":[]}',
+      "/Skrivro/C.skrivro/project.json": '{"title":"Fyren","series":"Vintern.serie","tree":[]}',
     });
     const books = await readShelf(files, "/Skrivro", []);
 
@@ -84,10 +84,10 @@ describe("shelfGroups", () => {
 
   it("orders a series by the books' numbers, and books without a number last", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/A.penna/project.json":
+      "/Skrivro/A.skrivro/project.json":
         '{"title":"Tvåan","series":"V.serie","seriesNumber":2,"tree":[]}',
-      "/Skrivro/B.penna/project.json": '{"title":"Utan","series":"V.serie","tree":[]}',
-      "/Skrivro/C.penna/project.json":
+      "/Skrivro/B.skrivro/project.json": '{"title":"Utan","series":"V.serie","tree":[]}',
+      "/Skrivro/C.skrivro/project.json":
         '{"title":"Ettan","series":"V.serie","seriesNumber":1,"tree":[]}',
     });
     const books = await readShelf(files, "/Skrivro", []);
@@ -105,9 +105,9 @@ describe("shelfGroups", () => {
 describe("a book being written", () => {
   it("counts its words toward the goal, and says what the deadline asks per day", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/Isen.penna/project.json":
+      "/Skrivro/Isen.skrivro/project.json":
         '{"title":"Isen","totalGoal":1000,"deadline":"2027-01-31","genre":"deckare","tree":[]}',
-      "/Skrivro/Isen.penna/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: utkast\n---\nTvå ord.",
+      "/Skrivro/Isen.skrivro/scenes/S1.md": "---\nid: S1\ntitle: A\nstatus: utkast\n---\nTvå ord.",
     });
 
     const [book] = await readShelf(files, "/Skrivro", []);
@@ -120,8 +120,8 @@ describe("a book being written", () => {
 
   it("stands first on the shelf when it was written in last", async () => {
     const files = createMemoryFileSystem({
-      "/Skrivro/A.penna/project.json": '{"title":"Gammal","tree":[]}',
-      "/Skrivro/B.penna/project.json": '{"title":"Ny","tree":[]}',
+      "/Skrivro/A.skrivro/project.json": '{"title":"Gammal","tree":[]}',
+      "/Skrivro/B.skrivro/project.json": '{"title":"Ny","tree":[]}',
     });
     const books = await readShelf(files, "/Skrivro", []);
     const [old, recent] = books;

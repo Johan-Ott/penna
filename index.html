@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Skrivro</title>
-    <link rel="icon" type="image/png" href="/src/assets/penna-logo.png" />
+    <link rel="icon" type="image/png" href="/src/assets/skrivro-logo.png" />
     <script src="/theme.js"></script>
     <style>
       /* The page's colour from the first frame, before the app's styles arrive. */
@@ -14,13 +14,13 @@
       html[data-theme="dark"] {
         background: #1b1b1b;
       }
-      @keyframes penna-in {
+      @keyframes skrivro-in {
         from {
           opacity: 0;
         }
       }
       #root {
-        animation: penna-in 180ms ease-out;
+        animation: skrivro-in 180ms ease-out;
       }
       /* The start picture: the logo and a thin line moving under it, from the first frame until
          the app has drawn more than its empty starting screen. */
@@ -113,7 +113,7 @@
   <body>
     <div id="root"></div>
     <div id="boot" aria-hidden="true">
-      <img src="/src/assets/penna-logo.png" alt="" />
+      <img src="/src/assets/skrivro-logo.png" alt="" />
       <span></span>
       <p id="boot-tip"></p>
     </div>

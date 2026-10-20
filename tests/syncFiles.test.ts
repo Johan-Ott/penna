@@ -38,7 +38,7 @@ describe("classifySceneFiles", () => {
   });
 
   it("ignores temp files and unrelated files", () => {
-    const names = ["01J9Z4K2QX.md.penna-tmp", "desktop.ini", ".DS_Store", "readme.txt"];
+    const names = ["01J9Z4K2QX.md.skrivro-tmp", "desktop.ini", ".DS_Store", "readme.txt"];
 
     const listing = classifySceneFiles(names);
 

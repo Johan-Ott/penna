@@ -1,4 +1,5 @@
 import type { FileSystem } from "@llkit/storage/fileSystem.js";
+import { isTempFile } from "@llkit/storage/atomicWrite.js";
 import type { Drive, RemoteFile } from "./drive.js";
 import { filesIn } from "../storage/folderFiles.js";
 import {
@@ -40,7 +41,7 @@ const CONFLICT_COPY = / \(Drive \d{4}-\d\d-\d\d\)/;
 const isLeftOut = (path: string) =>
   path === STATE_FILE ||
   path === SYNC_LOG ||
-  path.endsWith(".penna-tmp") ||
+  isTempFile(path) ||
   path.endsWith(DOWNLOAD_SUFFIX) ||
   CONFLICT_COPY.test(path);
 

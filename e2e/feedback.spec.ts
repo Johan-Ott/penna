@@ -62,8 +62,8 @@ test("after an update, Skrivro shows what is new once, and asks what the writer 
 }) => {
   await page.addInitScript((version) => {
     if (sessionStorage.getItem("started")) return;
-    localStorage.setItem("penna.app", JSON.stringify({ isOnboardingDone: true }));
-    localStorage.setItem("penna.seenVersion", "0.0.1");
+    localStorage.setItem("skrivro.app", JSON.stringify({ isOnboardingDone: true }));
+    localStorage.setItem("skrivro.seenVersion", "0.0.1");
     localStorage.setItem(
       "skrivro.updateNotes",
       JSON.stringify({ version, notes: "* Tidslinje | Timeline" }),

@@ -1,11 +1,11 @@
 [package]
-name = "penna"
+name = "skrivro"
 version = "0.4.4"
 edition = "2021"
 
 # Android and iOS start Skrivro from the library; the desktop starts it from main.rs.
 [lib]
-name = "penna_lib"
+name = "skrivro_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

@@ -3,7 +3,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 
-const REPO = "Johan-Ott/penna";
+const REPO = "Johan-Ott/skrivro";
 const MAIL = "johan.lonelodge@gmail.com";
 const LABELS = ["nu", "snart", "senare"];
 const token = process.env.GITHUB_TOKEN ?? execSync("gh auth token").toString().trim();
@@ -133,13 +133,13 @@ const top = (text) => `<!doctype html>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${text.title}</title>
-    <link rel="icon" href="penna-logo.png" />
+    <link rel="icon" href="skrivro-logo.png" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header class="top">
       <nav class="wrap">
-        <a class="brand" href="${text.home}"><img src="penna-logo.png" alt="" />Skrivro</a>
+        <a class="brand" href="${text.home}"><img src="skrivro-logo.png" alt="" />Skrivro</a>
         <a class="language" href="${text.other[0]}" lang="${text.other[1]}">${text.other[2]}</a>
         <a class="button" href="${text.download[0]}">${text.download[1]}</a>
       </nav>

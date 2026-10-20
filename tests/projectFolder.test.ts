@@ -9,7 +9,7 @@ import { openProjectFolder } from "../src/storage/projectFolder";
 let dir = "";
 
 beforeEach(async () => {
-  dir = await mkdtemp(joinPath(tmpdir(), "penna-test-"));
+  dir = await mkdtemp(joinPath(tmpdir(), "skrivro-test-"));
 });
 
 afterEach(async () => {
