@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { isMarkActive, toggleBold, toggleItalic } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
 import type { useEditorView } from "../editor/useEditorView.js";
+import { AlignButtons } from "./AlignButtons.js";
 import { StylePicker } from "./StylePicker.js";
 import { usePhone } from "./phone/usePhone.js";
 import { countWordsBetween } from "../manuscript/wordCount.js";
@@ -147,6 +148,17 @@ function BarActions({ editor, onComment, onReadAloud, isPhone }: BarProps & { is
   );
 }
 
+// The paragraph's style and its alignment, side by side; a phone's bar has room for neither.
+const BlockChoices = (props: {
+  editorState: EditorState | null;
+  run: (command: Command) => void;
+}) => (
+  <>
+    <StylePicker {...props} />
+    <AlignButtons {...props} />
+  </>
+);
+
 /** Marks, a comment or a footnote for the selected words, and the words as a picture to share. */
 export function SelectionBar(props: BarProps) {
   const { editor } = props;
@@ -169,7 +181,7 @@ export function SelectionBar(props: BarProps) {
     >
       <MarkButton {...marks} mark="bold" label={t("Fetstil")} />
       <MarkButton {...marks} mark="italic" label={t("Kursiv")} />
-      {!isPhone && <StylePicker editorState={editorState} run={editor.run} />}
+      {!isPhone && <BlockChoices editorState={editorState} run={editor.run} />}
       <BarActions {...props} isPhone={isPhone} />
       {!isPhone && <SelectedWords editorState={editorState} />}
     </div>

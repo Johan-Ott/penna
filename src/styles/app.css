@@ -1981,13 +1981,20 @@ button.book-cover:hover {
   box-shadow: var(--shadow-dialog);
 }
 
-/* Fast formateringsrad: the same row, kept under the top bar in the middle of the text. */
+/* Fast formateringsrad: the same row as a band across the top of the text, as a word
+   processor's, its buttons in the middle. It sits in the 46px the main card leaves at its top. */
 .selection-bar.fixed {
-  top: 52px;
-  left: 50%;
+  position: absolute;
+  top: -46px;
+  right: 0;
+  left: 0;
   z-index: var(--layer-float);
-  box-shadow: var(--shadow-low);
-  transform: translateX(-50%);
+  justify-content: center;
+  border: 0;
+  border-bottom: 1px solid var(--border-card);
+  border-radius: 0;
+  background: var(--bg);
+  box-shadow: none;
 }
 
 .focus-mode .selection-bar.fixed {
@@ -1996,7 +2003,7 @@ button.book-cover:hover {
 
 /* Its own band at the top of the text, so the row never covers the words. */
 .format-bar-on:not(.focus-mode) .main-card {
-  padding-top: 48px;
+  padding-top: 46px;
 }
 
 .export-part {
