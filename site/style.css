@@ -398,7 +398,7 @@ h2 {
 }
 
 .frame.middle img {
-  top: -90px;
+  top: 32px;
   left: 50%;
   transform: translateX(-50%);
 }

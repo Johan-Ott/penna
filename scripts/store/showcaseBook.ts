@@ -153,6 +153,18 @@ const PROJECT = {
   type: "roman",
   genre: "Mysdeckare",
   dailyGoal: 500,
+  submissions: [
+    ["Kardemummaförlaget", "2026-03-02", "nej"],
+    ["Bokhuset Mjölsäcken", "2026-03-02", "mer"],
+    ["Agentur Pärlsocker", "2026-03-14", "skickat"],
+    ["Förlaget Sockerkringlan", "2026-04-01", "ja"],
+  ].map(([to, sent, status], row) => ({
+    id: `01JA0SKRVRBK000000000000S${row + 1}`,
+    to,
+    sent,
+    status,
+    note: "",
+  })),
   connections: {
     [IDS.greta]: [
       { id: IDS.holm, role: "granne" },

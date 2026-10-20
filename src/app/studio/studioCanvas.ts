@@ -122,7 +122,7 @@ export function startCard(canvas: HTMLCanvasElement, look: Look, format: CardFor
 export const penMark = (card: Card) =>
   text(
     card,
-    "SKRIVEN I PENNA",
+    "SKRIVEN I SKRIVRO",
     { x: 484, y: card.height - 12 },
     {
       size: 9,

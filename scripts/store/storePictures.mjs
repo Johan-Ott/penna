@@ -82,6 +82,43 @@ export async function compose(browser, lang, shots, raw) {
   await render(browser, banner(tagline), { width: 1024, height: 500 }, `${dir}/play-banner.png`);
 }
 
+// The bun's swirl: a spiral wound out from the middle, as one path.
+const swirl = (turns, outer) =>
+  [...Array(turns * 36 + 1).keys()]
+    .map((step) => {
+      const angle = (step / 36) * 2 * Math.PI;
+      const radius = (outer * step) / (turns * 36);
+      return `${step ? "L" : "M"}${(radius * Math.cos(angle)).toFixed(1)} ${(radius * Math.sin(angle)).toFixed(1)}`;
+    })
+    .join(" ");
+
+const SUGAR = [
+  [-150, -210],
+  [60, -250],
+  [210, -120],
+  [-250, 20],
+  [240, 90],
+  [-120, 230],
+  [110, 210],
+  [-20, -60],
+];
+
+// The cover of the pictures' book, Kanelbullemordet, so the finished book looks like one.
+export const bookCover = () =>
+  sheet(
+    1600,
+    2560,
+    `<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 52%, #f8e4d3 0, #eccfb6 70%)"></div>
+  <div style="position:absolute;top:210px;width:100%;text-align:center;font-size:58px;letter-spacing:0.3em;color:#a85a2e">EN MYSDECKARE</div>
+  <h1 style="top:340px;width:1400px;font-size:230px;line-height:1;color:#0b4a37">Kanelbulle&shy;mordet</h1>
+  <svg viewBox="-400 -400 800 800" style="position:absolute;left:400px;top:1150px;width:800px">
+    <circle r="340" fill="#c98a55"/>
+    <path d="${swirl(4, 300)}" fill="none" stroke="#8a4b24" stroke-width="30" stroke-linecap="round"/>
+    ${SUGAR.map(([x, y]) => `<rect x="${x}" y="${y}" width="34" height="26" rx="9" fill="#fbf7f0"/>`).join("")}
+  </svg>
+  <div style="position:absolute;bottom:200px;width:100%;text-align:center;font-size:76px;letter-spacing:0.22em;color:#0b4a37">GRETA LIND</div>`,
+  );
+
 // Play rounds the icon itself, so its 512 × 512 is the logo's paper all the way to the edges.
 export const playIcon = () =>
   sheet(
