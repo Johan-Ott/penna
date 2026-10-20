@@ -87,7 +87,7 @@ export const playIcon = () =>
   sheet(
     512,
     512,
-    `<div style="position:absolute;inset:0;background:#faf9f6"></div>
+    `<div style="position:absolute;inset:0;background:#0e6b4f"></div>
   <img src="${dataUrl("src-tauri/icons/icon-source.png")}"
   style="position:absolute;left:-56px;top:-56px;width:624px">`,
   );

@@ -1,3 +1,4 @@
+import logo from "../../assets/skrivro-logo.png";
 import { LookButton } from "../settingsPanel.js";
 import { RemoteBadge } from "../settings/RemoteControlRow.js";
 import { WindowControls } from "@llkit/shell/WindowControls.js";
@@ -37,6 +38,8 @@ export interface TopbarProps {
   profile: ReactNode;
 }
 
+const BrandMark = () => <img className="brand-mark" src={logo} alt="" />;
+
 function ModeSwitch({ view, onView }: Pick<TopbarProps, "view" | "onView">) {
   const isPublishing = view === "publicera";
   const mode = (label: string, isOn: boolean, next: View, icon: ReactNode) => (
@@ -66,6 +69,7 @@ export function ShelfTopbar(props: Pick<TopbarProps, "title" | "onMenu" | "profi
         <IconButton label={t("Meny")} onClick={props.onMenu}>
           <MenuIcon />
         </IconButton>
+        <BrandMark />
         {props.profile}
       </div>
       <span className="topbar-title" data-tauri-drag-region>
@@ -100,6 +104,7 @@ function TopbarStart(props: TopbarProps) {
       <IconButton label={t("Meny")} onClick={props.onMenu}>
         <MenuIcon />
       </IconButton>
+      <BrandMark />
       <IconButton
         label={t("Visa eller dölj sidomenyn")}
         className="sidebar-toggle"
