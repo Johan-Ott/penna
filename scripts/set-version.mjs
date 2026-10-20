@@ -17,6 +17,8 @@ replaceIn("package.json", /"version": "[^"]*"/, `"version": "${version}"`);
 replaceIn("src-tauri/tauri.conf.json", /"version": "[^"]*"/, `"version": "${version}"`);
 // Only the first `version =` in Cargo.toml is Skrivro's own; the rest belong to dependencies.
 replaceIn("src-tauri/Cargo.toml", /^version = "[^"]*"/m, `version = "${version}"`);
+// The lock file names Skrivro's own version too; left alone, the next build changes it.
+replaceIn("src-tauri/Cargo.lock", /(name = "skrivro"\nversion = )"[^"]*"/, `$1"${version}"`);
 
 process.stdout.write(
   `Skrivro ${version}. Släpp den med:\n` +
