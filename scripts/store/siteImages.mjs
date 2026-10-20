@@ -1,16 +1,27 @@
 // `node scripts/store/siteImages.mjs`: the pictures in site/bilder, taken from the web build on
-// http://127.0.0.1:1420 (npm run dev:web) with the example book Vintervägen.
+// http://127.0.0.1:1420 (npm run dev:web) with the store pictures' book in showcaseBook.ts.
 import { chromium } from "@playwright/test";
 
 const APP = "http://127.0.0.1:1420/";
 const OUT = "site/bilder";
-const KOKET = "01J9Z4K2QX0000000000000001";
-const ARVID = "01J9Z4K2QX0000000000000005";
+const BAGERIET = "01JA0SKRVRBK00000000000001";
+const FONSTRET = "01JA0SKRVRBK00000000000003";
+const GRETA = "01JA0SKRVRBK00000000000006";
 
 async function openExample(browser, { viewport, scale = 1, colorScheme = "light" }) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: scale, colorScheme });
+  await page.route("**/src/demo/demoProject.ts*", async (route) => {
+    const url = route
+      .request()
+      .url()
+      .replace("/src/demo/demoProject.ts", "/scripts/store/showcaseBook.ts");
+    await route.fulfill({ response: await route.fetch({ url }) });
+  });
   await page.addInitScript(() => {
-    globalThis.localStorage.setItem("skrivro.app", JSON.stringify({ isOnboardingDone: true }));
+    globalThis.localStorage.setItem(
+      "skrivro.app",
+      JSON.stringify({ isOnboardingDone: true, authorName: "Greta Lind" }),
+    );
     globalThis.localStorage.setItem("skrivro.guide", JSON.stringify({ isOff: true }));
   });
   await page.goto(APP);
@@ -31,11 +42,11 @@ async function capture(page, file, action) {
   await page.screenshot({ path: `${OUT}/${file}`, ...(file.endsWith(".jpg") && { quality: 88 }) });
 }
 
-const SYNOPSIS = `Elin återvänder till ön en vinter då isen bär, för att tömma sin döda mosters hus. På köksbordet ligger ett brev, skrivet fyrtio år tidigare, som ingen skulle öppna förrän isen släppt.
+const SYNOPSIS = `En lördagsmorgon är den sista kanelbullen borta från Gyllene Kringlan, och bagare Holm misstänker alla utom sig själv. Greta, 78 år och pensionerad postmästare, tar sig an fallet.
 
-När hon börjar fråga runt visar sig farbror Arvid veta mer än han säger, och fyren som släcktes 1987 blir nyckeln till vad som hände den natten.
+Spåren i mjölet leder till katten Sixten, som har sett allt men inte tänker säga ett ord. Under förhöret singlar pärlsocker ner ur Holms mustasch.
 
-I slutet förstår Elin att brevet var till henne.`;
+Det var Holm. Han åt bullen i sömnen.`;
 
 const desk = { viewport: { width: 1440, height: 900 } };
 const browser = await chromium.launch();
@@ -45,14 +56,14 @@ for (const [colorScheme, file] of [
   ["dark", "skriv-mork.jpg"],
 ]) {
   const page = await openExample(browser, { ...desk, scale: 2, colorScheme });
-  await capture(page, file, () => open(page, KOKET));
+  await capture(page, file, () => open(page, BAGERIET));
   await page.close();
 }
 
 const page = await openExample(browser, desk);
-await capture(page, "person.png", () => open(page, ARVID));
+await capture(page, "person.png", () => open(page, GRETA));
 await capture(page, "granska.png", async () => {
-  await open(page, KOKET);
+  await open(page, FONSTRET);
   await page.waitForTimeout(600);
   await page
     .getByRole("button", { name: /^Granska/ })
@@ -61,6 +72,8 @@ await capture(page, "granska.png", async () => {
 });
 await capture(page, "las.png", async () => {
   await page.getByRole("button", { name: "Stäng granskning" }).click();
+  await open(page, BAGERIET);
+  await page.waitForTimeout(600);
   await page.getByRole("button", { name: "Läs kapitlet" }).click();
 });
 await capture(page, "publicera.png", async () => {

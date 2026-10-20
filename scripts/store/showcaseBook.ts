@@ -1,5 +1,5 @@
-// The book in the store pictures: served in place of src/demo/demoProject.ts while
-// scripts/store/storeImages.mjs takes them, so the app itself never ships it.
+// The book in the store and website pictures: served in place of src/demo/demoProject.ts while
+// storeImages.mjs and siteImages.mjs take them, so the app itself never ships it.
 
 export const DEMO_PROJECT_DIR = "/Kanelbullemordet.skrivro";
 
