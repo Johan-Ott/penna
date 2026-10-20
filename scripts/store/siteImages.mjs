@@ -6,9 +6,9 @@ import { bookCover, render } from "./storePictures.mjs";
 const APP = "http://127.0.0.1:1420/";
 const OUT = "site/bilder";
 const COVER = "out/store/omslag.png";
-const BAGERIET = "01JA0SKRVRBK00000000000001";
-const FONSTRET = "01JA0SKRVRBK00000000000003";
-const GRETA = "01JA0SKRVRBK00000000000006";
+const BRON = "01JA0SKRVRBK00000000000001";
+const ARKIVET = "01JA0SKRVRBK00000000000003";
+const ELIAS = "01JA0SKRVRBK00000000000006";
 
 async function openExample(browser, { viewport, scale = 1, colorScheme = "light" }) {
   const page = await browser.newPage({
@@ -27,7 +27,7 @@ async function openExample(browser, { viewport, scale = 1, colorScheme = "light"
   await page.addInitScript(() => {
     globalThis.localStorage.setItem(
       "skrivro.app",
-      JSON.stringify({ isOnboardingDone: true, authorName: "Greta Lind" }),
+      JSON.stringify({ isOnboardingDone: true, authorName: "J.Martinell" }),
     );
     globalThis.localStorage.setItem("skrivro.guide", JSON.stringify({ isOff: true }));
   });
@@ -58,14 +58,14 @@ for (const [colorScheme, file] of [
   ["dark", "skriv-mork.jpg"],
 ]) {
   const page = await openExample(browser, { ...desk, scale: 2, colorScheme });
-  await capture(page, file, () => open(page, BAGERIET));
+  await capture(page, file, () => open(page, BRON));
   await page.close();
 }
 
 const page = await openExample(browser, desk);
-await capture(page, "person.png", () => open(page, GRETA));
+await capture(page, "person.png", () => open(page, ELIAS));
 await capture(page, "granska.png", async () => {
-  await open(page, FONSTRET);
+  await open(page, ARKIVET);
   await page.waitForTimeout(600);
   await page
     .getByRole("button", { name: /^Granska/ })
@@ -74,7 +74,7 @@ await capture(page, "granska.png", async () => {
 });
 await capture(page, "las.png", async () => {
   await page.getByRole("button", { name: "Stäng granskning" }).click();
-  await open(page, BAGERIET);
+  await open(page, BRON);
   await page.waitForTimeout(600);
   await page.getByRole("button", { name: "Läs kapitlet" }).click();
 });

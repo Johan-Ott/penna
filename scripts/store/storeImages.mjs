@@ -2,18 +2,19 @@
 // on http://127.0.0.1:1420 (npm run dev:web) with the book in showcaseBook.ts instead of the example.
 import { chromium } from "@playwright/test";
 import { mkdirSync } from "node:fs";
-import { compose, playIcon, render } from "./storePictures.mjs";
+import { bookCover, compose, playIcon, render } from "./storePictures.mjs";
 
 const APP = "http://127.0.0.1:1420/";
 const RAW = "out/store/raw";
+const COVER = "out/store/omslag.png";
 
 const SHOTS = [
   ["skriv", "Här får orden vara ifred.", "Where words get some peace and quiet."],
   ["boken", "Kapitlen gör som du säger. Oftast.", "Your chapters do as they're told. Mostly."],
   [
     "anteckning",
-    "Vad hette katten nu igen? Skrivro minns.",
-    "What was the cat called again? Skrivro remembers.",
+    "Vem visste vad, och när? Skrivro minns.",
+    "Who knew what, and when? Skrivro remembers.",
   ],
   ["granska", "En egen redaktör. Ingen röd penna.", "Your own editor. No red pen."],
   ["publicera", "Från ”kanske en dag” till e-bok.", "From “someday” to e-book."],
@@ -31,7 +32,7 @@ async function openShowcase(browser, viewport, scale) {
   await page.addInitScript(() => {
     globalThis.localStorage.setItem(
       "skrivro.app",
-      JSON.stringify({ isOnboardingDone: true, authorName: "Greta Lind" }),
+      JSON.stringify({ isOnboardingDone: true, authorName: "J.Martinell" }),
     );
     globalThis.localStorage.setItem("skrivro.guide", JSON.stringify({ isOff: true }));
   });
@@ -42,9 +43,9 @@ async function openShowcase(browser, viewport, scale) {
   return page;
 }
 
-const GRETA = "01JA0SKRVRBK00000000000006";
-const FONSTRET = "01JA0SKRVRBK00000000000003";
-const BAGERIET = "01JA0SKRVRBK00000000000001";
+const ELIAS = "01JA0SKRVRBK00000000000006";
+const ARKIVET = "01JA0SKRVRBK00000000000003";
+const BRON = "01JA0SKRVRBK00000000000001";
 const open = (page, id) => page.evaluate((nodeId) => globalThis.skrivro.open(nodeId), id);
 
 const settle = (page) => page.waitForTimeout(900);
@@ -77,31 +78,33 @@ async function phone(browser) {
   await capture(page, "telefon-anteckning", async () => {
     await back();
     await row("Personer").click();
-    await row("Greta").click();
+    await row("Elias").click();
   });
   await capture(page, "telefon-granska", async () => {
     await back();
     await tab("Boken").click();
-    await openFromTree(page, row, ["Katten vet något", "Fönsterbrädan"]);
+    await openFromTree(page, row, ["Någon annans minne", "Arkivet"]);
     await page.getByRole("button", { name: /att se över/ }).click();
   });
   await capture(page, "telefon-publicera", async () => {
     await page.getByRole("button", { name: "Stäng granskning" }).click();
     await tab("Publicera").click();
-    await scrollPreview(page, 195, 700);
+    await showCover(page);
   });
   await page.close();
 }
 
-async function scrollPreview(page, left, distance) {
-  await settle(page);
-  await page.mouse.move(left, 600);
-  await page.mouse.wheel(0, distance);
+// The finished book: its cover under Bokuppgifter, put there as a writer would.
+async function showCover(page) {
+  await page.getByRole("button", { name: /^Bokuppgifter/ }).click();
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Byt bild…" }).click();
+  await (await chooser).setFiles(COVER);
 }
 
 async function desk(browser) {
   const page = await openShowcase(browser, { width: 1440, height: 900 }, 2);
-  await capture(page, "dator-skriv", () => open(page, BAGERIET));
+  await capture(page, "dator-skriv", () => open(page, BRON));
   await capture(page, "dator-boken", () =>
     page
       .getByRole("button", { name: /Innehåll/ })
@@ -110,10 +113,10 @@ async function desk(browser) {
   );
   await capture(page, "dator-anteckning", async () => {
     await page.keyboard.press("Escape");
-    await open(page, GRETA);
+    await open(page, ELIAS);
   });
   await capture(page, "dator-granska", async () => {
-    await open(page, FONSTRET);
+    await open(page, ARKIVET);
     await settle(page);
     await page
       .getByRole("button", { name: /^Granska/ })
@@ -123,13 +126,14 @@ async function desk(browser) {
   await capture(page, "dator-publicera", async () => {
     await page.getByRole("button", { name: "Stäng granskning" }).click();
     await page.getByRole("tab", { name: "Publicera" }).click();
-    await scrollPreview(page, 1100, 650);
+    await showCover(page);
   });
   await page.close();
 }
 
 mkdirSync(RAW, { recursive: true });
 const browser = await chromium.launch();
+await render(browser, bookCover(), { width: 1600, height: 2560 }, COVER);
 if (!process.argv.includes("--bara-bilder")) {
   await phone(browser);
   await desk(browser);

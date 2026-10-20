@@ -20,13 +20,18 @@ h1 { position: absolute; left: 0; right: 0; margin: 0 auto; text-align: center; 
 .frame img { display: block; width: 100%; }
 </style></head><body>${body}</body></html>`;
 
-const phonePicture = (caption, file) =>
+// What the screen made, held up in front of the phone: the finished book on Publicera.
+const popOut = (file) =>
+  `<img src="${dataUrl(file)}" style="position:absolute;left:560px;top:1060px;width:440px;
+  transform:rotate(4deg);border-radius:10px;box-shadow:0 50px 90px rgba(40,30,20,0.35)">`;
+
+const phonePicture = (caption, file, extra = "") =>
   sheet(
     1080,
     1920,
     `<h1 style="top:120px;width:900px;font-size:70px">${caption}</h1>
   <div class="frame" style="top:340px;width:760px;border:16px solid #111;border-radius:72px">
-  <img style="border-radius:56px" src="${dataUrl(file)}"></div>`,
+  <img style="border-radius:56px" src="${dataUrl(file)}"></div>${extra}`,
   );
 
 const deskPicture = (caption, file) =>
@@ -65,7 +70,11 @@ export async function compose(browser, lang, shots, raw) {
     const phoneSize = { width: 1080, height: 1920 };
     await render(
       browser,
-      phonePicture(caption, `${raw}/telefon-${name}.png`),
+      phonePicture(
+        caption,
+        `${raw}/telefon-${name}.png`,
+        name === "publicera" ? popOut("out/store/omslag.png") : "",
+      ),
       phoneSize,
       `${prefix}-telefon.png`,
     );
@@ -82,41 +91,35 @@ export async function compose(browser, lang, shots, raw) {
   await render(browser, banner(tagline), { width: 1024, height: 500 }, `${dir}/play-banner.png`);
 }
 
-// The bun's swirl: a spiral wound out from the middle, as one path.
-const swirl = (turns, outer) =>
-  [...Array(turns * 36 + 1).keys()]
-    .map((step) => {
-      const angle = (step / 36) * 2 * Math.PI;
-      const radius = (outer * step) / (turns * 36);
-      return `${step ? "L" : "M"}${(radius * Math.cos(angle)).toFixed(1)} ${(radius * Math.sin(angle)).toFixed(1)}`;
-    })
-    .join(" ");
+// A red door ajar in the dark, light spilling out over the floor: the door Elias closed.
+const DOOR = `<svg viewBox="0 0 800 1100" style="position:absolute;left:400px;top:1000px;width:800px">
+  <defs>
+    <linearGradient id="light" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8d9b8"/><stop offset="1" stop-color="#e08a5a"/>
+    </linearGradient>
+    <linearGradient id="spill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e08a5a" stop-opacity="0.55"/><stop offset="1" stop-color="#e08a5a" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="210" y="60" width="380" height="720" fill="#050807"/>
+  <rect x="210" y="60" width="380" height="720" fill="none" stroke="#2c3b35" stroke-width="18"/>
+  <polygon points="210,60 300,60 300,780 210,780" fill="url(#light)"/>
+  <polygon points="300,60 590,90 590,750 300,780" fill="#7a1f17"/>
+  <polygon points="300,60 590,90 590,750 300,780" fill="none" stroke="#a83a2a" stroke-width="6"/>
+  <circle cx="340" cy="430" r="11" fill="#e08a5a"/>
+  <polygon points="210,780 300,780 520,1100 0,1100" fill="url(#spill)"/>
+</svg>`;
 
-const SUGAR = [
-  [-150, -210],
-  [60, -250],
-  [210, -120],
-  [-250, 20],
-  [240, 90],
-  [-120, 230],
-  [110, 210],
-  [-20, -60],
-];
-
-// The cover of the pictures' book, Kanelbullemordet, so the finished book looks like one.
+// The cover of the pictures' book, Glömda Minnen, so the finished book looks like one.
 export const bookCover = () =>
   sheet(
     1600,
     2560,
-    `<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 52%, #f8e4d3 0, #eccfb6 70%)"></div>
-  <div style="position:absolute;top:210px;width:100%;text-align:center;font-size:58px;letter-spacing:0.3em;color:#a85a2e">EN MYSDECKARE</div>
-  <h1 style="top:340px;width:1400px;font-size:230px;line-height:1;color:#0b4a37">Kanelbulle&shy;mordet</h1>
-  <svg viewBox="-400 -400 800 800" style="position:absolute;left:400px;top:1150px;width:800px">
-    <circle r="340" fill="#c98a55"/>
-    <path d="${swirl(4, 300)}" fill="none" stroke="#8a4b24" stroke-width="30" stroke-linecap="round"/>
-    ${SUGAR.map(([x, y]) => `<rect x="${x}" y="${y}" width="34" height="26" rx="9" fill="#fbf7f0"/>`).join("")}
-  </svg>
-  <div style="position:absolute;bottom:200px;width:100%;text-align:center;font-size:76px;letter-spacing:0.22em;color:#0b4a37">GRETA LIND</div>`,
+    `<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 60%, #1c2a25 0, #070b0a 70%)"></div>
+  <div style="position:absolute;top:190px;width:100%;text-align:center;font-size:56px;letter-spacing:0.34em;color:#e08a5a">ROMAN</div>
+  <h1 style="top:300px;width:1400px;font-size:250px;line-height:1;color:#f4efe6">Glömda<br>Minnen</h1>
+  ${DOOR}
+  <div style="position:absolute;bottom:170px;width:100%;text-align:center;font-size:76px;letter-spacing:0.22em;color:#f4efe6">J.MARTINELL</div>`,
   );
 
 // Play rounds the icon itself, so its 512 × 512 is the logo's paper all the way to the edges.
