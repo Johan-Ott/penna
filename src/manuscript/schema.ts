@@ -11,6 +11,9 @@ export const STYLE_NAMES = [
   "hoger",
   "utan-indrag",
   "kapitaler",
+  "punktlista",
+  "numrerad",
+  "indrag",
 ] as const;
 export type StyleName = (typeof STYLE_NAMES)[number];
 

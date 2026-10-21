@@ -101,6 +101,20 @@ describe("parseMarkdown", () => {
     expect(roundTrip(scene)).toBe(scene);
   });
 
+  it("keeps a bulleted list, a numbered list and an indent as style blocks", () => {
+    const scene =
+      "::: punktlista\nMjöl\n\nÄgg\n:::\n\n::: numrerad\nFörst\n\nSedan\n:::\n\n::: indrag\nInskjutet.\n:::\n";
+    const doc = parseMarkdown(scene);
+
+    expect([0, 1, 2].map((index) => doc.child(index).attrs["style"])).toEqual([
+      "punktlista",
+      "numrerad",
+      "indrag",
+    ]);
+    expect(doc.child(0).childCount).toBe(2);
+    expect(roundTrip(scene)).toBe(scene);
+  });
+
   it("reads a scene break and a style block", () => {
     const doc = parseMarkdown("* * *\n\n::: brev\nKära Elin.\n:::\n");
 

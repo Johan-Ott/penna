@@ -13,7 +13,7 @@ import {
 } from "../editor/commands.js";
 import { insertFootnote } from "../editor/footnoteEditing.js";
 import { useMenuButton } from "@llkit/Menu.js";
-import { AlignButtons } from "./AlignButtons.js";
+import { AlignButtons, ListButtons } from "./AlignButtons.js";
 import { Icon } from "./shell/icons.js";
 import { StylePicker } from "./StylePicker.js";
 import { t } from "../i18n/i18n.js";
@@ -192,10 +192,11 @@ export const TextActions = ({ run, onComment, onReadAloud }: { run: Run } & Form
   </span>
 );
 
-/** The paragraph's style and its alignment. */
+/** The paragraph's style, its alignment, and lists. */
 export const BlockChoices = (props: { editorState: EditorState | null; run: Run }) => (
   <>
     <StylePicker {...props} />
     <AlignButtons {...props} />
+    <ListButtons {...props} />
   </>
 );

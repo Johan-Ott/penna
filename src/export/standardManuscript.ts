@@ -46,16 +46,32 @@ const centeredOptions = (text: string): ParagraphOptions => ({
 const centered = (text: string, extra: object = {}) =>
   new Paragraph({ ...centeredOptions(text), ...extra });
 
-const RIGHT_HAND = new Set(["hoger", "meddelande-ut", "motto"]);
+const LISTS = new Set(["punktlista", "numrerad"]);
 
-// Centrerat, the right-hand styles, Utan indrag and Kapitäler only set the line; the others are
-// inset. A manuscript for agents keeps no small capitals.
+// A list's paragraph starts with its bullet or number, as typed, with a tab to the hanging edge.
+const listMark = (style: string, index: number) =>
+  LISTS.has(style) ? [new TextRun(style === "punktlista" ? "•\t" : `${index + 1}.\t`)] : [];
+
+const RIGHT = { alignment: AlignmentType.RIGHT };
+const UNINDENTED = { indent: { firstLine: 0 } };
+const HANGING = { indent: { left: INDENT, hanging: INDENT / 2 } };
+
+// Centrerat, the right-hand styles, Utan indrag and Kapitäler only set the line; a list hangs;
+// the others are inset. A manuscript for agents keeps no small capitals.
+const LAYOUTS: Record<string, object> = {
+  centrerat: { alignment: AlignmentType.CENTER },
+  hoger: RIGHT,
+  "meddelande-ut": RIGHT,
+  motto: RIGHT,
+  "utan-indrag": UNINDENTED,
+  kapitaler: UNINDENTED,
+  punktlista: HANGING,
+  numrerad: HANGING,
+};
+
 function paragraphLayout(isFirst: boolean, style: string | null) {
-  if (style === "centrerat") return { alignment: AlignmentType.CENTER };
-  if (RIGHT_HAND.has(style ?? "")) return { alignment: AlignmentType.RIGHT };
-  if (["utan-indrag", "kapitaler"].includes(style ?? "")) return { indent: { firstLine: 0 } };
-  if (style) return { indent: { left: INDENT } };
-  return { indent: { firstLine: isFirst ? 0 : INDENT } };
+  if (!style) return { indent: { firstLine: isFirst ? 0 : INDENT } };
+  return LAYOUTS[style] ?? { indent: { left: INDENT } };
 }
 
 function blockParagraphs(
@@ -72,9 +88,13 @@ function blockParagraphs(
   }
   if (name === "styleBlock") {
     const inner: ParagraphOptions[] = [];
-    block.forEach((child) =>
+    const style = String(block.attrs["style"]);
+    block.forEach((child, _offset, index) =>
       inner.push(
-        ...blockParagraphs(child, { isFirst: true, style: String(block.attrs["style"]) }, settings),
+        ...blockParagraphs(child, { isFirst: true, style }, settings).map((options) => ({
+          ...options,
+          children: [...listMark(style, index), ...(options.children ?? [])],
+        })),
       ),
     );
     return inner;

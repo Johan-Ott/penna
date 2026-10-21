@@ -1462,5 +1462,9 @@
   "Sök och kommandon": "Search and commands",
   "Hämtat från synken": "Brought by the sync",
   "{count} ändringar från dina andra enheter": "{count} changes from your other devices",
-  "Visa ändringarna": "Show the changes"
+  "Visa ändringarna": "Show the changes",
+  "Punktlista": "Bulleted list",
+  "Numrerad lista": "Numbered list",
+  "Indrag": "Indent",
+  "Listor": "Lists"
 }

@@ -21,6 +21,9 @@ const STYLE_ORDER: StyleChoice[] = [
   "hoger",
   "utan-indrag",
   "kapitaler",
+  "punktlista",
+  "numrerad",
+  "indrag",
 ];
 
 function ChevronDown() {

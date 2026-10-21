@@ -72,6 +72,36 @@
   text-indent: 0;
 }
 
+/* A list is a style whose paragraphs each start with a bullet or their number, hanging. */
+.manuscript .style-punktlista,
+.manuscript .style-numrerad {
+  margin: 0.6em 0;
+  counter-reset: punkt;
+}
+
+.manuscript .style-punktlista p,
+.manuscript .style-numrerad p {
+  position: relative;
+  padding-left: 1.6em;
+  text-indent: 0;
+  counter-increment: punkt;
+}
+
+.manuscript .style-punktlista p::before,
+.manuscript .style-numrerad p::before {
+  position: absolute;
+  left: 0;
+  content: "•";
+}
+
+.manuscript .style-numrerad p::before {
+  content: counter(punkt) ".";
+}
+
+.manuscript .style-indrag {
+  margin: 0 0 0 2em;
+}
+
 .manuscript .style-kapitaler {
   font-variant: small-caps;
   letter-spacing: 0.05em;

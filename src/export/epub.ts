@@ -77,6 +77,11 @@ div.meddelande-ut p { margin: 0.4em 0 0.4em 25%; background: #ddd; }
 div.motto { margin: 1em 0 2em 30%; text-align: right; font-style: italic; }
 div.centrerat p, div.hoger p, div.utan-indrag p, div.kapitaler p { text-indent: 0; }
 div.kapitaler { font-variant: small-caps; letter-spacing: 0.05em; }
+div.punktlista, div.numrerad { margin: 1em 0; counter-reset: punkt; }
+div.punktlista p, div.numrerad p { text-indent: -1.4em; margin-left: 1.4em; counter-increment: punkt; }
+div.punktlista p::before { content: "•"; display: inline-block; width: 1.4em; text-indent: 0; }
+div.numrerad p::before { content: counter(punkt) "."; display: inline-block; width: 1.4em; text-indent: 0; }
+div.indrag { margin-left: 2em; }
 div.centrerat { text-align: center; }
 div.hoger { text-align: right; }
 .title-page, .copyright { text-align: center; text-indent: 0; }

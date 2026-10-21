@@ -51,6 +51,17 @@ const CLASSIC_PARTS = `#let scenbrytning(mark) = align(center, block(above: 1.4e
   else if name == "hoger" { set par(justify: false); align(right, body) }
   else if name == "utan-indrag" { body }
   else if name == "kapitaler" { text(size: 0.82em, tracking: 0.06em, upper(body)) }
+  else if name == "punktlista" or name == "numrerad" {
+    let punkt = counter("punkt")
+    punkt.update(0)
+    show par: it => {
+      punkt.step()
+      let mark = if name == "punktlista" { [•] } else { context punkt.display("1.") }
+      block(above: 0.5em, below: 0.5em, grid(columns: (1.4em, 1fr), mark, it))
+    }
+    block(above: 1.2em, below: 1.2em, body)
+  }
+  else if name == "indrag" { block(inset: (left: 2em), body) }
   else { block(inset: sides, above: 1.2em, below: 1.2em, body) }
 }
 // Small capitals drawn the same in every typeface: lower-case letters as smaller capitals.

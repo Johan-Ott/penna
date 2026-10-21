@@ -19,6 +19,9 @@ export const STYLE_LABELS: Record<StyleChoice, string> = {
   hoger: t("Högerställt"),
   "utan-indrag": t("Utan indrag"),
   kapitaler: t("Kapitäler"),
+  punktlista: t("Punktlista"),
+  numrerad: t("Numrerad lista"),
+  indrag: t("Indrag"),
 };
 
 export const toggleBold = toggleMark(schema.marks.bold);
