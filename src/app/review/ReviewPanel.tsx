@@ -1,9 +1,8 @@
 import type { PointerEvent } from "react";
 import { GuideTip } from "../guide/GuideTip.js";
-import { useFloating } from "../blocks/BlockPanel.js";
+import { HeadButtons, useFloating } from "../blocks/BlockPanel.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
-import { CloseButton } from "@llkit/controls.js";
 import { useEffect, type ReactNode } from "react";
 import type { NameSuspect } from "../../manuscript/review.js";
 import type { ProseNote } from "../../manuscript/prose.js";
@@ -151,8 +150,9 @@ function ReviewHeader(props: {
         <GripIcon />
         {t("Granska")}
       </span>
-      <CloseButton
-        label={t("Stäng granskning")}
+      <HeadButtons
+        id="granska"
+        closeLabel={t("Stäng granskning")}
         isPhoneBack={props.isShown}
         onClose={props.onClose}
       />
@@ -175,7 +175,7 @@ export function ReviewPanel(props: ReviewPanelProps) {
   return (
     <aside
       ref={floating.ref}
-      className={isShown ? "review-panel open" : "review-panel"}
+      className={(isShown ? "review-panel open" : "review-panel") + floating.minimized}
       aria-label={t("Granskning")}
       style={floating.style}
       // From within the panel; in the text, Escape already means other things.

@@ -88,7 +88,11 @@ export function Dropdown<T extends string>(props: {
 
 /** The × at the top right of a panel or a dialog: whatever lies over the text closes this way,
  * while a view the writer went to has Tillbaka at its top left. */
-export function CloseButton(props: { label?: string; onClose: () => void; isPhoneBack?: boolean }) {
+export function CloseButton(props: {
+  label?: string | undefined;
+  onClose: () => void;
+  isPhoneBack?: boolean | undefined;
+}) {
   const label = props.label ?? t("Stäng");
   return (
     <button

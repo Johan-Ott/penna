@@ -1,9 +1,8 @@
 import type { PointerEvent } from "react";
 import { Colophon } from "./Colophon.js";
-import { useFloating } from "../blocks/BlockPanel.js";
+import { HeadButtons, useFloating } from "../blocks/BlockPanel.js";
 import { usePhone } from "../phone/usePhone.js";
 import { GripIcon } from "../shell/icons.js";
-import { CloseButton } from "@llkit/controls.js";
 import { useState } from "react";
 import { dailyGoalOf, dayKey, type Stats } from "../../project/stats.js";
 import { chapterWords } from "../../project/treeLabels.js";
@@ -88,7 +87,12 @@ const InsightsHead = (props: {
       <GripIcon />
       {t("Insikter")}
     </span>
-    <CloseButton label={t("Stäng insikter")} isPhoneBack onClose={props.onClose} />
+    <HeadButtons
+      id="insikter"
+      closeLabel={t("Stäng insikter")}
+      isPhoneBack
+      onClose={props.onClose}
+    />
   </div>
 );
 
@@ -155,7 +159,7 @@ export function InsightsPanel(props: PanelProps) {
   return (
     <aside
       ref={floating.ref}
-      className="insights-panel"
+      className={"insights-panel" + floating.minimized}
       aria-label={t("Insikter")}
       style={floating.style}
     >
