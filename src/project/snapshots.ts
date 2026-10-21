@@ -1,6 +1,5 @@
 import { DAY } from "./stats.js";
 import { plainText } from "../manuscript/compare.js";
-import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import {
   joinSceneFile,
   readField,
@@ -8,7 +7,7 @@ import {
   withTextField,
 } from "../manuscript/sceneFile.js";
 import { changedWords } from "../manuscript/wordDiff.js";
-import { countDocumentWords } from "../manuscript/wordCount.js";
+import { countMarkdownWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { t } from "../i18n/i18n.js";
@@ -49,7 +48,7 @@ function timeOf(fileName: string): number | null {
 }
 
 const snapshotDir = (scene: SceneRef) => joinPath(scene.dir, `snapshots/${scene.id}`);
-const wordsIn = (body: string) => countDocumentWords(parseMarkdown(body));
+const wordsIn = (body: string) => countMarkdownWords(body);
 
 // "-2" marks a later snapshot taken the same minute.
 const newestFirst = (first: Snapshot, second: Snapshot) =>

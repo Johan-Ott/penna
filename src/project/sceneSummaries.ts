@@ -1,4 +1,3 @@
-import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import {
   sceneStatus,
   noteLink,
@@ -7,7 +6,7 @@ import {
   splitSceneFile,
   type SceneStatus,
 } from "../manuscript/sceneFile.js";
-import { countDocumentWords } from "../manuscript/wordCount.js";
+import { countMarkdownWords } from "../manuscript/wordCount.js";
 import { type FileSystem } from "@llkit/storage/fileSystem.js";
 import { scenePath } from "../storage/sceneId.js";
 import { t } from "../i18n/i18n.js";
@@ -29,7 +28,7 @@ function summarize(text: string): SceneSummary {
   const file = readField(frontMatter, "file");
   return {
     title,
-    words: countDocumentWords(parseMarkdown(body)),
+    words: countMarkdownWords(body),
     status: sceneStatus(frontMatter),
     ...(link === null ? {} : { link }),
     ...(file === null ? {} : { file }),

@@ -1,6 +1,5 @@
-import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
-import { countDocumentWords } from "../manuscript/wordCount.js";
+import { countMarkdownWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, type FileSystem } from "@llkit/storage/fileSystem.js";
 
@@ -20,8 +19,7 @@ export function dayKey(time: number): string {
 const dayBefore = (key: string) =>
   new Date(Date.parse(`${key}T00:00:00Z`) - DAY).toISOString().slice(0, 10);
 
-const bodyWords = (sceneText: string) =>
-  countDocumentWords(parseMarkdown(splitSceneFile(sceneText).body));
+const bodyWords = (sceneText: string) => countMarkdownWords(splitSceneFile(sceneText).body);
 
 /** Only what a save added, so moving or trashing scenes never counts as writing. */
 export const wordsAdded = (before: string, after: string) => bodyWords(after) - bodyWords(before);

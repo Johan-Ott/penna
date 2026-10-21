@@ -1,6 +1,5 @@
-import { parseMarkdown } from "../manuscript/parseMarkdown.js";
 import { splitSceneFile } from "../manuscript/sceneFile.js";
-import { countDocumentWords } from "../manuscript/wordCount.js";
+import { countMarkdownWords } from "../manuscript/wordCount.js";
 import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId, scenePath } from "../storage/sceneId.js";
@@ -22,8 +21,7 @@ export interface Draft {
 /** The folder a draft's scenes are read from, as a book's scenes/ is. */
 export const draftDir = (bookDir: string, id: string) => joinPath(bookDir, `utkast/${id}`);
 
-const wordsIn = (sceneText: string) =>
-  countDocumentWords(parseMarkdown(splitSceneFile(sceneText).body));
+const wordsIn = (sceneText: string) => countMarkdownWords(splitSceneFile(sceneText).body);
 
 export async function saveDraft(
   fileSystem: FileSystem,
