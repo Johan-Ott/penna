@@ -5,37 +5,42 @@ import { openExample } from "./helpers";
 const BOOK = "/Användare/Elin/Dokument/Skrivro/Vintervägen.skrivro";
 
 // What a sync would have left: a changed scene, and a chapter renamed two ways.
-async function leaveSyncLog(page: Page) {
-  await page.evaluate(async (dir) => {
-    // The page's own module, as the dev server serves it to the app.
-    const url = "/src/app/platform.ts";
-    const { platform } = (await import(url)) as { platform: typeof appPlatform };
-    const scene = `${dir}/scenes/01J9Z4K2QX0000000000000001.md`;
-    const before = await platform.fileSystem.readText(scene);
-    await platform.fileSystem.writeText(scene, before.replace("kylan", "snön"));
-    const chapter = { id: "01J9Z4K2QX00000000000000C3", kind: "chapter", title: "Smältningen" };
-    const log = {
-      files: [
-        {
-          path: "scenes/01J9Z4K2QX0000000000000001.md",
-          kind: "changed",
-          before,
-          after: before.replace("kylan", "snön"),
-        },
-      ],
-      nodes: [],
-      conflicts: [
-        {
-          id: chapter.id,
-          field: "title",
-          here: "Smältningen",
-          drive: "Islossningen",
-          node: chapter,
-        },
-      ],
-    };
-    await platform.fileSystem.writeText(`${dir}/.skrivro-sync-log.json`, JSON.stringify(log));
-  }, BOOK);
+async function leaveSyncLog(page: Page, hasConflict = true) {
+  await page.evaluate(
+    async ({ dir, hasConflict }) => {
+      // The page's own module, as the dev server serves it to the app.
+      const url = "/src/app/platform.ts";
+      const { platform } = (await import(url)) as { platform: typeof appPlatform };
+      const scene = `${dir}/scenes/01J9Z4K2QX0000000000000001.md`;
+      const before = await platform.fileSystem.readText(scene);
+      await platform.fileSystem.writeText(scene, before.replace("kylan", "snön"));
+      const chapter = { id: "01J9Z4K2QX00000000000000C3", kind: "chapter", title: "Smältningen" };
+      const log = {
+        files: [
+          {
+            path: "scenes/01J9Z4K2QX0000000000000001.md",
+            kind: "changed",
+            before,
+            after: before.replace("kylan", "snön"),
+          },
+        ],
+        nodes: [],
+        conflicts: hasConflict
+          ? [
+              {
+                id: chapter.id,
+                field: "title",
+                here: "Smältningen",
+                drive: "Islossningen",
+                node: chapter,
+              },
+            ]
+          : [],
+      };
+      await platform.fileSystem.writeText(`${dir}/.skrivro-sync-log.json`, JSON.stringify(log));
+    },
+    { dir: BOOK, hasConflict },
+  );
 }
 
 test("what the sync brought is shown side by side, and a conflict is chosen", async ({ page }) => {
@@ -44,7 +49,7 @@ test("what the sync brought is shown side by side, and a conflict is chosen", as
   await page.keyboard.press("ControlOrMeta+Shift+O");
   await page.getByText("Vintervägen").first().click();
 
-  await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
+  await page.getByRole("button", { name: "Från synken: 1 att se över" }).click();
   const view = page.locator(".sync-view");
   await view.getByRole("button", { name: /Köket/ }).click();
   await expect(view.locator("ins")).toContainText("snön");
@@ -68,7 +73,7 @@ test("taking back keeps what was written since the sync as a version", async ({ 
   await page.keyboard.press("ControlOrMeta+End");
   await page.keyboard.type(" Skrivet efter synken.");
 
-  await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
+  await page.getByRole("button", { name: "Från synken: 1 att se över" }).click();
   const view = page.locator(".sync-view");
   await view.getByRole("button", { name: /Köket/ }).click();
   await view.getByRole("button", { name: "Ta tillbaka min" }).click();
@@ -92,9 +97,24 @@ test("the phone shows what the sync brought too", async ({ page }) => {
   await page.getByRole("menuitem", { name: "Bokhylla" }).click();
   await page.getByRole("button", { name: "Fortsätt där du slutade" }).click();
 
-  await page.getByRole("button", { name: "Från synken: 2 att se över" }).click();
+  await page.getByRole("button", { name: "Från synken: 1 att se över" }).click();
   await page.getByRole("button", { name: "Behåll Drives" }).click();
   await page.getByRole("button", { name: "Godta" }).click();
 
   await expect(page.locator(".sync-view")).toContainText("Inget nytt från synken.");
+});
+
+test("what came without a conflict asks nothing, and is found under Konto", async ({ page }) => {
+  await openExample(page);
+  await leaveSyncLog(page, false);
+  await page.keyboard.press("ControlOrMeta+Shift+O");
+  await page.getByText("Vintervägen").first().click();
+  await expect(page.locator(".ProseMirror")).toContainText("in från snön");
+
+  await expect(page.getByRole("button", { name: /Från synken/ })).toBeHidden();
+  await page.keyboard.press("ControlOrMeta+,");
+  await page.getByRole("button", { name: "Konto" }).click();
+  await page.getByRole("button", { name: "Visa ändringarna" }).click();
+
+  await expect(page.locator(".sync-view")).toContainText("Köket");
 });

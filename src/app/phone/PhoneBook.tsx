@@ -117,7 +117,7 @@ export function PhoneBook(props: PhoneBookProps) {
       <main className="phone-card">
         <SyncNotices
           project={project}
-          reviewCount={app.syncReview.items.length}
+          reviewCount={app.syncReview.toChoose}
           onShowReview={props.onSync}
         />
         <TodayCard app={app} project={project} />

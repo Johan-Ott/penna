@@ -97,7 +97,9 @@ export function useSyncReview({ project, session, updateTree, refresh }: ReviewP
   // Seen: only the conflicts stay until they are chosen.
   const done = () => save({ ...emptyLog(), conflicts: log.conflicts });
   const items = project ? reviewItems(project, log) : [];
-  return { items, chooseNode, chooseCopy, settle, done };
+  // What came from the writer's other devices is already in the book; only a conflict asks.
+  const toChoose = items.filter((item) => item.kind === "copy" || item.kind === "conflict").length;
+  return { items, toChoose, chooseNode, chooseCopy, settle, done };
 }
 
 export type SyncReview = ReturnType<typeof useSyncReview>;

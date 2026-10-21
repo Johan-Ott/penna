@@ -124,7 +124,7 @@ export function sidebarProps(app: AppState, project: Project) {
     ...{ isFollowingOpenScene: writingMode.settings.followOpenText, onOpenScene: openText(app) },
     isContentsShown: writingMode.view === "innehall",
     onShowContents: () => writingMode.setView("innehall"),
-    syncReviewCount: app.syncReview.items.length,
+    syncReviewCount: app.syncReview.toChoose,
     onShowSyncReview: () => writingMode.setView("synk"),
     ...{ onShowSnapshots: app.snapshots.show, onShowDrafts: app.drafts.show },
     onOpenBeside: (id: string) =>

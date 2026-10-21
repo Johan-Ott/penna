@@ -26,6 +26,9 @@ export interface TabProps {
     /** Where the open book keeps its versions. */
     snapshotsDir: string;
     drive: DriveSync;
+    /** How many changes the last syncs brought, and the list of them. */
+    syncChanges: number;
+    onShowSyncChanges: () => void;
   } | null;
 }
 

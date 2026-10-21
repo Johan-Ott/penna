@@ -106,6 +106,11 @@ function bookSettings(app: OverlayParts, drive: DriveSync) {
     onExportZip: app.zip.backup,
     snapshotsDir: joinPath(app.project.dir, "snapshots"),
     drive,
+    syncChanges: app.syncReview.items.length,
+    onShowSyncChanges: () => {
+      app.writingMode.settingsDialog.close();
+      app.writingMode.setView("synk");
+    },
   };
 }
 

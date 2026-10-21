@@ -1459,5 +1459,8 @@
   "Lägg till kommentar": "Add a comment",
   "Sök i boken": "Search the book",
   "Gör till anteckning": "Make a note of it",
-  "Sök och kommandon": "Search and commands"
+  "Sök och kommandon": "Search and commands",
+  "Hämtat från synken": "Brought by the sync",
+  "{count} ändringar från dina andra enheter": "{count} changes from your other devices",
+  "Visa ändringarna": "Show the changes"
 }

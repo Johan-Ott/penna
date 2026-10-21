@@ -62,11 +62,27 @@ function GoogleRow({ book, preferences, updatePreferences }: TabProps) {
   );
 }
 
+// Taken in without asking, so what came can still be looked over and taken back here.
+function ChangesRow({ book }: Pick<TabProps, "book">) {
+  if (!book || book.syncChanges === 0) return null;
+  return (
+    <Row
+      label={t("Hämtat från synken")}
+      hint={t("{count} ändringar från dina andra enheter", { count: book.syncChanges })}
+    >
+      <button className="button secondary small" onClick={book.onShowSyncChanges}>
+        {t("Visa ändringarna")}
+      </button>
+    </Row>
+  );
+}
+
 /** Two ways: a Google account, or a sync service carrying the folder. */
 export function SyncTab(props: TabProps) {
   return (
     <>
       <GoogleRow {...props} />
+      <ChangesRow book={props.book} />
       <FolderRow />
     </>
   );
