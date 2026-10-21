@@ -4,7 +4,6 @@ import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { platform } from "../platform.js";
 import { Choice, Dropdown, Row } from "@llkit/controls.js";
 import { UiLanguageChoice } from "./UiLanguageChoice.js";
-import { RemoteControlRow } from "./RemoteControlRow.js";
 import { REMINDER_HOURS } from "../reminder.js";
 import type { TabProps } from "./settingsTabs.js";
 import { t } from "../../i18n/i18n.js";
@@ -132,7 +131,6 @@ export function GeneralTab(props: TabProps) {
         />
       </Row>
       <LibraryRows {...props} />
-      <RemoteControlRow />
     </>
   );
 }

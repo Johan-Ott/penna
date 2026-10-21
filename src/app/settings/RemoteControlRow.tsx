@@ -52,3 +52,24 @@ export function RemoteBadge() {
     </span>
   );
 }
+
+const GUIDE = "https://github.com/Johan-Ott/skrivro/blob/main/docs/styrning.md";
+
+/** Avancerat: steering from tools, which needs Skrivro's source code and its script. */
+export function AdvancedTab() {
+  return (
+    <>
+      <RemoteControlRow />
+      <Row
+        label={t("Så styr du Skrivro")}
+        hint={t(
+          "För utvecklare: anropen och hur de körs, med skriptet i Skrivros källkod eller Claude Code.",
+        )}
+      >
+        <button className="link-button" onClick={() => void platform.openLink(GUIDE)}>
+          {t("Öppna guiden")}
+        </button>
+      </Row>
+    </>
+  );
+}

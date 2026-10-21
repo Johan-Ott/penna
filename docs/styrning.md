@@ -6,7 +6,7 @@ autosparet, versionerna och trädet fungerar som vanligt.
 
 ## Kom igång
 
-**Med den vanliga Skrivro:** slå på Inställningar, Allmänt, "Styr Skrivro från den här datorn" och
+**Med den vanliga Skrivro:** slå på Inställningar, Avancerat, "Styr Skrivro från den här datorn" och
 starta om Skrivro. Det gäller den starten och bara den: topplisten visar "Styrs utifrån" så länge
 det är på, och nästa gång Skrivro startar är det av igen. Anropen går mot dina riktiga böcker med
 `--app`:

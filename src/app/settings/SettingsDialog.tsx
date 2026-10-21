@@ -8,6 +8,7 @@ import { ShortcutsTab } from "./shortcutsTab.js";
 import { GeneralTab } from "./generalTab.js";
 import { HelpTab } from "./helpTab.js";
 import { SyncTab } from "./syncTab.js";
+import { AdvancedTab } from "./RemoteControlRow.js";
 import { EditorTab, VersionsTab, type TabProps } from "./settingsTabs.js";
 import { platform } from "../platform.js";
 import { t } from "../../i18n/i18n.js";
@@ -20,9 +21,12 @@ const TABS: [string, (props: TabProps) => ReactNode][] = [
   [t("Hjälp"), HelpTab],
   [t("Kortkommandon"), ShortcutsTab],
   [t("Om Skrivro"), AboutTab],
+  [t("Avancerat"), AdvancedTab],
 ];
-// A phone has no keyboard to take shortcuts from.
-const isShown = (label: string) => !(platform.isPhone && label === t("Kortkommandon"));
+// A phone has no keyboard to take shortcuts from, and only a computer can be steered by tools.
+const isShown = (label: string) =>
+  !(platform.isPhone && label === t("Kortkommandon")) &&
+  !(!platform.remoteControl && label === t("Avancerat"));
 
 // The tabs that hold settings, and the shortcuts, searched together; Hjälp and Om Skrivro are reading.
 const READING = [t("Hjälp"), t("Om Skrivro")];
