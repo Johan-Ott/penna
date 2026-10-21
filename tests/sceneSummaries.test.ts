@@ -15,6 +15,16 @@ describe("countDocumentWords", () => {
 });
 
 describe("readSceneSummaries", () => {
+  it("counts a scene again once its text has changed, even to the same length", async () => {
+    const files = createMemoryFileSystem({ "/kopia/scenes/S1.md": "Ett två tre" });
+    await readSceneSummaries(files, "/kopia", ["S1"]);
+    await files.writeText("/kopia/scenes/S1.md", "Ett tvåtre!");
+
+    const summaries = await readSceneSummaries(files, "/kopia", ["S1"]);
+
+    expect(summaries["S1"]?.words).toBe(2);
+  });
+
   it("reads each scene's title and word count and names a scene without a title", async () => {
     const files = createMemoryFileSystem({
       "/bok/scenes/SCENE1.md": "---\nid: SCENE1\ntitle: Köket\n---\nBrevet låg där.",

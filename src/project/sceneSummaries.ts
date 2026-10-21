@@ -9,7 +9,7 @@ import {
 import { countMarkdownWords } from "../manuscript/wordCount.js";
 import { type FileSystem } from "@llkit/storage/fileSystem.js";
 import { scenePath } from "../storage/sceneId.js";
-import { t } from "../i18n/i18n.js";
+import { t, uiLanguage } from "../i18n/i18n.js";
 
 export interface SceneSummary {
   title: string;
@@ -35,14 +35,54 @@ function summarize(text: string): SceneSummary {
   };
 }
 
-// Every autosave rereads the project, so a scene is parsed again only when its text changed.
-const latestByPath = new Map<string, { text: string; summary: SceneSummary }>();
+// Kept between starts, per device and language, by file with the text's length and a checksum:
+// a scene is counted again only when it changed, so a book opened before opens at once.
+type Kept = { sum: string; summary: SceneSummary };
+const MOST_KEPT = 5000;
+const storedKey = () => `skrivro.summaries.1.${uiLanguage()}`;
+let kept: Map<string, Kept> | null = null;
+let isChanged = false;
+
+function keptSummaries() {
+  if (kept) return kept;
+  try {
+    const stored = JSON.parse(localStorage.getItem(storedKey()) ?? "{}") as Record<string, Kept>;
+    kept = new Map(Object.entries(stored));
+  } catch {
+    kept = new Map();
+  }
+  return kept;
+}
+
+function saveKept() {
+  if (!kept || !isChanged) return;
+  isChanged = false;
+  const newest = [...kept].slice(-MOST_KEPT);
+  try {
+    localStorage.setItem(storedKey(), JSON.stringify(Object.fromEntries(newest)));
+  } catch {
+    // Without storage the next start counts the book again, as before.
+  }
+}
+
+// FNV-1a over the text, with its length.
+function checksum(text: string) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < text.length; index++) {
+    hash = Math.imul(hash ^ text.charCodeAt(index), 0x01000193);
+  }
+  return `${text.length}:${(hash >>> 0).toString(36)}`;
+}
 
 function cachedSummary(path: string, text: string): SceneSummary {
-  const latest = latestByPath.get(path);
-  if (latest?.text === text) return latest.summary;
+  const all = keptSummaries();
+  const sum = checksum(text);
+  const found = all.get(path);
+  if (found?.sum === sum) return found.summary;
   const summary = summarize(text);
-  latestByPath.set(path, { text, summary });
+  all.delete(path);
+  all.set(path, { sum, summary });
+  isChanged = true;
   return summary;
 }
 
@@ -66,6 +106,7 @@ export async function readSceneSummaries(
       return [id, kept ?? cachedSummary(path, await fileSystem.readText(path))] as const;
     }),
   );
+  saveKept();
   return Object.fromEntries(entries);
 }
 
