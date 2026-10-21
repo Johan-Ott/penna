@@ -47,13 +47,17 @@ function load(compiler: TypstCompiler, source: string, files: TypstFiles) {
   compiler.addSource(MAIN, source);
 }
 
+// Typst's own words for the first error, so a book that cannot be set says why.
+function failureOf(diagnostics: { severity: string; message: string }[] | undefined) {
+  const error = (diagnostics ?? []).find((found) => found.severity === "error");
+  return new TypstError(error?.message ?? t("Typst kunde inte sätta boken."));
+}
+
 async function compile(compiler: TypstCompiler, source: string, files: TypstFiles, format: number) {
   load(compiler, source, files);
   const output = await compiler.compile({ mainFilePath: MAIN, format, diagnostics: "full" });
-  const errors = (output.diagnostics ?? []).filter((found) => found.severity === "error");
-  if (!output.result || errors.length > 0) {
-    throw new TypstError(errors[0]?.message ?? t("Typst kunde inte sätta boken."));
-  }
+  const hasError = (output.diagnostics ?? []).some((found) => found.severity === "error");
+  if (!output.result || hasError) throw failureOf(output.diagnostics);
   return output.result;
 }
 
@@ -69,7 +73,8 @@ export interface PageMarks {
 async function queryPages(compiler: TypstCompiler, source: string, files: TypstFiles) {
   load(compiler, source, files);
   return compiler.runWithWorld({ mainFilePath: MAIN }, async (world) => {
-    await world.compile();
+    const compiled = await world.compile({ diagnostics: "full" });
+    if (compiled.hasError) throw failureOf(compiled.diagnostics);
     const marks = (await world.query({ selector: "<pm>", field: "value" })) as PageMarks["marks"];
     const sheets = (await world.query({ selector: "<sheet>", field: "value" })) as number[];
     const found: PageMarks = { marks, pages: sheets.length, lastPage: sheets.at(-1) ?? 0 };
