@@ -1,3 +1,4 @@
+import { createStore } from "@llkit/store.js";
 import { pictureUrlIn } from "./pictureFiles.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { manuscriptSceneIds } from "../project/tree.js";
@@ -94,6 +95,9 @@ function startOf(project: Project) {
   return { firstScene: place?.sceneId ?? onDisk[0] ?? project.scenes[0], place };
 }
 
+/** True while a book just opened waits for its first text, which the writing area waits for too. */
+export const arrivingText = createStore(false);
+
 // A new project never keeps the previous project's scene; crash text is settled first. A book
 // opens where the writer last wrote, with the opening picture, and otherwise at its start.
 export function useOpenFirstScene(
@@ -107,9 +111,14 @@ export function useOpenFirstScene(
     if (!project || isOwnText || project.recoverable.length > 0) return;
     const { firstScene, place } = startOf(project);
     if (!firstScene) return void closeScene(session);
+    arrivingText.set(true);
+    // Shown anyway after a while, so a scene slow to read never leaves the page blank.
+    const shown = setTimeout(() => arrivingText.set(false), 3000);
     // Du slutade här needs a sentence to show; a place without one just opens there.
-    void openScene(session, project.dir, firstScene).then(() =>
-      place?.before?.trim() ? (showResume(place), greetBack(project, place)) : focusEditor(),
-    );
+    void openScene(session, project.dir, firstScene)
+      .then(() =>
+        place?.before?.trim() ? (showResume(place), greetBack(project, place)) : focusEditor(),
+      )
+      .finally(() => (clearTimeout(shown), arrivingText.set(false)));
   }, [project, session, focusEditor, seriesDir]);
 }

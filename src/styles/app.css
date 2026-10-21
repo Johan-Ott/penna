@@ -2073,6 +2073,11 @@ button.book-cover:hover {
 }
 
 /* Its own band at the top of the text, so the row never covers the words. */
+/* A book just opened shows its text whole, once it is read, rather than filling in before you. */
+.app.arriving .main-card > * {
+  visibility: hidden;
+}
+
 .format-bar-on:not(.focus-mode) .main-card {
   padding-top: 46px;
 }

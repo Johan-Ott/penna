@@ -8,7 +8,7 @@ import { ResumeScreen } from "../resume/ResumeScreen.js";
 import { ProfileLayer } from "../profile/ProfileLayer.js";
 import { useBookTheme } from "../themes/themeStyle.js";
 import { Sidebar } from "../Sidebar.js";
-import { openIfOnDisk } from "../useSceneSession.js";
+import { arrivingText, openIfOnDisk } from "../useSceneSession.js";
 import type { Project } from "../useProject.js";
 import { useCommandKey } from "../shortcuts.js";
 import { WritingArea } from "../WritingArea.js";
@@ -166,10 +166,15 @@ function useScreenKeysAndTheme({ app, project }: ScreenProps) {
   useBookTheme(project.fields);
 }
 
-// The screen's look follows Fokus, the sidebar and the format row.
-function screenClasses(writingMode: AppState["writingMode"], isPublishing: boolean) {
+// The screen's look follows Fokus, the sidebar and the format row, and waits for the first text.
+function screenClasses(
+  writingMode: AppState["writingMode"],
+  isPublishing: boolean,
+  isArriving: boolean,
+) {
   return [
     "app",
+    isArriving && "arriving",
     writingMode.isFocusMode && "focus-mode",
     writingMode.isSidebarOpen && !isPublishing ? "sidebar-open" : "sidebar-closed",
     !isPublishing && "format-bar-on",
@@ -185,7 +190,7 @@ export function ProjectScreen({ app, project }: ScreenProps) {
   const pageOf = writingMode.settings.tableOfContents
     ? pageFinder(pageMap, project.tree)
     : undefined;
-  const classes = screenClasses(writingMode, isPublishing);
+  const classes = screenClasses(writingMode, isPublishing, arrivingText.use());
   return (
     <div className={classes.filter(Boolean).join(" ")}>
       <ScreenTopbar app={app} project={project} {...menu.openers} />

@@ -64,8 +64,14 @@
 .phone-screen,
 .phone-text:not(.hidden),
 .review-panel.open,
-.beside-pane {
+.beside-pane,
+.app:not(.arriving) .main-card > * {
   animation: fade var(--calm) ease-out;
+}
+
+/* The format row is part of the page, not something that opens. */
+.selection-bar.fixed {
+  animation: none;
 }
 
 /* What you point at answers softly. */
