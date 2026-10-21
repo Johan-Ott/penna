@@ -1540,6 +1540,8 @@
   width: 100%;
   height: 40px;
   margin: auto 0 12px;
+  /* The panel's colour around it, so the choices scrolling past never show beside or below it. */
+  box-shadow: 0 12px 0 12px var(--bg-subtle);
 }
 
 /* "safe": centred while it fits, from the top when it is taller, so page 1 can be scrolled to. */

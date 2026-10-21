@@ -2060,12 +2060,36 @@ button.book-cover:hover {
   box-sizing: border-box;
   height: 46px;
   z-index: var(--layer-float);
-  justify-content: center;
+  /* Centred while it fits; in a narrow window it scrolls sideways from its start instead. */
+  justify-content: safe center;
+  overflow-x: auto;
+  scrollbar-width: none;
   border: 0;
   border-bottom: 1px solid var(--border-card);
   border-radius: 0;
   background: var(--bg);
   box-shadow: none;
+}
+
+/* A narrow window keeps the buttons: the count goes and the groups draw closer. */
+@media (max-width: 960px) {
+  .selection-bar.fixed {
+    gap: 2px;
+  }
+
+  .selection-bar.fixed > .selection-words {
+    display: none;
+  }
+
+  .selection-bar.fixed > .bar-group + *,
+  .selection-bar.fixed > * + .bar-group {
+    margin-left: 2px;
+    padding-left: 4px;
+  }
+}
+
+.selection-bar.fixed > * {
+  flex-shrink: 0;
 }
 
 .focus-mode .selection-bar.fixed {
