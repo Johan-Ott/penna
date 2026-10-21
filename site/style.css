@@ -39,8 +39,8 @@
     --marker: rgba(224, 138, 90, 0.45);
     --peach: #2c2422;
     --mint: #1f2a24;
-    --sky: #20252e;
-    --lilac: #26232e;
+    --sky: #22211e;
+    --lilac: #252320;
     --butter: #2e2a1e;
   }
 }
@@ -687,8 +687,8 @@ h1 mark::after {
 .closing .button {
   border-color: #fff;
   background: #fff;
-  color: #d43f1d;
-  box-shadow: 0 10px 30px rgba(120, 40, 0, 0.25);
+  color: #0e6b4f;
+  box-shadow: 0 10px 30px rgba(0, 40, 25, 0.25);
 }
 
 .closing .button.quiet {

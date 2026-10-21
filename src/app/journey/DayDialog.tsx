@@ -18,13 +18,13 @@ function paceText(days: number) {
 function Drop({ isDone }: { isDone: boolean }) {
   return (
     <svg width="296" height="150" viewBox="0 0 296 150" aria-hidden="true">
-      <circle cx="148" cy="75" r="64" fill="#4e6b57" />
-      <path d={DROP} fill="#fbfaf7" />
+      <circle cx="148" cy="75" r="64" style={{ fill: "var(--primary)" }} />
+      <path d={DROP} style={{ fill: "var(--on-primary)" }} />
       {isDone && (
         <path
           d="M134 90 l10 10 l20 -22"
           fill="none"
-          stroke="#3f6b4e"
+          style={{ stroke: "var(--primary)" }}
           strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"

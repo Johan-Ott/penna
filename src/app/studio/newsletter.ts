@@ -50,7 +50,7 @@ export interface Signature {
 function signatureHtml({ about, link }: Signature) {
   const style = "font-family:system-ui,sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;";
   const linked = link
-    ? ` <a href="${escape(link)}" style="color:#3f6b4e;">${escape(link)}</a>`
+    ? ` <a href="${escape(link)}" style="color:#0e6b4f;">${escape(link)}</a>`
     : "";
   return about || link
     ? `<p style="${style}border-top:1px solid #e7e5e1;padding-top:14px;margin-top:24px;">${escape(about)}${linked}</p>`

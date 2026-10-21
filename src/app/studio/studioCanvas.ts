@@ -24,7 +24,7 @@ const LOOKS: Record<Look, { paper: string; ink: string; grain: string }> = {
   ljus: { paper: "#ffffff", ink: "#111111", grain: "rgba(0,0,0,0)" },
   mork: { paper: "#141414", ink: "#f2f2f2", grain: "rgba(255,255,255,0.04)" },
 };
-export const GREEN = "#3f6b4e";
+export const GREEN = "#0e6b4f";
 export const PROSE = '"Literata", Georgia, serif';
 const SANS = '"Geist Sans", system-ui, sans-serif';
 

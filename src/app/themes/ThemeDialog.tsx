@@ -19,7 +19,7 @@ const THEME_FILE = { name: t("Skrivro-tema"), extension: "skrivrotema" };
 const SWATCHES: Record<"background" | "text" | "accent", string[]> = {
   background: ["#ffffff", "#f3efe6", "#eef2ec", "#f5ede8", "#1e1f24", "#121212"],
   text: ["#111111", "#2b2520", "#1f2a36", "#3a2226", "#ede8e0", "#c9d1d9"],
-  accent: ["#3f6b4e", "#8a5a2b", "#2f5d8a", "#b5546b", "#a83232", "#6b4e9b"],
+  accent: ["#0e6b4f", "#8a5a2b", "#2f5d8a", "#b5546b", "#a83232", "#6b4e9b"],
 };
 
 function ThemeChoice(props: {
@@ -29,7 +29,7 @@ function ThemeChoice(props: {
   onPick: () => void;
 }) {
   const [name, description] = themeNames()[props.id] ?? ["", ""];
-  const colours = props.theme ?? { background: "#ffffff", text: "#111111", accent: "#3f6b4e" };
+  const colours = props.theme ?? { background: "#ffffff", text: "#111111", accent: "#0e6b4f" };
   return (
     <button className="theme-choice" aria-pressed={props.isOn} onClick={props.onPick}>
       <span

@@ -2405,8 +2405,8 @@ button.book-cover:hover {
   align-items: center;
   justify-content: center;
   border: 1px dashed var(--primary);
-  background: rgba(120, 140, 255, 0.12);
-  color: #556;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--text-muted);
   font-size: 12px;
   cursor: move;
 }
@@ -3005,7 +3005,7 @@ button.book-cover:hover {
 }
 
 .celebration-badge.green {
-  background: #3f6b4e;
+  background: #0e6b4f;
 }
 
 .celebration-words {
@@ -3789,7 +3789,7 @@ html.welcome-shown body {
 }
 
 .tree-swipe-hint.right {
-  background: var(--accent, #3f6b4e);
+  background: var(--accent);
 }
 
 .tree-undo {
