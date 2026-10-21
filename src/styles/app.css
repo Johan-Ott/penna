@@ -3149,13 +3149,11 @@ button.book-cover:hover {
   position: relative;
 }
 
-/* As much room on both sides, so the text stays in the middle; on a phone there is no margin to
-   spare and the comments stay in Granska. */
+/* As much room on both sides, so the text stays in the middle; MarginNotes asks for it only when
+   the page is wide enough, and a phone keeps its comments in Granska. */
 
-@media (min-width: 601px) {
-  .page:has(> .margin-notes) {
-    padding-inline: 248px;
-  }
+.page.with-margin-notes {
+  padding-inline: 232px;
 }
 
 @media (max-width: 600px) {

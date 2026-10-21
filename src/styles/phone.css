@@ -841,28 +841,6 @@ body .phone-view .submit-text {
   }
 }
 
-/* När goes to a line of its own rather than off the screen's edge. */
-.phone-app .text-eyebrow {
-  flex-wrap: wrap;
-  row-gap: 6px;
-}
-
-.phone-app .text-when {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-/* On a narrow phone Läs kapitlet and Versioner go under the place rather than off the edge. */
-.phone-app .text-place {
-  flex-wrap: wrap;
-  row-gap: 6px;
-}
-
-.phone-app .text-place > *,
-.phone-app .text-when {
-  white-space: nowrap;
-}
-
 body .phone-app .text-when input {
   min-height: 0;
 }

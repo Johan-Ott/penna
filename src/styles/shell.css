@@ -2008,8 +2008,21 @@
 
 .text-place {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 6px 12px;
   align-items: center;
+}
+
+/* In a narrow column När, Läs kapitlet and Versioner go to the next line whole, never broken. */
+.text-eyebrow {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+.text-eyebrow .read-link,
+.text-when {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .read-link,

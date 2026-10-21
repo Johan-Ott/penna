@@ -7,7 +7,20 @@ import type { AppState } from "../App.js";
 import { t } from "../../i18n/i18n.js";
 
 const GAP = 16;
-const NARROWEST = 160;
+// The room each side of the text while the notes are out: a note and the space before it.
+const MARGIN = 232;
+const PAGE_EDGES = 96;
+// The text gives up some width for the notes, never more than down to this.
+const NARROWEST_TEXT = 440;
+
+// A page too narrow for the text at that width and a margin on both sides keeps its whole width
+// for the text, and the notes stay in Granska.
+function hasRoom(page: HTMLElement) {
+  const sheetMargins = page.classList.contains("paper") ? 176 : 0;
+  return (
+    page.getBoundingClientRect().width >= NARROWEST_TEXT + sheetMargins + 2 * MARGIN + PAGE_EDGES
+  );
+}
 
 // Each note sits level with its quote, pushed down below the note above so none overlap.
 // On paper the notes lie on the desk beside the sheet, otherwise beside the text.
@@ -15,9 +28,12 @@ function placeNotes(box: HTMLElement) {
   const page = box.parentElement;
   const beside = page?.querySelector(page.classList.contains("paper") ? ".sheet" : ".ProseMirror");
   if (!page || !beside) return;
+  const isRoomy = hasRoom(page);
+  page.classList.toggle("with-margin-notes", isRoomy);
+  box.hidden = !isRoomy;
+  if (!isRoomy) return;
   const origin = page.getBoundingClientRect();
   const left = beside.getBoundingClientRect().right - origin.left + 32;
-  box.hidden = page.clientWidth - left < NARROWEST;
   box.style.left = `${left}px`;
   const markTop = (note: HTMLElement) =>
     page
@@ -47,7 +63,10 @@ function usePlacement(shown: unknown, doc: unknown) {
     place();
     const observer = new ResizeObserver(place);
     observer.observe(page);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      page.classList.remove("with-margin-notes");
+    };
   }, [shown, doc]);
   return box;
 }
