@@ -8,7 +8,7 @@ import {
   applyQuery,
   countMatches,
   nextSceneWith,
-  searchableScene,
+  builtScene,
   type ManuscriptScope,
 } from "../editor/manuscriptSearch.js";
 import { manuscriptSceneIds, sceneIdsIn, sortsOf } from "../project/tree.js";
@@ -49,12 +49,15 @@ function manuscriptIds(project: Project, only: string[] = []) {
 }
 
 async function loadScenes(project: Project) {
+  const ids = manuscriptIds(project, [WITH_NOTES]);
+  const texts = await Promise.all(
+    ids.map((id) => platform.fileSystem.readText(scenePath(project.dir, id)).catch(() => null)),
+  );
   const scenes = new Map<string, EditorState>();
-  for (const id of manuscriptIds(project, [WITH_NOTES])) {
-    const path = scenePath(project.dir, id);
-    const text = await platform.fileSystem.readText(path).catch(() => null);
-    if (text !== null) scenes.set(id, searchableScene(text));
-  }
+  ids.forEach((id, index) => {
+    const text = texts[index];
+    if (typeof text === "string") scenes.set(id, builtScene(scenePath(project.dir, id), text));
+  });
   return scenes;
 }
 

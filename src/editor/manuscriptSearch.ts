@@ -20,6 +20,19 @@ export const searchableScene = (sceneText: string, query?: SearchQuery) =>
     plugins: [search(query ? { initialQuery: query } : {})],
   });
 
+// Every autosave reads the book again while its search is open, so only a scene whose text
+// changed is built again; building a long book's scenes takes seconds.
+const builtByPath = new Map<string, { text: string; state: EditorState }>();
+
+/** A scene as the book's search reads it, kept until its text changes. */
+export function builtScene(path: string, text: string) {
+  const built = builtByPath.get(path);
+  if (built?.text === text) return built.state;
+  const state = searchableScene(text);
+  builtByPath.set(path, { text, state });
+  return state;
+}
+
 export function countMatches(state: EditorState, query: SearchQuery): number {
   if (!query.valid) return 0;
   let count = 0;
