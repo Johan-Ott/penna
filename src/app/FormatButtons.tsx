@@ -192,11 +192,15 @@ export const TextActions = ({ run, onComment, onReadAloud }: { run: Run } & Form
   </span>
 );
 
-/** The paragraph's style, its alignment, and lists. */
-export const BlockChoices = (props: { editorState: EditorState | null; run: Run }) => (
+/** The paragraph's style, and its alignment and lists unless they are folded into ⋯. */
+export const BlockChoices = (props: {
+  editorState: EditorState | null;
+  run: Run;
+  isFolded: boolean;
+}) => (
   <>
     <StylePicker {...props} />
-    <AlignButtons {...props} />
-    <ListButtons {...props} />
+    {!props.isFolded && <AlignButtons {...props} />}
+    {!props.isFolded && <ListButtons {...props} />}
   </>
 );

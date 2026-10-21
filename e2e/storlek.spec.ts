@@ -36,3 +36,18 @@ for (const size of SIZES) {
     expect(await pastTheEdge(page)).toEqual([]);
   });
 }
+
+test("a narrow window folds alignment into the format row's ⋯ instead of cutting it off", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 720, height: 500 });
+  await openExample(page);
+  await page.locator(".ProseMirror p").first().click();
+  const row = page.getByRole("toolbar", { name: "Formatering" });
+  await expect(row.getByRole("button", { name: "Centrerat" })).toHaveCount(0);
+
+  await row.getByRole("button", { name: "Mer" }).click();
+  await page.getByRole("menuitemradio", { name: "Centrerat" }).click();
+
+  await expect(page.locator(".ProseMirror .style-centrerat")).toHaveCount(1);
+});

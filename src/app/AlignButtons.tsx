@@ -95,14 +95,39 @@ const ALIGNMENTS: ["vanster" | "centrerat" | "hoger", string, ReactNode][] = [
   ["hoger", t("Högerställt"), <AlignRightIcon key="h" />],
 ];
 
+const currentOf = (editorState: EditorState | null) =>
+  editorState ? currentStyle(editorState) : "brodtext";
+
+const isAligned = (current: string, choice: string) =>
+  choice === "vanster" ? current !== "centrerat" && current !== "hoger" : current === choice;
+
+function align(current: string, choice: string, run: Run) {
+  if (choice !== "vanster") return run(setStyle(choice as "centrerat" | "hoger"));
+  if (current === "centrerat" || current === "hoger") run(setStyle("brodtext"));
+}
+
+/** Justering and the lists as rows of a menu, for the format row's ⋯ in a narrow window. */
+export function blockMenuItems(editorState: EditorState | null, run: Run) {
+  const current = currentOf(editorState);
+  return [
+    ...ALIGNMENTS.map(([choice, label]) => ({
+      label,
+      isChecked: isAligned(current, choice),
+      onSelect: () => align(current, choice, run),
+    })),
+    ...BLOCK_STYLES.map(([choice, label], index) => ({
+      label,
+      isChecked: current === choice,
+      separatorBefore: index === 0,
+      onSelect: () => run(setStyle(current === choice ? "brodtext" : choice)),
+    })),
+  ];
+}
+
 export function AlignButtons({ editorState, run }: { editorState: EditorState | null; run: Run }) {
-  const current = editorState ? currentStyle(editorState) : "brodtext";
-  const isSet = (choice: string) =>
-    choice === "vanster" ? current !== "centrerat" && current !== "hoger" : current === choice;
-  const choose = (choice: string) => {
-    if (choice !== "vanster") return run(setStyle(choice as "centrerat" | "hoger"));
-    if (current === "centrerat" || current === "hoger") run(setStyle("brodtext"));
-  };
+  const current = currentOf(editorState);
+  const isSet = (choice: string) => isAligned(current, choice);
+  const choose = (choice: string) => align(current, choice, run);
   return (
     <span className="bar-group" role="group" aria-label={t("Justering")}>
       {ALIGNMENTS.map(([choice, label, icon]) => (
