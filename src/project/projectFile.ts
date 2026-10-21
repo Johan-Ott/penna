@@ -141,13 +141,21 @@ export async function readProjectFile(
 }
 
 /** A book's new title, written into project.json with everything else in it left as it was. */
-export async function retitleBook(fileSystem: FileSystem, dir: string, title: string) {
+/** Changes fields of a book that is not open, such as its title from the shelf. */
+export async function changeBookFile(
+  fileSystem: FileSystem,
+  dir: string,
+  change: Record<string, unknown>,
+) {
   const text = await readIfThere(fileSystem, projectPath(dir));
   if (text === null) throw new Error(`${projectPath(dir)} finns inte`);
   const project = JSON.parse(text) as Record<string, unknown>;
   await writeAtomic(
     fileSystem,
     projectPath(dir),
-    `${JSON.stringify({ ...project, title }, null, 2)}\n`,
+    `${JSON.stringify({ ...project, ...change }, null, 2)}\n`,
   );
 }
+
+export const retitleBook = (fileSystem: FileSystem, dir: string, title: string) =>
+  changeBookFile(fileSystem, dir, { title });

@@ -11,6 +11,7 @@ import { useRenameBook } from "./useRenameBook.js";
 import { retitleBook } from "../../project/projectFile.js";
 import { recordFailure } from "@llkit/errorLog.js";
 import { FavoriteStar, toggleFavorite, useShelfOrder } from "./shelfChoices.js";
+import { coverItem } from "./coverMenu.js";
 
 interface BookProps {
   book: ShelfBook;
@@ -49,7 +50,7 @@ function Cover({ book, author, pictureUrl, onOpen }: CoverProps) {
   }
   return (
     <button
-      className={`book-cover ${coverLookOf(book.dir, book.genre ?? null)} ${stageClass(book)}`}
+      className={`book-cover ${coverLookOf(book.dir, book.genre ?? null, book.coverLook ?? null)} ${stageClass(book)}`}
       onClick={() => onOpen(book.dir)}
     >
       <span className="book-kind">{seriesLine(book) ?? genreName(book) ?? book.kind}</span>
@@ -89,7 +90,7 @@ function BookMenu(props: BookMenuProps) {
       onSelect: () => toggleFavorite(book.dir),
     },
     { label: t("Byt namn…"), onSelect: rename.open },
-    { label: t("Välj omslag…"), onSelect: onChooseCover },
+    coverItem(book, props.hasPicture, onChooseCover),
     ...(platform.showInFolder
       ? [{ label: t("Visa i mappen"), onSelect: () => void platform.showInFolder?.(book.dir) }]
       : []),
@@ -128,6 +129,7 @@ function ProgressBar({ book }: { book: ShelfBook }) {
 
 type BookMenuProps = Pick<BookProps, "book" | "onRemove" | "onRemoveEverywhere"> & {
   onChooseCover: () => void;
+  hasPicture: boolean;
 };
 
 // A picture may carry no title, or one too small to read, so the name stands under it.

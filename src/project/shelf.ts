@@ -25,6 +25,8 @@ export interface ShelfBook {
   deadline: string | null;
   /** The genre it was made in, such as "deckare", which gives its cover; null when none. */
   genre?: string | null;
+  /** The cover's colours chosen on the shelf, such as "skog"; null follows the genre. */
+  coverLook?: string | null;
   updatedAt: number | null;
   /** The folder is gone: moved, renamed or on a disk that is not connected. */
   isMissing: boolean;
@@ -102,6 +104,7 @@ const NO_FIELDS = {
   totalGoal: null,
   deadline: null,
   genre: null,
+  coverLook: null,
 };
 
 // A broken project.json is repaired when the project opens, not here.
@@ -117,8 +120,10 @@ async function readProjectFields(fileSystem: FileSystem, dir: string) {
     const seriesNumber = typeof number === "number" ? number : null;
     const { totalGoal, deadline } = projectGoals(parsed);
     const genre = typeof parsed["genre"] === "string" ? parsed["genre"] : null;
+    const coverLook = typeof parsed["coverLook"] === "string" ? parsed["coverLook"] : null;
     return {
       genre,
+      coverLook,
       title: parsed["title"],
       type: parsed["type"],
       tree,
@@ -181,6 +186,7 @@ async function readBook(fileSystem: FileSystem, dir: string): Promise<ShelfBook>
     goal,
     deadline: fields.deadline,
     genre: fields.genre,
+    coverLook: fields.coverLook,
     updatedAt: await lastChange(fileSystem, dir, sceneIds),
     isMissing: false,
     series: fields.series,

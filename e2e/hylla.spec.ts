@@ -26,3 +26,12 @@ test("the shelf is sorted by title from Sortera", async ({ page }) => {
 
   await expect(page.getByRole("button", { name: "Sortera: Titel" })).toBeVisible();
 });
+
+test("a cover's colours are chosen from Omslag in the book's menu", async ({ page }) => {
+  const book = page.locator(".book").filter({ hasText: "Vintervägen" });
+  await book.getByRole("button", { name: "Bokens meny" }).click();
+  await page.getByRole("menuitem", { name: "Omslag" }).click();
+  await page.getByRole("menuitemradio", { name: "Plommon" }).click();
+
+  await expect(book.locator(".book-cover")).toHaveClass(/cover-plommon/);
+});
