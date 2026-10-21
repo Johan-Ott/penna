@@ -1,4 +1,6 @@
-import { shelfGroups, type ShelfBook } from "../../project/shelf.js";
+import type { ShelfBook } from "../../project/shelf.js";
+import { shelfGroups } from "../../project/shelfOrder.js";
+import { SortMenu, useShelfOrder } from "./shelfChoices.js";
 import { Book } from "./Book.js";
 import { CloudBook } from "./CloudBook.js";
 import { ContinueWriting } from "./ContinueWriting.js";
@@ -53,12 +55,10 @@ function NewBook({ onNewProject }: Pick<BookshelfProps, "onNewProject">) {
   );
 }
 
-// The books in Drive lead the first row; an empty shelf has Ny bok there, as large as a book.
-function Starts(props: BookshelfProps & { isEmpty: boolean }) {
-  const { cloud } = props;
+// The books in Drive come after the ones on this device, which open at once.
+function CloudBooks({ cloud }: Pick<BookshelfProps, "cloud">) {
   return (
     <>
-      {props.isEmpty && <NewBook {...props} />}
       {cloud.books.map((book) => (
         <CloudBook
           key={book.id}
@@ -91,12 +91,13 @@ function Welcome(props: Pick<BookshelfProps, "author" | "onOpenExample">) {
 }
 
 function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
-  const groups = shelfGroups(props.books);
+  const groups = shelfGroups(props.books, useShelfOrder());
   const isEmpty = !props.books.some((book) => !book.isMissing);
   if (groups.length === 0)
     return (
       <div className="books">
-        <Starts {...props} isEmpty />
+        <NewBook {...props} />
+        <CloudBooks cloud={props.cloud} />
         {props.cloud.isListing ? (
           <p className="shelf-listing">{t("Hämtar dina böcker från Drive…")}</p>
         ) : (
@@ -108,10 +109,11 @@ function ShelfRows(props: BookshelfProps & { books: ShelfBook[] }) {
     <section key={group.series ?? ""} className="shelf-group">
       {group.series && <h2 className="shelf-series">{group.series}</h2>}
       <div className="books">
-        {index === 0 && <Starts {...props} isEmpty={isEmpty} />}
+        {index === 0 && isEmpty && <NewBook {...props} />}
         {group.books.map((book) => (
           <Book key={book.dir} book={book} {...props} />
         ))}
+        {index === 0 && <CloudBooks cloud={props.cloud} />}
       </div>
     </section>
   ));
@@ -124,6 +126,7 @@ function ShelfHead(props: BookshelfProps & { books: ShelfBook[] | null }) {
       <h2>{t("Dina böcker")}</h2>
       <span className="shelf-summary">{props.books && summary(props.books)}</span>
       <span className="shelf-links">
+        <SortMenu />
         <button className="link-button quiet" onClick={props.onOpenExample}>
           {t("Prova exempelboken")}
         </button>

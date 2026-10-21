@@ -204,26 +204,3 @@ export async function readShelf(
   const books = await Promise.all(dirs.map((dir) => readBook(fileSystem, dir)));
   return [...books.filter((book) => !book.isMissing), ...books.filter((book) => book.isMissing)];
 }
-
-// Numbered books first, by number; the rest after them as they were.
-const inSeriesOrder = (books: ShelfBook[]) =>
-  [...books].sort(
-    (one, other) =>
-      (one.seriesNumber ?? Number.MAX_SAFE_INTEGER) -
-      (other.seriesNumber ?? Number.MAX_SAFE_INTEGER),
-  );
-
-// The book written in last first, since that is the one to go on with; missing ones last.
-const latestFirst = (books: ShelfBook[]) =>
-  [...books].sort((one, other) => (other.updatedAt ?? -1) - (one.updatedAt ?? -1));
-
-export function shelfGroups(books: ShelfBook[]) {
-  const names = [...new Set(books.map((book) => book.series))];
-  const ordered = [null, ...names.filter((name) => name !== null)];
-  return ordered
-    .map((series) => ({
-      series,
-      books: (series ? inSeriesOrder : latestFirst)(books.filter((book) => book.series === series)),
-    }))
-    .filter((group) => group.books.length > 0);
-}

@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  bookProgress,
-  bookStatus,
-  readShelf,
-  shelfGroups,
-  whenUpdated,
-} from "../src/project/shelf";
+import { bookProgress, bookStatus, readShelf, whenUpdated } from "../src/project/shelf";
 import { deadlineLine } from "../src/project/shelfLines";
+import { shelfGroups } from "../src/project/shelfOrder";
 import { createMemoryFileSystem } from "@llkit/storage/memoryFileSystem.js";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -133,5 +128,36 @@ describe("a book being written", () => {
     ]);
 
     expect(group?.books.map((book) => book.title)).toEqual(["Ny", "Gammal"]);
+  });
+});
+
+describe("the shelf's order", () => {
+  const book = (title: string, updatedAt: number, words: number) => ({
+    dir: `/Skrivro/${title}`,
+    title,
+    kind: "Roman",
+    words,
+    status: "",
+    progress: 0,
+    goal: null,
+    deadline: null,
+    updatedAt,
+    isMissing: false,
+    series: null,
+    seriesNumber: null,
+    stage: null,
+  });
+  const books = [book("Bävern", 3, 10), book("Älgen", 1, 30), book("Ankan", 2, 20)];
+  const titles = (sort: "senast" | "titel" | "ord", favorites: string[] = []) =>
+    shelfGroups(books, { sort, favorites })[0]?.books.map((one) => one.title);
+
+  it("sorts by the last written in, by title or by length", () => {
+    expect(titles("senast")).toEqual(["Bävern", "Ankan", "Älgen"]);
+    expect(titles("titel")).toEqual(["Ankan", "Bävern", "Älgen"]);
+    expect(titles("ord")).toEqual(["Älgen", "Ankan", "Bävern"]);
+  });
+
+  it("puts the favourites first, each part in the chosen order", () => {
+    expect(titles("titel", ["/Skrivro/Älgen"])).toEqual(["Älgen", "Ankan", "Bävern"]);
   });
 });

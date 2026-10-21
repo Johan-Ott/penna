@@ -1466,5 +1466,11 @@
   "Punktlista": "Bulleted list",
   "Numrerad lista": "Numbered list",
   "Indrag": "Indent",
-  "Listor": "Lists"
+  "Listor": "Lists",
+  "Senast skrivet": "Last written",
+  "Längst": "Longest",
+  "Sortera": "Sort",
+  "Sortera: {order}": "Sort: {order}",
+  "Ta bort från favoriter": "Remove from favourites",
+  "Lägg till i favoriter": "Add to favourites"
 }

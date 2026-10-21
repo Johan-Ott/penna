@@ -10,6 +10,7 @@ import { useShelfCover } from "./useShelfCover.js";
 import { useRenameBook } from "./useRenameBook.js";
 import { retitleBook } from "../../project/projectFile.js";
 import { recordFailure } from "@llkit/errorLog.js";
+import { FavoriteStar, toggleFavorite, useShelfOrder } from "./shelfChoices.js";
 
 interface BookProps {
   book: ShelfBook;
@@ -81,7 +82,12 @@ const renameOnDisk = (dir: string) => (title: string) =>
 function BookMenu(props: BookMenuProps) {
   const { book, onChooseCover } = props;
   const rename = useRenameBook(book.title, renameOnDisk(book.dir));
+  const isFavorite = useShelfOrder().favorites.includes(book.dir);
   const items = [
+    {
+      label: isFavorite ? t("Ta bort från favoriter") : t("Lägg till i favoriter"),
+      onSelect: () => toggleFavorite(book.dir),
+    },
     { label: t("Byt namn…"), onSelect: rename.open },
     { label: t("Välj omslag…"), onSelect: onChooseCover },
     ...(platform.showInFolder
@@ -192,6 +198,7 @@ function PresentBook(props: BookProps) {
   return (
     <div className="book" onContextMenu={openMenu}>
       <Cover {...props} pictureUrl={cover.url} />
+      <FavoriteStar dir={props.book.dir} />
       <BookMeta
         book={props.book}
         hasPicture={cover.url !== null}

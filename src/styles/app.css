@@ -820,9 +820,36 @@ html.look-shown .selection-bar {
 }
 
 .book {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 240px;
+}
+
+/* The star waits in the cover's corner, seen on a favourite and on a book pointed at. */
+.book-favorite {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 18px;
+  line-height: 32px;
+  opacity: 0;
+}
+
+.book:hover .book-favorite,
+.book-favorite:focus-visible,
+.book-favorite[aria-pressed="true"] {
+  opacity: 1;
+}
+
+.book-favorite[aria-pressed="true"] {
+  color: #f2c14e;
 }
 
 .book-cover {
