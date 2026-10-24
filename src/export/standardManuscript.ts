@@ -13,7 +13,7 @@ import {
 import type { Node } from "prosemirror-model";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
 import { runs, type TextSettings, type WordNotes } from "./wordRuns.js";
-import { bookWords, headingLabel, roundedWords } from "./bookWords.js";
+import { bookWords, headingLabel, roundedWords, titleBesideLabel } from "./bookWords.js";
 import { sceneEndMark, sceneStartMark } from "./sceneMarks.js";
 
 interface ManuscriptInput {
@@ -129,9 +129,10 @@ function headingParagraphs(
   language: string,
 ) {
   const label = headingLabel(item, language);
+  const title = titleBesideLabel(item.title, label);
   return [
     centered(label, { pageBreakBefore: true, spacing: { before: HEADING_DROP } }),
-    ...(item.title ? [centered(item.title)] : []),
+    ...(title ? [centered(title)] : []),
   ];
 }
 

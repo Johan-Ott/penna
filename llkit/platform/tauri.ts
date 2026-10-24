@@ -112,9 +112,10 @@ function updateCheck(repository: string) {
   return async () => null;
 }
 
-// A program is never started from a file the app keeps: such a file is shown in its folder.
-const RUNS = /\.(exe|msi|bat|cmd|com|ps1|vbs|js|jse|wsf|scr|lnk|reg|hta|cpl|jar|app|sh)$/i;
-const openFile = (path: string) => (RUNS.test(path) ? revealItemInDir(path) : openPath(path));
+// Only documents and pictures open in their program. Anything else, which could be a program,
+// is shown in its folder instead.
+const OPENS = /\.(pdf|txt|md|docx|odt|epub|png|jpe?g|gif|webp|bmp|heic)$/i;
+const openFile = (path: string) => (OPENS.test(path) ? openPath(path) : revealItemInDir(path));
 
 // The dialog grants the app the picked file, wherever it lies.
 async function pickFile(kind: PickKind) {

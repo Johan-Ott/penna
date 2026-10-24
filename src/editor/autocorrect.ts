@@ -92,8 +92,10 @@ interface Fix {
 // The last correction, kept until anything else changes, so Backspace right after takes it back.
 const lastFix = new PluginKey<Fix | null>("autocorrect");
 
-// The word is changed only if it still stands where it was typed.
+// The word is changed only if it still stands where it was typed. An input rule may have
+// shortened the text since, as "..." becoming "…", so `end` can lie past the end of the scene.
 async function correctLastWord(view: EditorView, spelling: SpellingSwitch, end: number) {
+  if (end > view.state.doc.content.size) return;
   const before = view.state.doc.textBetween(Math.max(0, end - 40), end, "\n");
   const correction = await correctionOf(spelling, before);
   if (!correction) return;

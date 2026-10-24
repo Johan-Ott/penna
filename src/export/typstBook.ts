@@ -2,7 +2,7 @@ import type { Node } from "prosemirror-model";
 import type { BookDetails, OutlineItem, Typography } from "./book.js";
 import { backTexts, type BookExtras } from "./bookParts.js";
 import type { BookDesign } from "./bookDesign.js";
-import { bookWords, contentsLabel, designedLabel } from "./bookWords.js";
+import { bookWords, contentsLabel, designedLabel, titleBesideLabel } from "./bookWords.js";
 import {
   breakMark,
   chapterLayout,
@@ -100,7 +100,8 @@ function openingCall(input: PrintInput, item: Opening, hasBleed: boolean) {
     `by: ${optional(item.epigraphBy ?? "")}`,
   ].join(", ");
   const toc = typstString(contentsLabel(item, input.language));
-  const start = `${optional(label ?? "")}, ${optional(item.title)}, ${toc}`;
+  const title = titleBesideLabel(item.title, label);
+  const start = `${optional(label ?? "")}, ${optional(title)}, ${toc}`;
   if (item.kind === "part") return `#del(${start}, extra: (${extra}))`;
   const layout = chapterLayout(input.design, item, input.images, hasBleed);
   return `#kapitel(${start}, layout: ${layout}, extra: (${extra}))`;

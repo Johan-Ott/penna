@@ -1,6 +1,6 @@
 import type { OutlineItem } from "./book.js";
 import { BREAK_PICTURE, DEFAULT_DESIGN, type BookDesign } from "./bookDesign.js";
-import { contentsLabel, designedLabel } from "./bookWords.js";
+import { contentsLabel, designedLabel, titleBesideLabel } from "./bookWords.js";
 import { imageSize } from "./imageSize.js";
 import { openingOf } from "./typstOpening.js";
 import { escapeXml } from "./xhtml.js";
@@ -60,9 +60,10 @@ function openingPictures(item: Opening, look: EpubDesign) {
 /** The chapter's opening: its pictures, label, title, subtitle and epigraph. */
 export function openingHtml(item: Opening, language: string, look: EpubDesign) {
   const label = designedLabel(item, language, look.design.chapterLabel);
+  const title = titleBesideLabel(item.title, label);
   const parts = [
     label ? `<span class="label">${escapeXml(label)}</span>` : "",
-    item.title ? `<span class="title">${escapeXml(item.title)}</span>` : "",
+    title ? `<span class="title">${escapeXml(title)}</span>` : "",
     item.subtitle ? `<span class="subtitle">${escapeXml(item.subtitle)}</span>` : "",
   ].filter(Boolean);
   const heading = `<h1>${parts.join("<br />") || escapeXml(contentsLabel(item, language))}</h1>`;

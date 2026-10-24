@@ -150,13 +150,18 @@ export function designedLabel(
   return null;
 }
 
+/** A title that only repeats its label, as a new book's "Kapitel 1", is printed once. */
+export const titleBesideLabel = (title: string, label: string | null) =>
+  title === label ? "" : title;
+
 /** The contents' line for a part or chapter: the label and the title, or what there is. */
 export function contentsLabel(
   item: Extract<OutlineItem, { kind: "part" | "chapter" }>,
   language: string,
 ) {
   const label = headingLabel(item, language);
-  return item.title ? `${label}. ${item.title}` : label;
+  const title = titleBesideLabel(item.title, label);
+  return title ? `${label}. ${title}` : label;
 }
 
 /** Rounded to hundreds, as agents and publishers expect; a short text is never "about 0". */
