@@ -573,6 +573,7 @@ button:not(:disabled):active {
 
 /* A dialog stays in the part of the screen a phone's keyboard leaves free, and scrolls there. */
 .dialog-backdrop {
+  top: var(--visible-top, 0);
   bottom: auto;
   height: var(--visible-height, 100%);
 }

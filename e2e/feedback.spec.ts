@@ -33,7 +33,7 @@ test("feedback opens a mail, and the report goes along only with something wrong
   await dialog.getByLabel("Berätta").fill("Fler kapitelmallar som standard.");
   await dialog.getByRole("button", { name: "Skriv mejlet" }).click();
 
-  await expect(dialog).toContainText("Ditt mejlprogram öppnas");
+  await expect(dialog).toContainText("Tack för att du hör av dig");
   const opened = await page.evaluate(
     () => (window as unknown as { openedMail: string }).openedMail,
   );

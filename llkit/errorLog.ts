@@ -26,10 +26,12 @@ function writeKept(shelf: Shelf | null, kept: Kept) {
   }
 }
 
+// Read by a person: the app and device on one line, each error at the writer's own clock.
 const reportOf = (entries: Entry[], info: { app: string; version: string; device: string }) => {
-  const lines = entries.map(({ time, message }) => `${new Date(time).toISOString()}  ${message}`);
-  const errors = lines.length > 0 ? lines.join("\n") : "Inga fel sedan starten.";
-  return `${info.app} ${info.version}\n${info.device}\n\n${errors}\n`;
+  const clock = (time: number) => new Date(time).toLocaleString("sv-SE").slice(0, 16);
+  const lines = entries.map(({ time, message }) => `${clock(time)}  ${message}`);
+  const errors = lines.length > 0 ? `Fel:\n${lines.join("\n")}` : "Inga fel sedan starten.";
+  return `${info.app} ${info.version} · ${info.device}\n\n${errors}\n`;
 };
 
 /** The latest errors, kept on the device so they outlive a crash. Never sent by Skrivro itself. */

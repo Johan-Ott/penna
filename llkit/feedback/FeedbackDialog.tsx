@@ -97,7 +97,7 @@ function FeedbackFields(props: { feedback: Feedback; onChange: (feedback: Feedba
 
 const DONE: Partial<Record<Outcome, string>> = {
   öppnad: t(
-    "Ditt mejlprogram öppnas med meddelandet ifyllt: skicka det därifrån. Öppnades inget är texten kopierad, så du kan klistra in den i ett mejl.",
+    "Tack för att du hör av dig! Skickade du mejlet har vi fått det. Öppnades inget mejlprogram är texten kopierad, så du kan klistra in den i ett mejl.",
   ),
   kopierad: t("Texten är kopierad: klistra in den i ett mejl till oss."),
   "inte-kopierad": t("Texten kunde inte kopieras. Skriv den i ett mejl till oss i stället."),

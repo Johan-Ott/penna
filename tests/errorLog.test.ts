@@ -12,7 +12,7 @@ describe("errorLog", () => {
     expect(report).toContain("Skrivro 0.1.0");
     expect(report).toContain("Windows");
     expect(report.indexOf("Kunde inte spara")).toBeLessThan(report.indexOf("Drive svarade"));
-    expect(report).toContain("2026-10-05T10:00:00");
+    expect(report).toContain(new Date("2026-10-05T10:00:00Z").toLocaleString("sv-SE").slice(0, 16));
   });
 
   it("shows the errors newest first, each with its time", () => {

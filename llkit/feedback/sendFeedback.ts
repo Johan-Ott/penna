@@ -23,10 +23,24 @@ export function provideFeedbackAddress(to: string) {
 
 export const canSendFeedback = () => address !== "";
 
+const systemOf = (agent: string) => {
+  const android = /Android [\d.]+/.exec(agent)?.[0];
+  if (android) return android;
+  if (/iPhone|iPad/.test(agent)) return "iOS";
+  if (/Windows/.test(agent)) return "Windows";
+  return /Mac OS X/.test(agent) ? "macOS" : "Linux";
+};
+
+/** The system and the browser engine from the user agent, instead of all of it. */
+export function deviceOf(agent: string) {
+  const engine = /Chrome\/(\d+)/.exec(agent)?.[1];
+  return engine ? `${systemOf(agent)}, Chromium ${engine}` : systemOf(agent);
+}
+
 /** Version, device and the session's latest errors: never any of the book's text. */
 export function feedbackReport() {
   const { name, version } = appInfo();
-  return errorLog.report({ app: name, version, device: navigator.userAgent });
+  return errorLog.report({ app: name, version, device: deviceOf(navigator.userAgent) });
 }
 
 export function feedbackText(feedback: Feedback) {

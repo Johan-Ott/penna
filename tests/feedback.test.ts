@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { provideAppName } from "@llkit/appInfo.js";
 import {
+  deviceOf,
   feedbackMail,
   feedbackText,
   provideFeedbackAddress,
@@ -49,5 +50,17 @@ describe("the error report", () => {
     const idea = feedbackText({ ...feedback, kind: "ide", hasReport: true });
 
     expect(idea).not.toContain("---");
+  });
+});
+
+describe("deviceOf", () => {
+  it("names the system and the engine instead of the whole user agent", () => {
+    const phone =
+      "Mozilla/5.0 (Linux; Android 14; SM-S921B Build/UP1A; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile Safari/537.36";
+    const windows =
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0";
+
+    expect(deviceOf(phone)).toBe("Android 14, Chromium 130");
+    expect(deviceOf(windows)).toBe("Windows, Chromium 130");
   });
 });
