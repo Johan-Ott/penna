@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { provideAppName } from "@llkit/appInfo.js";
 import { setUiLanguage } from "@llkit/i18n.js";
-import { changesIn, keepNotes, keptNotes } from "@llkit/releaseNotes.js";
+import { changesIn, changesSince, keepNotes, keptNotes } from "@llkit/releaseNotes.js";
 
 provideAppName("Skrivro");
 
@@ -41,5 +41,19 @@ describe("release notes", () => {
 
     expect(keptNotes("0.5.0")).toBe(notes);
     expect(keptNotes("0.4.1")).toBe("");
+  });
+});
+
+describe("changesSince", () => {
+  it("tells every version an update skipped, newest first, and nothing from before", () => {
+    setUiLanguage("sv");
+    const releases = [
+      { tag_name: "v0.4.10", body: "### Nytt\n- Snabbare\n\n### New\n- Faster" },
+      { tag_name: "v0.4.11", body: "### Nytt\n- Ännu inte släppt", draft: true },
+      { tag_name: "v0.4.9", body: "### Nytt\n- Listor\n\n### New\n- Lists" },
+      { tag_name: "v0.4.8", body: "### Nytt\n- Ny logga\n\n### New\n- New logo" },
+    ];
+
+    expect(changesSince(releases, "0.4.8", "0.4.10")).toEqual(["Snabbare", "Listor"]);
   });
 });

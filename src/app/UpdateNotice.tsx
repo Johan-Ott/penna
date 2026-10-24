@@ -6,7 +6,7 @@ import { checkForUpdates, dismissUpdates, useUpdates } from "@llkit/updates.js";
 import { Dialog } from "@llkit/controls.js";
 import { keepNotes } from "@llkit/releaseNotes.js";
 import { t } from "../i18n/i18n.js";
-import { Changes, WhatsNew } from "./WhatsNew.js";
+import { Changes, useChangesSince, WhatsNew } from "./WhatsNew.js";
 
 // At the start and then every six hours, as long as Skrivro is open.
 const EVERY = 6 * 60 * 60 * 1000;
@@ -36,9 +36,10 @@ function UpdateDialog(props: { update: AppUpdate; session: SceneSession; onClose
   const { update, session, onClose } = props;
   const { progress, install } = useInstall(update, session);
   const action = update.isDownload ? t("Hämta") : t("Starta om och uppdatera");
+  const changes = useChangesSince(__APP_VERSION__, update.version, update.notes ?? "");
   return (
     <Dialog label={t("Skrivro {version} finns", { version: update.version })} onClose={onClose}>
-      <Changes notes={update.notes ?? ""} />
+      <Changes changes={changes} />
       {progress !== null && !update.isDownload && (
         <progress className="update-progress" value={progress} max={1} aria-label={t("Hämtar")} />
       )}

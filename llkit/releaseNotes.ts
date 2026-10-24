@@ -1,6 +1,7 @@
 import { appInfo } from "./appInfo.js";
 import { uiLanguage } from "./i18n.js";
 import { browserStorage } from "./storage/browserStorage.js";
+import { isNewer } from "./platform/versions.js";
 
 // Release notes list the changes in Swedish, then under "### New" in English. Older ones wrote
 // each change as "* Svenska | English". Anything that is not a list line is not shown.
@@ -19,6 +20,23 @@ export function changesIn(notes: string) {
     const [inSwedish = "", inEnglish] = change.split("|").map((part) => part.trim());
     return uiLanguage() === "en" && inEnglish ? inEnglish : inSwedish;
   });
+}
+
+/** A published release as GitHub lists it. */
+export interface Release {
+  tag_name: string;
+  body?: string | null;
+  draft?: boolean;
+}
+
+/** Every change after `from` up to and including `to`, newest first: an update that skips a
+ * version still tells what that version brought. */
+export function changesSince(releases: Release[], from: string, to: string) {
+  return releases
+    .filter((release) => !release.draft && isNewer(release.tag_name, from))
+    .filter((release) => !isNewer(release.tag_name, to))
+    .sort((one, other) => (isNewer(one.tag_name, other.tag_name) ? -1 : 1))
+    .flatMap((release) => changesIn(release.body ?? ""));
 }
 
 // The notes of an update are kept when it is offered, so the new version can show them after
