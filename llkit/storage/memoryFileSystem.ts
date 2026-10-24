@@ -29,9 +29,24 @@ function childNames(disk: Disk, dir: string): string[] {
   return [...new Set(children)];
 }
 
+// A folder moves with everything in it, as on a disk.
+function renameFolder(disk: Disk, from: string, to: string) {
+  if (!disk.folders.has(from)) throw missing(from);
+  const moved = (path: string) => to + path.slice(from.length);
+  const inside = (path: string) => path === from || path.startsWith(`${from}/`);
+  for (const [path, file] of [...disk.files].filter(([path]) => inside(path))) {
+    disk.files.delete(path);
+    store(disk, moved(path), file.content);
+  }
+  for (const folder of [...disk.folders].filter(inside)) {
+    disk.folders.delete(folder);
+    addFolderWithParents(disk, moved(folder));
+  }
+}
+
 function renameFile(disk: Disk, from: string, to: string) {
   const file = disk.files.get(from);
-  if (!file) throw missing(from);
+  if (!file) return renameFolder(disk, from, to);
   disk.files.delete(from);
   store(disk, to, file.content);
 }

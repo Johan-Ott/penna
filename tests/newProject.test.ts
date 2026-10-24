@@ -26,6 +26,23 @@ describe("createProject", () => {
     narration: null,
   };
 
+  it("is made under another name and stands on the shelf only when whole", async () => {
+    const files = createMemoryFileSystem({
+      "/Skrivro/Vintervägen.skrivro.skapas/scenes/OLD.md": "",
+    });
+
+    const created = await createProject(files, "/Skrivro", { ...details, structure: "tre-akter" });
+
+    expect(created.dir).toBe("/Skrivro/Vintervägen 2.skrivro");
+    expect(await files.list("/Skrivro")).not.toContain("Vintervägen 2.skrivro.skapas");
+    const project = await readProjectFile(files, created.dir, []);
+    const sceneIds = manuscriptSceneIds(project.tree);
+    expect(sceneIds.length).toBeGreaterThan(1);
+    expect((await openProjectFolder(files, created.dir)).scenes).toEqual(
+      expect.arrayContaining(sceneIds),
+    );
+  });
+
   it("keeps how the book is told, for Granska to watch", async () => {
     const files = createMemoryFileSystem({});
     const narration = { voice: "tredje", tense: "dåtid", deep: true } as const;

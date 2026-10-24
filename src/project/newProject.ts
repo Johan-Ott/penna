@@ -2,7 +2,6 @@ import { DEMO_PROJECT_DIR, DEMO_PROJECT_FILES } from "../demo/demoProject.js";
 import type { ImportedNode } from "../import/markdownImport.js";
 import { newSceneText, withSceneStatus } from "../manuscript/sceneFile.js";
 import { createFileNote, saveResearchFile } from "./researchFiles.js";
-import { writeAtomic } from "@llkit/storage/atomicWrite.js";
 import { joinPath, readIfThere, type FileSystem } from "@llkit/storage/fileSystem.js";
 import { newSceneId, scenePath } from "../storage/sceneId.js";
 import { BOOK_SUFFIX, parentOf, withoutBookSuffix } from "./libraryFolders.js";
@@ -45,19 +44,28 @@ export function projectFolderName(title: string): string {
 }
 
 /** "Isen.skrivro", "Isen 2.skrivro", and so on. */
+const MAKING = ".skapas";
+
 export async function freeProjectDir(fileSystem: FileSystem, libraryDir: string, title: string) {
   const taken = new Set(await fileSystem.list(libraryDir));
   const base = withoutBookSuffix(projectFolderName(title));
   let candidate = `${base}${BOOK_SUFFIX}`;
-  for (let number = 2; taken.has(candidate); number++)
-    candidate = `${base} ${number}${BOOK_SUFFIX}`;
+  const isTaken = (name: string) => taken.has(name) || taken.has(`${name}${MAKING}`);
+  for (let number = 2; isTaken(candidate); number++) candidate = `${base} ${number}${BOOK_SUFFIX}`;
   return joinPath(libraryDir, candidate);
 }
 
-// A research file becomes a note of its own; a text, a scene file.
+// The book being written: its folder, and the scene files on their way to it.
+interface Making {
+  fileSystem: FileSystem;
+  dir: string;
+  writes: Promise<void>[];
+}
+
+// A research file becomes a note of its own, saved in turn since it takes a free name; a text is
+// a scene file, written alongside the others, as a phone is slow at one file after another.
 async function writeScene(
-  fileSystem: FileSystem,
-  dir: string,
+  { fileSystem, dir, writes }: Making,
   node: Extract<ImportedNode, { kind: "scene" }>,
   id: string,
 ) {
@@ -67,22 +75,29 @@ async function writeScene(
   }
   const text = newSceneText(id, node.title);
   const file = node.body ? withSceneStatus(text, "utkast") + node.body : text;
-  await writeAtomic(fileSystem, scenePath(dir, id), file);
+  writes.push(fileSystem.writeText(scenePath(dir, id), file));
   return id;
 }
 
-async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
+async function writeNodes(making: Making, book: ImportedNode[]) {
   const tree: TreeNode[] = [];
   for (const node of book) {
     const id = (node.kind === "sort" ? node.id : undefined) ?? newSceneId();
     const summary = node.kind !== "sort" && node.summary ? { summary: node.summary } : {};
     if (node.kind !== "scene") {
-      const children = await writeBook(fileSystem, dir, node.children);
+      const children = await writeNodes(making, node.children);
       tree.push({ id, kind: node.kind, title: node.title, ...summary, children });
       continue;
     }
-    tree.push({ id: await writeScene(fileSystem, dir, node, id), kind: "scene", ...summary });
+    tree.push({ id: await writeScene(making, node, id), kind: "scene", ...summary });
   }
+  return tree;
+}
+
+async function writeBook(fileSystem: FileSystem, dir: string, book: ImportedNode[]) {
+  const making = { fileSystem, dir, writes: [] };
+  const tree = await writeNodes(making, book);
+  await Promise.all(making.writes);
   return tree;
 }
 
@@ -155,7 +170,10 @@ export async function createProject(
   imported?: ImportedNode[],
 ) {
   const template = await templateFor(fileSystem, libraryDir, details);
-  const dir = await freeProjectDir(fileSystem, libraryDir, details.title);
+  const finalDir = await freeProjectDir(fileSystem, libraryDir, details.title);
+  // Made under another name and given its own when whole: a book left halfway, as when the app
+  // is closed, never stands on the shelf or goes to Drive.
+  const dir = `${finalDir}${MAKING}`;
   await fileSystem.makeDir(joinPath(dir, "scenes"));
   const isPlanned = details.isPlanned !== false || imported !== undefined;
   const book =
@@ -169,7 +187,8 @@ export async function createProject(
   const goal = details.totalGoal ? { totalGoal: details.totalGoal } : {};
   const fields = { ...bookFields(details), ...fromTemplate.fields, ...goal, welcome };
   await writeProjectFile(fileSystem, dir, fields, withNotesFirst(all, [welcome, ...steps]));
-  return { dir, sceneId: sceneId ?? welcome };
+  await fileSystem.rename(dir, finalDir);
+  return { dir: finalDir, sceneId: sceneId ?? welcome };
 }
 
 // The example is copied once: asked for again, the copy already on the shelf opens. Its files go
