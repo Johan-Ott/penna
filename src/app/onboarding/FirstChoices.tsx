@@ -3,7 +3,7 @@ import { THEME_LABELS, type Theme } from "../../editor/writingSettings.js";
 import { BOOK_LANGUAGES } from "../../project/bookLanguage.js";
 import { BackButton, Choice } from "@llkit/controls.js";
 import { platform } from "../platform.js";
-import { t, uiLanguage } from "../../i18n/i18n.js";
+import { numberLocale, t } from "../../i18n/i18n.js";
 
 // The first start's choices: which languages the books are written in, whose dictionaries are
 // fetched now, how Skrivro looks, and a day's goal. Each can be changed later in Inställningar.
@@ -17,7 +17,7 @@ export interface Choices {
 }
 
 /** A new writer's first book language, from the language Skrivro is shown in. */
-export const firstLanguage = () => (uiLanguage() === "en" ? "en-GB" : "sv-SE");
+export const firstLanguage = () => numberLocale();
 
 const THEMES = Object.entries(THEME_LABELS) as [Theme, string][];
 // No goal first, two to start from, and the writer's own number.

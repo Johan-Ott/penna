@@ -1,4 +1,4 @@
-import type { UiLanguage } from "../i18n/i18n.js";
+import { isUiLanguage, type UiLanguage } from "../i18n/i18n.js";
 import {
   readStoredObject,
   writeStored,
@@ -59,7 +59,7 @@ export function loadPreferences(storage: KeyValueStorage): AppPreferences {
       ? stored["defaultDailyGoal"]
       : START_PREFERENCES.defaultDailyGoal,
     isAutoSnapshotOn: stored["isAutoSnapshotOn"] !== false,
-    uiLanguage: stored["uiLanguage"] === "en" ? "en" : "sv",
+    uiLanguage: isUiLanguage(stored["uiLanguage"]) ? stored["uiLanguage"] : "sv",
     bookLanguage: textOrNull(stored["bookLanguage"]) ?? START_PREFERENCES.bookLanguage,
     reminderHour: isHour(stored["reminderHour"]) ? stored["reminderHour"] : null,
     isDriveSyncOn: stored["isDriveSyncOn"] === true,

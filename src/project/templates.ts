@@ -1,5 +1,5 @@
 import type { ImportedNode } from "../import/markdownImport.js";
-import { uiLanguage } from "../i18n/i18n.js";
+import { isSwedish } from "../i18n/i18n.js";
 import { defaultLabels } from "./labels.js";
 import english from "./templates.en.json";
 import swedish from "./templates.sv.json";
@@ -32,7 +32,7 @@ export interface TemplatePiece {
   chapters: string[][];
 }
 
-const texts = () => (uiLanguage() === "en" ? english : swedish);
+const texts = () => (isSwedish() ? swedish : english);
 
 export const structures = (): BookTemplate[] => texts().structures;
 export const templatePieces = (): TemplatePiece[] => texts().pieces;

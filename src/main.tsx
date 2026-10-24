@@ -16,18 +16,24 @@ import "./editor/editor.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App.js";
-import { recordUncaughtErrors } from "@llkit/errorLog.js";
+import { recordFailure, recordUncaughtErrors } from "@llkit/errorLog.js";
 import { keepWebMenuOut } from "./app/spelling/keepWebMenuOut.js";
 import { styledTooltips } from "@llkit/tooltips.js";
 import { followVisibleHeight, longPressOpensMenus } from "@llkit/touch.js";
 import { isMac } from "@llkit/thisComputer.js";
 import { platform } from "./app/platform.js";
+import { isBuiltIn, uiLanguage } from "./i18n/i18n.js";
+import { fetchPack, isPackCurrent } from "./i18n/languagePacks.js";
 
 recordUncaughtErrors();
 keepWebMenuOut();
 styledTooltips();
 longPressOpensMenus();
 followVisibleHeight();
+// A fetched language from an earlier version is fetched again, for the next start.
+if (!isBuiltIn(uiLanguage()) && !isPackCurrent(uiLanguage())) {
+  void fetchPack(platform.webFetch, uiLanguage()).catch(recordFailure("Språket"));
+}
 // Android has a back button, so the page can leave out its own ways to close.
 document.documentElement.classList.toggle("android", /Android/i.test(navigator.userAgent));
 // A Mac's app window keeps its own buttons over the top left, so the top bar leaves room for

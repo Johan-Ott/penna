@@ -5,7 +5,7 @@ import { feedbackReport } from "@llkit/feedback/sendFeedback.js";
 import { Row } from "@llkit/controls.js";
 import { CopyButton } from "../share/ImageActions.js";
 import { checkForUpdates } from "@llkit/updates.js";
-import { numberLocale, t, uiLanguage } from "../../i18n/i18n.js";
+import { isSwedish, numberLocale, t } from "../../i18n/i18n.js";
 
 // The report goes to the clipboard, so the writer chooses where to send it and sees what it holds.
 const ErrorReportButton = () => (
@@ -58,8 +58,7 @@ function Credits() {
 
 // The website's pages, in the language Skrivro is shown in.
 const SITE = "https://johan-ott.github.io/skrivro/";
-const sitePage = (swedish: string, english: string) =>
-  SITE + (uiLanguage() === "en" ? english : swedish);
+const sitePage = (swedish: string, english: string) => SITE + (isSwedish() ? swedish : english);
 const SUPPORT_URL = "https://github.com/Johan-Ott/skrivro/issues";
 
 const Link = ({ url, label }: { url: string; label: string }) => (

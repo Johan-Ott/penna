@@ -5,7 +5,11 @@ import english from "./en.json";
 addEnglish(english);
 
 export {
+  addLanguagePack,
   formatNumber,
+  isBuiltIn,
+  isSwedish,
+  isUiLanguage,
   numberLocale,
   setUiLanguage,
   t,

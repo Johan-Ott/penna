@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import KIT_ENGLISH from "../llkit/en.json";
 import ENGLISH from "../src/i18n/en.json";
-import { setUiLanguage, t } from "../src/i18n/i18n";
+import { addLanguagePack, isBuiltIn, setUiLanguage, t, UI_LANGUAGES } from "../src/i18n/i18n";
 
 // llkit/template is a new app's code, with its own English.
 function sourceFiles(dir: string): string[] {
@@ -27,7 +27,7 @@ const textsIn = (dir: string) =>
 const usedTexts = textsIn("src");
 const kitTexts = textsIn("llkit");
 
-afterEach(() => setUiLanguage("sv"));
+afterEach(() => (setUiLanguage("sv"), addLanguagePack({})));
 
 describe("t", () => {
   it("shows the Swedish text as written, and fills in the values", () => {
@@ -57,5 +57,36 @@ describe("t", () => {
     const used = new Set(usedTexts);
 
     expect(Object.keys(ENGLISH).filter((text) => !used.has(text))).toEqual([]);
+  });
+});
+
+describe("language packs", () => {
+  const known = new Set([...Object.keys(ENGLISH), ...Object.keys(KIT_ENGLISH)]);
+  const placeholders = (text: string) =>
+    [...text.matchAll(/\{(\w+)\}/g)]
+      .map((match) => match[1])
+      .sort()
+      .join(",");
+  const packOf = (language: string) =>
+    JSON.parse(readFileSync(`src/i18n/packs/${language}.json`, "utf8")) as Record<string, string>;
+  const fetched = UI_LANGUAGES.filter(([language]) => !isBuiltIn(language));
+
+  it.each(fetched)("%s translates the app's texts, each with its placeholders", (language) => {
+    const pack = packOf(language);
+
+    expect(Object.keys(pack).filter((swedish) => !known.has(swedish))).toEqual([]);
+    expect(
+      Object.entries(pack).filter(
+        ([swedish, text]) => placeholders(text) !== placeholders(swedish),
+      ),
+    ).toEqual([]);
+  });
+
+  it("shows a fetched language, and English for what it lacks", () => {
+    setUiLanguage("de");
+    addLanguagePack({ "Ny scen": "Neue Szene" });
+
+    expect(t("Ny scen")).toBe("Neue Szene");
+    expect(t("{count} ord", { count: 12 })).toBe("12 words");
   });
 });

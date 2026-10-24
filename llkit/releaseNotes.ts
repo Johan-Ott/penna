@@ -1,5 +1,5 @@
 import { appInfo } from "./appInfo.js";
-import { uiLanguage } from "./i18n.js";
+import { isSwedish } from "./i18n.js";
 import { browserStorage } from "./storage/browserStorage.js";
 import { isNewer } from "./platform/versions.js";
 
@@ -15,10 +15,10 @@ const listLines = (text: string) =>
 /** The changes in the notes, in the language the app is shown in. */
 export function changesIn(notes: string) {
   const [swedish = "", english] = notes.split(/^###\s*New\s*$/m);
-  if (english !== undefined) return listLines(uiLanguage() === "en" ? english : swedish);
+  if (english !== undefined) return listLines(isSwedish() ? swedish : english);
   return listLines(notes).map((change) => {
     const [inSwedish = "", inEnglish] = change.split("|").map((part) => part.trim());
-    return uiLanguage() === "en" && inEnglish ? inEnglish : inSwedish;
+    return !isSwedish() && inEnglish ? inEnglish : inSwedish;
   });
 }
 
