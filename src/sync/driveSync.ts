@@ -25,6 +25,7 @@ import {
   type SyncState,
 } from "./syncState.js";
 import { addToSyncLog, SYNC_LOG, syncLogger, type SyncLogger } from "./syncLog.js";
+import { remoteTree, type RemoteTree } from "./remoteTree.js";
 
 /** Paths inside the book folder, such as "scenes/S1.md". */
 interface SyncResult {
@@ -44,23 +45,6 @@ const isLeftOut = (path: string) =>
   isTempFile(path) ||
   path.endsWith(DOWNLOAD_SUFFIX) ||
   CONFLICT_COPY.test(path);
-
-async function remoteFiles(drive: Drive, folderId: string, prefix: string, tree: RemoteTree) {
-  for (const file of await drive.list(folderId)) {
-    const path = prefix ? `${prefix}/${file.name}` : file.name;
-    if (file.isFolder) {
-      tree.folders.set(path, file.id);
-      await remoteFiles(drive, file.id, path, tree);
-    } else {
-      tree.files.set(path, file);
-    }
-  }
-}
-
-interface RemoteTree {
-  files: Map<string, RemoteFile>;
-  folders: Map<string, string>;
-}
 
 interface Run {
   book: LocalBook;
@@ -114,8 +98,19 @@ interface DriveSide {
   remoteBytes?: Uint8Array;
 }
 
+// project.json as both sides last agreed, which a merge compares with; a duplicate grew apart
+// from it, so it has none, and neither side's chapters are dropped.
+interface Merging {
+  base: string | null;
+}
+
 // project.json is merged; any other file keeps this device's text and Drive's goes beside it.
-async function keepBoth(run: Run, path: string, local: Uint8Array, drive: Required<DriveSide>) {
+async function keepBoth(
+  run: Run,
+  path: string,
+  local: Uint8Array,
+  drive: Required<DriveSide> & Partial<Merging>,
+) {
   const { remote, remoteBytes } = drive;
   if (path !== MERGED) {
     await writeLocal(run.book, await conflictCopyPath(run.book, path, run.now), remoteBytes);
@@ -123,7 +118,7 @@ async function keepBoth(run: Run, path: string, local: Uint8Array, drive: Requir
     return send(run, path, local, remote);
   }
   const decode = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
-  const base = run.state.files[MERGED]?.text ?? null;
+  const base = drive.base === undefined ? (run.state.files[MERGED]?.text ?? null) : drive.base;
   const { text, conflicts } = mergeProjectText(base, decode(local), decode(remoteBytes));
   const merged = new TextEncoder().encode(text);
   if (!(await replaceLocal(run.book, MERGED, local, merged))) return;
@@ -175,6 +170,21 @@ async function syncFile(run: Run, path: string, local: Uint8Array | undefined) {
   if (!(await isInStep(run, path, local, remote))) await settle(run, path, local, remote);
 }
 
+// A second file at a path is settled like a change from another device, then goes to Drive's
+// trash, where it can be restored for 30 days.
+async function settleDuplicates(run: Run) {
+  for (const [path, duplicate] of run.remote.duplicates) {
+    const known = run.state.files[path];
+    const local = await readLocal(run.book, path);
+    if (!known || !local) continue;
+    const remoteBytes = await run.drive.download(duplicate.id);
+    const remote = { ...duplicate, id: known.id, version: known.version };
+    if ((await hashOf(remoteBytes)) !== (await hashOf(local)))
+      await keepBoth(run, path, local, { remote, remoteBytes, base: null });
+    await run.drive.trash(duplicate.id);
+  }
+}
+
 // Each file is read again just before its turn, so text saved during the sync is what counts.
 async function syncEach(run: Run, all: string[], onProgress?: (done: number, all: number) => void) {
   const paths = all.filter((path) => !isLeftOut(path));
@@ -200,14 +210,14 @@ export async function syncProject(
   // in Drive for a book to fetch. A fetch starts empty and gets its state when done.
   if (!state.folderId && local.size > 0)
     await writeState(fileSystem, dir, { dir, folderId: rootId, files: state.files });
-  const remote: RemoteTree = { files: new Map(), folders: new Map() };
-  await remoteFiles(drive, rootId, "", remote);
+  const remote = await remoteTree(drive, rootId, (path) => state.files[path]?.id);
   checkFewGone(state, local, remote.files);
   const book = { fileSystem, dir, guard };
   const result: SyncResult = { uploaded: [], downloaded: [], conflicts: [], trashed: [] };
   const logger = syncLogger();
   const run: Run = { book, drive, now, rootId, remote, state, result, logger };
   await syncEach(run, [...new Set([...local.keys(), ...remote.files.keys()])], options.onProgress);
+  await settleDuplicates(run);
   await fileSystem.makeDir(dir);
   const saved: SyncState = { dir, folderId: rootId, files: state.files };
   await writeState(fileSystem, dir, saved);
