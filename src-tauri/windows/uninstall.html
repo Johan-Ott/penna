@@ -1,0 +1,184 @@
+<!doctype html>
+<!--
+  The uninstaller's whole window, 440 × 300 at 1x: ?lang=sv|en&check=on|off.
+  node scripts/make-installer-splash.mjs makes uninstall-<lang>-<check>.bmp and their 2x.
+  The uninstaller reads where it is clicked; the boxes below are where windows/uninstall.nsh looks.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Literata";
+        font-weight: 700;
+        src: url("../../public/fonts/literata-700-normal.ttf");
+      }
+      @font-face {
+        font-family: "Geist";
+        src: url("../../public/fonts/geist-sans-400-normal.ttf");
+      }
+      html,
+      body {
+        margin: 0;
+        width: 440px;
+        height: 300px;
+        background: #151517;
+        overflow: hidden;
+        font-family: "Geist";
+      }
+      .head {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        padding: 28px 32px 0;
+      }
+      img {
+        width: 40px;
+        height: 40px;
+      }
+      h1 {
+        margin: 0;
+        color: #f2eee7;
+        font: 700 21px "Literata";
+      }
+      .text {
+        margin: 14px 32px 0;
+        color: #b9b4ad;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      /* Where the click toggles: 32–408 × 150–206. */
+      .check {
+        position: absolute;
+        top: 150px;
+        left: 32px;
+        width: 376px;
+        height: 56px;
+        box-sizing: border-box;
+        display: flex;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid #2e2c2a;
+        border-radius: 10px;
+      }
+      .box {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        margin-top: 1px;
+        border: 1.5px solid #8a857e;
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .on .box {
+        border-color: #7fd3a8;
+        background: #7fd3a8;
+      }
+      .on .box::after {
+        content: "";
+        width: 8px;
+        height: 4px;
+        margin-top: -2px;
+        border-left: 2px solid #151517;
+        border-bottom: 2px solid #151517;
+        transform: rotate(-45deg);
+      }
+      .label {
+        color: #f2eee7;
+        font-size: 12.5px;
+        line-height: 1.4;
+      }
+      .label small {
+        display: block;
+        color: #8a857e;
+        font-size: 11.5px;
+      }
+      /* The window's own buttons: minimise 372–404 and close 404–436, both 4–36. */
+      .window-button {
+        position: absolute;
+        top: 8px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8a857e;
+        font-size: 16px;
+      }
+      .minimise {
+        left: 376px;
+      }
+      .close {
+        left: 408px;
+        font-size: 18px;
+      }
+      /* Avbryt 216–308, Ta bort 316–408, both 246–278. */
+      .button {
+        position: absolute;
+        top: 246px;
+        width: 92px;
+        height: 32px;
+        box-sizing: border-box;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+      }
+      .cancel {
+        left: 216px;
+        border: 1px solid #3a3835;
+        color: #f2eee7;
+      }
+      .remove {
+        left: 316px;
+        background: #7fd3a8;
+        color: #151517;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <img src="../icons/icon-source.png" alt="" />
+      <h1 id="title"></h1>
+    </div>
+    <p class="text" id="text"></p>
+    <div class="check" id="check">
+      <span class="box"></span>
+      <span class="label"><span id="option"></span><small id="hint"></small></span>
+    </div>
+    <span class="window-button minimise">&#x2013;</span>
+    <span class="window-button close">&#x2715;</span>
+    <span class="button cancel" id="cancel"></span>
+    <span class="button remove" id="remove"></span>
+    <script>
+      const words = {
+        sv: {
+          title: "Ta bort Skrivro?",
+          text: "Programmet tas bort från datorn. Dina böcker ligger kvar där du har sparat dem, och i Google Drive om du synkar.",
+          option: "Ta även bort inställningar och säkerhetskopior",
+          hint: "Också nedladdade ordlistor och inloggningen till Google.",
+          cancel: "Avbryt",
+          remove: "Ta bort",
+        },
+        en: {
+          title: "Remove Skrivro?",
+          text: "The program is removed from this computer. Your books stay where you saved them, and in Google Drive if you sync.",
+          option: "Also remove settings and backups",
+          hint: "Downloaded dictionaries and the Google sign-in too.",
+          cancel: "Cancel",
+          remove: "Remove",
+        },
+      };
+      const asked = new URLSearchParams(location.search);
+      const chosen = words[asked.get("lang") ?? "sv"];
+      for (const [id, text] of Object.entries(chosen))
+        document.getElementById(id).textContent = text;
+      if (asked.get("check") === "on") document.getElementById("check").classList.add("on");
+    </script>
+  </body>
+</html>
